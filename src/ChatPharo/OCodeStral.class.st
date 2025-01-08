@@ -1,8 +1,9 @@
 Class {
 	#name : 'OCodeStral',
 	#superclass : 'OModel',
-	#category : 'ChatPharo',
-	#package : 'ChatPharo'
+	#category : 'ChatPharo-API',
+	#package : 'ChatPharo',
+	#tag : 'API'
 }
 
 { #category : 'as yet unclassified' }

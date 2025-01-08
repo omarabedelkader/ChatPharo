@@ -1,8 +1,9 @@
 Class {
 	#name : 'OPhi3Model',
 	#superclass : 'OModel',
-	#category : 'ChatPharo',
-	#package : 'ChatPharo'
+	#category : 'ChatPharo-API',
+	#package : 'ChatPharo',
+	#tag : 'API'
 }
 
 { #category : 'accessing' }

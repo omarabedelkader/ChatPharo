@@ -15,8 +15,9 @@ Class {
 	#classInstVars : [
 		'defaultModel'
 	],
-	#category : 'ChatPharo',
-	#package : 'ChatPharo'
+	#category : 'ChatPharo-API',
+	#package : 'ChatPharo',
+	#tag : 'API'
 }
 
 { #category : 'accessing' }

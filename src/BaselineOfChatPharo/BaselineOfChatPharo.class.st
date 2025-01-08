@@ -54,6 +54,9 @@ BaselineOfChatPharo >> definePackages: spec [
 
 	spec package: 'Pharo-Ollama' with: [ spec requires: #( 'NeoJSON' ) ].
 	spec package: 'Pharo-Ollama-Tests' with: [ spec requires: #( 'Pharo-Ollama' ) ].
+	
+	spec package: 'LLM-API' with: [ spec requires: #( 'NeoJSON' ) ].
+	spec package: 'LLM-Spec' with: [ spec requires: #( 'LLM-API' ) ].
 
 	spec for: #'pharo10.x' do: [ 
 		spec
