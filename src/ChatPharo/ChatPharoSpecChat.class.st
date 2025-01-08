@@ -69,7 +69,7 @@ ChatPharoSpecChat >> askLocalModel [
 
     "Step 4) Append the AI's reply (assistant) to your history."
     history addMessage: (LLMAPIChatObjectMessage
-                            role: 'assistant'
+                            role: 'ChatPharo'
                             content: result).
 
     "Step 5) Clear out the user’s input field"

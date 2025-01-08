@@ -51,5 +51,5 @@ ChatPharo >> initializePresenters [
 { #category : 'specs' }
 ChatPharo >> title [
 	
-	^ 'LLM Chat'
+	^ 'ChatPharo'
 ]
