@@ -36,7 +36,7 @@ OllamaAPI class >> defaultModel: anObject [
 OllamaAPI class >> ollamaSettings: aBuilder [
 
 	<systemsettings>
-	(aBuilder group: #Ollama)
+	(aBuilder group: #ChatPharo)
 		parent: #tools;
 		with: [
 			(aBuilder pickOne: #defaultModel)

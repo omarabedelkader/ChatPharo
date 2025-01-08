@@ -57,9 +57,9 @@ LLMAPI class >> host: anObject [
 LLMAPI class >> llmSettingOn: aBuilder [
 
 	<systemsettings>
-	(aBuilder group: #LLMAPI)
+	(aBuilder group: #ChatPharo)
 		parent: #tools;
-		name: 'LLM API';
+		name: 'ChatPharo';
 		with: [
 			(aBuilder setting: #apiKey)
 				order: -100000;
