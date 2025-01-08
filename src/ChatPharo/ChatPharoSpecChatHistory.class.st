@@ -1,5 +1,5 @@
 Class {
-	#name : 'LLMAPISpecChatHistory',
+	#name : 'ChatPharoSpecChatHistory',
 	#superclass : 'SpPresenterWithModel',
 	#instVars : [
 		'panel'
@@ -10,7 +10,7 @@ Class {
 }
 
 { #category : 'instance creation' }
-LLMAPISpecChatHistory class >> from: messages [
+ChatPharoSpecChatHistory class >> from: messages [
 
 	^ self basicNew
 		setModelBeforeInitialization: messages;
@@ -19,23 +19,23 @@ LLMAPISpecChatHistory class >> from: messages [
 ]
 
 { #category : 'initialization' }
-LLMAPISpecChatHistory >> addMessage: aMessage [
+ChatPharoSpecChatHistory >> addMessage: aMessage [
 
 	self model add: aMessage.
-	panel add: (LLMAPISpecChatBubble from: aMessage)
+	panel add: (ChatPharoSpecChatBubble from: aMessage)
 ]
 
 { #category : 'layout' }
-LLMAPISpecChatHistory >> defaultLayout [
+ChatPharoSpecChatHistory >> defaultLayout [
 
 	^ SpScrollableLayout with: panel
 ]
 
 { #category : 'initialization' }
-LLMAPISpecChatHistory >> initializePresenters [
+ChatPharoSpecChatHistory >> initializePresenters [
 
 	panel := SpBoxLayout newTopToBottom.
 
 	self model do: [ :message |
-		panel add: (LLMAPISpecChatBubble from: message) expand: true]
+		panel add: (ChatPharoSpecChatBubble from: message) expand: true]
 ]

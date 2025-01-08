@@ -1,5 +1,5 @@
 Class {
-	#name : 'LLMAPISpecChatBubble',
+	#name : 'ChatPharoSpecChatBubble',
 	#superclass : 'SpPresenterWithModel',
 	#instVars : [
 		'roleText',
@@ -11,7 +11,7 @@ Class {
 }
 
 { #category : 'instance creation' }
-LLMAPISpecChatBubble class >> from: aMessage [
+ChatPharoSpecChatBubble class >> from: aMessage [
 
 	^ self basicNew
 		setModelBeforeInitialization: aMessage;
@@ -20,7 +20,7 @@ LLMAPISpecChatBubble class >> from: aMessage [
 ]
 
 { #category : 'layout' }
-LLMAPISpecChatBubble >> defaultLayout [
+ChatPharoSpecChatBubble >> defaultLayout [
 
 	^ SpBoxLayout newTopToBottom
 		  add: self model role expand: false;
@@ -31,7 +31,7 @@ LLMAPISpecChatBubble >> defaultLayout [
 ]
 
 { #category : 'initialization' }
-LLMAPISpecChatBubble >> initializePresenters [
+ChatPharoSpecChatBubble >> initializePresenters [
 	"roleText := self newText .
 	roleText text: self model role.
 	roleText editable: false."

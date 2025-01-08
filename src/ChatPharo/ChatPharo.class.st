@@ -1,5 +1,5 @@
 Class {
-	#name : 'LLMAPISpec',
+	#name : 'ChatPharo',
 	#superclass : 'SpPresenter',
 	#instVars : [
 		'toolbar',
@@ -11,14 +11,14 @@ Class {
 }
 
 { #category : 'examples' }
-LLMAPISpec class >> open [
+ChatPharo class >> open [
 	<example>
 	
 	^ self new open
 ]
 
 { #category : 'layout' }
-LLMAPISpec >> defaultLayout [
+ChatPharo >> defaultLayout [
 
 	^ SpBoxLayout newTopToBottom
 		  add: toolbar expand: false;
@@ -27,7 +27,7 @@ LLMAPISpec >> defaultLayout [
 ]
 
 { #category : 'specs' }
-LLMAPISpec >> initialExtent [
+ChatPharo >> initialExtent [
 
 	| fontWidth rowHeight |
 	fontWidth := (StandardFonts defaultFont widthOfString: 'M').
@@ -38,18 +38,18 @@ LLMAPISpec >> initialExtent [
 ]
 
 { #category : 'initialization' }
-LLMAPISpec >> initializePresenters [
+ChatPharo >> initializePresenters [
 
 	notebook := self newNotebook.
 	toolbar := self newMenuBar.
 	notebook addPage: (SpNotebookPage
 			 title: 'Chat'
 			 icon: (self iconNamed: #announcement)
-			 provider: [ LLMAPISpecChat new ])
+			 provider: [ ChatPharoSpecChat new ])
 ]
 
 { #category : 'specs' }
-LLMAPISpec >> title [
+ChatPharo >> title [
 	
 	^ 'LLM Chat'
 ]

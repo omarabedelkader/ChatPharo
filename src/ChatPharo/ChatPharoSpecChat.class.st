@@ -1,5 +1,5 @@
 Class {
-	#name : 'LLMAPISpecChat',
+	#name : 'ChatPharoSpecChat',
 	#superclass : 'SpPresenter',
 	#instVars : [
 		'history',
@@ -12,7 +12,7 @@ Class {
 }
 
 { #category : 'initialization' }
-LLMAPISpecChat >> askLLM [
+ChatPharoSpecChat >> askLLM [
 
 	| api result resultContent |
 	history addMessage:
@@ -35,7 +35,7 @@ LLMAPISpecChat >> askLLM [
 ]
 
 { #category : 'initialization' }
-LLMAPISpecChat >> askLocalModel [
+ChatPharoSpecChat >> askLocalModel [
     | ollama result |
     
     "Step 1) Add user message to chat history"
@@ -77,7 +77,7 @@ LLMAPISpecChat >> askLocalModel [
 ]
 
 { #category : 'layout' }
-LLMAPISpecChat >> defaultLayout [
+ChatPharoSpecChat >> defaultLayout [
 
 	| submitRow |
 	submitRow := SpBoxLayout newLeftToRight
@@ -96,7 +96,7 @@ LLMAPISpecChat >> defaultLayout [
 ]
 
 { #category : 'initialization' }
-LLMAPISpecChat >> initializePresenters [
+ChatPharoSpecChat >> initializePresenters [
 
     submitButton := self newButton
         label: 'Submit';
@@ -108,5 +108,5 @@ LLMAPISpecChat >> initializePresenters [
     inputField := self newTextInput.
     inputField whenSubmitDo: [ :text | self askLocalModel ].
 
-    history := LLMAPISpecChatHistory from: OrderedCollection new
+    history := ChatPharoSpecChatHistory from: OrderedCollection new
 ]
