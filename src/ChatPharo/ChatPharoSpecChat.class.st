@@ -1,3 +1,12 @@
+"
+### `ChatPharoSpecChat` Class
+Handles the specific chat functionalities in the application.
+
+- **`askLLM`**: Sends the chat input to a remote language model and processes the response.
+- **`askLocalModel`**: Handles the communication with a local language model to get responses.
+- **`defaultLayout`**: Sets up the layout for the chat interface including the history and input field.
+- **`initializePresenters`**: Sets up the chat interface components like the input field and submit button.
+"
 Class {
 	#name : 'ChatPharoSpecChat',
 	#superclass : 'SpPresenter',

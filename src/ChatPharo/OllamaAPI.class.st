@@ -1,3 +1,12 @@
+"
+### `OllamaAPI` Class
+Handles interactions with a hypothetical Ollama API server.
+
+- **`query:`**: Sends a query to the Ollama API and returns the response.
+- **`initialize`**: Sets default values and initializes the API instance.
+- **`list`**: Lists available models on the Ollama server.
+- **`delete`**: Deletes a model from the Ollama server.
+"
 Class {
 	#name : 'OllamaAPI',
 	#superclass : 'Object',

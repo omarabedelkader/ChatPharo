@@ -1,3 +1,9 @@
+"
+### `LLMAPIFimObjectPayload` Class
+Defines the payload for fim requests.
+
+- **`asJsonableObject`**: Converts the fim payload to a JSON-compatible object.
+"
 Class {
 	#name : 'LLMAPIFimObjectPayload',
 	#superclass : 'LLMAPIObject',

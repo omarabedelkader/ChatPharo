@@ -1,3 +1,10 @@
+"
+### `LLMAPIChatObjectMessage` Class
+Represents a chat message in the API's expected format.
+
+- **`asJsonableObject`**: Converts the message to a JSON-compatible object.
+- **`role:` `content:`**: Constructor method for setting role and content.
+"
 Class {
 	#name : 'LLMAPIChatObjectMessage',
 	#superclass : 'LLMAPIObject',

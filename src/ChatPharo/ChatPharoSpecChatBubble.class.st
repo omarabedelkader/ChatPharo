@@ -1,3 +1,11 @@
+"
+### `ChatPharoSpecChatBubble` Class
+Visual presentation for individual chat messages as bubbles.
+
+- **`from:`**: Factory method to create a chat bubble from a message.
+- **`defaultLayout`**: Arranges the content within the bubble.
+- **`initializePresenters`**: Sets up the text display inside the bubble.
+"
 Class {
 	#name : 'ChatPharoSpecChatBubble',
 	#superclass : 'SpPresenterWithModel',

@@ -1,3 +1,13 @@
+"
+### `ChatPharo` Class
+Represents a GUI presenter for a chat application using the Pharo Smalltalk environment.
+
+- **`open`**: Opens a new instance of the chat presenter.
+- **`defaultLayout`**: Defines the vertical layout for the chat including toolbar and notebook.
+- **`initialExtent`**: Calculates the initial size of the window based on font size and row height.
+- **`initializePresenters`**: Initializes the components like the notebook and toolbar.
+- **`title`**: Provides the title for the chat window.
+"
 Class {
 	#name : 'ChatPharo',
 	#superclass : 'SpPresenter',

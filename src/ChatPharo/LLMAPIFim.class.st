@@ -1,3 +1,12 @@
+"
+### `LLMAPIFim` Class
+Handles fim (Feature Integration Model) API requests.
+
+- **`path`**: Specifies the endpoint for fim requests.
+- **`payloadClass`**: Returns the class used for fim payloads.
+- **`performRequest`**: Executes the fim API request.
+
+"
 Class {
 	#name : 'LLMAPIFim',
 	#superclass : 'LLMAPI',

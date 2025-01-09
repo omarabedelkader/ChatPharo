@@ -1,3 +1,9 @@
+"
+### `LLMAPIChatObjectPayload` Class
+Encapsulates the payload for a chat request.
+
+- **`asJsonableObject`**: Converts the payload to a JSON-compatible object, including parameters like model, temperature, etc.
+"
 Class {
 	#name : 'LLMAPIChatObjectPayload',
 	#superclass : 'LLMAPIObject',

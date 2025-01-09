@@ -1,3 +1,14 @@
+"
+### `LLMAPI` Class
+Base class for making API requests to language models.
+
+- **`apiKey`**: Handles the API key for the service.
+- **`chat`**: Returns a new instance for chat API interaction.
+- **`fim`**: Returns a new instance for fim API interaction.
+- **`host`**: Manages the API host setting.
+- **`initialize`**: Sets up the HTTP client with API key and host.
+- **`performRequest`**: Should be implemented by subclasses to perform specific API requests.
+"
 Class {
 	#name : 'LLMAPI',
 	#superclass : 'Object',
