@@ -13,7 +13,8 @@ Class {
 	#superclass : 'SpPresenter',
 	#instVars : [
 		'toolbar',
-		'notebook'
+		'notebook',
+		'openStatus'
 	],
 	#category : 'ChatPharo-Spec',
 	#package : 'ChatPharo',
@@ -25,6 +26,12 @@ ChatPharo class >> open [
 	<example>
 	
 	^ self new open
+]
+
+{ #category : 'layout' }
+ChatPharo >> close [
+    "Close the chat."
+    openStatus := false.
 ]
 
 { #category : 'layout' }
@@ -47,6 +54,12 @@ ChatPharo >> initialExtent [
 	
 ]
 
+{ #category : 'layout' }
+ChatPharo >> initialize [
+    super initialize.
+    openStatus := false.
+]
+
 { #category : 'initialization' }
 ChatPharo >> initializePresenters [
 
@@ -56,6 +69,18 @@ ChatPharo >> initializePresenters [
 			 title: 'Chat'
 			 icon: (self iconNamed: #announcement)
 			 provider: [ ChatPharoSpecChat new ])
+]
+
+{ #category : 'layout' }
+ChatPharo >> isOpen [
+    "Return whether the chat is open."
+    ^ openStatus
+]
+
+{ #category : 'layout' }
+ChatPharo >> open [
+    "Open the chat."
+    openStatus := true.
 ]
 
 { #category : 'specs' }
