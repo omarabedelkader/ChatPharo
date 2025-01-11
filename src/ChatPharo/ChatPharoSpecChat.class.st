@@ -113,8 +113,11 @@ ChatPharoSpecChat >> initializePresenters [
         help: 'Submit prompt to LLM';
         action: [ self askLocalModel ];  " <— here we wire it to askLocalModel "
         yourself.
-
-    inputField := self newTextInput.
+ 
+    inputField := self newTextInput
+			placeholder: 'Type your message here...'; 
+			yourself.
+			
     inputField whenSubmitDo: [ :text | self askLocalModel ].
 
     history := ChatPharoSpecChatHistory from: OrderedCollection new
