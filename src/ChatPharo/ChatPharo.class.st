@@ -27,13 +27,25 @@ ChatPharo class >> open [
 	^ self new open
 ]
 
-{ #category : 'layout' }
-ChatPharo >> defaultLayout [
+{ #category : 'initialization' }
+ChatPharo >> addNewChat [
 
-	^ SpBoxLayout newTopToBottom
-		  add: toolbar expand: false;
-		  add: notebook;
-		  yourself
+    | newPage |
+    newPage := SpNotebookPage
+        title: 'New Chat'
+        icon: (self iconNamed: #announcement)
+        provider: [ ChatPharoSpecChat new ].
+    notebook addPage: newPage.
+    notebook selectPage: newPage
+]
+
+{ #category : 'layout' }
+ChatPharo >> defaultLayout [ 
+
+    ^ SpBoxLayout newTopToBottom
+        add: toolbar expand: false;
+        add: notebook;
+        yourself
 ]
 
 { #category : 'specs' }
@@ -48,14 +60,22 @@ ChatPharo >> initialExtent [
 ]
 
 { #category : 'initialization' }
-ChatPharo >> initializePresenters [
+ChatPharo >> initializePresenters [ 
 
-	notebook := self newNotebook.
-	toolbar := self newMenuBar.
-	notebook addPage: (SpNotebookPage
-			 title: 'Chat'
-			 icon: (self iconNamed: #announcement)
-			 provider: [ ChatPharoSpecChat new ])
+    notebook := self newNotebook.
+    toolbar := self newToolbar.
+    
+    toolbar add: (SpToolbarButtonPresenter new
+        label: 'New Chat';
+        icon: (self iconNamed: #add);
+        help: 'Create a new chat';
+        action: [ self addNewChat ];
+        yourself).
+    
+    notebook addPage: (SpNotebookPage
+        title: 'Chat'
+        icon: (self iconNamed: #announcement)
+        provider: [ ChatPharoSpecChat new ])
 ]
 
 { #category : 'specs' }
