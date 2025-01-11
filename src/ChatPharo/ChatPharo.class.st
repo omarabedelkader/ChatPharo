@@ -48,6 +48,20 @@ ChatPharo >> defaultLayout [
         yourself
 ]
 
+{ #category : 'initialization' }
+ChatPharo >> deleteAllChats [
+
+    (self confirm: 'Are you sure you want to delete all chats?')
+        ifFalse: [ ^ self ].
+    
+    notebook removeAll.
+    notebook addPage: (SpNotebookPage
+        title: 'Chat'
+        icon: (self iconNamed: #announcement)
+        provider: [ ChatPharoSpecChat new ]).
+    notebook selectPageIndex: 1.
+]
+
 { #category : 'specs' }
 ChatPharo >> initialExtent [
 
@@ -70,6 +84,13 @@ ChatPharo >> initializePresenters [
         icon: (self iconNamed: #add);
         help: 'Create a new chat';
         action: [ self addNewChat ];
+        yourself).
+        
+    toolbar add: (SpToolbarButtonPresenter new
+        label: 'Delete All';
+        icon: (self iconNamed: #delete);
+        help: 'Delete all chats';
+        action: [ self deleteAllChats ];
         yourself).
     
     notebook addPage: (SpNotebookPage
