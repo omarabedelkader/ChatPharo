@@ -62,6 +62,20 @@ ChatPharo >> deleteAllChats [
     notebook selectPageIndex: 1.
 ]
 
+{ #category : 'initialization' }
+ChatPharo >> deleteChat: aPageTitle [ 
+
+    "Find the page by title and remove it if found."
+    | pageToDelete |
+    pageToDelete := notebook pages detect: [:page | page title = aPageTitle] ifNone: [^ self].
+    
+    (self confirm: 'Are you sure you want to delete this chat?')
+        ifTrue: [
+            notebook removePage: pageToDelete.
+        ].
+
+]
+
 { #category : 'specs' }
 ChatPharo >> initialExtent [
 
@@ -92,6 +106,14 @@ ChatPharo >> initializePresenters [
         help: 'Delete all chats';
         action: [ self deleteAllChats ];
         yourself).
+
+	toolbar add: (SpToolbarButtonPresenter new
+    	label: 'Delete Chat';
+    	icon: (self iconNamed: #delete);
+    	help: 'Delete the selected chat';
+    	action: [ self deleteChat: (notebook selectedPage title) ];
+    	yourself).
+
     
     notebook addPage: (SpNotebookPage
         title: 'Chat'
