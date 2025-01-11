@@ -32,7 +32,7 @@ ChatPharoSpecChatBubble >> defaultLayout [
 
 	^ SpBoxLayout newTopToBottom
 		  add: self model role expand: false;
-		  "add: roleText expand: false;"add: contentArea
+		  add: contentArea
 		  withConstraints: [ :constraints | 
 			constraints height: (self class inputTextHeight) * 4 ];
 		  yourself
@@ -40,9 +40,6 @@ ChatPharoSpecChatBubble >> defaultLayout [
 
 { #category : 'initialization' }
 ChatPharoSpecChatBubble >> initializePresenters [
-	"roleText := self newText .
-	roleText text: self model role.
-	roleText editable: false."
 
 	contentArea := MicrodownPresenter new.
 	contentArea document: (Microdown parse: self model content)
