@@ -27,6 +27,18 @@ ChatPharoSpecChatBubble class >> from: aMessage [
 		yourself
 ]
 
+{ #category : 'accessing' }
+ChatPharoSpecChatBubble >> contentArea [
+
+	^ contentArea
+]
+
+{ #category : 'accessing' }
+ChatPharoSpecChatBubble >> contentArea: anObject [
+
+	contentArea := anObject
+]
+
 { #category : 'layout' }
 ChatPharoSpecChatBubble >> defaultLayout [
 
@@ -43,4 +55,16 @@ ChatPharoSpecChatBubble >> initializePresenters [
 
 	contentArea := MicrodownPresenter new.
 	contentArea document: (Microdown parse: self model content)
+]
+
+{ #category : 'accessing' }
+ChatPharoSpecChatBubble >> roleText [
+
+	^ roleText
+]
+
+{ #category : 'accessing' }
+ChatPharoSpecChatBubble >> roleText: anObject [
+
+	roleText := anObject
 ]

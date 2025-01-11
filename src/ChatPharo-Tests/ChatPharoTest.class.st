@@ -1,6 +1,9 @@
 Class {
 	#name : 'ChatPharoTest',
 	#superclass : 'TestCase',
+	#instVars : [
+		'presenter'
+	],
 	#category : 'ChatPharo-Tests',
 	#package : 'ChatPharo-Tests'
 }
@@ -8,33 +11,35 @@ Class {
 { #category : 'running' }
 ChatPharoTest >> setUp [
 
-	super setUp.
+   super setUp.
+   presenter := ChatPharo new.
 ]
 
 { #category : 'running' }
 ChatPharoTest >> tearDown [ 
 
-	super tearDown.
+    presenter window ifNotNil: [ :w | w close ].
+    super tearDown
 ]
 
 { #category : 'running' }
-ChatPharoTest >> testInitializePresenters [
-    | instance notebook toolbar page |
-    
-    "Create an instance of the class and call the method under test"
-    instance := ChatPharo new.
-    instance initializePresenters.
-    
-    "Verify that the notebook and toolbar are initialized"
-    notebook := instance instVarNamed: 'notebook'.
-    self assert: notebook equals: (SpNotebookPresenter new).
-    
-    toolbar := instance instVarNamed: 'toolbar'.
-    self assert: toolbar equals: (SpMenuBarPresenter new).
-    
-    "Verify that the notebook contains the 'Chat' page"
-    page := notebook pages detect: [ :each | each title = 'Chat' ] ifNone: [ nil ].
-    self assert: page notNil.
+ChatPharoTest >> testAddNewChat [ 
+
+    presenter open.
+    self assert: presenter notebook pages size equals: 1.
+    presenter addNewChat.
+    self assert: presenter notebook pages size equals: 2.
+    self assert: presenter notebook selectedPage title equals: 'New Chat'
+]
+
+{ #category : 'running' }
+ChatPharoTest >> testInitialWindow [ 
+
+    | window |
+    window := presenter open.
+    self assert: window isDisplayed.
+    self assert: presenter title equals: 'ChatPharo'.
+    self assert: presenter notebook pages size equals: 1
 ]
 
 { #category : 'running' }

@@ -99,8 +99,32 @@ ChatPharo >> initializePresenters [
         provider: [ ChatPharoSpecChat new ])
 ]
 
+{ #category : 'accessing' }
+ChatPharo >> notebook [
+
+	^ notebook
+]
+
+{ #category : 'accessing' }
+ChatPharo >> notebook: anObject [
+
+	notebook := anObject
+]
+
 { #category : 'specs' }
 ChatPharo >> title [
 	
 	^ 'ChatPharo'
+]
+
+{ #category : 'accessing' }
+ChatPharo >> toolbar [
+
+	^ toolbar
+]
+
+{ #category : 'accessing' }
+ChatPharo >> toolbar: anObject [
+
+	toolbar := anObject
 ]

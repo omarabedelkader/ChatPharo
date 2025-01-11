@@ -104,6 +104,18 @@ ChatPharoSpecChat >> defaultLayout [
 		  yourself
 ]
 
+{ #category : 'accessing' }
+ChatPharoSpecChat >> history [
+
+	^ history
+]
+
+{ #category : 'accessing' }
+ChatPharoSpecChat >> history: anObject [
+
+	history := anObject
+]
+
 { #category : 'initialization' }
 ChatPharoSpecChat >> initializePresenters [
 
@@ -121,4 +133,28 @@ ChatPharoSpecChat >> initializePresenters [
     inputField whenSubmitDo: [ :text | self askLocalModel ].
 
     history := ChatPharoSpecChatHistory from: OrderedCollection new
+]
+
+{ #category : 'accessing' }
+ChatPharoSpecChat >> inputField [
+
+	^ inputField
+]
+
+{ #category : 'accessing' }
+ChatPharoSpecChat >> inputField: anObject [
+
+	inputField := anObject
+]
+
+{ #category : 'accessing' }
+ChatPharoSpecChat >> submitButton [
+
+	^ submitButton
+]
+
+{ #category : 'accessing' }
+ChatPharoSpecChat >> submitButton: anObject [
+
+	submitButton := anObject
 ]

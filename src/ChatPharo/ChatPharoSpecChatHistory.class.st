@@ -48,3 +48,15 @@ ChatPharoSpecChatHistory >> initializePresenters [
 	self model do: [ :message |
 		panel add: (ChatPharoSpecChatBubble from: message) expand: true]
 ]
+
+{ #category : 'accessing' }
+ChatPharoSpecChatHistory >> panel [
+
+	^ panel
+]
+
+{ #category : 'accessing' }
+ChatPharoSpecChatHistory >> panel: anObject [
+
+	panel := anObject
+]
