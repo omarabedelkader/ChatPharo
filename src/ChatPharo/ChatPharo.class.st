@@ -136,6 +136,7 @@ ChatPharo >> initializePresenters [
 
 { #category : 'initialization' }
 ChatPharo >> loadChat [ 
+
     | fileReference jsonData messages newPage |
     
     fileReference := UIManager default 
@@ -180,8 +181,8 @@ ChatPharo >> notebook: anObject [
 
 { #category : 'initialization' }
 ChatPharo >> saveCurrentChat [
-    | fileReference jsonData currentChat |
-    
+
+    | fileReference jsonData currentChat |    
     currentChat := notebook selectedPage presenterProvider value.
     jsonData := STON toStringPretty: (currentChat history model collect: [ :msg |
         Dictionary new

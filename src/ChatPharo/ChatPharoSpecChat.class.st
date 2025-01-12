@@ -45,6 +45,7 @@ ChatPharoSpecChat >> askLLM [
 
 { #category : 'initialization' }
 ChatPharoSpecChat >> askLocalModel [
+
     | ollama result |
     
     "Step 1) Add user message to chat history"

@@ -46,6 +46,18 @@ ChatPharoTest >> testDeleteAllChats [
 ]
 
 { #category : 'running' }
+ChatPharoTest >> testDeleteChat [
+
+    | chatTitle originalPages |
+    presenter open.
+   
+    presenter addNewChat.
+    chatTitle := presenter notebook selectedPage title.
+    originalPages := presenter notebook pages size.
+            
+]
+
+{ #category : 'running' }
 ChatPharoTest >> testInitialWindow [ 
 
     | window |
