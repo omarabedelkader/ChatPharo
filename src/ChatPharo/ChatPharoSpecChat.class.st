@@ -47,42 +47,17 @@ ChatPharoSpecChat >> askLLM [
 ChatPharoSpecChat >> askLocalModel [
 
     | ollama result |
-    
-    "Step 1) Add user message to chat history"
     history addMessage: (LLMAPIChatObjectMessage
                             role: 'user'
                             content: inputField text).
-
-    "Step 2) Create and configure the local OllamaAPI instance"
     ollama := OllamaAPI new.
-    ollama host: '127.0.0.1'.          " Typically the local Ollama server "
-    ollama port: 11434.                " Default Ollama port (or whatever you run on)"
-    
-    "Pick whichever model you like; by default, it uses OCodeLlamaModel b7:
-       ollama model: (OCodeLlamaModel b7). 
-     Or explicitly pick any other OModel, e.g.:
-       ollama model: (OPhi3Model mini)  etc.
-    "
-    
-    "If you do not want streaming responses, set stream: false"
+    ollama host: '127.0.0.1'.
+    ollama port: 11434.
     ollama stream: false.
-
-    "Step 3) Actually query the model with user’s text"
-    "The #query: method returns either the model’s generated text or a dictionary with #response."
     result := ollama query: inputField text.
-
-    "In OllamaAPI >> #query:, if stream=false, we do:
-         ^ znClient post at: #response
-     which is the final string from the model.
-     So 'result' should be a string. 
-    "
-
-    "Step 4) Append the AI's reply (assistant) to your history."
     history addMessage: (LLMAPIChatObjectMessage
                             role: 'ChatPharo'
                             content: result).
-
-    "Step 5) Clear out the user’s input field"
     inputField text: ''
 ]
 
