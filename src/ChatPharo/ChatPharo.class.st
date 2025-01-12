@@ -127,6 +127,14 @@ ChatPharo >> initializePresenters [
         help: 'Load saved chat';
         action: [ self loadChat ];
         yourself).
+
+
+toolbar add: (SpToolbarButtonPresenter new
+        label: 'Settings';
+        icon: (self iconNamed: #smallConfiguration);
+        help: 'Open settings';
+        action: [ self openSettings ];
+        yourself).
     
     notebook addPage: (SpNotebookPage
         title: 'Chat'
@@ -177,6 +185,14 @@ ChatPharo >> notebook [
 ChatPharo >> notebook: anObject [
 
 	notebook := anObject
+]
+
+{ #category : 'initialization' }
+ChatPharo >> openSettings [ 
+
+    | settingsWindow |
+    settingsWindow := ChatPharoSettings new.
+    settingsWindow open
 ]
 
 { #category : 'initialization' }
