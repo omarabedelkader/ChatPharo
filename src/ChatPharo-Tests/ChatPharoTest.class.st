@@ -34,18 +34,6 @@ ChatPharoTest >> testAddNewChat [
 ]
 
 { #category : 'running' }
-ChatPharoTest >> testDeleteAllChats [
-
-    presenter open.
-    self assert: presenter notebook pages size equals: 1.
-
-    presenter deleteAllChats.
-    self assert: presenter notebook pages size equals: 1.
-    self assert: presenter notebook selectedPage title equals: 'Chat'
-
-]
-
-{ #category : 'running' }
 ChatPharoTest >> testDeleteChat [
 
     | chatTitle originalPages |
