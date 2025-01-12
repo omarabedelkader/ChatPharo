@@ -1,3 +1,20 @@
+"
+### `ChatPharoSettings` Class
+Manages the settings and layout of the ChatPharo application within the Pharo Smalltalk environment. This class is responsible for configuring and maintaining the chat settings UI elements such as the notebook and various tabs.
+
+- **`chatSettings`**: Accessor for the chat settings object.
+- **`chatSettings:`**: Mutator to set the chat settings object.
+- **`defaultLayout`**: Establishes the default top-to-bottom layout for the settings, primarily the notebook.
+- **`deleteAllChats`**: Provides functionality to delete all chat records with a confirmation dialogue.
+- **`initializePresenters`**: Sets up the initial presenters within the notebook, including tabs for Chat, API, and Configuration.
+- **`newAPITab`**: Initializes the API tab with its specific settings.
+- **`newChatTab`**: Initializes the Chat tab with options like 'Delete All Chats'.
+- **`newConfigurationTab`**: Sets up the Configuration tab.
+- **`notebook`**: Accessor for the notebook component.
+- **`notebook:`**: Mutator to set the notebook component.
+- **`title`**: Returns the title of the settings window as 'ChatPharo Settings'.
+
+"
 Class {
 	#name : 'ChatPharoSettings',
 	#superclass : 'SpPresenter',
