@@ -20,7 +20,9 @@ Class {
 	#superclass : 'SpPresenter',
 	#instVars : [
 		'notebook',
-		'chatSettings'
+		'chatSettings',
+		'apiKeyInput',
+		'hostInput'
 	],
 	#category : 'ChatPharo-Spec',
 	#package : 'ChatPharo',
@@ -83,13 +85,22 @@ ChatPharoSettings >> initializePresenters [
 ]
 
 { #category : 'layout' }
-ChatPharoSettings >> newAPITab [
+ChatPharoSettings >> newAPITab [ 
 
-    ^ SpPresenter new
-        layout: (SpBoxLayout newTopToBottom
-            add: 'API Settings' expand: false;
-            yourself);
-        yourself
+	^ SpPresenter new
+		layout: (SpBoxLayout newTopToBottom
+			add: 'LLM API Key:' expand: false;
+			add: (apiKeyInput := self newTextInput
+				placeholder: 'My key';
+				yourself) expand: false;
+			add: 'LLM Host:' expand: false;
+			add: (hostInput := self newTextInput
+				placeholder: 'api.mistral.ai';
+				yourself) expand: false;
+			yourself);
+		yourself
+
+
 ]
 
 { #category : 'layout' }
