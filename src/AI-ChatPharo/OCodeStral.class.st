@@ -1,0 +1,28 @@
+"
+Base class and specific implementations for different models used in API interactions.
+
+•	fullName: Constructs the full name of the model for API requests.
+•	name: Abstract method to return the model's name, implemented by subclasses.
+"
+Class {
+	#name : 'OCodeStral',
+	#superclass : 'OModel',
+	#category : 'AI-ChatPharo-API',
+	#package : 'AI-ChatPharo',
+	#tag : 'API'
+}
+
+{ #category : 'as yet unclassified' }
+OCodeStral class >> codestral22b [
+
+	<ollamaInit: 'codestral:22b'>
+	^ self new
+		  tag: '22b';
+		  yourself
+]
+
+{ #category : 'accessing' }
+OCodeStral >> name [
+
+	^ 'codestral'
+]
