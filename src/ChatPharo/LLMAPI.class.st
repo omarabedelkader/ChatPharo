@@ -139,8 +139,8 @@ LLMAPI >> initialize [
 
 	super initialize.
 	client := ZnClient new.
-	self apiKey: LLMAPI apiKey.
-	self host: LLMAPI host.
+	self apiKey: self apiKey.
+	self host: self  host.
 ]
 
 { #category : 'accessing' }
