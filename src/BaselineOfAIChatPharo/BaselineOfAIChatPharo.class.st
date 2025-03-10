@@ -52,12 +52,6 @@ BaselineOfAIChatPharo >> defineGroups: spec [
 { #category : 'baselines' }
 BaselineOfAIChatPharo >> definePackages: spec [
 	
-	spec package: 'LLM-API' with: [ spec requires: #( 'NeoJSON' ) ].
-	spec package: 'LLM-Spec' with: [ spec requires: #( 'LLM-API' ) ].
-
-	spec for: #'pharo10.x' do: [ 
-		spec
-			package: 'Pharo-Ollama'
-			with: [ spec requires: #( 'NeoJSON' 'Pharo-Ollama-Pharo10' ) ];
-			package: 'Pharo-Ollama-Pharo10' ]
+	spec package: 'AI-ChatPharo' with: [ spec requires: #( 'NeoJSON' ) ].
+	spec package: 'AI-ChatPharo' with: [ spec requires: #( 'AI-ChatPharo' ) ].
 ]
