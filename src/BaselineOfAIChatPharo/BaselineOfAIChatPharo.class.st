@@ -21,14 +21,14 @@ Internal Representation and Key Implementation Points.
     Implementation Points
 "
 Class {
-	#name : 'BaselineOfChatPharo',
+	#name : 'BaselineOfAIChatPharo',
 	#superclass : 'BaselineOf',
 	#category : 'BaselineOfAIChatPharo',
 	#package : 'BaselineOfAIChatPharo'
 }
 
 { #category : 'baselines' }
-BaselineOfChatPharo >> baseline: spec [
+BaselineOfAIChatPharo >> baseline: spec [
 
 	<baseline>
 	spec for: #common do: [
@@ -38,7 +38,7 @@ BaselineOfChatPharo >> baseline: spec [
 ]
 
 { #category : 'baselines' }
-BaselineOfChatPharo >> defineDependencies: spec [
+BaselineOfAIChatPharo >> defineDependencies: spec [
 
 	spec
 		baseline: 'NeoJSON'
@@ -46,11 +46,11 @@ BaselineOfChatPharo >> defineDependencies: spec [
 ]
 
 { #category : 'baselines' }
-BaselineOfChatPharo >> defineGroups: spec [
+BaselineOfAIChatPharo >> defineGroups: spec [
 ]
 
 { #category : 'baselines' }
-BaselineOfChatPharo >> definePackages: spec [
+BaselineOfAIChatPharo >> definePackages: spec [
 
 	spec package: 'Pharo-Ollama' with: [ spec requires: #( 'NeoJSON' ) ].
 	spec package: 'Pharo-Ollama-Tests' with: [ spec requires: #( 'Pharo-Ollama' ) ].
