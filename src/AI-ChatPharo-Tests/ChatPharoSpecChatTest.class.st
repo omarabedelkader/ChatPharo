@@ -12,7 +12,8 @@ Class {
 ChatPharoSpecChatTest >> setUp [
 
     super setUp.
-    chat := ChatPharoSpecChat new
+    chat := ChatPharoSpecChat new.
+    chat initializePresenters. "Ensure all UI elements are properly initialized"
 ]
 
 { #category : 'running' }
@@ -50,4 +51,42 @@ ChatPharoSpecChatTest >> testInitialState [
     self assert: chat inputField text isEmpty.
     self assert: chat history model isEmpty
 
+]
+
+{ #category : 'running' }
+ChatPharoSpecChatTest >> testInputFieldMultiLine [
+
+    "Ensure inputField is set to multi-line mode"
+    self assert: chat inputField multiLine.
+
+]
+
+{ #category : 'running' }
+ChatPharoSpecChatTest >> testClearButtonExists [
+
+    "Ensure clearButton is initialized properly"
+    self assert: chat clearButton notNil.
+
+]
+
+{ #category : 'running' }
+ChatPharoSpecChatTest >> testClearChat [
+
+    | message |
+    
+    "Add a message to the chat history"
+    message := LLMAPIChatObjectMessage 
+        role: 'user' 
+        content: 'This is a test message'.
+    
+    chat history addMessage: message.
+    
+    "Ensure the message was added"
+    self assert: chat history model size equals: 1.
+
+    "Call clearChat to remove all messages"
+    chat clearChat.
+
+    "Ensure the history is empty after clearing"
+    self assert: chat history model isEmpty.
 ]
