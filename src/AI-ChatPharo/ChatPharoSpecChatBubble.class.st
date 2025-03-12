@@ -53,12 +53,10 @@ ChatPharoSpecChatBubble >> defaultLayout [
 { #category : 'initialization' }
 ChatPharoSpecChatBubble >> initializePresenters [
 
-	"Initialize the role text presenter with proper styling"
 	roleText := SpLabelPresenter new.
 	roleText text: self model role.
 	self applyRoleStyling.
 
-	"Initialize content area to render message text"
 	contentArea := MicrodownPresenter new.
 	contentArea document: (Microdown parse: self model content)
 ]
