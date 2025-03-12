@@ -53,9 +53,23 @@ ChatPharoSpecChatBubble >> defaultLayout [
 { #category : 'initialization' }
 ChatPharoSpecChatBubble >> initializePresenters [
 
+	roleText := SpLabelPresenter new.
+	roleText text: self model role.
+	self applyRoleStyling.
+
 	contentArea := MicrodownPresenter new.
 	contentArea document: (Microdown parse: self model content)
 ]
+
+{ #category : 'private' }
+ChatPharoSpecChatBubble >> applyRoleStyling [
+
+	"Apply different styles for user and AI messages"
+	(self model role asLowercase = 'user')
+		ifTrue: [ roleText fontColor: Color blue ]
+		ifFalse: [ roleText fontColor: Color green ].
+]
+
 
 { #category : 'accessing' }
 ChatPharoSpecChatBubble >> roleText [
