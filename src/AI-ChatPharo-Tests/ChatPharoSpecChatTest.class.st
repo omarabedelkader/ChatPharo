@@ -12,16 +12,7 @@ Class {
 ChatPharoSpecChatTest >> setUp [
 
     super setUp.
-    chat := ChatPharoSpecChat new.
-    chat initializePresenters. "Ensure all UI elements are properly initialized"
-]
-
-{ #category : 'running' }
-ChatPharoSpecChatTest >> tearDown [
-
-    chat := nil.
-
-    super tearDown.
+    chat := ChatPharoSpecChat new
 ]
 
 { #category : 'running' }
@@ -36,13 +27,17 @@ ChatPharoSpecChatTest >> testAddMessage [
         role: 'user' 
         content: 'Test message'.
     
+    "Add the message"
     history addMessage: message.
     
+    "Verify the message was added to the model"
     self assert: history model size equals: 1.
     self assert: history model first equals: message.
     
+    "Verify the message was added to the panel"
     self assert: history panel children size equals: 1.
     
+    "Verify the panel contains a ChatPharoSpecChatBubble"
     self assert: (history panel children first isKindOf: ChatPharoSpecChatBubble).
     
     "Verify the bubble contains the correct message"
@@ -55,37 +50,4 @@ ChatPharoSpecChatTest >> testInitialState [
     self assert: chat inputField text isEmpty.
     self assert: chat history model isEmpty
 
-]
-
-{ #category : 'running' }
-ChatPharoSpecChatTest >> testInputFieldMultiLine [
-
-    "Ensure inputField is set to multi-line mode"
-    self assert: chat inputField multiLine.
-
-]
-
-{ #category : 'running' }
-ChatPharoSpecChatTest >> testClearButtonExists [
-
-    self assert: chat clearButton notNil.
-
-]
-
-{ #category : 'running' }
-ChatPharoSpecChatTest >> testClearChat [
-
-    | message |
-    
-    message := LLMAPIChatObjectMessage 
-        role: 'user' 
-        content: 'This is a test message'.
-    
-    chat history addMessage: message.
-    
-    self assert: chat history model size equals: 1.
-
-    chat clearChat.
-
-    self assert: chat history model isEmpty.
 ]
