@@ -12,12 +12,6 @@ Modular Design: Easily extendable to support additional models.
 
 Spec UI Interface: Interactive chat interface for smooth user experience.
 
-Function Calling (Planned): Enable AI to call Smalltalk functions.
-
-Multimodal Support (Planned): Image and speech integration.
-
-RAG (Planned): Use vector search for better context retention.
-
 
 Getting Started 🚀
 ===============
@@ -31,19 +25,6 @@ and API key.
 4. Use the `sendMessage:` method to send prompts to the AI and retrieve responses.
 
 
-Example Usage ---
-===============
-smalltalk
-
-| chat response |
-chat := ChatPharo new.
-response := chat sendMessage: 'What is Pharo?'.
-Transcript show: response.
-| chat response |
-This example creates a new instance of `ChatPharo`, sends a prompt to the AI, and
-displays the response in the Transcript.
-
-
 Installation 🔧
 
 Prerequisites ----
@@ -54,32 +35,41 @@ Ollama (for local models) (Optional, required for running local models)
 Steps to Install
 Open a Pharo image.
 
-Load ChatPharo using Metacello:
+Load Pharo-LLMAPI using Metacello:
 
 Metacello new
-    baseline: 'AIChatPharo';
-    repository: 'github://your-repo/ChatPharo';
-    load.
+  githubUser: 'Evref-BL' project: 'Pharo-LLMAPI' commitish: 'main' path: 'src';
+  baseline: 'LLMAPI';
+  load
 
-Start ChatPharo:
-ChatPharo open.
 
-Usage 📖
-Basic Chat Interaction
+Example Usage ---
+===============
+smalltalk
 
-| chat response |
-chat := ChatPharo new.
-response := chat sendMessage: 'What is Pharo?'.
-Transcript show: response.
+For the example of using the Mistral model, you can use the following code:
 
-Switching AI Models
+api := LLMAPI chat.
+api host: 'api.mistral.ai'.
+api apiKey: '<apiKey>'.
 
-chat setModel: OLlamaModel new.
-chat setModel: ODeepseekerCodeModel new.
+api payload
+	temperature: 0.5;
+	model: 'mistral-small-latest';
+	top_p: 1;
+	max_tokens: 250;
+	messages: {
+		LLMAPIChatObjectMessage role: 'system' content: 'You are a usefull assistant'.
+		LLMAPIChatObjectMessage role: 'user' content: 'How to write hello world in Pharo?'.
+		 }.
 
-Custom API Calls
-LLMAPI new sendRequest: 'Translate this to French: Hello world'.
+result := api performRequest.
 
+For the UI --
+===============
+You can use the following code to create a UI for the chat:
+
+LLMAPISpec open
 
 Contributing 🤝
 We welcome contributions! To contribute:
