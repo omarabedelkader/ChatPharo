@@ -119,16 +119,18 @@ ChatPharoSpecChatTest >> testClearButtonExists [
 ChatPharoSpecChatTest >> testClearChat [
     | message |
 
-    "Create a test message"
     message := LLMAPIChatObjectMessage 
         role: 'user' 
         content: 'This is a test message'.
     
     chat history addMessage: message.
     
-    self assert: chat history model size equals: 1.
-    
-    chat history removeAllMessages.
-    
-    self assert: chat history model isEmpty.
+    self assert: chat history model size = 1.
+
+    chat history model removeAll.
+    chat history update.  
+
+    self assert: chat history model isEmpty 
+        description: ('Expected empty but found: ', chat history model size asString).
 ]
+
