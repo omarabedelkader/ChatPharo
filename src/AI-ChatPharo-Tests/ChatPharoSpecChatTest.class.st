@@ -29,7 +29,7 @@ ChatPharoSpecChatTest >> setUp [
 
     super setUp.
     chat := ChatPharoSpecChat new.
-    chat initializePresenters. "Ensure UI elements are properly initialized"
+    chat initializePresenters. 
 ]
 
 { #category : 'running' }
@@ -51,7 +51,6 @@ ChatPharoSpecChatTest >> testAddMessage [
 
     | message |
 
-    "Create a test message"
     message := LLMAPIChatObjectMessage 
         role: 'user' 
         content: 'Test message'.
