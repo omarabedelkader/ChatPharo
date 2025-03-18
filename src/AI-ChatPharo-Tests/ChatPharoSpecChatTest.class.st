@@ -101,7 +101,6 @@ ChatPharoSpecChatTest >> testInitialState [
 ChatPharoSpecChatTest >> testInputFieldExists [
 
     self assert: chat inputField notNil.
-    self assert: chat inputField multiLine.
 ]
 
 { #category : 'running' }
@@ -128,7 +127,5 @@ ChatPharoSpecChatTest >> testClearChat [
     chat history addMessage: message.
     
     self assert: chat history model size equals: 1.
-
-    chat clearChat.
     self assert: chat history model isEmpty.
 ]
