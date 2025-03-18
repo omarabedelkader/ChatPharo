@@ -113,7 +113,6 @@ ChatPharoSpecChat >> initializePresenters [
  
     inputField := self newTextInput
 			placeholder: 'Type your message here...';
-			multiLine: true; "Enable multi-line input" 
 			yourself.
 			
     inputField whenSubmitDo: [ :text | self askLocalModel ].
