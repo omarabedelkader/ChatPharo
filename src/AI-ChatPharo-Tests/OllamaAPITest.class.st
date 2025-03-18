@@ -18,6 +18,13 @@ OllamaAPITest >> setUp [
 ]
 
 { #category : 'running' }
+OllamaAPITest >> tearDown [ 
+
+	ollama := nil.
+	super tearDown.	
+]
+
+{ #category : 'running' }
 OllamaAPITest >> testOllamaAPIHasDefaultModelInitialized [
 
 	self assert: (ollama model isKindOf: OModel)

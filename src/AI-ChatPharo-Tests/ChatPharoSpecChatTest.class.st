@@ -9,6 +9,22 @@ Class {
 }
 
 { #category : 'running' }
+ChatPharoSpecChatTest >> fakeLocalModelResponse [
+
+	| userContent |
+	userContent := chat inputField text.
+	chat history addMessage: (
+		LLMAPIChatObjectMessage
+			role: 'user'
+			content: userContent).
+	chat history addMessage: (
+		LLMAPIChatObjectMessage
+			role: 'ChatPharo'
+			content: 'Fake local model response').
+	chat inputField text: ''
+]
+
+{ #category : 'running' }
 ChatPharoSpecChatTest >> setUp [
 
     super setUp.
@@ -24,7 +40,15 @@ ChatPharoSpecChatTest >> tearDown [
 ]
 
 { #category : 'running' }
+ChatPharoSpecChatTest >> tearDown [
+
+   chat := nil.
+	super tearDown .
+]
+
+{ #category : 'running' }
 ChatPharoSpecChatTest >> testAddMessage [
+
     | message |
 
     "Create a test message"
@@ -36,6 +60,34 @@ ChatPharoSpecChatTest >> testAddMessage [
     
     self assert: chat history model size equals: 1.
     self assert: chat history model first equals: message.
+
+]
+
+{ #category : 'running' }
+ChatPharoSpecChatTest >> testAskLocalModel [
+
+" This test won't work in the CI because we are the not the admin of the env. BUT it must pass if you downlaod the Ollama correctly "
+
+"
+	| userMessage responseMessage |
+
+	chat 
+		when: #askLocalModel
+		send: #fakeLocalModelResponse
+		to: self.
+
+	chat inputField text: 'Hello LLM'.
+	chat askLocalModel. 
+	
+	self assert: chat history model size equals: 2.
+	
+	userMessage := chat history model first.
+	responseMessage := chat history model second.
+
+	self assert: userMessage role equals: 'user'.
+	self assert: responseMessage role equals: 'ChatPharo'.
+	self assert: chat inputField text isEmpty
+"
 ]
 
 { #category : 'running' }
