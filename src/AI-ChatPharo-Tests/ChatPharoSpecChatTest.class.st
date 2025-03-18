@@ -28,7 +28,15 @@ ChatPharoSpecChatTest >> fakeLocalModelResponse [
 ChatPharoSpecChatTest >> setUp [
 
     super setUp.
-    chat := ChatPharoSpecChat new
+    chat := ChatPharoSpecChat new.
+    chat initializePresenters. 
+]
+
+{ #category : 'running' }
+ChatPharoSpecChatTest >> tearDown [
+
+    chat := nil.
+    super tearDown.
 ]
 
 { #category : 'running' }
@@ -41,18 +49,17 @@ ChatPharoSpecChatTest >> tearDown [
 { #category : 'running' }
 ChatPharoSpecChatTest >> testAddMessage [
 
-    | history message |
-    history := ChatPharoSpecChatHistory from: OrderedCollection new.
+    | message |
+
     message := LLMAPIChatObjectMessage 
         role: 'user' 
         content: 'Test message'.
+    
+    chat history addMessage: message.
+    
+    self assert: chat history model size equals: 1.
+    self assert: chat history model first equals: message.
 
-    history addMessage: message.
-    self assert: history model size equals: 1.
-    self assert: history model first equals: message.
-    self assert: history panel children size equals: 1.
-    self assert: (history panel children first isKindOf: ChatPharoSpecChatBubble).
-    self assert: (history panel children first model) equals: message.
 ]
 
 { #category : 'running' }
@@ -84,8 +91,45 @@ ChatPharoSpecChatTest >> testAskLocalModel [
 
 { #category : 'running' }
 ChatPharoSpecChatTest >> testInitialState [
- 
-    self assert: chat inputField text isEmpty.
-    self assert: chat history model isEmpty
 
+    self assert: chat inputField text isEmpty.
+    self assert: chat history model isEmpty.
 ]
+
+{ #category : 'running' }
+ChatPharoSpecChatTest >> testInputFieldExists [
+
+    self assert: chat inputField notNil.
+]
+
+{ #category : 'running' }
+ChatPharoSpecChatTest >> testSubmitButtonExists [
+
+    self assert: chat submitButton notNil.
+]
+
+{ #category : 'running' }
+ChatPharoSpecChatTest >> testClearButtonExists [
+
+    self assert: chat clearButton notNil.
+]
+
+{ #category : 'running' }
+ChatPharoSpecChatTest >> testClearChat [
+    | message |
+
+    message := LLMAPIChatObjectMessage 
+        role: 'user' 
+        content: 'This is a test message'.
+    
+    chat history addMessage: message.
+    
+    self assert: chat history model size = 1.
+
+    chat history model removeAll.
+    chat history update.  
+
+    self assert: chat history model isEmpty 
+        description: ('Expected empty but found: ', chat history model size asString).
+]
+

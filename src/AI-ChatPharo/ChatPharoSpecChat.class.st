@@ -13,7 +13,8 @@ Class {
 	#instVars : [
 		'history',
 		'inputField',
-		'submitButton'
+		'submitButton',
+		'clearButton'
 	],
 	#category : 'AI-ChatPharo-Spec',
 	#package : 'AI-ChatPharo',
@@ -92,10 +93,18 @@ ChatPharoSpecChat >> history: anObject [
 	history := anObject
 ]
 
+{ #category : 'actions' }
+ChatPharoSpecChat >> clearChat [
+
+    history clear.
+]
+
 { #category : 'initialization' }
 ChatPharoSpecChat >> initializePresenters [
 
-    submitButton := self newButton
+    history := ChatPharoSpecChatHistory from: OrderedCollection new.
+	
+	submitButton := self newButton
         label: 'Submit';
         icon: (self iconNamed: #glamorousGo);
         help: 'Submit prompt to LLM';
@@ -103,12 +112,17 @@ ChatPharoSpecChat >> initializePresenters [
         yourself.
  
     inputField := self newTextInput
-			placeholder: 'Type your message here...'; 
+			placeholder: 'Type your message here...';
 			yourself.
 			
     inputField whenSubmitDo: [ :text | self askLocalModel ].
 
-    history := ChatPharoSpecChatHistory from: OrderedCollection new
+	clearButton := self newButton
+        label: 'Clear Chat';
+        icon: (self iconNamed: #glamorousTrash);
+        help: 'Clear chat history';
+        action: [ self clearChat ];
+        yourself.
 ]
 
 { #category : 'accessing' }
@@ -133,4 +147,16 @@ ChatPharoSpecChat >> submitButton [
 ChatPharoSpecChat >> submitButton: anObject [
 
 	submitButton := anObject
+]
+
+{ #category : 'accessing' }
+ChatPharoSpecChat >> clearButton [
+
+	^ clearButton
+]
+
+{ #category : 'accessing' }
+ChatPharoSpecChat >> clearButton: anObject [
+
+	clearButton := anObject
 ]
