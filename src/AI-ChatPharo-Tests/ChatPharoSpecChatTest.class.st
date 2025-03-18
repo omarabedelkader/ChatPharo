@@ -127,5 +127,8 @@ ChatPharoSpecChatTest >> testClearChat [
     chat history addMessage: message.
     
     self assert: chat history model size equals: 1.
+    
+    chat history removeAllMessages.
+    
     self assert: chat history model isEmpty.
 ]
