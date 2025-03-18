@@ -9,6 +9,22 @@ Class {
 }
 
 { #category : 'running' }
+ChatPharoSpecChatTest >> fakeLocalModelResponse [
+
+	| userContent |
+	userContent := chat inputField text.
+	chat history addMessage: (
+		LLMAPIChatObjectMessage
+			role: 'user'
+			content: userContent).
+	chat history addMessage: (
+		LLMAPIChatObjectMessage
+			role: 'ChatPharo'
+			content: 'Fake local model response').
+	chat inputField text: ''
+]
+
+{ #category : 'running' }
 ChatPharoSpecChatTest >> setUp [
 
     super setUp.
@@ -16,32 +32,50 @@ ChatPharoSpecChatTest >> setUp [
 ]
 
 { #category : 'running' }
+ChatPharoSpecChatTest >> tearDown [
+
+   chat := nil.
+	super tearDown .
+]
+
+{ #category : 'running' }
 ChatPharoSpecChatTest >> testAddMessage [
+
     | history message |
-    
-    "Set up the history with empty collection"
     history := ChatPharoSpecChatHistory from: OrderedCollection new.
-    
-    "Create a test message"
     message := LLMAPIChatObjectMessage 
         role: 'user' 
         content: 'Test message'.
-    
-    "Add the message"
+
     history addMessage: message.
-    
-    "Verify the message was added to the model"
     self assert: history model size equals: 1.
     self assert: history model first equals: message.
-    
-    "Verify the message was added to the panel"
     self assert: history panel children size equals: 1.
-    
-    "Verify the panel contains a ChatPharoSpecChatBubble"
     self assert: (history panel children first isKindOf: ChatPharoSpecChatBubble).
-    
-    "Verify the bubble contains the correct message"
     self assert: (history panel children first model) equals: message.
+]
+
+{ #category : 'running' }
+ChatPharoSpecChatTest >> testAskLocalModel [
+
+	| userMessage responseMessage |
+
+	chat 
+		when: #askLocalModel
+		send: #fakeLocalModelResponse
+		to: self.
+
+	chat inputField text: 'Hello LLM'.
+	chat askLocalModel. 
+	
+	self assert: chat history model size equals: 2.
+	
+	userMessage := chat history model first.
+	responseMessage := chat history model second.
+
+	self assert: userMessage role equals: 'user'.
+	self assert: responseMessage role equals: 'ChatPharo'.
+	self assert: chat inputField text isEmpty
 ]
 
 { #category : 'running' }
