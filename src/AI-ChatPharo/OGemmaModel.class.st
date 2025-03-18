@@ -11,7 +11,8 @@ Class {
     #name : 'OGemmaModel',
     #superclass : 'OModel',
     #category : 'AI-ChatPharo-API',
-    #package : 'AI-ChatPharo'
+    #package : 'AI-ChatPharo',
+    #tag : 'API'
 }
 
 { #category : 'accessing' }
