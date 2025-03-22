@@ -8,65 +8,84 @@ Maintains and displays the history of chat messages.
 - **`initializePresenters`**: Initializes the panel that will hold the chat bubbles.
 "
 Class {
-	#name : 'ChatPharoSpecChatHistory',
-	#superclass : 'SpPresenterWithModel',
-	#instVars : [
-		'panel'
-	],
-	#category : 'AI-ChatPharo-Spec',
-	#package : 'AI-ChatPharo',
-	#tag : 'Spec'
+    #name : 'ChatPharoSpecChatHistory',
+    #superclass : 'SpPresenterWithModel',
+    #instVars : [
+        'panel',
+        'scroller'
+    ],
+    #category : 'AI-ChatPharo-Spec',
+    #package : 'AI-ChatPharo',
+    #tag : 'Spec'
 }
 
 { #category : 'instance creation' }
 ChatPharoSpecChatHistory class >> from: messages [
 
-	^ self basicNew
-		setModelBeforeInitialization: messages;
-		initialize;
-		yourself
+    ^ self basicNew
+        setModelBeforeInitialization: messages;
+        initialize;
+        yourself
 ]
 
 { #category : 'initialization' }
 ChatPharoSpecChatHistory >> addMessage: aMessage [
 
-	self model add: aMessage.
-	panel add: (ChatPharoSpecChatBubble from: aMessage).
+    self model add: aMessage.
+    panel add: (ChatPharoSpecChatBubble from: aMessage).
 
-	self scrollToBottom.  
+    self scrollToBottom.  
 ]
 
 { #category : 'layout' }
 ChatPharoSpecChatHistory >> defaultLayout [
 
-	^ SpScrollableLayout with: panel
+    scroller := SpScrollPane new.
+    scroller add: panel.
+    scroller vScrollbar alwaysVisible: true.
+
+    ^ scroller
 ]
 
 { #category : 'initialization' }
 ChatPharoSpecChatHistory >> initializePresenters [
 
-	panel := SpBoxLayout newTopToBottom.
+    panel := SpBoxLayout newTopToBottom.
 
-	self model do: [ :message |
-		panel add: (ChatPharoSpecChatBubble from: message) expand: true ].
+    self model do: [ :message |
+        panel add: (ChatPharoSpecChatBubble from: message) expand: true ].
 
-	self scrollToBottom.  " Ensure history starts at the bottom "
+    self scrollToBottom.
 ]
 
 { #category : 'scrolling' }
 ChatPharoSpecChatHistory >> scrollToBottom [
 
-	self panel scrollToBottom.
+    scroller ifNotNil: [
+        scroller vScrollbar value: scroller vScrollbar maximum.
+    ].
 ]
 
 { #category : 'accessing' }
 ChatPharoSpecChatHistory >> panel [
-	
-	^ panel 
+
+    ^ panel 
 ]
 
 { #category : 'accessing' }
 ChatPharoSpecChatHistory >> panel: anObject [
-	
-	panel := anObject 
+
+    panel := anObject 
+]
+
+{ #category : 'accessing' }
+ChatPharoSpecChatHistory >> scroller [
+
+    ^ scroller 
+]
+
+{ #category : 'accessing' }
+ChatPharoSpecChatHistory >> scroller: anObject [
+
+    scroller := anObject 
 ]

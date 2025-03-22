@@ -4,25 +4,28 @@ Represents a chat message in the API's expected format.
 
 - **`asJsonableObject`**: Converts the message to a JSON-compatible object.
 - **`role:` `content:`**: Constructor method for setting role and content.
+- **`timestamp`**: Automatically sets a timestamp when a message is created.
 "
 Class {
 	#name : 'LLMAPIChatObjectMessage',
 	#superclass : 'LLMAPIObject',
 	#instVars : [
 		'role',
-		'content'
+		'content',
+		'timestamp'  
 	],
 	#category : 'AI-ChatPharo-API',
 	#package : 'AI-ChatPharo',
 	#tag : 'API'
 }
 
-{ #category : 'as yet unclassified' }
+{ #category : 'instance creation' }
 LLMAPIChatObjectMessage class >> role: aRole content: aContent [
 
 	^ self new
 		  role: aRole;
 		  content: aContent;
+		  timestamp: DateAndTime now;  
 		  yourself
 ]
 
@@ -32,6 +35,7 @@ LLMAPIChatObjectMessage >> asJsonableObject [
 	^ Dictionary new
 		  at: #content put: self content;
 		  at: #role put: self role;
+		  at: #timestamp put: self timestamp asString;  
 		  yourself
 ]
 
@@ -57,4 +61,16 @@ LLMAPIChatObjectMessage >> role [
 LLMAPIChatObjectMessage >> role: anObject [
 
 	role := anObject
+]
+
+{ #category : 'accessing' }
+LLMAPIChatObjectMessage >> timestamp [
+
+	^ timestamp ifNil: [ timestamp := DateAndTime now ]  
+]
+
+{ #category : 'accessing' }
+LLMAPIChatObjectMessage >> timestamp: aTimestamp [
+
+	timestamp := aTimestamp
 ]

@@ -27,7 +27,7 @@ ChatPharoSpecChat >> askLLM [
 	| api result resultContent timestamp |
 	timestamp := DateAndTime now asString.
 
-	history addMessage:
+	history widget addMessage:
 		(LLMAPIChatObjectMessage role: 'user' content: inputField text timestamp: timestamp).
 
 	api := LLMAPI chat.
@@ -37,17 +37,17 @@ ChatPharoSpecChat >> askLLM [
 		model: 'mistral-small-latest';
 		top_p: 1;
 		max_tokens: 250;
-		messages: history model.
+		messages: history widget model.
 
 	result := api performRequest.
 	resultContent := result choices anyOne message content.
 	timestamp := DateAndTime now asString.
 
-	history addMessage:
+	history widget addMessage:
 		(LLMAPIChatObjectMessage role: 'assistant' content: resultContent timestamp: timestamp).
 
 	inputField text: ''.
-	history scrollToBottom.  
+	history widget scrollToBottom.
 ]
 
 { #category : 'initialization' }
@@ -56,7 +56,7 @@ ChatPharoSpecChat >> askLocalModel [
     | ollama result timestamp |
     timestamp := DateAndTime now asString.
 
-    history addMessage: (LLMAPIChatObjectMessage
+    history widget addMessage: (LLMAPIChatObjectMessage
                             role: 'user'
                             content: inputField text
                             timestamp: timestamp).
@@ -69,13 +69,13 @@ ChatPharoSpecChat >> askLocalModel [
 
     timestamp := DateAndTime now asString.
 
-    history addMessage: (LLMAPIChatObjectMessage
+    history widget addMessage: (LLMAPIChatObjectMessage
                             role: 'ChatPharo'
                             content: result
                             timestamp: timestamp).
 
     inputField text: ''.
-    history scrollToBottom. 
+    history widget scrollToBottom.
 ]
 
 { #category : 'layout' }
@@ -83,12 +83,12 @@ ChatPharoSpecChat >> defaultLayout [
 
 	| submitRow |
 	submitRow := SpBoxLayout newLeftToRight
-		             add: inputField;
-		             spacing: 5;
-		             add: submitButton withConstraints: [ :constraints |
-			             constraints height: 27.
-			             constraints width: 70 ];
-		             yourself.
+			     add: inputField;
+			     spacing: 5;
+			     add: submitButton withConstraints: [ :constraints |
+				     constraints height: 27.
+				     constraints width: 70 ];
+			     yourself.
 
 	^ SpBoxLayout newTopToBottom
 		  add: history;
@@ -110,19 +110,20 @@ ChatPharoSpecChat >> history: anObject [
 
 { #category : 'actions' }
 ChatPharoSpecChat >> clearChat [
-	 history clear. 
+	 history widget clear. 
 ]
 
 { #category : 'initialization' }
 ChatPharoSpecChat >> initializePresenters [
 
-    history := ChatPharoSpecChatHistory from: OrderedCollection new.
+    history := SpScrollPane new.  " Use a scrollable container "
+    history widget: (ChatPharoSpecChatHistory from: OrderedCollection new).
 	
 	submitButton := self newButton
         label: 'Submit';
         icon: (self iconNamed: #glamorousGo);
         help: 'Submit prompt to LLM';
-        action: [ self askLocalModel ];  " <— here we wire it to askLocalModel "
+        action: [ self askLocalModel ];
         yourself.
  
     inputField := self newTextInput

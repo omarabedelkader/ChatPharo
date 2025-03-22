@@ -15,8 +15,9 @@ ChatPharoSpecChatBubbleTest >> setUp [
     
     testMessage := LLMAPIChatObjectMessage 
         role: 'user' 
-        content: 'Hello, this is a test message!'.
-    
+        content: 'Hello, this is a test message!' 
+        timestamp: DateAndTime now.  
+
     bubble := ChatPharoSpecChatBubble from: testMessage.
 ]
 
@@ -37,7 +38,6 @@ ChatPharoSpecChatBubbleTest >> testBubbleCreation [
 ChatPharoSpecChatBubbleTest >> testContentRendering [
     self assert: bubble contentArea notNil.
     self assert: bubble contentArea document asString = (Microdown parse: testMessage content) asString.
-
 ]
 
 { #category : 'tests' }

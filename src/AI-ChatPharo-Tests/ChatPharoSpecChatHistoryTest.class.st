@@ -9,45 +9,50 @@ Class {
 }
 
 { #category : 'running' }
-ChatPharoSpecChatHistoryTest >> setUp [
-
-	super setUp.
-	history := ChatPharoSpecChatHistory from: OrderedCollection new
+ChatPharoSpecChatHistoryTest >> setUp [  
+    super setUp.
+    history := ChatPharoSpecChatHistory from: OrderedCollection new.
+    history initializePresenters.  
 ]
 
 { #category : 'running' }
-ChatPharoSpecChatHistoryTest >> tearDown [ 
-
-	history := ChatPharoSpecChatHistory from: OrderedCollection new.
-	super tearDown
+ChatPharoSpecChatHistoryTest >> tearDown [  
+    history := nil.
+    super tearDown.
 ]
 
 { #category : 'running' }
-ChatPharoSpecChatHistoryTest >> testAddMessage [
-
+ChatPharoSpecChatHistoryTest >> testAddMessage [  
     | message |
     message := LLMAPIChatObjectMessage role: 'user' content: 'Testing'.
+
     history addMessage: message.
+    history initializePresenters.  
 
     self assert: (history model includes: message).
     self assert: history panel children size equals: 1.
     self assert: (history panel children first model) equals: message.
-
 ]
 
 { #category : 'running' }
-ChatPharoSpecChatHistoryTest >> testInitializeWithExistingMessages [
+ChatPharoSpecChatHistoryTest >> testInitializeWithExistingMessages [  
+    | messages newHistory |
+    messages := OrderedCollection new
+        add: (LLMAPIChatObjectMessage role: 'user' content: 'Hi');
+        add: (LLMAPIChatObjectMessage role: 'assistant' content: 'Hello!');
+        yourself.
 
-	| messages newHistory |
-	messages := OrderedCollection new
-		add: (LLMAPIChatObjectMessage role: 'user' content: 'Hi');
-		add: (LLMAPIChatObjectMessage role: 'assistant' content: 'Hello!');
-		yourself.
+    newHistory := ChatPharoSpecChatHistory from: messages.
+    newHistory initializePresenters.  " Ensure messages load in UI "
 
-	newHistory := ChatPharoSpecChatHistory from: messages.
+    self assert: newHistory model size equals: 2.
+    self assert: newHistory panel children size equals: 2.
+    self assert: (newHistory panel children first model) equals: messages first.
+    self assert: (newHistory panel children last model) equals: messages last.
+]
 
-	self assert: newHistory model size equals: 2.
-	self assert: newHistory panel children size equals: 2.
-	self assert: (newHistory panel children first model) equals: messages first.
-	self assert: (newHistory panel children last model) equals: messages last.
+{ #category : 'running' }
+ChatPharoSpecChatHistoryTest >> testScrollToBottom [  
+    
+    self shouldntRaise: [ history scrollToBottom ].
 ]
