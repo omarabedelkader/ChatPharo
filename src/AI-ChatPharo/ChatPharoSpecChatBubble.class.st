@@ -53,16 +53,15 @@ ChatPharoSpecChatBubble >> defaultLayout [
 { #category : 'initialization' }
 ChatPharoSpecChatBubble >> initializePresenters [
 
-	contentArea := MicrodownPresenter new.  
+    contentArea := MicrodownPresenter new.  
     contentArea document: (Microdown parse: self model content).  
 
     roleText := SpTextPresenter new.  
     roleText text: self model role.  
 
     timestampLabel := SpTextPresenter new.  
-    timestampLabel text: self model timestamp asString.  
-
-    timestampLabel font: (SpFontStyle new size: 10; color: Color gray).
+    timestampLabel text: (Text string: self model timestamp asString
+                          withAttributes: { TextColor gray. TextEmphasis normal }).
 ]
 
 { #category : 'accessing' }

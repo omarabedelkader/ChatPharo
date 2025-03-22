@@ -40,11 +40,14 @@ ChatPharoSpecChatHistory >> addMessage: aMessage [
 { #category : 'layout' }
 ChatPharoSpecChatHistory >> defaultLayout [
 
-    ^ SpBoxLayout newTopToBottom
-        add: panel expand: true;
-        yourself.
-]
+    scroller := SpScrollPane new.
+    panel := SpBoxLayout newTopToBottom.
 
+    scroller add: panel.
+    scroller vScrollbar alwaysVisible: true.
+
+    ^ scroller
+]
 
 { #category : 'initialization' }
 ChatPharoSpecChatHistory >> initializePresenters [
@@ -60,8 +63,11 @@ ChatPharoSpecChatHistory >> initializePresenters [
 { #category : 'scrolling' }
 ChatPharoSpecChatHistory >> scrollToBottom [
 
-    panel ifNotNil: [
-        panel scrollToBottom.
+    | lastMessage |
+    lastMessage := panel submorphs ifNotEmpty: [ panel submorphs last ].
+    
+    lastMessage ifNotNil: [
+        lastMessage scrollIntoView.
     ].
 ]
 
