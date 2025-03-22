@@ -42,7 +42,11 @@ BaselineOfAIChatPharo >> defineDependencies: spec [
 
 	spec
 		baseline: 'NeoJSON'
-		with: [ spec repository: 'github://svenvc/NeoJSON/repository' ]
+		with: [ spec repository: 'github://svenvc/NeoJSON/repository' ].
+
+	spec
+        baseline: 'Spec2'
+        with: [ spec repository: 'github://pharo-spec/Spec2' ].
 ]
 
 { #category : 'baselines' }
@@ -52,6 +56,6 @@ BaselineOfAIChatPharo >> defineGroups: spec [
 { #category : 'baselines' }
 BaselineOfAIChatPharo >> definePackages: spec [
 	
-	spec package: 'AI-ChatPharo' with: [ spec requires: #( 'NeoJSON' ) ].
+	spec package: 'AI-ChatPharo' with: [ spec requires: #( 'NeoJSON' 'Spec2' ) ].
 	spec package: 'AI-ChatPharo-Tests' with: [ spec requires: #( 'AI-ChatPharo' ) ].
 ]

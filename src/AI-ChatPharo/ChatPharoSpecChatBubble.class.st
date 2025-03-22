@@ -55,7 +55,7 @@ ChatPharoSpecChatBubble >> defaultLayout [
 ChatPharoSpecChatBubble >> initializePresenters [  
 
     | fontStyle |
-	
+
 	contentArea := MicrodownPresenter new.  
     contentArea document: (Microdown parse: self model content).  
 
@@ -69,7 +69,7 @@ ChatPharoSpecChatBubble >> initializePresenters [
     fontStyle size: 10.  
     fontStyle color: Color gray.  
 
-    timestampLabel fontStyle: fontStyle.  
+    timestampLabel textStyle: fontStyle.  
 ]
 
 { #category : 'accessing' }
