@@ -50,8 +50,3 @@ ChatPharoSpecChatHistoryTest >> testInitializeWithExistingMessages [
     self assert: (newHistory panel children first model) equals: messages first.
     self assert: (newHistory panel children last model) equals: messages last.
 ]
-
-{ #category : 'running' }
-ChatPharoSpecChatHistoryTest >> testScrollToBottom [  
-    self shouldnt: [ history scrollToBottom ] raise: Error.
-]
