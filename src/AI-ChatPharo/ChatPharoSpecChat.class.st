@@ -26,7 +26,7 @@ ChatPharoSpecChat >> askLLM [
 	| api result resultContent timestamp |
 	timestamp := DateAndTime now asString.
 
-	history widget addMessage:
+	history addMessage:
 		(LLMAPIChatObjectMessage role: 'user' content: inputField text timestamp: timestamp).
 
 	api := LLMAPI chat.
@@ -36,50 +36,48 @@ ChatPharoSpecChat >> askLLM [
 		model: 'mistral-small-latest';
 		top_p: 1;
 		max_tokens: 250;
-		messages: history widget model.
+		messages: history model.
 
 	result := api performRequest.
 	resultContent := result choices anyOne message content.
 	timestamp := DateAndTime now asString.
 
-	history widget addMessage:
+	history addMessage:
 		(LLMAPIChatObjectMessage role: 'assistant' content: resultContent timestamp: timestamp).
 
 	inputField text: ''.
-	history widget scrollToBottom.
+	history scrollToBottom.
 ]
 
 { #category : 'initialization' }
 ChatPharoSpecChat >> askLocalModel [
+	| ollama result timestamp |
+	timestamp := DateAndTime now asString.
 
-    | ollama result timestamp |
-    timestamp := DateAndTime now asString.
-
-    history widget addMessage: (LLMAPIChatObjectMessage
+	history addMessage: (LLMAPIChatObjectMessage
                             role: 'user'
                             content: inputField text
                             timestamp: timestamp).
 
-    ollama := OllamaAPI new.
-    ollama host: '127.0.0.1'.
-    ollama port: 11434.
-    ollama stream: false.
-    result := ollama query: inputField text.
+	ollama := OllamaAPI new.
+	ollama host: '127.0.0.1'.
+	ollama port: 11434.
+	ollama stream: false.
+	result := ollama query: inputField text.
 
-    timestamp := DateAndTime now asString.
+	timestamp := DateAndTime now asString.
 
-    history widget addMessage: (LLMAPIChatObjectMessage
+	history addMessage: (LLMAPIChatObjectMessage
                             role: 'ChatPharo'
                             content: result
                             timestamp: timestamp).
 
-    inputField text: ''.
-    history widget scrollToBottom.
+	inputField text: ''.
+	history scrollToBottom.
 ]
 
 { #category : 'layout' }
 ChatPharoSpecChat >> defaultLayout [
-
 	| submitRow |
 	submitRow := SpBoxLayout newLeftToRight
 		     add: inputField;
@@ -90,34 +88,22 @@ ChatPharoSpecChat >> defaultLayout [
 		     yourself.
 
 	^ SpBoxLayout newTopToBottom
-		  add: history;
+		  add: history defaultLayout;  
 		  spacing: 5;
 		  add: submitRow expand: false;
-		  yourself
-]
-
-{ #category : 'accessing' }
-ChatPharoSpecChat >> history [
-
-	^ history 
-]
-
-{ #category : 'accessing' }
-ChatPharoSpecChat >> history: anObject [
-	 history := anObject 
+		  yourself.
 ]
 
 { #category : 'actions' }
 ChatPharoSpecChat >> clearChat [
-	 history widget clear. 
+	history clear. 
 ]
 
 { #category : 'initialization' }
 ChatPharoSpecChat >> initializePresenters [
-
-    history := SpBoxLayout newTopToBottom.
-    history widget: (ChatPharoSpecChatHistory from: OrderedCollection new).
 	
+	history := ChatPharoSpecChatHistory from: OrderedCollection new.
+
 	submitButton := self newButton
         label: 'Submit';
         icon: (self iconNamed: #glamorousGo);
@@ -125,11 +111,11 @@ ChatPharoSpecChat >> initializePresenters [
         action: [ self askLocalModel ];
         yourself.
  
-    inputField := self newTextInput
+	inputField := self newTextInput
 			placeholder: 'Type your message here...';
 			yourself.
 			
-    inputField whenSubmitDo: [ :text | self askLocalModel ].
+	inputField whenSubmitDo: [ :text | self askLocalModel ].
 
 	clearButton := self newButton
         label: 'Clear Chat';
@@ -140,8 +126,20 @@ ChatPharoSpecChat >> initializePresenters [
 ]
 
 { #category : 'accessing' }
-ChatPharoSpecChat >> inputField [
+ChatPharoSpecChat >> history [
 	 
+	^ history 
+]
+
+{ #category : 'accessing' }
+ChatPharoSpecChat >> history: anObject [
+	 
+	history := anObject 
+]
+
+{ #category : 'accessing' }
+ChatPharoSpecChat >> inputField [
+	
 	^ inputField 
 ]
 
@@ -153,7 +151,7 @@ ChatPharoSpecChat >> inputField: anObject [
 
 { #category : 'accessing' }
 ChatPharoSpecChat >> submitButton [
-	 
+	
 	^ submitButton 
 ]
 

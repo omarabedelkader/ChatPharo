@@ -20,7 +20,6 @@ Class {
 
 { #category : 'instance creation' }
 ChatPharoSpecChatBubble class >> from: aMessage [
-
 	^ self basicNew
 		setModelBeforeInitialization: aMessage;
 		initialize;
@@ -29,7 +28,7 @@ ChatPharoSpecChatBubble class >> from: aMessage [
 
 { #category : 'accessing' }
 ChatPharoSpecChatBubble >> contentArea [
-
+	
 	^ contentArea
 ]
 
@@ -52,9 +51,7 @@ ChatPharoSpecChatBubble >> defaultLayout [
 ]
 
 { #category : 'initialization' }
-ChatPharoSpecChatBubble >> initializePresenters [  
-
-    | fontStyle |
+ChatPharoSpecChatBubble >> initializePresenters [
 
 	contentArea := MicrodownPresenter new.  
     contentArea document: (Microdown parse: self model content).  
@@ -65,11 +62,7 @@ ChatPharoSpecChatBubble >> initializePresenters [
     timestampLabel := SpTextPresenter new.  
     timestampLabel text: self model timestamp asString.  
 
-    fontStyle := SpFontStyle new.  
-    fontStyle size: 10.  
-    fontStyle color: Color gray.  
-
-    timestampLabel textStyle: fontStyle.  
+    timestampLabel textFont: (SpFontReference family: 'Arial' size: 10 color: Color gray).  
 ]
 
 { #category : 'accessing' }
