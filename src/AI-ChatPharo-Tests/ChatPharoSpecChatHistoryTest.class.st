@@ -53,6 +53,5 @@ ChatPharoSpecChatHistoryTest >> testInitializeWithExistingMessages [
 
 { #category : 'running' }
 ChatPharoSpecChatHistoryTest >> testScrollToBottom [  
-    
-    self shouldntRaise: [ history scrollToBottom ].
+    self shouldnt: [ history scrollToBottom ] raise: Error.
 ]

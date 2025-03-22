@@ -116,7 +116,7 @@ ChatPharoSpecChat >> clearChat [
 { #category : 'initialization' }
 ChatPharoSpecChat >> initializePresenters [
 
-    history := SpScrollPane new.  " Use a scrollable container "
+    history := SpScrollArea new.  
     history widget: (ChatPharoSpecChatHistory from: OrderedCollection new).
 	
 	submitButton := self newButton
