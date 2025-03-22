@@ -39,7 +39,7 @@ ChatPharoSpecChatHistory >> addMessage: aMessage [
 { #category : 'layout' }
 ChatPharoSpecChatHistory >> defaultLayout [
 
-    scroller := SpScrollPane new.
+    scroller := SpScrollPanel new.
     panel := SpBoxLayout newTopToBottom.
 
     scroller add: panel.
