@@ -60,8 +60,7 @@ ChatPharoSpecChatBubble >> initializePresenters [
     roleText text: self model role.  
 
     timestampLabel := SpTextPresenter new.  
-    timestampLabel text: (Text string: self model timestamp asString
-                          withAttributes: { TextColor gray. TextEmphasis normal }).
+    timestampLabel text: (Text fromString: self model timestamp asString).  
 ]
 
 { #category : 'accessing' }

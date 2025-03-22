@@ -64,10 +64,10 @@ ChatPharoSpecChatHistory >> initializePresenters [
 ChatPharoSpecChatHistory >> scrollToBottom [
 
     | lastMessage |
-    lastMessage := panel submorphs ifNotEmpty: [ panel submorphs last ].
+    lastMessage := panel children ifNotEmpty: [ panel children last ].
     
     lastMessage ifNotNil: [
-        lastMessage scrollIntoView.
+        scroller vScrollbar value: scroller vScrollbar maximum.
     ].
 ]
 
