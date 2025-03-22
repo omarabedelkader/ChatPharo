@@ -41,13 +41,12 @@ ChatPharoSpecChatBubble >> contentArea: anObject [
 { #category : 'layout' }
 ChatPharoSpecChatBubble >> defaultLayout [
 
-	^ SpBoxLayout newTopToBottom
-		  add: roleText expand: false;
-		  add: contentArea
-		  withConstraints: [ :constraints | 
-			constraints height: (self class inputTextHeight) * 4 ];
-		  add: timestampLabel expand: false align: #right;
-		  yourself
+    ^ SpBoxLayout newTopToBottom
+        add: roleText expand: false;
+        add: contentArea withConstraints: [ :constraints | 
+            constraints height: (self class inputTextHeight) * 4 ];
+        add: timestampLabel withConstraints: [ :c | c horizontalAlign: #right ];
+        yourself.
 ]
 
 { #category : 'initialization' }

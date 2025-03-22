@@ -21,7 +21,6 @@ Class {
 
 { #category : 'instance creation' }
 ChatPharoSpecChatHistory class >> from: messages [
-
     ^ self basicNew
         setModelBeforeInitialization: messages;
         initialize;
@@ -30,11 +29,11 @@ ChatPharoSpecChatHistory class >> from: messages [
 
 { #category : 'initialization' }
 ChatPharoSpecChatHistory >> addMessage: aMessage [
-
+	
     self model add: aMessage.
     panel add: (ChatPharoSpecChatBubble from: aMessage).
 
-    self scrollToBottom.  
+    self scrollToBottom.
 ]
 
 { #category : 'layout' }
@@ -51,17 +50,23 @@ ChatPharoSpecChatHistory >> defaultLayout [
 
 { #category : 'initialization' }
 ChatPharoSpecChatHistory >> initializePresenters [
-
+    
+    scroller := SpScrollPane new.
     panel := SpBoxLayout newTopToBottom.
 
     self model do: [ :message |
         panel add: (ChatPharoSpecChatBubble from: message) expand: true ].
+
+    scroller add: panel.
+    scroller vScrollbar alwaysVisible: true.
 
     self scrollToBottom.
 ]
 
 { #category : 'scrolling' }
 ChatPharoSpecChatHistory >> scrollToBottom [
+
+    scroller ifNil: [ ^ self ]. 
 
     | lastMessage |
     lastMessage := panel children ifNotEmpty: [ panel children last ].
