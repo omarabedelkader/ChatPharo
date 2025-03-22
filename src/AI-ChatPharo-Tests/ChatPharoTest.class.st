@@ -40,7 +40,7 @@ ChatPharoTest >> testDeleteChat [
     chatTitle := presenter notebook selectedPage title.
     originalPages := presenter notebook pages size.
 
-    presenter deleteChat: chatTitle.
+    presenter deleteChat: chatTitle force: true.
 
     self assert: presenter notebook pages size equals: (originalPages - 1).
     self assert: (presenter notebook pages anySatisfy: [ :p | p title = chatTitle ]) not.
