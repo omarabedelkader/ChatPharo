@@ -28,7 +28,7 @@ ChatPharoSpecChatBubble class >> from: aMessage [
 
 { #category : 'accessing' }
 ChatPharoSpecChatBubble >> contentArea [
-	
+
 	^ contentArea
 ]
 
@@ -62,7 +62,7 @@ ChatPharoSpecChatBubble >> initializePresenters [
     timestampLabel := SpTextPresenter new.  
     timestampLabel text: self model timestamp asString.  
 
-    timestampLabel textFont: (SpFontReference family: 'Arial' size: 10 color: Color gray).  
+    timestampLabel font: (SpFontStyle new size: 10; color: Color gray).
 ]
 
 { #category : 'accessing' }
