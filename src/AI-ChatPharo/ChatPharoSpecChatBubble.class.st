@@ -45,7 +45,7 @@ ChatPharoSpecChatBubble >> defaultLayout [
         add: roleText expand: false;
         add: contentArea withConstraints: [ :constraints | 
             constraints height: (self class inputTextHeight) * 4 ];
-        add: timestampLabel withConstraints: [ :c | c alignment: #right ];
+        add: timestampLabel;
         yourself.
 ]
 
