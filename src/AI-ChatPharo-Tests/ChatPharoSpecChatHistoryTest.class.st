@@ -43,7 +43,7 @@ ChatPharoSpecChatHistoryTest >> testInitializeWithExistingMessages [
         yourself.
 
     newHistory := ChatPharoSpecChatHistory from: messages.
-    newHistory initializePresenters.  " Ensure messages load in UI "
+    newHistory initializePresenters.  
 
     self assert: newHistory model size equals: 2.
     self assert: newHistory panel children size equals: 2.

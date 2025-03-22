@@ -1,5 +1,4 @@
-"
-### `ChatPharoSpecChat` Class
+"### `ChatPharoSpecChat` Class
 Handles the specific chat functionalities in the application.
 
 - **`askLLM`**: Sends the chat input to a remote language model and processes the response.
@@ -83,12 +82,12 @@ ChatPharoSpecChat >> defaultLayout [
 
 	| submitRow |
 	submitRow := SpBoxLayout newLeftToRight
-			     add: inputField;
-			     spacing: 5;
-			     add: submitButton withConstraints: [ :constraints |
-				     constraints height: 27.
-				     constraints width: 70 ];
-			     yourself.
+		     add: inputField;
+		     spacing: 5;
+		     add: submitButton withConstraints: [ :constraints |
+			     constraints height: 27.
+			     constraints width: 70 ];
+		     yourself.
 
 	^ SpBoxLayout newTopToBottom
 		  add: history;
@@ -116,7 +115,7 @@ ChatPharoSpecChat >> clearChat [
 { #category : 'initialization' }
 ChatPharoSpecChat >> initializePresenters [
 
-    history := SpScrollArea new.  
+    history := SpBoxLayout newTopToBottom.
     history widget: (ChatPharoSpecChatHistory from: OrderedCollection new).
 	
 	submitButton := self newButton
