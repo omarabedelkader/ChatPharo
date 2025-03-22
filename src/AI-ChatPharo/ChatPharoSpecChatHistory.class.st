@@ -31,7 +31,9 @@ ChatPharoSpecChatHistory class >> from: messages [
 ChatPharoSpecChatHistory >> addMessage: aMessage [
 
 	self model add: aMessage.
-	panel add: (ChatPharoSpecChatBubble from: aMessage)
+	panel add: (ChatPharoSpecChatBubble from: aMessage).
+
+	self scrollToBottom.  
 ]
 
 { #category : 'layout' }
@@ -46,17 +48,25 @@ ChatPharoSpecChatHistory >> initializePresenters [
 	panel := SpBoxLayout newTopToBottom.
 
 	self model do: [ :message |
-		panel add: (ChatPharoSpecChatBubble from: message) expand: true]
+		panel add: (ChatPharoSpecChatBubble from: message) expand: true ].
+
+	self scrollToBottom.  " Ensure history starts at the bottom "
+]
+
+{ #category : 'scrolling' }
+ChatPharoSpecChatHistory >> scrollToBottom [
+
+	self panel scrollToBottom.
 ]
 
 { #category : 'accessing' }
 ChatPharoSpecChatHistory >> panel [
-
-	^ panel
+	
+	^ panel 
 ]
 
 { #category : 'accessing' }
 ChatPharoSpecChatHistory >> panel: anObject [
-
-	panel := anObject
+	
+	panel := anObject 
 ]

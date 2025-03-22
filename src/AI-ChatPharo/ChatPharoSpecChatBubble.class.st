@@ -1,5 +1,4 @@
-"
-### `ChatPharoSpecChatBubble` Class
+"### `ChatPharoSpecChatBubble` Class
 Visual presentation for individual chat messages as bubbles.
 
 - **`from:`**: Factory method to create a chat bubble from a message.
@@ -11,7 +10,8 @@ Class {
 	#superclass : 'SpPresenterWithModel',
 	#instVars : [
 		'roleText',
-		'contentArea'
+		'contentArea',
+		'timestampLabel'
 	],
 	#category : 'AI-ChatPharo-Spec',
 	#package : 'AI-ChatPharo',
@@ -43,10 +43,11 @@ ChatPharoSpecChatBubble >> contentArea: anObject [
 ChatPharoSpecChatBubble >> defaultLayout [
 
 	^ SpBoxLayout newTopToBottom
-		  add: self model role expand: false;
+		  add: roleText expand: false;
 		  add: contentArea
 		  withConstraints: [ :constraints | 
 			constraints height: (self class inputTextHeight) * 4 ];
+		  add: timestampLabel expand: false align: #right;
 		  yourself
 ]
 
@@ -54,7 +55,14 @@ ChatPharoSpecChatBubble >> defaultLayout [
 ChatPharoSpecChatBubble >> initializePresenters [
 
 	contentArea := MicrodownPresenter new.
-	contentArea document: (Microdown parse: self model content)
+	contentArea document: (Microdown parse: self model content).
+
+	roleText := SpTextPresenter new.
+	roleText text: self model role.
+
+	timestampLabel := SpTextPresenter new.
+	timestampLabel text: self model timestamp asString.
+	timestampLabel fontStyle: (SpFontStyle size: 10 color: Color gray).
 ]
 
 { #category : 'accessing' }
@@ -67,4 +75,16 @@ ChatPharoSpecChatBubble >> roleText [
 ChatPharoSpecChatBubble >> roleText: anObject [
 
 	roleText := anObject
+]
+
+{ #category : 'accessing' }
+ChatPharoSpecChatBubble >> timestampLabel [
+
+	^ timestampLabel
+]
+
+{ #category : 'accessing' }
+ChatPharoSpecChatBubble >> timestampLabel: anObject [
+
+	timestampLabel := anObject
 ]
