@@ -46,7 +46,6 @@ ChatPharoSpecChat >> askLLM [
 		(LLMAPIChatObjectMessage role: 'assistant' content: resultContent timestamp: timestamp).
 
 	inputField text: ''.
-	history scrollToBottom.
 ]
 
 { #category : 'initialization' }
@@ -73,7 +72,6 @@ ChatPharoSpecChat >> askLocalModel [
                             timestamp: timestamp).
 
 	inputField text: ''.
-	history scrollToBottom.
 ]
 
 { #category : 'layout' }

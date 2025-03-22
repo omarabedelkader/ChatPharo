@@ -11,8 +11,7 @@ Class {
     #name : 'ChatPharoSpecChatHistory',
     #superclass : 'SpPresenterWithModel',
     #instVars : [
-        'panel',
-        'scroller'
+        'panel'
     ],
     #category : 'AI-ChatPharo-Spec',
     #package : 'AI-ChatPharo',
@@ -33,47 +32,23 @@ ChatPharoSpecChatHistory >> addMessage: aMessage [
     self model add: aMessage.
     panel add: (ChatPharoSpecChatBubble from: aMessage).
 
-    self scrollToBottom.
 ]
 
 { #category : 'layout' }
 ChatPharoSpecChatHistory >> defaultLayout [
 
-    scroller := SpScrollPanel new.
     panel := SpBoxLayout newTopToBottom.
-
-    scroller add: panel.
-    scroller vScrollbar alwaysVisible: true.
-
-    ^ scroller
+    
+    ^ panel
 ]
 
 { #category : 'initialization' }
 ChatPharoSpecChatHistory >> initializePresenters [
     
-    scroller := SpScrollPanel new.
     panel := SpBoxLayout newTopToBottom.
 
     self model do: [ :message |
         panel add: (ChatPharoSpecChatBubble from: message) expand: true ].
-
-    scroller add: panel.
-    scroller vScrollbar alwaysVisible: true.
-
-    self scrollToBottom.
-]
-
-{ #category : 'scrolling' }
-ChatPharoSpecChatHistory >> scrollToBottom [
-
-    | lastMessage |
-
-	scroller ifNil: [ ^ self ]. 
-    lastMessage := panel children ifNotEmpty: [ panel children last ].
-    
-    lastMessage ifNotNil: [
-        scroller vScrollbar value: scroller vScrollbar maximum.
-    ].
 ]
 
 { #category : 'accessing' }
@@ -86,16 +61,4 @@ ChatPharoSpecChatHistory >> panel [
 ChatPharoSpecChatHistory >> panel: anObject [
 
     panel := anObject 
-]
-
-{ #category : 'accessing' }
-ChatPharoSpecChatHistory >> scroller [
-
-    ^ scroller 
-]
-
-{ #category : 'accessing' }
-ChatPharoSpecChatHistory >> scroller: anObject [
-
-    scroller := anObject 
 ]
