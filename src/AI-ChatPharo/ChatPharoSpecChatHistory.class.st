@@ -51,7 +51,7 @@ ChatPharoSpecChatHistory >> defaultLayout [
 { #category : 'initialization' }
 ChatPharoSpecChatHistory >> initializePresenters [
     
-    scroller := SpScrollPane new.
+    scroller := SpScrollPanel new.
     panel := SpBoxLayout newTopToBottom.
 
     self model do: [ :message |
