@@ -29,7 +29,7 @@ ChatPharoSpecChatHistory class >> from: messages [
 
 { #category : 'initialization' }
 ChatPharoSpecChatHistory >> addMessage: aMessage [
-	
+
     self model add: aMessage.
     panel add: (ChatPharoSpecChatBubble from: aMessage).
 
@@ -66,9 +66,9 @@ ChatPharoSpecChatHistory >> initializePresenters [
 { #category : 'scrolling' }
 ChatPharoSpecChatHistory >> scrollToBottom [
 
-    scroller ifNil: [ ^ self ]. 
-
     | lastMessage |
+
+	scroller ifNil: [ ^ self ]. 
     lastMessage := panel children ifNotEmpty: [ panel children last ].
     
     lastMessage ifNotNil: [
