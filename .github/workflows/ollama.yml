@@ -2,15 +2,27 @@ name: Ollama
 'on':
   workflow_dispatch:
 jobs:
-  summarize:
-    runs-on: ubuntu-latest
+  build:
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ]
+        smalltalk: [ Pharo64-13 ]
+
+    runs-on: ${{ matrix.os }}
+
     steps:
-    - name: Install ollama
-      run: curl -fsSL https://ollama.com/install.sh | sh
-    - name: Run ollama
-      run: |
-        ollama serve &
-        ollama pull phi3:mini
-    - name: Call ollama API
-      run: |
-        curl -d '{"model": "phi3:mini", "stream": false, "prompt":"Whatever I say, asnwer with Yes"}' http://localhost:11434/api/generate
+      - uses: actions/checkout@v4
+
+      - name: Start Ollama
+        run: |
+          curl -fsSL https://ollama.com/install.sh | sh
+          nohup ollama serve > /dev/null 2>&1 &
+          sleep 10  # give time for server to start
+
+      - uses: hpi-swa/setup-smalltalkCI@v1
+        with:
+          smalltalk-version: ${{ matrix.smalltalk }}
+
+      - run: smalltalkci -s ${{ matrix.smalltalk }}
+        shell: bash
+        timeout-minutes: 15
