@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y \
  && rm -rf /var/lib/apt/lists/*
 
 # Install Pharo
-RUN wget -O- https://get.pharo.org/64 | bash \
+RUN curl -L https://get.pharo.org/64 | bash \
  && mv pharo /usr/local/bin/pharo \
  && mv pharo-vm /usr/local/bin/pharo-vm \
  && mkdir -p /var/pharo/images/default \
