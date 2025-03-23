@@ -8,7 +8,8 @@ RUN apt-get update && apt-get install -y \
  && rm -rf /var/lib/apt/lists/*
 
 # Install Pharo
-RUN cd /usr/local/bin && wget -O- http://get.pharo.org/64/vmLatest | bash || echo "VM download failed"
+RUN wget -O- https://get.pharo.org/64 | bash
+RUN mv pharo /usr/local/bin/pharo && chmod +x /usr/local/bin/pharo
 RUN mkdir -p /var/pharo/images/120 && ln -sf /var/pharo/images/120 /var/pharo/images/default \
  && cd /var/pharo/images/120 && wget -O- http://get.pharo.org/64/120 | bash
 
