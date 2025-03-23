@@ -8,10 +8,9 @@ RUN apt-get update && apt-get install -y \
  && rm -rf /var/lib/apt/lists/*
 
 # Install Pharo
-RUN wget -O- https://get.pharo.org/64 | bash
-RUN mv pharo /usr/local/bin/pharo && chmod +x /usr/local/bin/pharo
-RUN mkdir -p /var/pharo/images/120 && ln -sf /var/pharo/images/120 /var/pharo/images/default \
- && cd /var/pharo/images/120 && wget -O- http://get.pharo.org/64/120 | bash
+RUN wget -O- https://get.pharo.org/64/vmLatest | bash \
+ && mv pharo /usr/local/bin/pharo \
+ && mv pharo-vm /usr/local/bin/pharo-vm
 
 # Install Ollama
 RUN curl -fsSL https://ollama.com/install.sh | sh
