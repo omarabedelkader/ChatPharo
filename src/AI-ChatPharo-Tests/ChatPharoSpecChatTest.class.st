@@ -40,13 +40,6 @@ ChatPharoSpecChatTest >> tearDown [
 ]
 
 { #category : 'running' }
-ChatPharoSpecChatTest >> tearDown [
-
-   chat := nil.
-	super tearDown .
-]
-
-{ #category : 'running' }
 ChatPharoSpecChatTest >> testAddMessage [
 
     | message |
@@ -67,7 +60,7 @@ ChatPharoSpecChatTest >> testAskLocalModel [
 
 " This test won't work in the CI because we are the not the admin of the env. BUT it must pass if you downlaod the Ollama correctly "
 
-"
+
 	| userMessage responseMessage |
 
 	chat 
@@ -86,26 +79,7 @@ ChatPharoSpecChatTest >> testAskLocalModel [
 	self assert: userMessage role equals: 'user'.
 	self assert: responseMessage role equals: 'ChatPharo'.
 	self assert: chat inputField text isEmpty
-"
-]
 
-{ #category : 'running' }
-ChatPharoSpecChatTest >> testInitialState [
-
-    self assert: chat inputField text isEmpty.
-    self assert: chat history model isEmpty.
-]
-
-{ #category : 'running' }
-ChatPharoSpecChatTest >> testInputFieldExists [
-
-    self assert: chat inputField notNil.
-]
-
-{ #category : 'running' }
-ChatPharoSpecChatTest >> testSubmitButtonExists [
-
-    self assert: chat submitButton notNil.
 ]
 
 { #category : 'running' }
@@ -133,3 +107,21 @@ ChatPharoSpecChatTest >> testClearChat [
         description: ('Expected empty but found: ', chat history model size asString).
 ]
 
+{ #category : 'running' }
+ChatPharoSpecChatTest >> testInitialState [
+
+    self assert: chat inputField text isEmpty.
+    self assert: chat history model isEmpty.
+]
+
+{ #category : 'running' }
+ChatPharoSpecChatTest >> testInputFieldExists [
+
+    self assert: chat inputField notNil.
+]
+
+{ #category : 'running' }
+ChatPharoSpecChatTest >> testSubmitButtonExists [
+
+    self assert: chat submitButton notNil.
+]
