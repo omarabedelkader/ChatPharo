@@ -1,15 +1,15 @@
-# Use a base image depending on the SMALLTALK_VERSION argument
-ARG SMALLTALK_VERSION
-FROM pharoproject/pharo:$SMALLTALK_VERSION
 
-# Set working directory
-WORKDIR /app
+FROM debian:bookworm-slim
 
-# Copy your project files into the image (assuming you have a project)
-COPY . /app
+RUN set -ex \
+	&& buildDeps='wget unzip' \
+	&& runtimeDeps='ca-certificates libcairo2 libc6 libfreetype6 libssl3' \
+	&& apt-get update \
+	&& apt-get install -y --no-install-recommends $buildDeps $runtimeDeps \
+	&& (cd /usr/local/bin && wget -O- http://get.pharo.org/64/vmLatest | bash) \
+	&& (mkdir -p /var/pharo/images/120; ln -sf /var/pharo/images/120 /var/pharo/images/default; cd /var/pharo/images/120 && wget -O- http://get.pharo.org/64/120 | bash) \
+	&& apt-get purge -y --auto-remove $buildDeps \
+	&& rm -rf /var/lib/apt/lists/* \
+	&& true
 
-# Optionally install additional dependencies here
-# RUN apt-get update && apt-get install -y curl
-
-# Default command
-CMD ["pharo", "--version"]
+ENTRYPOINT ["/usr/local/bin/pharo", "/var/pharo/images/default/Pharo.image"]
