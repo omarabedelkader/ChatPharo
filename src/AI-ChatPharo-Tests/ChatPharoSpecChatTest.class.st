@@ -60,7 +60,7 @@ ChatPharoSpecChatTest >> testAskLocalModel [
 
 " This test won't work in the CI because we are the not the admin of the env. BUT it must pass if you downlaod the Ollama correctly "
 
-"
+
 	| userMessage responseMessage |
 
 	chat 
@@ -79,7 +79,7 @@ ChatPharoSpecChatTest >> testAskLocalModel [
 	self assert: userMessage role equals: 'user'.
 	self assert: responseMessage role equals: 'ChatPharo'.
 	self assert: chat inputField text isEmpty
-"
+
 ]
 
 { #category : 'running' }
