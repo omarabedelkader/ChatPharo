@@ -1,0 +1,16 @@
+name: Ollama
+'on':
+  workflow_dispatch:
+jobs:
+  summarize:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Install ollama
+      run: curl -fsSL https://ollama.com/install.sh | sh
+    - name: Run ollama
+      run: |
+        ollama serve &
+        ollama pull phi3:mini
+    - name: Call ollama API
+      run: |
+        curl -d '{"model": "phi3:mini", "stream": false, "prompt":"Whatever I say, asnwer with Yes"}' http://localhost:11434/api/generate
