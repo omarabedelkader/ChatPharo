@@ -49,14 +49,17 @@ ChatPharo >> defaultLayout [
 ]
 
 { #category : 'initialization' }
-ChatPharo >> deleteChat: aPageTitle force: aBoolean [
+ChatPharo >> deleteChat: aPageTitle [ 
+
+    "Find the page by title and remove it if found."
     | pageToDelete |
     pageToDelete := notebook pages detect: [:page | page title = aPageTitle] ifNone: [^ self].
-
-    (aBoolean or: [ self confirm: 'Are you sure you want to delete this chat?' ])
+    
+    (self confirm: 'Are you sure you want to delete this chat?')
         ifTrue: [
             notebook removePage: pageToDelete.
         ].
+
 ]
 
 { #category : 'specs' }

@@ -39,6 +39,12 @@ ChatPharoSpecChatTest >> tearDown [
     super tearDown.
 ]
 
+{ #category : 'running' }
+ChatPharoSpecChatTest >> tearDown [
+
+   chat := nil.
+	super tearDown .
+]
 
 { #category : 'running' }
 ChatPharoSpecChatTest >> testAddMessage [

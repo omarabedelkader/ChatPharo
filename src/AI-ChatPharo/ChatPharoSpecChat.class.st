@@ -1,4 +1,5 @@
-"### `ChatPharoSpecChat` Class
+"
+### `ChatPharoSpecChat` Class
 Handles the specific chat functionalities in the application.
 
 - **`askLLM`**: Sends the chat input to a remote language model and processes the response.
@@ -23,12 +24,9 @@ Class {
 { #category : 'initialization' }
 ChatPharoSpecChat >> askLLM [
 
-	| api result resultContent timestamp |
-	timestamp := DateAndTime now asString.
-
+	| api result resultContent |
 	history addMessage:
-		(LLMAPIChatObjectMessage role: 'user' content: inputField text timestamp: timestamp).
-
+		(LLMAPIChatObjectMessage role: 'user' content: inputField text).
 	api := LLMAPI chat.
 	api host: 'api.mistral.ai'.
 	api payload
@@ -40,80 +38,84 @@ ChatPharoSpecChat >> askLLM [
 
 	result := api performRequest.
 	resultContent := result choices anyOne message content.
-	timestamp := DateAndTime now asString.
-
 	history addMessage:
-		(LLMAPIChatObjectMessage role: 'assistant' content: resultContent timestamp: timestamp).
+		(LLMAPIChatObjectMessage role: 'assistant' content: resultContent).
 
-	inputField text: ''.
+	inputField text: ''
 ]
 
 { #category : 'initialization' }
 ChatPharoSpecChat >> askLocalModel [
-	| ollama result timestamp |
-	timestamp := DateAndTime now asString.
 
-	history addMessage: (LLMAPIChatObjectMessage
+    | ollama result |
+    history addMessage: (LLMAPIChatObjectMessage
                             role: 'user'
-                            content: inputField text
-                            timestamp: timestamp).
-
-	ollama := OllamaAPI new.
-	ollama host: '127.0.0.1'.
-	ollama port: 11434.
-	ollama stream: false.
-	result := ollama query: inputField text.
-
-	timestamp := DateAndTime now asString.
-
-	history addMessage: (LLMAPIChatObjectMessage
+                            content: inputField text).
+    ollama := OllamaAPI new.
+    ollama host: '127.0.0.1'.
+    ollama port: 11434.
+    ollama stream: false.
+    result := ollama query: inputField text.
+    history addMessage: (LLMAPIChatObjectMessage
                             role: 'ChatPharo'
-                            content: result
-                            timestamp: timestamp).
-
-	inputField text: ''.
+                            content: result).
+    inputField text: ''
 ]
 
 { #category : 'layout' }
 ChatPharoSpecChat >> defaultLayout [
+
 	| submitRow |
 	submitRow := SpBoxLayout newLeftToRight
-		     add: inputField;
-		     spacing: 5;
-		     add: submitButton withConstraints: [ :constraints |
-			     constraints height: 27.
-			     constraints width: 70 ];
-		     yourself.
+		             add: inputField;
+		             spacing: 5;
+		             add: submitButton withConstraints: [ :constraints |
+			             constraints height: 27.
+			             constraints width: 70 ];
+		             yourself.
 
 	^ SpBoxLayout newTopToBottom
-		  add: history defaultLayout;  
+		  add: history;
 		  spacing: 5;
 		  add: submitRow expand: false;
-		  yourself.
+		  yourself
+]
+
+{ #category : 'accessing' }
+ChatPharoSpecChat >> history [
+
+	^ history
+]
+
+{ #category : 'accessing' }
+ChatPharoSpecChat >> history: anObject [
+
+	history := anObject
 ]
 
 { #category : 'actions' }
 ChatPharoSpecChat >> clearChat [
-	history clear. 
+
+    history clear.
 ]
 
 { #category : 'initialization' }
 ChatPharoSpecChat >> initializePresenters [
-	
-	history := ChatPharoSpecChatHistory from: OrderedCollection new.
 
+    history := ChatPharoSpecChatHistory from: OrderedCollection new.
+	
 	submitButton := self newButton
         label: 'Submit';
         icon: (self iconNamed: #glamorousGo);
         help: 'Submit prompt to LLM';
-        action: [ self askLocalModel ];
+        action: [ self askLocalModel ];  " <— here we wire it to askLocalModel "
         yourself.
  
-	inputField := self newTextInput
+    inputField := self newTextInput
 			placeholder: 'Type your message here...';
 			yourself.
 			
-	inputField whenSubmitDo: [ :text | self askLocalModel ].
+    inputField whenSubmitDo: [ :text | self askLocalModel ].
 
 	clearButton := self newButton
         label: 'Clear Chat';
@@ -124,49 +126,37 @@ ChatPharoSpecChat >> initializePresenters [
 ]
 
 { #category : 'accessing' }
-ChatPharoSpecChat >> history [
-	 
-	^ history 
-]
-
-{ #category : 'accessing' }
-ChatPharoSpecChat >> history: anObject [
-	 
-	history := anObject 
-]
-
-{ #category : 'accessing' }
 ChatPharoSpecChat >> inputField [
-	
-	^ inputField 
+
+	^ inputField
 ]
 
 { #category : 'accessing' }
 ChatPharoSpecChat >> inputField: anObject [
-	 
-	inputField := anObject 
+
+	inputField := anObject
 ]
 
 { #category : 'accessing' }
 ChatPharoSpecChat >> submitButton [
-	
-	^ submitButton 
+
+	^ submitButton
 ]
 
 { #category : 'accessing' }
 ChatPharoSpecChat >> submitButton: anObject [
-	
-	submitButton := anObject 
+
+	submitButton := anObject
 ]
 
 { #category : 'accessing' }
 ChatPharoSpecChat >> clearButton [
-	
-	^ clearButton 
+
+	^ clearButton
 ]
 
 { #category : 'accessing' }
 ChatPharoSpecChat >> clearButton: anObject [
-	
-	clearButton := anObject 
+
+	clearButton := anObject
 ]
