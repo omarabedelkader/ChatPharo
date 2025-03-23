@@ -8,57 +8,55 @@ Maintains and displays the history of chat messages.
 - **`initializePresenters`**: Initializes the panel that will hold the chat bubbles.
 "
 Class {
-    #name : 'ChatPharoSpecChatHistory',
-    #superclass : 'SpPresenterWithModel',
-    #instVars : [
-        'panel'
-    ],
-    #category : 'AI-ChatPharo-Spec',
-    #package : 'AI-ChatPharo',
-    #tag : 'Spec'
+	#name : 'ChatPharoSpecChatHistory',
+	#superclass : 'SpPresenterWithModel',
+	#instVars : [
+		'panel'
+	],
+	#category : 'AI-ChatPharo-Spec',
+	#package : 'AI-ChatPharo',
+	#tag : 'Spec'
 }
 
 { #category : 'instance creation' }
 ChatPharoSpecChatHistory class >> from: messages [
-    ^ self basicNew
-        setModelBeforeInitialization: messages;
-        initialize;
-        yourself
+
+	^ self basicNew
+		setModelBeforeInitialization: messages;
+		initialize;
+		yourself
 ]
 
 { #category : 'initialization' }
 ChatPharoSpecChatHistory >> addMessage: aMessage [
 
-    self model add: aMessage.
-    panel add: (ChatPharoSpecChatBubble from: aMessage).
-
+	self model add: aMessage.
+	panel add: (ChatPharoSpecChatBubble from: aMessage)
 ]
 
 { #category : 'layout' }
 ChatPharoSpecChatHistory >> defaultLayout [
 
-    panel := SpBoxLayout newTopToBottom.
-    
-    ^ panel
+	^ SpScrollableLayout with: panel
 ]
 
 { #category : 'initialization' }
 ChatPharoSpecChatHistory >> initializePresenters [
-    
-    panel := SpBoxLayout newTopToBottom.
 
-    self model do: [ :message |
-        panel add: (ChatPharoSpecChatBubble from: message) expand: true ].
+	panel := SpBoxLayout newTopToBottom.
+
+	self model do: [ :message |
+		panel add: (ChatPharoSpecChatBubble from: message) expand: true]
 ]
 
 { #category : 'accessing' }
 ChatPharoSpecChatHistory >> panel [
 
-    ^ panel 
+	^ panel
 ]
 
 { #category : 'accessing' }
 ChatPharoSpecChatHistory >> panel: anObject [
 
-    panel := anObject 
+	panel := anObject
 ]

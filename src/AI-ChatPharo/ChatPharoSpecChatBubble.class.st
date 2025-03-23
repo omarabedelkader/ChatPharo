@@ -1,4 +1,5 @@
-"### `ChatPharoSpecChatBubble` Class
+"
+### `ChatPharoSpecChatBubble` Class
 Visual presentation for individual chat messages as bubbles.
 
 - **`from:`**: Factory method to create a chat bubble from a message.
@@ -10,8 +11,7 @@ Class {
 	#superclass : 'SpPresenterWithModel',
 	#instVars : [
 		'roleText',
-		'contentArea',
-		'timestampLabel'
+		'contentArea'
 	],
 	#category : 'AI-ChatPharo-Spec',
 	#package : 'AI-ChatPharo',
@@ -20,6 +20,7 @@ Class {
 
 { #category : 'instance creation' }
 ChatPharoSpecChatBubble class >> from: aMessage [
+
 	^ self basicNew
 		setModelBeforeInitialization: aMessage;
 		initialize;
@@ -41,25 +42,19 @@ ChatPharoSpecChatBubble >> contentArea: anObject [
 { #category : 'layout' }
 ChatPharoSpecChatBubble >> defaultLayout [
 
-    ^ SpBoxLayout newTopToBottom
-        add: roleText expand: false;
-        add: contentArea withConstraints: [ :constraints | 
-            constraints height: (self class inputTextHeight) * 4 ];
-        add: timestampLabel;
-        yourself.
+	^ SpBoxLayout newTopToBottom
+		  add: self model role expand: false;
+		  add: contentArea
+		  withConstraints: [ :constraints | 
+			constraints height: (self class inputTextHeight) * 4 ];
+		  yourself
 ]
 
 { #category : 'initialization' }
 ChatPharoSpecChatBubble >> initializePresenters [
 
-    contentArea := MicrodownPresenter new.  
-    contentArea document: (Microdown parse: self model content).  
-
-    roleText := SpTextPresenter new.  
-    roleText text: self model role.  
-
-    timestampLabel := SpTextPresenter new.  
-    timestampLabel text: (Text fromString: self model timestamp asString).  
+	contentArea := MicrodownPresenter new.
+	contentArea document: (Microdown parse: self model content)
 ]
 
 { #category : 'accessing' }
@@ -72,16 +67,4 @@ ChatPharoSpecChatBubble >> roleText [
 ChatPharoSpecChatBubble >> roleText: anObject [
 
 	roleText := anObject
-]
-
-{ #category : 'accessing' }
-ChatPharoSpecChatBubble >> timestampLabel [
-
-	^ timestampLabel
-]
-
-{ #category : 'accessing' }
-ChatPharoSpecChatBubble >> timestampLabel: anObject [
-
-	timestampLabel := anObject
 ]
