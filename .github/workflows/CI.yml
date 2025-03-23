@@ -1,17 +1,10 @@
 name: CI
 
-env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-# Controls when the action will run. Triggers the workflow on push or pull request
-# events but only for the development branch
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
   build:
@@ -19,13 +12,45 @@ jobs:
       matrix:
         os: [ macos-latest, ubuntu-latest ]
         smalltalk: [ Pharo64-13, Pharo64-12 ]
+
     runs-on: ${{ matrix.os }}
     name: ${{ matrix.smalltalk }}
+
+    services:
+      # Example of a Docker "service" container
+      ollama:
+        # You need an image that runs Ollama or your LLM
+        # for example, if there's an official Docker image at ghcr.io/ollama/ollama:
+        image: ghcr.io/ollama/ollama:latest
+        # Or your custom Docker image that runs your LLM
+        ports:
+          - 11411:11411  # or whichever port your LLM listens on
+        # If your container needs special startup arguments:
+        # options: >-
+        #   --entrypoint /path/to/my/entrypoint.sh
+
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v2
+      
       - uses: hpi-swa/setup-smalltalkCI@v1
         with:
           smalltalk-version: ${{ matrix.smalltalk }}
-      - run: smalltalkci -s ${{ matrix.smalltalk }}
+
+      # Optional: wait briefly or healthcheck until the LLM container is ready
+      - name: Wait for LLM to be ready
+        run: |
+          # e.g. poll localhost:11411
+          for i in {1..30}; do
+            if nc -z localhost 11411; then
+              echo "Ollama service is up!"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Timed out waiting for Ollama on port 11411"
+          exit 1
+
+      - name: Run tests
+        run: smalltalkci -s ${{ matrix.smalltalk }}
         shell: bash
         timeout-minutes: 15
