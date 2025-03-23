@@ -1,5 +1,8 @@
 name: CI
 
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 on:
   push:
     branches:
@@ -9,41 +12,22 @@ on:
       - main
 
 jobs:
-  build-and-test:
+  build:
     strategy:
       matrix:
-        os: [ ubuntu-latest ]
+        os: [ macos-latest, ubuntu-latest ]
         smalltalk: [ Pharo64-13, Pharo64-12 ]
-    runs-on: ${{ matrix.os }}
 
+    runs-on: ${{ matrix.os }}
+    name: ${{ matrix.smalltalk }}
+    
     steps:
       - uses: actions/checkout@v4
-
-      - name: Build Docker image
-        run: docker build --build-arg SMALLTALK_VERSION=${{ matrix.smalltalk }} \
-                          -t my-ollama-image:${{ matrix.smalltalk }} .
-
-      - name: Run container in background
-        run: |
-          docker run -d --name ollama -p 11400:11400 my-ollama-image:${{ matrix.smalltalk }}
-      
-      - name: Wait for Ollama
-        run: |
-          # Same "wait for port" snippet from above
-          for i in {1..30}; do
-            if curl --silent localhost:11400 > /dev/null; then
-              echo "Ollama is up!"
-              exit 0
-            fi
-            echo "Waiting for Ollama..."
-            sleep 2
-          done
-          echo "Ollama never came up!"
-          exit 1
 
       - uses: hpi-swa/setup-smalltalkCI@v1
         with:
           smalltalk-version: ${{ matrix.smalltalk }}
-
-      - name: Run smalltalkCI
-        run: smalltalkci -s ${{ matrix.smalltalk }}
+      - run: smalltalkci -s ${{ matrix.smalltalk }}
+      
+        shell: bash
+        timeout-minutes: 15
