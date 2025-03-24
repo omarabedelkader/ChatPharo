@@ -31,4 +31,7 @@ jobs:
             -v ${{ github.workspace }}:/app \
             -w /app \
             my-ollama-image:${{ matrix.smalltalk }} \
-            /usr/local/bin/pharo /var/pharo/images/default/Pharo.image smalltalkci
+            /usr/local/bin/pharo /var/pharo/images/default/Pharo.image smalltalkci -s ${{ matrix.smalltalk }}
+      
+          shell: bash
+          timeout-minutes: 15
