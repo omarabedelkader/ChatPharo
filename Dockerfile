@@ -8,9 +8,12 @@ RUN apt-get update && apt-get install -y \
  && rm -rf /var/lib/apt/lists/*
 
 # Install Pharo
-RUN cd /usr/local/bin && wget -O- http://get.pharo.org/64/vmLatest | bash || echo "VM download failed"
-RUN mkdir -p /var/pharo/images/120 && ln -sf /var/pharo/images/120 /var/pharo/images/default \
- && cd /var/pharo/images/120 && wget -O- http://get.pharo.org/64/120 | bash
+RUN curl -L https://get.pharo.org/64 | bash \
+ && mv pharo /usr/local/bin/pharo \
+ && mv pharo-vm /usr/local/bin/pharo-vm \
+ && mkdir -p /var/pharo/images/default \
+ && mv Pharo.image /var/pharo/images/default/Pharo.image \
+ && mv Pharo.changes /var/pharo/images/default/Pharo.changes
 
 # Install Ollama
 RUN curl -fsSL https://ollama.com/install.sh | sh
