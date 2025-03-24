@@ -13,7 +13,6 @@ jobs:
   docker-test:
     strategy:
       matrix:
-        os: [ macos-latest, ubuntu-latest, windows-latest ]
         smalltalk: [ Pharo64-13, Pharo64-12 ]
     runs-on: ubuntu-latest
 
