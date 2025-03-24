@@ -6,20 +6,13 @@ The #name method returns 'gemma', ensuring compatibility with Ollama’s model n
 The class methods #small and #large create instances of OGemmaModel with tag values '2b' and '7b', 
 corresponding to Gemma-2B and Gemma-7B model versions.
 "
-
 Class {
-    #name : 'OGemmaModel',
-    #superclass : 'OModel',
-    #category : 'AI-ChatPharo-API',
-    #package : 'AI-ChatPharo',
-    #tag : 'API'
+	#name : 'OGemmaModel',
+	#superclass : 'OModel',
+	#category : 'AI-ChatPharo-API',
+	#package : 'AI-ChatPharo',
+	#tag : 'API'
 }
-
-{ #category : 'accessing' }
-OGemmaModel >> name [
-    
-    ^ 'gemma'
-]
 
 { #category : 'as yet unclassified' }
 OGemmaModel class >> b2 [
@@ -37,4 +30,10 @@ OGemmaModel class >> b7 [
     ^ self new 
           tag: '7b'; 
           yourself
+]
+
+{ #category : 'accessing' }
+OGemmaModel >> name [
+    
+    ^ 'gemma'
 ]
