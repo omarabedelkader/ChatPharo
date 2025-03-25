@@ -11,13 +11,13 @@ Class {
 
 { #category : 'running' }
 ChatPharoSpecChatBubbleTest >> setUp [
-    super setUp.
-    
-    testMessage := LLMAPIChatObjectMessage 
-        role: 'user' 
-        content: 'Hello, this is a test message!'.
-    
-    bubble := ChatPharoSpecChatBubble from: testMessage.
+
+	super setUp.
+	testMessage := LLMAPIChatObjectMessage
+		               role: 'user'
+		               content: 'Hello, this is a test message!'.
+
+	bubble := ChatPharoSpecChatBubble from: testMessage
 ]
 
 { #category : 'running' }
@@ -35,19 +35,21 @@ ChatPharoSpecChatBubbleTest >> testBubbleCreation [
 
 { #category : 'tests' }
 ChatPharoSpecChatBubbleTest >> testContentRendering [
-    self assert: bubble contentArea notNil.
-    self assert: bubble contentArea document asString = (Microdown parse: testMessage content) asString.
 
+	self assert: bubble contentArea notNil.
+	self assert: bubble contentArea document asString
+		equals: (Microdown parse: testMessage content) asString
 ]
 
 { #category : 'tests' }
 ChatPharoSpecChatBubbleTest >> testLayoutConstraints [
-    | layout constraints |
-    
-    layout := bubble defaultLayout.
 
-    self assert: (layout children includes: bubble contentArea).
-    
-    constraints := layout constraintsFor: bubble contentArea.
-    self assert: constraints height = (ChatPharoSpecChatBubble inputTextHeight * 4).
+	| layout constraints |
+	layout := bubble defaultLayout.
+
+	self assert: (layout children includes: bubble contentArea).
+
+	constraints := layout constraintsFor: bubble contentArea.
+	self assert:
+		constraints height equals: (ChatPharoSpecChatBubble inputTextHeight * 4)
 ]
