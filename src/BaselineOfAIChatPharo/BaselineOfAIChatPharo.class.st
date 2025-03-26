@@ -51,8 +51,14 @@ BaselineOfAIChatPharo >> defineGroups: spec [
 
 { #category : 'baselines' }
 BaselineOfAIChatPharo >> definePackages: spec [
-	
-	spec package: 'AI-ChatPharo' with: [ spec requires: #( 'NeoJSON' ) ].
-	spec package: 'AI-ChatPharo-Spec' with: [ spec requires: #( 'AI-ChatPharo' ) ].
-	spec package: 'AI-ChatPharo-Tests' with: [ spec requires: #( 'AI-ChatPharo' ) ].
+
+	spec 
+		package: 'AI-ChatPharo' 
+		with: [ spec requires: #( 'NeoJSON' ) ].
+	spec
+		package: 'AI-ChatPharo-Spec'
+		with: [ spec requires: #( 'AI-ChatPharo' ) ].
+	spec
+		package: 'AI-ChatPharo-Tests'
+		with: [ spec requires: #( 'AI-ChatPharo' ) ]
 ]
