@@ -49,7 +49,8 @@ LLMAPIChatTest >> testLLMAPIChatRequestSetup [
 LLMAPIChatTest >> testLLMAPIChatPerformRequest [
 	| mockClient mockResponse response |
 
-	mockResponse := ZnResponse ok: (ZnEntity with: '{"id":"123","object":"chat.completion","choices":[{"message":{"role":"assistant","content":"Hello!"}}]}' contentType: 'application/json').
+	mockResponse := ZnResponse ok: (ZnEntity text: '{"id":"123","object":"chat.completion","choices":[{"message":{"role":"assistant","content":"Hello!"}}]}').
+	mockResponse contentType: 'application/json'.
 
 	mockClient := ZnClient new.
 	mockClient beOneShot.
@@ -71,4 +72,3 @@ LLMAPIChatTest >> testLLMAPIChatPerformRequest [
 	self assert: (response isKindOf: ZnResponse).
 	self assert: (response code = 200) ifFalse: [ self fail: 'Request did not return 200 OK' ].
 ]
-
