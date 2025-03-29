@@ -40,8 +40,8 @@ LLMAPIChatTest >> testLLMAPIChatRequestSetup [
 	chatAPI prepareRequest.
 
 	self assert: (chatAPI host = 'api.example.com').
-	self assert: (chatAPI client defaultHeaders includesKey: 'Authorization').
-	self assert: ((chatAPI client defaultHeaders at: 'Authorization') includesSubstring: 'Bearer test-key').
+	self assert: (chatAPI client requestHeaders includesKey: 'Authorization').
+	self assert: ((chatAPI client requestHeaders at: 'Authorization') includesSubstring: 'Bearer test-key').
 ]
 
 { #category : 'tests' }
@@ -50,15 +50,21 @@ LLMAPIChatTest >> testLLMAPIChatPerformRequest [
 
 	mockResponse := ZnResponse ok: (ZnEntity json: '{"id":"123","object":"chat.completion","choices":[{"message":{"role":"assistant","content":"Hello!"}}]}').
 
-	mockClient := Object new.
-	mockClient class compile: 'post [ ^ mockResponse ]'.
+	mockClient := ZnClient new.
+	mockClient setBearerAuthentication: 'test-key'.
+	mockClient forJsonREST.
+	mockClient https.
+	mockClient host: 'api.example.com'.
+	mockClient path: 'v1/chat/completions'.
 
 	chatAPI apiKey: 'test-key'.
 	chatAPI host: 'api.example.com'.
 	chatAPI content: (LLMAPIChatObjectPayload new).
 	chatAPI client: mockClient.
 
-	response := chatAPI performRequest.
+	[ response := chatAPI performRequest ] 
+		on: ZnRequestError 
+		do: [ :error | self fail: 'HTTP request failed with error: ', error messageText ].
 
 	self assert: (response isKindOf: ZnResponse).
 	self assert: (response code = 200) ifFalse: [ self fail: 'Request did not return 200 OK' ].
