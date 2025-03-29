@@ -35,22 +35,20 @@ LLMAPIChatTest >> testLLMAPIChatHasCorrectPayloadClass [
 
 { #category : 'tests' }
 LLMAPIChatTest >> testLLMAPIChatRequestSetup [
-
 	chatAPI apiKey: 'test-key'.
 	chatAPI host: 'api.example.com'.
 	chatAPI prepareRequest.
 
 	self assert: (chatAPI host = 'api.example.com').
-	self assert: (chatAPI client requestHeaders includesKey: 'Authorization').
-
-	self assert: ((chatAPI client requestHeaders at: 'Authorization') includesSubstring: 'Bearer test-key').
+	self assert: (chatAPI client defaultHeaders includesKey: 'Authorization').
+	self assert: ((chatAPI client defaultHeaders at: 'Authorization') includesSubstring: 'Bearer test-key').
 ]
 
 { #category : 'tests' }
 LLMAPIChatTest >> testLLMAPIChatPerformRequest [
 	| mockClient mockResponse response |
 
-	mockResponse := ZnResponse ok: '{"id":"123","object":"chat.completion","choices":[{"message":{"role":"assistant","content":"Hello!"}}]}'.
+	mockResponse := ZnResponse ok: (ZnEntity json: '{"id":"123","object":"chat.completion","choices":[{"message":{"role":"assistant","content":"Hello!"}}]}').
 
 	mockClient := Object new.
 	mockClient class compile: 'post [ ^ mockResponse ]'.
