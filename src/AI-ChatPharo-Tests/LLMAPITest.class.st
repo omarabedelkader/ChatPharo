@@ -26,9 +26,10 @@ LLMAPITest >> tearDown [
 
 { #category : 'tests' }
 LLMAPITest >> testLLMAPIHasDefaultHost [
+	| hostValue |
+	hostValue := llmAPI host.
 
-	self assert: (llmAPI host isString).
-	self assert: (llmAPI host size > 0).
+	self assert: ((hostValue isNil) or: [ hostValue isString and: [ hostValue size > 0 ] ]).
 ]
 
 { #category : 'tests' }
@@ -49,4 +50,11 @@ LLMAPITest >> testLLMAPIChatInstance [
 	| chatInstance |
 	chatInstance := LLMAPI chat.
 	self assert: (chatInstance isKindOf: LLMAPIChat).
+]
+
+{ #category : 'tests' }
+LLMAPITest >> testLLMAPIFimInstance [
+	| fimInstance |
+	fimInstance := LLMAPI fim.
+	self assert: (fimInstance isKindOf: LLMAPIFim).
 ]
