@@ -41,23 +41,23 @@ LLMAPIChatTest >> testLLMAPIChatRequestSetup [
 
 	self assert: (chatAPI host = 'api.example.com').
 
-	self assert: (chatAPI client request headerAt: 'Authorization' ifAbsent: [ '' ]) 
-		includesSubstring: 'Bearer test-key'.
+	self assert: ((chatAPI client request headers at: 'Authorization' ifAbsent: [ '' ]) 
+		includesSubstring: 'Bearer test-key').
 ]
 
 { #category : 'tests' }
 LLMAPIChatTest >> testLLMAPIChatPerformRequest [
 	| mockClient mockResponse response |
 
-	mockResponse := ZnResponse ok: (ZnEntity json: '{"id":"123","object":"chat.completion","choices":[{"message":{"role":"assistant","content":"Hello!"}}]}').
+	mockResponse := ZnResponse ok: (ZnEntity text: '{"id":"123","object":"chat.completion","choices":[{"message":{"role":"assistant","content":"Hello!"}}]}' contentType: 'application/json').
 
 	mockClient := ZnClient new.
 	mockClient beOneShot.
-	mockClient beJson.
 	mockClient https.
 	mockClient host: 'api.example.com'.
 	mockClient path: 'v1/chat/completions'.
 	mockClient request headerAt: 'Authorization' put: 'Bearer test-key'.
+	mockClient request contentType: 'application/json'.
 
 	chatAPI apiKey: 'test-key'.
 	chatAPI host: 'api.example.com'.
