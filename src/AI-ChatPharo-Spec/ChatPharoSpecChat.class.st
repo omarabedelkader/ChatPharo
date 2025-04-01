@@ -6,6 +6,21 @@ Handles the specific chat functionalities in the application.
 - **`askLocalModel`**: Handles the communication with a local language model to get responses.
 - **`defaultLayout`**: Sets up the layout for the chat interface including the history and input field.
 - **`initializePresenters`**: Sets up the chat interface components like the input field and submit button.
+
+
+
+
+
+## Instance variables (AI generated comments)
+**history** : Stores chat messages for history display
+**inputField** : Input field for user messages in chat application
+**submitButton** : Submits user input to the language model
+**clearButton** : ```
+Button to clear chat history
+```
+-----
+
+
 "
 Class {
 	#name : 'ChatPharoSpecChat',
@@ -22,6 +37,7 @@ Class {
 
 { #category : 'initialization' }
 ChatPharoSpecChat >> askLLM [
+	"This method sends a chat request to the Mistral API, processes the response, updates the chat history, and clears the input field."
 
 	| api result resultContent |
 	history addMessage:
@@ -45,6 +61,7 @@ ChatPharoSpecChat >> askLLM [
 
 { #category : 'initialization' }
 ChatPharoSpecChat >> askLocalModel [
+	"This method sends a user's input to an Ollama API and updates the chat history with the response."
 
     | ollama result |
     history addMessage: (LLMAPIChatObjectMessage
@@ -63,24 +80,28 @@ ChatPharoSpecChat >> askLocalModel [
 
 { #category : 'accessing' }
 ChatPharoSpecChat >> clearButton [
+	"Returns the clear button instance."
 
 	^ clearButton
 ]
 
 { #category : 'accessing' }
 ChatPharoSpecChat >> clearButton: anObject [
+	"Sets `clearButton` to the provided object."
 
 	clearButton := anObject
 ]
 
 { #category : 'actions' }
 ChatPharoSpecChat >> clearChat [
+	"Resets chat history by clearing it."
 
     history clear.
 ]
 
 { #category : 'layout' }
 ChatPharoSpecChat >> defaultLayout [
+	"Creates a vertical layout with history above a horizontal row containing input field and submit button."
 
 	| submitRow |
 	submitRow := SpBoxLayout newLeftToRight
@@ -100,12 +121,14 @@ ChatPharoSpecChat >> defaultLayout [
 
 { #category : 'accessing' }
 ChatPharoSpecChat >> history [
+	"Returns the history object."
 
 	^ history
 ]
 
 { #category : 'accessing' }
 ChatPharoSpecChat >> history: anObject [
+	"Stores the provided object as the current history."
 
 	history := anObject
 ]
@@ -138,24 +161,28 @@ ChatPharoSpecChat >> initializePresenters [
 
 { #category : 'accessing' }
 ChatPharoSpecChat >> inputField [
+	"Returns the input field."
 
 	^ inputField
 ]
 
 { #category : 'accessing' }
 ChatPharoSpecChat >> inputField: anObject [
+	"Assigns an object to the instance variable inputField."
 
 	inputField := anObject
 ]
 
 { #category : 'accessing' }
 ChatPharoSpecChat >> submitButton [
+	"Returns the submit button instance variable."
 
 	^ submitButton
 ]
 
 { #category : 'accessing' }
 ChatPharoSpecChat >> submitButton: anObject [
+	"Sets the submit button to the specified object."
 
 	submitButton := anObject
 ]
