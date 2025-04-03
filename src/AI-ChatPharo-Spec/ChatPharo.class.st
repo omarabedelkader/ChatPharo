@@ -40,9 +40,13 @@ ChatPharo >> addNewChat [
 
 { #category : 'layout' }
 ChatPharo >> defaultLayout [ 
-
     ^ SpBoxLayout newTopToBottom
-        add: toolbar expand: false;
+		  add: (SpBoxLayout newLeftToRight 
+					add: toolbar expand: false;
+					add: (ChatPharoOllamaModel new ollamaModelSelect)
+					expand: true fill: true padding: 20
+					) expand: false;
+
         add: notebook;
         yourself
 ]
@@ -67,7 +71,6 @@ ChatPharo >> initialExtent [
 	| fontWidth rowHeight |
 	fontWidth := (StandardFonts defaultFont widthOfString: 'M').
 	rowHeight := self class inputTextHeight.
-
 	^ (40@25) * (fontWidth @ rowHeight)
 	
 ]
