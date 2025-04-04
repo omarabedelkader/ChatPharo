@@ -12,12 +12,14 @@ Class {
 	#package : 'AI-ChatPharo-Spec'
 }
 
-{ #category : 'ollama models' }
-ChatPharoOllamaModel class >> ollamaList [
-	"Ask ollama for its list of model names, return them"
-	| res |
-	res := (LibC resultOfCommand: 'ollama list') lines allButFirst.
-	^res collect: [:resItem | resItem copyUpToSubstring: ' ' ].
+{ #category : 'layout' }
+ChatPharoOllamaModel >> getOllamaModelNames [
+	"returns an array with one item per model. Each item has nested informations, and some arrays"
+	| response  |
+	
+	response := ZnClient new get: 'http://localhost:11434/api/tags'.
+	^ ((STONJSON fromString: response) at: 'models' )
+		 collect: [ :model | model at: 'name' ]
 ]
 
 { #category : 'layout' }
@@ -25,7 +27,7 @@ ChatPharoOllamaModel >> ollamaModelSelect [
 	"Add to ChatPharo a select ollama model"
 	^ SpDropListPresenter new
 			help: 'Select ollama model';
-			items: self class ollamaList;
+			items: self getOllamaModelNames;
 			display: [ :e | e  ];
 			whenSelectedItemChangedDo: [ :e | "Dummy"];
 			yourself
