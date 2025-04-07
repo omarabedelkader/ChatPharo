@@ -29,7 +29,8 @@ Class {
 		'history',
 		'inputField',
 		'submitButton',
-		'clearButton'
+		'clearButton',
+		'ollamaModel'
 	],
 	#category : 'AI-ChatPharo-Spec',
 	#package : 'AI-ChatPharo-Spec'
@@ -61,6 +62,27 @@ ChatPharoSpecChat >> askLLM [
 
 { #category : 'initialization' }
 ChatPharoSpecChat >> askLocalModel [
+	"This method sends a user's input to an Ollama API and updates the chat history with the response."
+
+    | ollama result |
+    history addMessage: (LLMAPIChatObjectMessage
+                            role: 'user'
+                            content: inputField text).
+"self halt.
+    ollama := ChatPharoOllamaModel new.
+    ollama getOllamaModelNames.
+    ollama port: 11434.
+    ollama stream: false."
+	 result := ollamaModel getResonceForPrompt:inputField text.
+"    result := ollama query: inputField text."
+    history addMessage: (LLMAPIChatObjectMessage
+                            role: 'ChatPharo'
+                            content: result).
+    inputField text: ''
+]
+
+{ #category : 'initialization' }
+ChatPharoSpecChat >> askLocalModel_previous [
 	"This method sends a user's input to an Ollama API and updates the chat history with the response."
 
     | ollama result |
@@ -171,6 +193,16 @@ ChatPharoSpecChat >> inputField: anObject [
 	"Assigns an object to the instance variable inputField."
 
 	inputField := anObject
+]
+
+{ #category : 'accessing' }
+ChatPharoSpecChat >> ollamaModel [
+	^ ollamaModel 
+]
+
+{ #category : 'accessing' }
+ChatPharoSpecChat >> ollamaModel: model [
+	ollamaModel := model
 ]
 
 { #category : 'accessing' }

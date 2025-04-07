@@ -13,7 +13,8 @@ Class {
 	#superclass : 'SpPresenter',
 	#instVars : [
 		'toolbar',
-		'notebook'
+		'notebook',
+		'ollamaModel'
 	],
 	#category : 'AI-ChatPharo-Spec',
 	#package : 'AI-ChatPharo-Spec'
@@ -43,9 +44,9 @@ ChatPharo >> defaultLayout [
     ^ SpBoxLayout newTopToBottom
 		  add: (SpBoxLayout newLeftToRight 
 					add: toolbar expand: false;
-					add: (ChatPharoOllamaModel new ollamaModelSelect)
-					expand: true fill: true padding: 20
-					) expand: false;
+					add: (ollamaModel ollamaModelSelect)
+							expand: true fill: true padding: 20
+							) expand: false;
 
         add: notebook;
         yourself
@@ -80,6 +81,7 @@ ChatPharo >> initializePresenters [
 
     notebook := self newNotebook.
     toolbar := self newToolbar.
+	 ollamaModel := ChatPharoOllamaModel new.
     
     toolbar add: (SpToolbarButtonPresenter new
         label: 'New Chat';
@@ -119,7 +121,7 @@ ChatPharo >> initializePresenters [
     notebook addPage: (SpNotebookPage
         title: 'Chat'
         icon: (self iconNamed: #announcement)
-        provider: [ ChatPharoSpecChat new ])
+        provider: [ ChatPharoSpecChat new ollamaModel: ollamaModel])
 ]
 
 { #category : 'initialization' }

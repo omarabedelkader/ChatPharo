@@ -3,10 +3,9 @@ I contain the code needed to select one of the ollama models in on your computer
 "
 Class {
 	#name : 'ChatPharoOllamaModel',
-	#superclass : 'Class',
+	#superclass : 'AI_OllamaPrompting',
 	#instVars : [
-		'modelList',
-		'selectedModel'
+		'modelList'
 	],
 	#category : 'AI-ChatPharo-Spec',
 	#package : 'AI-ChatPharo-Spec'
@@ -14,12 +13,20 @@ Class {
 
 { #category : 'layout' }
 ChatPharoOllamaModel >> getOllamaModelNames [
-	"returns an array with one item per model. Each item has nested informations, and some arrays"
-	| response  |
+	"returns an array with one item per model."
+	| modelResponse |
 	
-	response := ZnClient new get: 'http://localhost:11434/api/tags'.
-	^ ((STONJSON fromString: response) at: 'models' )
-		 collect: [ :model | model at: 'name' ]
+	modelResponse := ZnClient new get: 'http://localhost:11434/api/tags'.
+	modelList := ((STONJSON fromString: modelResponse) at: 'models' )
+		 collect: [ :item | item at: 'name' ].
+	^ modelList
+]
+
+{ #category : 'initialization' }
+ChatPharoOllamaModel >> initialize [ 
+	super initialize.
+	self getOllamaModelNames.
+	self model: modelList first.
 ]
 
 { #category : 'layout' }
@@ -29,7 +36,14 @@ ChatPharoOllamaModel >> ollamaModelSelect [
 			help: 'Select ollama model';
 			items: self getOllamaModelNames;
 			display: [ :e | e  ];
-			whenSelectedItemChangedDo: [ :e | "Dummy"];
+			whenSelectedItemChangedDo: [ :e | self model: e];
 			yourself
 		
+]
+
+{ #category : 'layout' }
+ChatPharoOllamaModel >> setOllamaModel: selectedModel [
+	"Sets the selected model"
+	model := selectedModel.
+	
 ]
