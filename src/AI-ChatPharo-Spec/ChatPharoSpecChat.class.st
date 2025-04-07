@@ -64,17 +64,11 @@ ChatPharoSpecChat >> askLLM [
 ChatPharoSpecChat >> askLocalModel [
 	"This method sends a user's input to an Ollama API and updates the chat history with the response."
 
-    | ollama result |
+    | result |
     history addMessage: (LLMAPIChatObjectMessage
                             role: 'user'
                             content: inputField text).
-"self halt.
-    ollama := ChatPharoOllamaModel new.
-    ollama getOllamaModelNames.
-    ollama port: 11434.
-    ollama stream: false."
 	 result := ollamaModel getResonceForPrompt:inputField text.
-"    result := ollama query: inputField text."
     history addMessage: (LLMAPIChatObjectMessage
                             role: 'ChatPharo'
                             content: result).
