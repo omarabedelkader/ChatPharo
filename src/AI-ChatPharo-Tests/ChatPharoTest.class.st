@@ -4,9 +4,9 @@ Class {
 	#instVars : [
 		'presenter'
 	],
-	#category : 'AI-ChatPharo-Tests-Ullama',
+	#category : 'AI-ChatPharo-Tests-Spec',
 	#package : 'AI-ChatPharo-Tests',
-	#tag : 'Ullama'
+	#tag : 'Spec'
 }
 
 { #category : 'running' }
@@ -54,6 +54,12 @@ ChatPharoTest >> testInitialWindow [
     self assert: window isDisplayed.
     self assert: presenter title equals: 'ChatPharo'.
     self assert: presenter notebook pages size equals: 1
+]
+
+{ #category : 'running' }
+ChatPharoTest >> testModelInformation [
+	
+	
 ]
 
 { #category : 'running' }
