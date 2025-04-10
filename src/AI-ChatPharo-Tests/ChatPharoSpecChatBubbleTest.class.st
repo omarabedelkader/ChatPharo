@@ -13,7 +13,7 @@ Class {
 ChatPharoSpecChatBubbleTest >> setUp [
 
 	super setUp.
-	testMessage := LLMAPIChatObjectMessage
+	testMessage := ChatPharoHistorySaver
 		               role: 'user'
 		               content: 'Hello, this is a test message!'.
 

@@ -14,11 +14,11 @@ ChatPharoSpecChatTest >> fakeLocalModelResponse [
 	| userContent |
 	userContent := chat inputField text.
 	chat history addMessage: (
-		LLMAPIChatObjectMessage
+		ChatPharoHistorySaver
 			role: 'user'
 			content: userContent).
 	chat history addMessage: (
-		LLMAPIChatObjectMessage
+		ChatPharoHistorySaver
 			role: 'ChatPharo'
 			content: 'Fake local model response').
 	chat inputField text: ''
@@ -44,7 +44,7 @@ ChatPharoSpecChatTest >> testAddMessage [
 
     | message |
 
-    message := LLMAPIChatObjectMessage 
+    message := ChatPharoHistorySaver 
         role: 'user' 
         content: 'Test message'.
     
@@ -92,7 +92,7 @@ ChatPharoSpecChatTest >> testClearButtonExists [
 ChatPharoSpecChatTest >> testClearChat [
 
 	| message |
-	message := LLMAPIChatObjectMessage
+	message := ChatPharoHistorySaver
 		           role: 'user'
 		           content: 'This is a test message'.
 

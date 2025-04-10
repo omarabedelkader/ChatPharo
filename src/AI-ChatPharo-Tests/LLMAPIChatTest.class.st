@@ -44,4 +44,3 @@ LLMAPIChatTest >> testLLMAPIChatRequestSetup [
 	self assert: ((chatAPI client request headers at: 'Authorization' ifAbsent: [ '' ]) 
 		includesSubstring: 'Bearer test-key').
 ]
-

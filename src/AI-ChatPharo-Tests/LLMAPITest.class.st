@@ -25,27 +25,6 @@ LLMAPITest >> tearDown [
 ]
 
 { #category : 'tests' }
-LLMAPITest >> testLLMAPIHasDefaultHost [
-	| hostValue |
-	hostValue := llmAPI host.
-
-	self assert: ((hostValue isNil) or: [ hostValue isString and: [ hostValue size > 0 ] ]).
-]
-
-{ #category : 'tests' }
-LLMAPITest >> testLLMAPIHasClientInitialized [
-
-	self assert: (llmAPI client isKindOf: ZnClient).
-]
-
-{ #category : 'tests' }
-LLMAPITest >> testLLMAPIHandlesAPIKey [
-
-	llmAPI apiKey: 'test-key'.
-	self assert: (llmAPI apiKey = 'test-key').
-]
-
-{ #category : 'tests' }
 LLMAPITest >> testLLMAPIChatInstance [
 	| chatInstance |
 	chatInstance := LLMAPI chat.
@@ -57,4 +36,25 @@ LLMAPITest >> testLLMAPIFimInstance [
 	| fimInstance |
 	fimInstance := LLMAPI fim.
 	self assert: (fimInstance isKindOf: LLMAPIFim).
+]
+
+{ #category : 'tests' }
+LLMAPITest >> testLLMAPIHandlesAPIKey [
+
+	llmAPI apiKey: 'test-key'.
+	self assert: (llmAPI apiKey = 'test-key').
+]
+
+{ #category : 'tests' }
+LLMAPITest >> testLLMAPIHasClientInitialized [
+
+	self assert: (llmAPI client isKindOf: ZnClient).
+]
+
+{ #category : 'tests' }
+LLMAPITest >> testLLMAPIHasDefaultHost [
+	| hostValue |
+	hostValue := llmAPI host.
+
+	self assert: ((hostValue isNil) or: [ hostValue isString and: [ hostValue size > 0 ] ]).
 ]

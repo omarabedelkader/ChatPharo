@@ -26,7 +26,7 @@ ChatPharoSpecChatHistoryTest >> tearDown [
 ChatPharoSpecChatHistoryTest >> testAddMessage [
 
     | message |
-    message := LLMAPIChatObjectMessage role: 'user' content: 'Testing'.
+    message := ChatPharoHistorySaver role: 'user' content: 'Testing'.
     history addMessage: message.
 
     self assert: (history model includes: message).
@@ -40,8 +40,8 @@ ChatPharoSpecChatHistoryTest >> testInitializeWithExistingMessages [
 
 	| messages newHistory |
 	messages := OrderedCollection new
-		add: (LLMAPIChatObjectMessage role: 'user' content: 'Hi');
-		add: (LLMAPIChatObjectMessage role: 'assistant' content: 'Hello!');
+		add: (ChatPharoHistorySaver role: 'user' content: 'Hi');
+		add: (ChatPharoHistorySaver role: 'assistant' content: 'Hello!');
 		yourself.
 
 	newHistory := ChatPharoSpecChatHistory from: messages.
