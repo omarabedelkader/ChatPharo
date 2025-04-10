@@ -1,8 +1,9 @@
 Class {
 	#name : 'AI_OllamaPromptingTest',
 	#superclass : 'TestCase',
-	#category : 'AI-ChatPharo-Tests',
-	#package : 'AI-ChatPharo-Tests'
+	#category : 'AI-ChatPharo-Tests-Ullama',
+	#package : 'AI-ChatPharo-Tests',
+	#tag : 'Ullama'
 }
 
 { #category : 'tests' }

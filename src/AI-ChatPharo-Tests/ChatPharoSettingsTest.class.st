@@ -5,8 +5,9 @@ Class {
 		'history',
 		'settings'
 	],
-	#category : 'AI-ChatPharo-Tests',
-	#package : 'AI-ChatPharo-Tests'
+	#category : 'AI-ChatPharo-Tests-Spec',
+	#package : 'AI-ChatPharo-Tests',
+	#tag : 'Spec'
 }
 
 { #category : 'running' }

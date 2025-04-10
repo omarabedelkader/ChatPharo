@@ -82,7 +82,7 @@ ChatPharo >> initializePresenters [
 
     notebook := self newNotebook.
     toolbar := self newToolbar.
-	 ollamaDropList := ChatPharoOllamaModel new.
+	 ollamaDropList := OllamaApiGenerate new.
     
     toolbar add: (SpToolbarButtonPresenter new
         label: 'New Chat';

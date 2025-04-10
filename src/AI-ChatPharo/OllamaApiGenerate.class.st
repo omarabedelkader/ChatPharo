@@ -3,7 +3,7 @@ I contain the code needed to select one of the ollama models in on your computer
 I should be made a SpPresenter subclass (as the other aspects)
 "
 Class {
-	#name : 'ChatPharoOllamaModel',
+	#name : 'OllamaApiGenerate',
 	#superclass : 'Ollama',
 	#instVars : [
 		'modelList'
@@ -14,14 +14,14 @@ Class {
 }
 
 { #category : 'initialization' }
-ChatPharoOllamaModel >> initialize [ 
+OllamaApiGenerate >> initialize [ 
 	super initialize.
 	modelList := Ollama modelNames.
 	self model: modelList first.
 ]
 
 { #category : 'layout' }
-ChatPharoOllamaModel >> ollamaModelSelect [
+OllamaApiGenerate >> ollamaModelSelect [
 	"Add to ChatPharo a select ollama model"
 	^ SpDropListPresenter new
 			help: 'Select ollama model';

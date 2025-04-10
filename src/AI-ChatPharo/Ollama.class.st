@@ -41,36 +41,12 @@ Ollama class >> newSystem: synstemText promptPrefix: promptPrefixText [
 ]
 
 { #category : 'ollama models' }
-Ollama >> getDeepSeekResponseForPrompt: prompt [
-    "Sends a prompt to DeepSeek Chat's API and returns the response."
-    | url apiKey requestBody jsonResponse |
-    
-    url := 'https://api.deepseek.com/v1/chat/completions'. "Replace with actual API endpoint if different"
-    apiKey := 'your_api_key_here'. "If authentication is required"
-    
-    "Format the request body for DeepSeek (adjust fields as per their API docs)"
-    requestBody := STONJSON toString: {
-        #model -> 'deepseek-chat'. "Or the specific model name"
-        #messages -> { {
-            #role -> 'user'.
-            #content -> prompt
-        } }.
-        #stream -> false
-    } asDictionary.
-    
-    "Send the HTTP request"
-    jsonResponse := ZnClient new
-        url: url;
-        headers: {
-            'Content-Type' -> 'application/json'.
-            'Authorization' -> ('Bearer ', apiKey) "If auth is needed"
-        };
-        entity: (ZnEntity with: requestBody);
-        post;
-        contents.
-    
-    "Parse the JSON response (adjust key paths as per DeepSeek's response structure)"
-    ^ (STONJSON fromString: jsonResponse) at: 'choices' at: 1 at: 'message' at: 'content'.
+Ollama class >> ollamaVersion [
+	"Retrieve the Ollama version"
+	| response  |
+	
+	response := ZnClient new get: 'http://localhost:11434/api/version'.
+	^ (STONJSON fromString: response) at: 'version'  .
 ]
 
 { #category : 'ollama models' }
@@ -90,18 +66,6 @@ Ollama >> getOllamaModelInformation [
 	    contents.
 	response := (STONJSON fromString: jsonResponse).
 	^ response contents.
-]
-
-{ #category : 'ollama models' }
-Ollama >> getOllamaModelNames [
-	"returns an array with one item per model."
-	^ self getOllamaModels collect: [ :ollamaModel | ollamaModel at: 'name' ]
-]
-
-{ #category : 'ollama models' }
-Ollama >> getOllamaModels [
-	"returns an array with one item per model. Each item has nested informations, and some arrays"
-	^ self class models
 ]
 
 { #category : 'ollama models' }
