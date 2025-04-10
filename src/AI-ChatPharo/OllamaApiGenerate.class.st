@@ -4,7 +4,7 @@ I should be made a SpPresenter subclass (as the other aspects)
 "
 Class {
 	#name : 'OllamaApiGenerate',
-	#superclass : 'Ollama',
+	#superclass : 'OllamaAPI',
 	#instVars : [
 		'modelList'
 	],
@@ -16,7 +16,7 @@ Class {
 { #category : 'initialization' }
 OllamaApiGenerate >> initialize [ 
 	super initialize.
-	modelList := Ollama modelNames.
+	modelList := OllamaAPI modelNames.
 	self model: modelList first.
 ]
 
@@ -25,7 +25,7 @@ OllamaApiGenerate >> ollamaModelSelect [
 	"Add to ChatPharo a select ollama model"
 	^ SpDropListPresenter new
 			help: 'Select ollama model';
-			items: Ollama modelNames;
+			items: OllamaAPI modelNames;
 			display: [ :e | e  ];
 			whenSelectedItemChangedDo: [ :e | self model: e];
 			yourself

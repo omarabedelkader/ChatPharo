@@ -16,6 +16,40 @@ Class {
 }
 
 { #category : 'ollama models' }
+OllamaAPI class >> modelNames [
+	"returns an array with one item per model."
+	^ self models collect: [ :ollamaModel | ollamaModel at: 'name' ]
+]
+
+{ #category : 'ollama models' }
+OllamaAPI class >> models [
+	"returns an array with one item per model. Each item has nested informations, and some arrays"
+	| response  |
+
+	response := ZnClient new get: 'http://localhost:11434/api/tags'.
+	^ (STONJSON fromString: response) at: 'models'  .
+]
+
+{ #category : 'instance creation' }
+OllamaAPI class >> newSystem: synstemText promptPrefix: promptPrefixText [
+	"Create and return an instance with predefined system and prompt prefix for Ollama queries."
+	| prompter |
+	prompter := self new.
+	prompter system: synstemText.
+	prompter promptPrefix: promptPrefixText.
+	^ prompter 
+]
+
+{ #category : 'ollama models' }
+OllamaAPI class >> ollamaVersion [
+	"Retrieve the Ollama version"
+	| response  |
+	
+	response := ZnClient new get: 'http://localhost:11434/api/version'.
+	^ (STONJSON fromString: response) at: 'version'  .
+]
+
+{ #category : 'ollama models' }
 OllamaAPI >> getOllamaModelInformation [
 	"Show information about a model including details, modelfile, template, parameters, license, system prompt."
 	"Check https://github.com/ollama/ollama/blob/main/docs/api.md#show-model-information for details"
