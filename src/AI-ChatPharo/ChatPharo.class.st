@@ -14,8 +14,7 @@ Class {
 	#instVars : [
 		'toolbar',
 		'notebook',
-		'ollamaDropList',
-		'ollama'
+		'ollamaDropList'
 	],
 	#category : 'AI-ChatPharo-Spec',
 	#package : 'AI-ChatPharo',
@@ -46,7 +45,7 @@ ChatPharo >> defaultLayout [
     ^ SpBoxLayout newTopToBottom
 		  add: (SpBoxLayout newLeftToRight 
 					add: toolbar expand: false;
-					add: ( ollamaDropList )
+					add: (ollamaDropList ollamaModelSelect)
 							expand: true fill: true padding: 20
 							) expand: false;
 
@@ -79,73 +78,11 @@ ChatPharo >> initialExtent [
 ]
 
 { #category : 'initialization' }
-ChatPharo >> initializePresenters [
-
-	| tmp1 tmp2 tmp3 tmp4 tmp5 tmp6 tmp7 |
-	notebook := self newNotebook.
-	toolbar := self newToolbar.
-	tmp2 := SpDropListPresenter new.
-	tmp2
-		help: 'Select ollama model';
-		items: Ollama modelNames;
-		display: [ :arg1 | arg1 ];
-		whenSelectedItemChangedDo: [ :arg2 |
-			('<an unprintable nonliteral value>'
-				 runtimeUndeclaredReadInContext: thisContext) model: arg2 ].
-	tmp1 := tmp2 yourself.
-	'<an unprintable nonliteral value>'
-		runtimeUndeclaredWrite: tmp1
-		inContext: thisContext.
-	tmp3 := SpToolbarButtonPresenter new.
-	tmp3
-		label: 'New Chat';
-		icon: (self iconNamed: #add);
-		help: 'Create a new chat';
-		action: [ self addNewChat ].
-	toolbar add: tmp3 yourself.
-	tmp4 := SpToolbarButtonPresenter new.
-	tmp4
-		label: 'Delete Chat';
-		icon: (self iconNamed: #delete);
-		help: 'Delete the selected chat';
-		action: [ self deleteChat: notebook selectedPage title ].
-	toolbar add: tmp4 yourself.
-	tmp5 := SpToolbarButtonPresenter new.
-	tmp5
-		label: 'Save Chat';
-		icon: (self iconNamed: #smallSave);
-		help: 'Save current chat';
-		action: [ self saveCurrentChat ].
-	toolbar add: tmp5 yourself.
-	tmp6 := SpToolbarButtonPresenter new.
-	tmp6
-		label: 'Load Chat';
-		icon: (self iconNamed: #smallOpen);
-		help: 'Load saved chat';
-		action: [ self loadChat ].
-	toolbar add: tmp6 yourself.
-	tmp7 := SpToolbarButtonPresenter new.
-	tmp7
-		label: 'Settings';
-		icon: (self iconNamed: #smallConfiguration);
-		help: 'Open settings';
-		action: [ self openSettings ].
-	toolbar add: tmp7 yourself.
-	notebook addPage: (SpNotebookPage
-			 title: 'Chat'
-			 icon: (self iconNamed: #announcement)
-			 provider: [
-				 ChatPharoSpecChat new ollamaModel:
-					 ('<an unprintable nonliteral value>'
-						  runtimeUndeclaredReadInContext: thisContext) ])
-]
-
-{ #category : 'initialization' }
-ChatPharo >> initializePresenters_oldbar [
+ChatPharo >> initializePresenters [ 
 
     notebook := self newNotebook.
     toolbar := self newToolbar.
-	 ollama := ChatPharoOllamaModel new.
+	 ollamaDropList := ChatPharoOllamaModel new.
     
     toolbar add: (SpToolbarButtonPresenter new
         label: 'New Chat';
@@ -185,40 +122,7 @@ ChatPharo >> initializePresenters_oldbar [
     notebook addPage: (SpNotebookPage
         title: 'Chat'
         icon: (self iconNamed: #announcement)
-        provider: [ ChatPharoSpecChat new ollamaModel: ollama])
-]
-
-{ #category : 'initialization' }
-ChatPharo >> loadChat [ 
-
-    | fileReference jsonData messages newPage |
-    
-    fileReference := UIManager default 
-        chooseExistingFileReference: 'Load chat'
-        extensions: #('json')
-        path: FileLocator home.
-        
-    fileReference ifNotNil: [
-        jsonData := STON fromString: fileReference contents.
-        messages := jsonData collect: [ :dict |
-            ChatPharoHistorySaver 
-                role: (dict at: 'role')
-                content: (dict at: 'content')
-        ].
-        
-        newPage := SpNotebookPage
-            title: fileReference basename
-            icon: (self iconNamed: #announcement)
-            provider: [ 
-                | chat |
-                chat := ChatPharoSpecChat new.
-                messages do: [ :msg | chat history addMessage: msg ].
-                chat
-            ].
-            
-        notebook addPage: newPage.
-        notebook selectPage: newPage
-    ]
+        provider: [ ChatPharoSpecChat new ollamaModel: ollamaDropList])
 ]
 
 { #category : 'accessing' }

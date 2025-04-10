@@ -65,7 +65,7 @@ ChatPharoSettings >> deleteAllChats [
 
 { #category : 'layout' }
 ChatPharoSettings >> initializePresenters [
-self halt.
+
     notebook := self newNotebook.
 
     notebook addPage: (SpNotebookPage

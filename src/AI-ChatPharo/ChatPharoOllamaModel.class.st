@@ -13,17 +13,6 @@ Class {
 	#tag : 'Ullama'
 }
 
-{ #category : 'layout' }
-ChatPharoOllamaModel >> getOllamaModelNames_old [
-	"returns an array with one item per model."
-	| modelResponse |
-	
-	modelResponse := ZnClient new get: 'http://localhost:11434/api/tags'.
-	modelList := ((STONJSON fromString: modelResponse) at: 'models' )
-		 collect: [ :item | item at: 'name' ].
-	^ modelList
-]
-
 { #category : 'initialization' }
 ChatPharoOllamaModel >> initialize [ 
 	super initialize.
@@ -41,11 +30,4 @@ ChatPharoOllamaModel >> ollamaModelSelect [
 			whenSelectedItemChangedDo: [ :e | self model: e];
 			yourself
 		
-]
-
-{ #category : 'layout' }
-ChatPharoOllamaModel >> setOllamaModel_old: selectedModel [
-	"Sets the selected model"
-	model := selectedModel.
-	
 ]

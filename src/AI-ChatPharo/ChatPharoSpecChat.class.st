@@ -29,7 +29,7 @@ Class {
 		'history',
 		'inputField',
 		'submitButton',
-		'cancelSubmit',
+		'cancelButton',
 		'clearButton',
 		'ollamaModel',
 		'ollamaProcess'
@@ -130,7 +130,7 @@ ChatPharoSpecChat >> defaultLayout [
 		add: submitButton withConstraints: [ :constraints |
              constraints height: 27.
              constraints width: 70 ];
-		add: cancelSubmit withConstraints: [ :constraints |
+		add: cancelButton withConstraints: [ :constraints |
              constraints height: 27.
              constraints width: 70 ];
 		yourself.
@@ -174,7 +174,7 @@ ChatPharoSpecChat >> initializePresenters [
         action: [ self askLocalModel ];  
         yourself.
 
-	cancelSubmit := self newButton
+	cancelButton := self newButton
         label: 'Cancel';
         icon: (self iconNamed: #delete);
         help: 'Cancel prompt to Ollama model';
