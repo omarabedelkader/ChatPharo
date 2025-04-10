@@ -41,22 +41,6 @@ Ollama class >> newSystem: synstemText promptPrefix: promptPrefixText [
 ]
 
 { #category : 'ollama models' }
-Ollama class >> ollamaList [
-	"Ask ollama for its list of model names, return them"
-	| res |
-	res := (LibC resultOfCommand: 'ollama list') lines allButFirst.
-	^res collect: [:resItem | resItem copyUpToSubstring: ' ' ].
-]
-
-{ #category : 'ollama models' }
-Ollama class >> ollamaList_old [
-	"Ask ollama for its list of model names, return them"
-	| res |
-	res := (LibC resultOfCommand: 'ollama list') lines allButFirst.
-	^res collect: [:resItem | resItem copyUpToSubstring: ' ' ].
-]
-
-{ #category : 'ollama models' }
 Ollama >> getDeepSeekResponseForPrompt: prompt [
     "Sends a prompt to DeepSeek Chat's API and returns the response."
     | url apiKey requestBody jsonResponse |
