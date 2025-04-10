@@ -43,15 +43,17 @@ Class {
 ChatPharoSpecChat >> askLocalModel [
 	"This method sends a user's input to an Ollama API and updates the chat history with the response."
 
-    | result |
-    history addMessage: (ChatPharoHistorySaver
+	| result |
+	history addMessage: (ChatPharoHistorySaver
                             role: 'user'
                             content: inputField text).
-	 result := ollamaModel getResponseForPrompt:inputField text.
-    history addMessage: (ChatPharoHistorySaver
+	ollamaProcess := [ 
+			result := ollamaModel getResponseForPrompt:inputField text.
+			history addMessage: (ChatPharoHistorySaver
                             role: 'ChatPharo'
                             content: result).
-    inputField text: ''
+		] fork.
+	inputField text: ''
 ]
 
 { #category : 'initialization' }
@@ -90,7 +92,7 @@ ChatPharoSpecChat >> askLocalModel_old [
 ChatPharoSpecChat >> cancelOllamaPrompt [
 	"This method sends a user's input to an Ollama API and updates the chat history with the response."
 
-	| result |
+	|  |
 	ollamaProcess terminate.
 	history addMessage: (ChatPharoHistorySaver
                             role: 'ChatPharo'
