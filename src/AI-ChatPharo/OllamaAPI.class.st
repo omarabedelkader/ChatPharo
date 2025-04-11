@@ -49,49 +49,10 @@ OllamaAPI class >> ollamaVersion [
 	^ (STONJSON fromString: response) at: 'version'  .
 ]
 
-{ #category : 'ollama models' }
-OllamaAPI >> getOllamaModelInformation [
-	"Show information about a model including details, modelfile, template, parameters, license, system prompt."
-	"Check https://github.com/ollama/ollama/blob/main/docs/api.md#show-model-information for details"
-	| url jsonResponse requestBody|
-	url := 'http://localhost:11434/api/show'.
-
-	requestBody := STONJSON toString: { 
-		#model -> model.
-	} asDictionary.
-	jsonResponse := ZnClient new
-	    url: url;
-	    entity: (ZnEntity with: requestBody);
-	    post;
-	    contents.
-	response := (STONJSON fromString: jsonResponse).
-	^ response contents.
-]
-
-{ #category : 'ollama models' }
-OllamaAPI >> getResponseForPrompt: prompt [
-	"Sends a prompt to an API, receives JSON response, and extracts the 'response' value"
-	| url jsonResponse requestBody|
-	url := 'http://localhost:11434/api/generate'.
-
-	requestBody := STONJSON toString: { 
-		#model -> model.
-		#system -> system.
-		#prompt -> (promptPrefix , ' ', prompt).
-		#stream -> false.
-	} asDictionary.
-	jsonResponse := ZnClient new
-	    url: url;
-	    entity: (ZnEntity with: requestBody);
-	    post;
-	    contents.
-	response := (STONJSON fromString: jsonResponse) at: 'response'.
-	^ response contents.
-]
-
 { #category : 'initialization' }
 OllamaAPI >> initialize [ 
-	model := ''.
+	super initialize.
+	self model: (self class modelNames) first.
 	system := ''.
 	promptPrefix := ''.
 ]

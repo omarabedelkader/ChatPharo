@@ -48,12 +48,12 @@ ChatPharoSpecChat >> askLocalModel [
                             role: 'user'
                             content: inputField text).
 	ollamaProcess := [ 
-			result := ollamaModel getResponseForPrompt:inputField text.
+			result := ollamaModel getResponseForPrompt: inputField text.
 			history addMessage: (ChatPharoHistorySaver
-                            role: 'ChatPharo'
+                            role: 'assistant'
                             content: result).
 		] fork.
-	inputField text: ''
+	"inputField text: ''"
 ]
 
 { #category : 'initialization' }

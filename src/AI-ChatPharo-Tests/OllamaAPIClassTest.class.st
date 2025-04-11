@@ -1,5 +1,5 @@
 Class {
-	#name : 'OllamaClassTest',
+	#name : 'OllamaAPIClassTest',
 	#superclass : 'TestCase',
 	#category : 'AI-ChatPharo-Tests-Ullama',
 	#package : 'AI-ChatPharo-Tests',
@@ -7,7 +7,7 @@ Class {
 }
 
 { #category : 'tests' }
-OllamaClassTest >> testModelNames [
+OllamaAPIClassTest >> testModelNames [
 	"check at the list function works, and is larger than 0"
 	| res |
 	res := OllamaAPI modelNames.
@@ -16,7 +16,7 @@ OllamaClassTest >> testModelNames [
 ]
 
 { #category : 'tests' }
-OllamaClassTest >> testModels [
+OllamaAPIClassTest >> testModels [
 	"check at the list function works, and is larger than 0"
 	| res |
 	res := OllamaAPI models.
@@ -25,7 +25,7 @@ OllamaClassTest >> testModels [
 ]
 
 { #category : 'tests' }
-OllamaClassTest >> testOllamaList [
+OllamaAPIClassTest >> testOllamaList [
 	"check at the list function works, and is larger than 0"
 	| res |
 	res := OllamaAPI models.
@@ -34,7 +34,7 @@ OllamaClassTest >> testOllamaList [
 ]
 
 { #category : 'tests' }
-OllamaClassTest >> testOllamaVersion [
+OllamaAPIClassTest >> testOllamaVersion [
 	"check at the list function works, and is larger than 0"
 	| res |
 	res := OllamaAPI ollamaVersion.

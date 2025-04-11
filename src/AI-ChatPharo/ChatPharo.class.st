@@ -45,7 +45,7 @@ ChatPharo >> defaultLayout [
     ^ SpBoxLayout newTopToBottom
 		  add: (SpBoxLayout newLeftToRight 
 					add: toolbar expand: false;
-					add: (ollamaDropList ollamaModelSelect)
+					add: (self ollamaModelSelect)
 							expand: true fill: true padding: 20
 							) expand: false;
 
@@ -82,7 +82,7 @@ ChatPharo >> initializePresenters [
 
     notebook := self newNotebook.
     toolbar := self newToolbar.
-	 ollamaDropList := OllamaApiGenerate new.
+	 ollamaDropList := self ollamaApi.
     
     toolbar add: (SpToolbarButtonPresenter new
         label: 'New Chat';
@@ -135,6 +135,24 @@ ChatPharo >> notebook [
 ChatPharo >> notebook: anObject [
 
 	notebook := anObject
+]
+
+{ #category : 'as yet unclassified' }
+ChatPharo >> ollamaApi [
+	"Return what Api we are using at the moment. Should return OllamaApiGenerate or OllamaApiChat"
+	^ OllamaApiGenerate new.
+]
+
+{ #category : 'layout' }
+ChatPharo >> ollamaModelSelect [
+	"Add to ChatPharo a select ollama model"
+	^ SpDropListPresenter new
+			help: 'Select ollama model';
+			items: OllamaAPI modelNames;
+			display: [ :e | e  ];
+			whenSelectedItemChangedDo: [ :e | self model: e];
+			yourself
+		
 ]
 
 { #category : 'initialization' }

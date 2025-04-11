@@ -1,5 +1,5 @@
 Class {
-	#name : 'OllamaTest',
+	#name : 'OllamaAPITest',
 	#superclass : 'TestCase',
 	#instVars : [
 		'ollamaAPI'
@@ -10,7 +10,7 @@ Class {
 }
 
 { #category : 'running' }
-OllamaTest >> setUp [
+OllamaAPITest >> setUp [
 	super setUp.
 
 	"Put here a common initialization logic for tests"
@@ -20,13 +20,13 @@ OllamaTest >> setUp [
 ]
 
 { #category : 'tests' }
-OllamaTest >> testGetResonceForPrompt [
+OllamaAPITest >> testGetResonceForPrompt [
 	ollamaAPI getResponseForPrompt: 'Can you read these words. Please answer Yes or no'.
 	self assert: (ollamaAPI response includesSubstring: 'Yes')
 ]
 
 { #category : 'tests' }
-OllamaTest >> testModelInformation [
+OllamaAPITest >> testModelInformation [
 	"test that the connection to the model works"
 
 	self 
@@ -35,7 +35,7 @@ OllamaTest >> testModelInformation [
 ]
 
 { #category : 'tests' }
-OllamaTest >> testNewSystemPromptPrefix [
+OllamaAPITest >> testNewSystemPromptPrefix [
 	"test that the connection to the model works"
 
 	ollamaAPI
