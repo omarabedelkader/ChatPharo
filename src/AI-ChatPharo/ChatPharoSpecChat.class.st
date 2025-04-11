@@ -56,45 +56,15 @@ ChatPharoSpecChat >> askLocalModel [
 	history addMessage: (ChatPharoHistorySaver
                             role: 'user'
                             content: inputField text).
-	ollamaProcess := [ 
-			result := self ollamaModel getResponseForPrompt: inputField text.
-			history addMessage: (ChatPharoHistorySaver
-                            role: 'assistant'
-                            content: result).
-		] fork.
-	"inputField text: ''"
-]
-
-{ #category : 'initialization' }
-ChatPharoSpecChat >> askLocalModel_new [
-	"This method sends a user's input to an Ollama API and updates the chat history with the response."
-
-	| result |
-	history addMessage: (ChatPharoHistorySaver
-                            role: 'user'
-                            content: inputField text).
-	ollamaProcess := [ 
-			result := self ollamaModel getResponseForPrompt:inputField text.
+	ollamaProcess := [ | prompt |
+			prompt := inputField text.
+			inputField text: '(ollama model running)'.
+			result := self ollamaModel getResponseForPrompt: prompt.
+			inputField text: ''.
 			history addMessage: (ChatPharoHistorySaver
                             role: 'ChatPharo'
                             content: result).
 		] fork.
-	inputField text: ''
-]
-
-{ #category : 'initialization' }
-ChatPharoSpecChat >> askLocalModel_old [
-	"This method sends a user's input to an Ollama API and updates the chat history with the response."
-
-    | result |
-    history addMessage: (ChatPharoHistorySaver
-                            role: 'user'
-                            content: inputField text).
-	 result := self ollamaModel getResponseForPrompt:inputField text.
-    history addMessage: (ChatPharoHistorySaver
-                            role: 'ChatPharo'
-                            content: result).
-    inputField text: ''
 ]
 
 { #category : 'initialization' }

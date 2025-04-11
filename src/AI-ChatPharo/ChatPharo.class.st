@@ -41,7 +41,10 @@ ChatPharo >> addNewChat [
 ]
 
 { #category : 'layout' }
-ChatPharo >> defaultLayout [ 
+ChatPharo >> defaultLayout [
+	"Layout of ChatPharo. Nicer design wanted..."
+	
+	titleHolder := 'ChatPharo'. 
     ^ SpBoxLayout newTopToBottom
 		  add: (SpBoxLayout newLeftToRight 
 					add: toolbar expand: false;
@@ -125,7 +128,7 @@ ChatPharo >> initializePresenters [
 ]
 
 { #category : 'instance creation' }
-ChatPharo >> newChatPharoSpecChat [
+ChatPharo >> newChatPharoSpecChat_old [
 	ChatPharoSpecChat newWithParent: self.
 ]
 
@@ -154,20 +157,6 @@ ChatPharo >> ollamaModel [
 
 { #category : 'layout' }
 ChatPharo >> ollamaModelSelect [
-	"Add to ChatPharo a select ollama model"
-	^ SpDropListPresenter new
-			help: 'Select ollama model';
-			items: OllamaAPI modelNames;
-			display: [ :e | e  ];
-			whenSelectedItemChangedDo: [ :e | 
-				ollamaModel := self ollamaApi.
-				ollamaModel model: e];
-			yourself
-		
-]
-
-{ #category : 'layout' }
-ChatPharo >> ollamaModelSelect_old [
 	"Add to ChatPharo a select ollama model"
 	^ SpDropListPresenter new
 			help: 'Select ollama model';
@@ -208,12 +197,6 @@ ChatPharo >> saveCurrentChat [
             nextPutAll: jsonData;
             close
     ]
-]
-
-{ #category : 'specs' }
-ChatPharo >> title [
-	
-	^ 'ChatPharo'
 ]
 
 { #category : 'accessing' }
