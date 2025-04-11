@@ -14,7 +14,7 @@ Class {
 	#instVars : [
 		'toolbar',
 		'notebook',
-		'ollamaDropList'
+		'ollamaModel'
 	],
 	#category : 'AI-ChatPharo-Spec',
 	#package : 'AI-ChatPharo',
@@ -79,10 +79,9 @@ ChatPharo >> initialExtent [
 
 { #category : 'initialization' }
 ChatPharo >> initializePresenters [ 
-
     notebook := self newNotebook.
     toolbar := self newToolbar.
-	 ollamaDropList := self ollamaApi.
+	 ollamaModel := self ollamaApi.
     
     toolbar add: (SpToolbarButtonPresenter new
         label: 'New Chat';
@@ -122,7 +121,12 @@ ChatPharo >> initializePresenters [
     notebook addPage: (SpNotebookPage
         title: 'Chat'
         icon: (self iconNamed: #announcement)
-        provider: [ ChatPharoSpecChat new ollamaModel: ollamaDropList])
+        provider: [ ChatPharoSpecChat newWithParent: self])
+]
+
+{ #category : 'instance creation' }
+ChatPharo >> newChatPharoSpecChat [
+	ChatPharoSpecChat newWithParent: self.
 ]
 
 { #category : 'accessing' }
@@ -137,10 +141,15 @@ ChatPharo >> notebook: anObject [
 	notebook := anObject
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'accessing' }
 ChatPharo >> ollamaApi [
 	"Return what Api we are using at the moment. Should return OllamaApiGenerate or OllamaApiChat"
 	^ OllamaApiGenerate new.
+]
+
+{ #category : 'accessing' }
+ChatPharo >> ollamaModel [
+	^ ollamaModel 
 ]
 
 { #category : 'layout' }
@@ -150,7 +159,21 @@ ChatPharo >> ollamaModelSelect [
 			help: 'Select ollama model';
 			items: OllamaAPI modelNames;
 			display: [ :e | e  ];
-			whenSelectedItemChangedDo: [ :e | self model: e];
+			whenSelectedItemChangedDo: [ :e | 
+				ollamaModel := self ollamaApi.
+				ollamaModel model: e];
+			yourself
+		
+]
+
+{ #category : 'layout' }
+ChatPharo >> ollamaModelSelect_old [
+	"Add to ChatPharo a select ollama model"
+	^ SpDropListPresenter new
+			help: 'Select ollama model';
+			items: OllamaAPI modelNames;
+			display: [ :e | e  ];
+			whenSelectedItemChangedDo: [ :e | self ollamaApi model: e];
 			yourself
 		
 ]

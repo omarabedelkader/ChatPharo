@@ -26,18 +26,27 @@ Class {
 	#name : 'ChatPharoSpecChat',
 	#superclass : 'SpPresenter',
 	#instVars : [
+		'spParent',
 		'history',
 		'inputField',
 		'submitButton',
 		'cancelButton',
 		'clearButton',
-		'ollamaModel',
 		'ollamaProcess'
 	],
 	#category : 'AI-ChatPharo-Spec',
 	#package : 'AI-ChatPharo',
 	#tag : 'Spec'
 }
+
+{ #category : 'instance creation' }
+ChatPharoSpecChat class >> newWithParent: spPresenter [
+	"Create an instance of me, with spPresenter as spParent"
+	| specChat |
+	specChat := self new.
+	specChat spParent: spPresenter.
+	^ specChat 
+]
 
 { #category : 'initialization' }
 ChatPharoSpecChat >> askLocalModel [
@@ -48,7 +57,7 @@ ChatPharoSpecChat >> askLocalModel [
                             role: 'user'
                             content: inputField text).
 	ollamaProcess := [ 
-			result := ollamaModel getResponseForPrompt: inputField text.
+			result := self ollamaModel getResponseForPrompt: inputField text.
 			history addMessage: (ChatPharoHistorySaver
                             role: 'assistant'
                             content: result).
@@ -65,7 +74,7 @@ ChatPharoSpecChat >> askLocalModel_new [
                             role: 'user'
                             content: inputField text).
 	ollamaProcess := [ 
-			result := ollamaModel getResponseForPrompt:inputField text.
+			result := self ollamaModel getResponseForPrompt:inputField text.
 			history addMessage: (ChatPharoHistorySaver
                             role: 'ChatPharo'
                             content: result).
@@ -81,7 +90,7 @@ ChatPharoSpecChat >> askLocalModel_old [
     history addMessage: (ChatPharoHistorySaver
                             role: 'user'
                             content: inputField text).
-	 result := ollamaModel getResponseForPrompt:inputField text.
+	 result := self ollamaModel getResponseForPrompt:inputField text.
     history addMessage: (ChatPharoHistorySaver
                             role: 'ChatPharo'
                             content: result).
@@ -160,7 +169,6 @@ ChatPharoSpecChat >> history: anObject [
 
 { #category : 'initialization' }
 ChatPharoSpecChat >> initializePresenters [
-
    history := ChatPharoSpecChatHistory from: OrderedCollection new.
 	 
    inputField := self newTextInput
@@ -207,12 +215,17 @@ ChatPharoSpecChat >> inputField: anObject [
 
 { #category : 'accessing' }
 ChatPharoSpecChat >> ollamaModel [
-	^ ollamaModel 
+	^ spParent ollamaModel 
 ]
 
 { #category : 'accessing' }
-ChatPharoSpecChat >> ollamaModel: model [
-	ollamaModel := model
+ChatPharoSpecChat >> spParent [
+	^ spParent 
+]
+
+{ #category : 'accessing' }
+ChatPharoSpecChat >> spParent: spPresenter [
+	spParent := spPresenter
 ]
 
 { #category : 'accessing' }
