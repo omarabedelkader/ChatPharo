@@ -32,13 +32,13 @@ Class {
 { #category : 'accessing' }
 OllamaAPI class >> defaultModel [
 
-	^ defaultModel ifNil: [ defaultModel := OCodeLlamaModel class >> #b7 ]
+    ^ defaultModel ifNil: [ defaultModel := 'llama2' ] 
 ]
 
 { #category : 'accessing' }
-OllamaAPI class >> defaultModel: anObject [
+OllamaAPI class >> defaultModel: aString [
 
-	defaultModel := anObject
+    defaultModel := aString
 ]
 
 { #category : 'settings' }
@@ -52,12 +52,10 @@ OllamaAPI class >> ollamaSettings: aBuilder [
 				order: -100000;
 				label: 'Ollama Default model';
 				target: self;
-				default: OCodeLlamaModel class >> #b7;
-				domainValues:
-					(((Pragma allNamed: #ollamaInit:) collect: [ :pragma |
-							  pragma arguments first -> pragma method ]) sorted: [ :a :b |
-							 a key < b key ]);
-				ghostHelp: 'Model name' ]
+				default: self defaultModel;
+				domainValues: (OllamaModelRegistry new allModels);
+				ghostHelp: 'Choose a model installed on your system'
+		]
 ]
 
 { #category : 'private' }
@@ -91,9 +89,18 @@ OllamaAPI >> delete [
 	znClient port: self port.
 	znClient path: 'api/delete'.
 	paramDic := Dictionary new.
-	paramDic at: #name put: self model fullName.
+	paramDic at: #name put: self model.
 	znClient entity: (ZnEntity json: (NeoJSONWriter toString: paramDic)).
 	^ znClient delete
+]
+
+{ #category : 'api' }
+OllamaAPI >> listModels [
+    | response json models |
+    response := self list contents.
+    json := NeoJSONReader fromString: response.
+    models := (json at: 'models' ifAbsent: [ #() ]) collect: [ :m | m at: 'name' ].
+    ^ models
 ]
 
 { #category : 'accessing' }
@@ -132,10 +139,7 @@ OllamaAPI >> initialize [
 	super initialize.
 	host := '127.0.0.1'.
 	port := 11434.
-	model := self class defaultModel
-		         valueWithReceiver:
-		         self class defaultModel methodClass instanceSide
-		         arguments: {  }.
+	model := self class defaultModel. 
 	stream := false
 ]
 
@@ -199,7 +203,7 @@ OllamaAPI >> pull [
 	znClient port: self port.
 	znClient path: 'api/pull'.
 	paramDic := Dictionary new.
-	paramDic at: #name put: self model fullName.
+	paramDic at: #name put: self model.
 	paramDic at: #stream put: false.
 	znClient entity: (ZnEntity json: (NeoJSONWriter toString: paramDic)).
 	^ znClient post at: #response
@@ -218,7 +222,7 @@ OllamaAPI >> query: aTextQuery [
 	znClient port: self port.
 	znClient path: 'api/generate'.
 	paramDic := Dictionary new.
-	paramDic at: #model put: self model fullName.
+	paramDic at: #model put: self model.
 	paramDic at: #prompt put: (self buildQuery: aTextQuery).
 	paramDic at: #stream put: self stream.
 	self format ifNotNil: [ :f | paramDic at: #format put: f ].
