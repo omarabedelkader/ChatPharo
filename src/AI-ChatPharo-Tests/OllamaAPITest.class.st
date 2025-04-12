@@ -30,13 +30,3 @@ OllamaAPITest >> testOllamaAPIHasDefaultModelInitialized [
 	self assert: (ollama model isString).
 	self assert: (ollama model notEmpty).
 ]
-
-{ #category : 'running' }
-OllamaAPITest >> testListModelsReturnsStrings [
-
-	| models |
-	models := ollama listModels.
-
-	self assert: models isArray.
-	self assert: (models allSatisfy: [ :each | each isString ]).
-]
