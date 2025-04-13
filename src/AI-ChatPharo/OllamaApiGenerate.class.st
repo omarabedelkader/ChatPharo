@@ -5,7 +5,12 @@ See ""https://github.com/ollama/ollama/blob/main/docs/api.md#generate-a-completi
 "
 Class {
 	#name : 'OllamaApiGenerate',
-	#superclass : 'OllamaAPI',
+	#superclass : 'OllamaApi',
+	#instVars : [
+		'system',
+		'promptPrefix',
+		'response'
+	],
 	#category : 'AI-ChatPharo-Ullama',
 	#package : 'AI-ChatPharo',
 	#tag : 'Ullama'
@@ -18,8 +23,8 @@ OllamaApiGenerate >> getResponseForPrompt: prompt [
 	url := 'http://localhost:11434/api/generate'.
 	requestDictionary := Dictionary newFrom:  { 
 		#model -> model.
-		#system -> system.
-		#prompt -> (promptPrefix , ' ', prompt).
+		#system -> self system.
+		#prompt -> (self promptPrefix , ' ', prompt).
 		#stream -> false.
 		#options -> (Dictionary newFrom: {
     		#temperature -> 0})
@@ -30,6 +35,50 @@ OllamaApiGenerate >> getResponseForPrompt: prompt [
 	    entity: (ZnEntity with: requestBody);
 	    post;
 	    contents.
-	response := (STONJSON fromString: jsonResponse) at: 'response'.
-	^ response contents.
+	self response: ((STONJSON fromString: jsonResponse) at: 'response').
+	^ self response contents.
+]
+
+{ #category : 'initialization' }
+OllamaApiGenerate >> initialize [ 
+	super initialize.
+	
+	self system: ''.
+	self promptPrefix: ''.
+]
+
+{ #category : 'accessing' }
+OllamaApiGenerate >> promptPrefix [
+
+	^ promptPrefix
+]
+
+{ #category : 'accessing' }
+OllamaApiGenerate >> promptPrefix: anObject [
+
+	promptPrefix := anObject
+]
+
+{ #category : 'accessing' }
+OllamaApiGenerate >> response [
+
+	^ response
+]
+
+{ #category : 'accessing' }
+OllamaApiGenerate >> response: anObject [
+
+	response := anObject
+]
+
+{ #category : 'accessing' }
+OllamaApiGenerate >> system [
+
+	^ system
+]
+
+{ #category : 'accessing' }
+OllamaApiGenerate >> system: anObject [
+
+	system := anObject
 ]

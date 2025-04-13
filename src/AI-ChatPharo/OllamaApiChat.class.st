@@ -4,7 +4,7 @@ I should be made a SpPresenter subclass (as the other aspects)
 "
 Class {
 	#name : 'OllamaApiChat',
-	#superclass : 'OllamaAPI',
+	#superclass : 'OllamaApi',
 	#category : 'AI-ChatPharo-Ullama',
 	#package : 'AI-ChatPharo',
 	#tag : 'Ullama'

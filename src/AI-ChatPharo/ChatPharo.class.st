@@ -160,7 +160,7 @@ ChatPharo >> ollamaModelSelect [
 	"Add to ChatPharo a select ollama model"
 	^ SpDropListPresenter new
 			help: 'Select ollama model';
-			items: OllamaAPI modelNames;
+			items: OllamaApi modelNames;
 			display: [ :e | e  ];
 			whenSelectedItemChangedDo: [ :e | self ollamaApi model: e];
 			yourself

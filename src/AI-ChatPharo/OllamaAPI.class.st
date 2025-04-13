@@ -2,13 +2,10 @@
 Killroy was here, but went away
 "
 Class {
-	#name : 'OllamaAPI',
+	#name : 'OllamaApi',
 	#superclass : 'Object',
 	#instVars : [
-		'model',
-		'system',
-		'promptPrefix',
-		'response'
+		'model'
 	],
 	#category : 'AI-ChatPharo-Ullama',
 	#package : 'AI-ChatPharo',
@@ -16,13 +13,13 @@ Class {
 }
 
 { #category : 'ollama models' }
-OllamaAPI class >> modelNames [
+OllamaApi class >> modelNames [
 	"returns an array with one item per model."
 	^ self models collect: [ :ollamaModel | ollamaModel at: 'name' ]
 ]
 
 { #category : 'ollama models' }
-OllamaAPI class >> models [
+OllamaApi class >> models [
 	"returns an array with one item per model. Each item has nested informations, and some arrays"
 	| response  |
 
@@ -31,7 +28,7 @@ OllamaAPI class >> models [
 ]
 
 { #category : 'instance creation' }
-OllamaAPI class >> newSystem: synstemText promptPrefix: promptPrefixText [
+OllamaApi class >> newSystem: synstemText promptPrefix: promptPrefixText [
 	"Create and return an instance with predefined system and prompt prefix for Ollama queries."
 	| prompter |
 	prompter := self new.
@@ -41,7 +38,7 @@ OllamaAPI class >> newSystem: synstemText promptPrefix: promptPrefixText [
 ]
 
 { #category : 'ollama models' }
-OllamaAPI class >> ollamaVersion [
+OllamaApi class >> ollamaVersion [
 	"Retrieve the Ollama version"
 	| response  |
 	
@@ -50,30 +47,28 @@ OllamaAPI class >> ollamaVersion [
 ]
 
 { #category : 'initialization' }
-OllamaAPI >> initialize [ 
+OllamaApi >> initialize [ 
 	super initialize.
 	self model: (self class modelNames) first.
-	system := ''.
-	promptPrefix := ''.
 ]
 
 { #category : 'accessing' }
-OllamaAPI >> model [
+OllamaApi >> model [
 
 	^ model
 ]
 
 { #category : 'accessing' }
-OllamaAPI >> model: anObject [
+OllamaApi >> model: anObject [
 
 	model := anObject
 ]
 
 { #category : 'ollama models' }
-OllamaAPI >> modelInformation [
+OllamaApi >> modelInformation [
 	"Show information about a model including details, modelfile, template, parameters, license, system prompt."
 	"Check https://github.com/ollama/ollama/blob/main/docs/api.md#show-model-information for details"
-	| url jsonResponse requestBody|
+	| url jsonResponse requestBody  response|
 	url := 'http://localhost:11434/api/show'.
 
 	requestBody := STONJSON toString: { 
@@ -86,34 +81,4 @@ OllamaAPI >> modelInformation [
 	    contents.
 	response := (STONJSON fromString: jsonResponse).
 	^ response contents.
-]
-
-{ #category : 'accessing' }
-OllamaAPI >> promptPrefix [
-	^ promptPrefix .
-]
-
-{ #category : 'accessing' }
-OllamaAPI >> promptPrefix: aValue [
-	promptPrefix	:=	aValue.
-]
-
-{ #category : 'accessing' }
-OllamaAPI >> response [
-	^ response .
-]
-
-{ #category : 'accessing' }
-OllamaAPI >> response: aValue [
-	response	 :=	aValue.
-]
-
-{ #category : 'accessing' }
-OllamaAPI >> system [
-	^ system .
-]
-
-{ #category : 'accessing' }
-OllamaAPI >> system: aValue [
-	system	 :=	aValue.
 ]

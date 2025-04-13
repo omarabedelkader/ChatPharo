@@ -24,3 +24,14 @@ OllamaApiGenerateTest >> testGetResonceForPrompt [
 	ollamaApiGenerate getResponseForPrompt: 'Can you read these words. Please answer Yes or no'.
 	self assert: (ollamaApiGenerate response includesSubstring: 'Yes')
 ]
+
+{ #category : 'tests' }
+OllamaApiGenerateTest >> testNewSystemPromptPrefix [
+	"test that the connection to the model works "
+
+	ollamaApiGenerate
+		system: 'Killroy was ';
+		promptPrefix: 'here'.
+	self assert: ollamaApiGenerate system = 'Killroy was '.
+	self assert: ollamaApiGenerate promptPrefix = 'here'
+]
