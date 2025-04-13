@@ -59,12 +59,14 @@ OllamaAPI >> initialize [
 
 { #category : 'accessing' }
 OllamaAPI >> model [
+
 	^ model
 ]
 
 { #category : 'accessing' }
-OllamaAPI >> model: aValue [
-	model	:=	aValue.
+OllamaAPI >> model: anObject [
+
+	model := anObject
 ]
 
 { #category : 'ollama models' }

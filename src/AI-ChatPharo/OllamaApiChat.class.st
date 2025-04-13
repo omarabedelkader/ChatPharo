@@ -23,6 +23,27 @@ OllamaApiChat >> fibbe [
 { #category : 'ollama models' }
 OllamaApiChat >> getResponseForPrompt: prompt [
 	"Sends a prompt to an API, receives JSON response, and extracts the 'response' value"
+	| url jsonResponse requestDictionary requestBody|
+	url := 'http://localhost:11434/api/generate'.
+	requestDictionary := Dictionary newFrom:  { 
+		#model -> model.
+		#system -> system.
+		#prompt -> (promptPrefix , ' ', prompt).
+		#stream -> false.
+	} .
+	requestBody := (STONJSON toString: requestDictionary).
+	jsonResponse := ZnClient new
+	    url: url;
+	    entity: (ZnEntity with: requestBody);
+	    post;
+	    contents.
+	response := (STONJSON fromString: jsonResponse) at: 'response'.
+	^ response contents.
+]
+
+{ #category : 'ollama models' }
+OllamaApiChat >> getResponseForPrompt_old: prompt [
+	"Sends a prompt to an API, receives JSON response, and extracts the 'response' value"
 	| url jsonResponse requestBody|
 	url := 'http://localhost:11434/api/chat'.
 
@@ -39,19 +60,6 @@ OllamaApiChat >> getResponseForPrompt: prompt [
 	    contents.
 	response := (STONJSON fromString: jsonResponse) at: 'response'.
 	^ response contents.
-]
-
-{ #category : 'layout' }
-OllamaApiChat >> ollamaModelSelect_old [
-	"Add to ChatPharo a select ollama model"
-self halt.
-	^ SpDropListPresenter new
-			help: 'Select ollama model';
-			items: OllamaAPI modelNames;
-			display: [ :e | e  ];
-			whenSelectedItemChangedDo: [ :e | self model: e];
-			yourself
-		
 ]
 
 { #category : 'as yet unclassified' }

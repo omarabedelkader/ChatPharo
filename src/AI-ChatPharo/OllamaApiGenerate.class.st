@@ -21,6 +21,8 @@ OllamaApiGenerate >> getResponseForPrompt: prompt [
 		#system -> system.
 		#prompt -> (promptPrefix , ' ', prompt).
 		#stream -> false.
+		#options -> (Dictionary newFrom: {
+    		#temperature -> 0})
 	} .
 	requestBody := (STONJSON toString: requestDictionary).
 	jsonResponse := ZnClient new
