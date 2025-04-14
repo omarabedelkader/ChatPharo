@@ -321,3 +321,27 @@ OllamaAPI >> top_p: anObject [
 
 	top_p := anObject
 ]
+
+{ #category : 'accessing' }
+OllamaAPI >> host [
+
+	^ host
+]
+
+{ #category : 'accessing' }
+OllamaAPI >> host: anObject [
+
+	host := anObject
+]
+
+{ #category : 'accessing' }
+OllamaAPI >> port [
+
+	^ port
+]
+
+{ #category : 'accessing' }
+OllamaAPI >> port: anObject [
+	
+	port := anObject
+]
