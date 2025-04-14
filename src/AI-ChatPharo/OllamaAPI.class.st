@@ -22,7 +22,10 @@ Class {
 		'format'
 	],
 	#classInstVars : [
-		'defaultModel'
+		'defaultHost',
+	    'defaultPort',
+		'defaultModel',
+		'defaultTemperature'
 	],
 	#category : 'AI-ChatPharo-API',
 	#package : 'AI-ChatPharo',
@@ -32,7 +35,7 @@ Class {
 { #category : 'accessing' }
 OllamaAPI class >> defaultModel [
 
-    ^ defaultModel ifNil: [ defaultModel := 'llama2' ] 
+    ^ defaultModel ifNil: [ defaultModel := 'codellama:7b' ] 
 ]
 
 { #category : 'accessing' }
@@ -54,7 +57,22 @@ OllamaAPI class >> ollamaSettings: aBuilder [
 				target: self;
 				default: self defaultModel;
 				domainValues: (OllamaModelRegistry new allModels);
-				ghostHelp: 'Choose a model installed on your system'
+				ghostHelp: 'Choose a model installed on your system'.
+
+			(aBuilder text: #defaultHost)
+				label: 'Ollama Host';
+				default: '127.0.0.1';
+				ghostHelp: 'Host of the Ollama server (usually localhost)'.
+
+			(aBuilder number: #defaultPort)
+				label: 'Ollama Port';
+				default: 11434;
+				ghostHelp: 'Port the Ollama server is listening on'.
+
+			(aBuilder float: #defaultTemperature)
+				label: 'Default Temperature';
+				default: 0.8;
+				ghostHelp: 'Controls randomness of response (0.0 - 1.0)'
 		]
 ]
 
@@ -122,25 +140,26 @@ OllamaAPI >> formatJson [
 ]
 
 { #category : 'accessing' }
-OllamaAPI >> host [
+OllamaAPI class >> defaultHost [
 
-	^ host
+	^ defaultHost ifNil: [ defaultHost := '127.0.0.1' ]
 ]
 
 { #category : 'accessing' }
-OllamaAPI >> host: anObject [
+OllamaAPI class >> defaultHost: aString [
 
-	host := anObject
+	defaultHost := aString
 ]
 
 { #category : 'initialization' }
 OllamaAPI >> initialize [
 
 	super initialize.
-	host := '127.0.0.1'.
-	port := 11434.
+	host := self class defaultHost.
+	port := self class defaultPort.
 	model := self class defaultModel. 
-	stream := false
+	stream := false.
+	temperature := self class defaultTemperature.
 ]
 
 { #category : 'api' }
@@ -169,6 +188,17 @@ OllamaAPI >> model: anObject [
 ]
 
 { #category : 'accessing' }
+OllamaAPI class >> defaultTemperature [
+
+	^ defaultTemperature ifNil: [ defaultTemperature := 0.8 ]
+]
+
+OllamaAPI class >> defaultTemperature: aFloat [
+
+	defaultTemperature := aFloat.
+]
+
+{ #category : 'accessing' }
 OllamaAPI >> num_predict [
 
 	^ num_predict
@@ -181,15 +211,15 @@ OllamaAPI >> num_predict: anObject [
 ]
 
 { #category : 'accessing' }
-OllamaAPI >> port [
+OllamaAPI class >> defaultPort [
 
-	^ port
+	^ defaultPort ifNil: [ defaultPort := 11434 ]
 ]
 
 { #category : 'accessing' }
-OllamaAPI >> port: anObject [
+OllamaAPI class >> defaultPort: aNumber [
 
-	port := anObject
+	defaultPort := aNumber
 ]
 
 { #category : 'api' }
