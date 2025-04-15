@@ -7,9 +7,9 @@ Class {
 	#instVars : [
 		'model'
 	],
-	#category : 'AI-ChatPharo-Ullama',
+	#category : 'AI-ChatPharo-Ollama',
 	#package : 'AI-ChatPharo',
-	#tag : 'Ullama'
+	#tag : 'Ollama'
 }
 
 { #category : 'ollama models' }

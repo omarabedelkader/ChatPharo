@@ -1,16 +1,16 @@
 Class {
-	#name : 'OllamaAPITest',
+	#name : 'OllamaApiTest',
 	#superclass : 'TestCase',
 	#instVars : [
 		'ollamaAPI'
 	],
-	#category : 'AI-ChatPharo-Tests-Ullama',
+	#category : 'AI-ChatPharo-Tests-Ollama',
 	#package : 'AI-ChatPharo-Tests',
-	#tag : 'Ullama'
+	#tag : 'Ollama'
 }
 
 { #category : 'running' }
-OllamaAPITest >> setUp [
+OllamaApiTest >> setUp [
 	super setUp.
 
 	"Put here a common initialization logic for tests"
@@ -20,7 +20,7 @@ OllamaAPITest >> setUp [
 ]
 
 { #category : 'tests' }
-OllamaAPITest >> testModelInformation [
+OllamaApiTest >> testModelInformation [
 	"test that the connection to the model works"
 
 	self 
@@ -29,7 +29,7 @@ OllamaAPITest >> testModelInformation [
 ]
 
 { #category : 'tests' }
-OllamaAPITest >> testModelNames [
+OllamaApiTest >> testModelNames [
 	"check at the list function works, and is larger than 0"
 	| res |
 	res := OllamaApi modelNames.
@@ -38,7 +38,7 @@ OllamaAPITest >> testModelNames [
 ]
 
 { #category : 'tests' }
-OllamaAPITest >> testModels [
+OllamaApiTest >> testModels [
 	"check at the list function works, and is larger than 0"
 	| res |
 	res := OllamaApi models.
@@ -47,7 +47,7 @@ OllamaAPITest >> testModels [
 ]
 
 { #category : 'tests' }
-OllamaAPITest >> testOllamaList [
+OllamaApiTest >> testOllamaList [
 	"check at the list function works, and is larger than 0"
 	| res |
 	res := OllamaApi models.
@@ -56,7 +56,7 @@ OllamaAPITest >> testOllamaList [
 ]
 
 { #category : 'tests' }
-OllamaAPITest >> testOllamaVersion [
+OllamaApiTest >> testOllamaVersion [
 	"check at the list function works, and is larger than 0"
 	| res |
 	res := OllamaApi ollamaVersion.

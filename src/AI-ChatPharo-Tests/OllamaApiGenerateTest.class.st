@@ -4,9 +4,9 @@ Class {
 	#instVars : [
 		'ollamaApiGenerate'
 	],
-	#category : 'AI-ChatPharo-Tests-Ullama',
+	#category : 'AI-ChatPharo-Tests-Ollama',
 	#package : 'AI-ChatPharo-Tests',
-	#tag : 'Ullama'
+	#tag : 'Ollama'
 }
 
 { #category : 'running' }
@@ -20,7 +20,7 @@ OllamaApiGenerateTest >> setUp [
 ]
 
 { #category : 'tests' }
-OllamaApiGenerateTest >> testGetResonceForPrompt [
+OllamaApiGenerateTest >> testGetResponseForPrompt [
 	ollamaApiGenerate getResponseForPrompt: 'Can you read these words. Please answer Yes or no'.
 	self assert: (ollamaApiGenerate response includesSubstring: 'Yes')
 ]

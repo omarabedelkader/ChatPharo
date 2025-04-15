@@ -11,16 +11,16 @@ Class {
 		'promptPrefix',
 		'response'
 	],
-	#category : 'AI-ChatPharo-Ullama',
+	#category : 'AI-ChatPharo-Ollama',
 	#package : 'AI-ChatPharo',
-	#tag : 'Ullama'
+	#tag : 'Ollama'
 }
 
 { #category : 'ollama models' }
 OllamaApiGenerate >> getResponseForPrompt: prompt [
 	"Sends a prompt to an API, receives JSON response, and extracts the 'response' value"
-	| url jsonResponse requestDictionary requestBody|
-	url := 'http://localhost:11434/api/generate'.
+	| apiGenerateUrl jsonResponse requestDictionary requestBody|
+	apiGenerateUrl := 'http://localhost:11434/api/generate'.
 	requestDictionary := Dictionary newFrom:  { 
 		#model -> model.
 		#system -> self system.
@@ -31,7 +31,7 @@ OllamaApiGenerate >> getResponseForPrompt: prompt [
 	} .
 	requestBody := (STONJSON toString: requestDictionary).
 	jsonResponse := ZnClient new
-	    url: url;
+	    url: apiGenerateUrl;
 	    entity: (ZnEntity with: requestBody);
 	    post;
 	    contents.

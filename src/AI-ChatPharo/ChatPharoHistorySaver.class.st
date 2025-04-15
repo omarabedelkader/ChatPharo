@@ -1,3 +1,6 @@
+"
+For each aspect of History, I store role and content.
+"
 Class {
 	#name : 'ChatPharoHistorySaver',
 	#superclass : 'Object',
@@ -20,15 +23,6 @@ ChatPharoHistorySaver class >> role: aRole content: aContent [
 ]
 
 { #category : 'converting' }
-ChatPharoHistorySaver >> asJsonableObject [
-
-	^ Dictionary new
-		  at: #content put: self content;
-		  at: #role put: self role;
-		  yourself
-]
-
-{ #category : 'converting' }
 ChatPharoHistorySaver >> content [
 
 	^ content
@@ -38,6 +32,12 @@ ChatPharoHistorySaver >> content [
 ChatPharoHistorySaver >> content: anObject [
 
 	content := anObject
+]
+
+{ #category : 'ollama models' }
+ChatPharoHistorySaver >> historyString [
+	"I return a role content string"
+	^ role,': ' , content , String cr.
 ]
 
 { #category : 'converting' }

@@ -43,8 +43,9 @@ Class {
 ChatPharoSpecChat class >> newWithParent: spPresenter [
 	"Create an instance of me, with spPresenter as spParent"
 	| specChat |
-	specChat := self new.
+	specChat := self basicNew.
 	specChat spParent: spPresenter.
+	specChat initialize.
 	^ specChat 
 ]
 
@@ -59,10 +60,11 @@ ChatPharoSpecChat >> askLocalModel [
 	ollamaProcess := [ | prompt |
 			prompt := inputField text.
 			inputField text: '(ollama model running)'.
+			self ollamaModel promptPrefix: history asPromptPrefix.
 			result := self ollamaModel getResponseForPrompt: prompt.
 			inputField text: ''.
 			history addMessage: (ChatPharoHistorySaver
-                            role: 'ChatPharo'
+                            role: 'assistant'
                             content: result).
 		] fork.
 ]
@@ -139,7 +141,7 @@ ChatPharoSpecChat >> history: anObject [
 
 { #category : 'initialization' }
 ChatPharoSpecChat >> initializePresenters [
-   history := ChatPharoSpecChatHistory from: OrderedCollection new.
+   history := ChatPharoSpecChatHistory from: OrderedCollection new parent: self spParent .
 	 
    inputField := self newTextInput
 			placeholder: 'Type your message here...';

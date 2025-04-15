@@ -84,7 +84,7 @@ ChatPharo >> initialExtent [
 ChatPharo >> initializePresenters [ 
     notebook := self newNotebook.
     toolbar := self newToolbar.
-	 ollamaModel := self ollamaApi.
+	 ollamaModel := OllamaApiGenerate new.
     
     toolbar add: (SpToolbarButtonPresenter new
         label: 'New Chat';
@@ -145,12 +145,6 @@ ChatPharo >> notebook: anObject [
 ]
 
 { #category : 'accessing' }
-ChatPharo >> ollamaApi [
-	"Return what Api we are using at the moment. Should return OllamaApiGenerate or OllamaApiChat"
-	^ OllamaApiGenerate new.
-]
-
-{ #category : 'accessing' }
 ChatPharo >> ollamaModel [
 	^ ollamaModel 
 ]
@@ -162,7 +156,7 @@ ChatPharo >> ollamaModelSelect [
 			help: 'Select ollama model';
 			items: OllamaApi modelNames;
 			display: [ :e | e  ];
-			whenSelectedItemChangedDo: [ :e | self ollamaApi model: e];
+			whenSelectedItemChangedDo: [ :e | self ollamaModel model: e];
 			yourself
 		
 ]
