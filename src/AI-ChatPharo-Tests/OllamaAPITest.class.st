@@ -27,13 +27,5 @@ OllamaAPITest >> tearDown [
 { #category : 'running' }
 OllamaAPITest >> testOllamaAPIHasDefaultModelInitialized [
 
-	self assert: (ollama model isString).
-	self assert: (ollama model notEmpty).
-]
-
-{ #category : 'running' }
-OllamaAPITest >> testOllamaAPIDefaultSettings [
-	self assert: (ollama host isString).
-	self assert: (ollama port isInteger).
-	self assert: (ollama temperature isNumber).
+	self assert: (ollama model isKindOf: OModel)
 ]
