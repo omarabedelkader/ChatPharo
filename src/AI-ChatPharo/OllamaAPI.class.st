@@ -22,7 +22,10 @@ Class {
 		'format'
 	],
 	#classInstVars : [
-		'defaultModel'
+		'defaultHost',
+	    'defaultPort',
+		'defaultModel',
+		'defaultTemperature'
 	],
 	#category : 'AI-ChatPharo-API',
 	#package : 'AI-ChatPharo',
@@ -32,13 +35,13 @@ Class {
 { #category : 'accessing' }
 OllamaAPI class >> defaultModel [
 
-	^ defaultModel ifNil: [ defaultModel := OCodeLlamaModel class >> #b7 ]
+    ^ defaultModel ifNil: [ defaultModel := 'codellama:7b' ] 
 ]
 
 { #category : 'accessing' }
-OllamaAPI class >> defaultModel: anObject [
+OllamaAPI class >> defaultModel: aString [
 
-	defaultModel := anObject
+    defaultModel := aString
 ]
 
 { #category : 'settings' }
@@ -52,12 +55,25 @@ OllamaAPI class >> ollamaSettings: aBuilder [
 				order: -100000;
 				label: 'Ollama Default model';
 				target: self;
-				default: OCodeLlamaModel class >> #b7;
-				domainValues:
-					(((Pragma allNamed: #ollamaInit:) collect: [ :pragma |
-							  pragma arguments first -> pragma method ]) sorted: [ :a :b |
-							 a key < b key ]);
-				ghostHelp: 'Model name' ]
+				default: self defaultModel;
+				domainValues: (OllamaModelRegistry new allModels);
+				ghostHelp: 'Choose a model installed on your system'.
+
+			(aBuilder text: #defaultHost)
+				label: 'Ollama Host';
+				default: '127.0.0.1';
+				ghostHelp: 'Host of the Ollama server (usually localhost)'.
+
+			(aBuilder number: #defaultPort)
+				label: 'Ollama Port';
+				default: 11434;
+				ghostHelp: 'Port the Ollama server is listening on'.
+
+			(aBuilder float: #defaultTemperature)
+				label: 'Default Temperature';
+				default: 0.8;
+				ghostHelp: 'Controls randomness of response (0.0 - 1.0)'
+		]
 ]
 
 { #category : 'private' }
@@ -91,9 +107,18 @@ OllamaAPI >> delete [
 	znClient port: self port.
 	znClient path: 'api/delete'.
 	paramDic := Dictionary new.
-	paramDic at: #name put: self model fullName.
+	paramDic at: #name put: self model.
 	znClient entity: (ZnEntity json: (NeoJSONWriter toString: paramDic)).
 	^ znClient delete
+]
+
+{ #category : 'api' }
+OllamaAPI >> listModels [
+    | response json models |
+    response := self list contents.
+    json := NeoJSONReader fromString: response.
+    models := (json at: 'models' ifAbsent: [ #() ]) collect: [ :m | m at: 'name' ].
+    ^ models
 ]
 
 { #category : 'accessing' }
@@ -115,28 +140,26 @@ OllamaAPI >> formatJson [
 ]
 
 { #category : 'accessing' }
-OllamaAPI >> host [
+OllamaAPI class >> defaultHost [
 
-	^ host
+	^ defaultHost ifNil: [ defaultHost := '127.0.0.1' ]
 ]
 
 { #category : 'accessing' }
-OllamaAPI >> host: anObject [
+OllamaAPI class >> defaultHost: aString [
 
-	host := anObject
+	defaultHost := aString
 ]
 
 { #category : 'initialization' }
 OllamaAPI >> initialize [
 
 	super initialize.
-	host := '127.0.0.1'.
-	port := 11434.
-	model := self class defaultModel
-		         valueWithReceiver:
-		         self class defaultModel methodClass instanceSide
-		         arguments: {  }.
-	stream := false
+	host := self class defaultHost.
+	port := self class defaultPort.
+	model := self class defaultModel. 
+	stream := false.
+	temperature := self class defaultTemperature.
 ]
 
 { #category : 'api' }
@@ -165,6 +188,17 @@ OllamaAPI >> model: anObject [
 ]
 
 { #category : 'accessing' }
+OllamaAPI class >> defaultTemperature [
+
+	^ defaultTemperature ifNil: [ defaultTemperature := 0.8 ]
+]
+
+OllamaAPI class >> defaultTemperature: aFloat [
+
+	defaultTemperature := aFloat.
+]
+
+{ #category : 'accessing' }
 OllamaAPI >> num_predict [
 
 	^ num_predict
@@ -177,15 +211,15 @@ OllamaAPI >> num_predict: anObject [
 ]
 
 { #category : 'accessing' }
-OllamaAPI >> port [
+OllamaAPI class >> defaultPort [
 
-	^ port
+	^ defaultPort ifNil: [ defaultPort := 11434 ]
 ]
 
 { #category : 'accessing' }
-OllamaAPI >> port: anObject [
+OllamaAPI class >> defaultPort: aNumber [
 
-	port := anObject
+	defaultPort := aNumber
 ]
 
 { #category : 'api' }
@@ -199,7 +233,7 @@ OllamaAPI >> pull [
 	znClient port: self port.
 	znClient path: 'api/pull'.
 	paramDic := Dictionary new.
-	paramDic at: #name put: self model fullName.
+	paramDic at: #name put: self model.
 	paramDic at: #stream put: false.
 	znClient entity: (ZnEntity json: (NeoJSONWriter toString: paramDic)).
 	^ znClient post at: #response
@@ -218,7 +252,7 @@ OllamaAPI >> query: aTextQuery [
 	znClient port: self port.
 	znClient path: 'api/generate'.
 	paramDic := Dictionary new.
-	paramDic at: #model put: self model fullName.
+	paramDic at: #model put: self model.
 	paramDic at: #prompt put: (self buildQuery: aTextQuery).
 	paramDic at: #stream put: self stream.
 	self format ifNotNil: [ :f | paramDic at: #format put: f ].
@@ -286,4 +320,28 @@ OllamaAPI >> top_p [
 OllamaAPI >> top_p: anObject [
 
 	top_p := anObject
+]
+
+{ #category : 'accessing' }
+OllamaAPI >> host [
+
+	^ host
+]
+
+{ #category : 'accessing' }
+OllamaAPI >> host: anObject [
+
+	host := anObject
+]
+
+{ #category : 'accessing' }
+OllamaAPI >> port [
+
+	^ port
+]
+
+{ #category : 'accessing' }
+OllamaAPI >> port: anObject [
+	
+	port := anObject
 ]
