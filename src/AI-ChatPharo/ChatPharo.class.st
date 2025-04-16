@@ -71,7 +71,7 @@ ChatPharo >> deleteChat: aPageTitle [
 
 ]
 
-{ #category : 'specs' }
+{ #category : 'TOREMOVE' }
 ChatPharo >> initialExtent [
 
 	| fontWidth rowHeight |
