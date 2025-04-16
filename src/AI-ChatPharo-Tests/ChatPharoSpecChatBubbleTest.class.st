@@ -12,13 +12,15 @@ Class {
 
 { #category : 'running' }
 ChatPharoSpecChatBubbleTest >> setUp [
-
+	
 	super setUp.
 	testMessage := ChatPharoHistorySaver
 		               role: 'user'
 		               content: 'Hello, this is a test message!'.
 
-	bubble := ChatPharoSpecChatBubble from: testMessage
+	bubble := ChatPharoSpecChatBubble 
+		from: testMessage 
+		parent: (ChatPharo new)
 ]
 
 { #category : 'running' }

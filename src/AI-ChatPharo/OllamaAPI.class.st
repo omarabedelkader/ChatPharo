@@ -5,7 +5,10 @@ Class {
 	#name : 'OllamaApi',
 	#superclass : 'Object',
 	#instVars : [
-		'model'
+		'model',
+		'system',
+		'promptPrefix',
+		'response'
 	],
 	#category : 'AI-ChatPharo-Ollama',
 	#package : 'AI-ChatPharo',
@@ -46,10 +49,35 @@ OllamaApi class >> ollamaVersion [
 	^ (STONJSON fromString: response) at: 'version'  .
 ]
 
+{ #category : 'ollama models' }
+OllamaApi >> getResponseForPrompt: prompt [
+	"Sends a prompt to an API, receives JSON response, and extracts the 'response' value"
+	| apiGenerateUrl jsonResponse requestDictionary requestBody|
+	apiGenerateUrl := 'http://localhost:11434/api/generate'.
+	requestDictionary := Dictionary newFrom:  { 
+		#model -> model.
+		#system -> self system.
+		#prompt -> (self promptPrefix , ' ', prompt).
+		#stream -> false.
+		#options -> (Dictionary newFrom: {
+    		#temperature -> 0})
+	} .
+	requestBody := (STONJSON toString: requestDictionary).
+	jsonResponse := ZnClient new
+	    url: apiGenerateUrl;
+	    entity: (ZnEntity with: requestBody);
+	    post;
+	    contents.
+	self response: ((STONJSON fromString: jsonResponse) at: 'response').
+	^ self response contents.
+]
+
 { #category : 'initialization' }
 OllamaApi >> initialize [ 
 	super initialize.
 	self model: (self class modelNames) first.
+	self system: ''.
+	self promptPrefix: ''.
 ]
 
 { #category : 'accessing' }
@@ -81,4 +109,40 @@ OllamaApi >> modelInformation [
 	    contents.
 	response := (STONJSON fromString: jsonResponse).
 	^ response contents.
+]
+
+{ #category : 'accessing' }
+OllamaApi >> promptPrefix [
+
+	^ promptPrefix
+]
+
+{ #category : 'accessing' }
+OllamaApi >> promptPrefix: anObject [
+
+	promptPrefix := anObject
+]
+
+{ #category : 'accessing' }
+OllamaApi >> response [
+
+	^ response
+]
+
+{ #category : 'accessing' }
+OllamaApi >> response: anObject [
+
+	response := anObject
+]
+
+{ #category : 'accessing' }
+OllamaApi >> system [
+
+	^ system
+]
+
+{ #category : 'accessing' }
+OllamaApi >> system: anObject [
+
+	system := anObject
 ]

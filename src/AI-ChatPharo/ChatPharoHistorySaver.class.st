@@ -13,7 +13,7 @@ Class {
 	#tag : 'Spec'
 }
 
-{ #category : 'as yet unclassified' }
+{ #category : 'instance creation' }
 ChatPharoHistorySaver class >> role: aRole content: aContent [
 
 	^ self new
@@ -35,9 +35,13 @@ ChatPharoHistorySaver >> content: anObject [
 ]
 
 { #category : 'ollama models' }
-ChatPharoHistorySaver >> historyString [
+ChatPharoHistorySaver >> historyStringOn: stream [
 	"I return a role content string"
-	^ role,': ' , content , String cr.
+	stream 
+		nextPutAll: role;
+		nextPutAll: ': ';
+		nextPutAll: content;
+		nextPutAll: String cr.
 ]
 
 { #category : 'converting' }

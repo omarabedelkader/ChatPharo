@@ -28,7 +28,7 @@ ChatPharoSpecChatHistory class >> from: messages parent: par [
 		yourself
 ]
 
-{ #category : 'initialization' }
+{ #category : 'actions' }
 ChatPharoSpecChatHistory >> addMessage: aMessage [
 	| chatter |
 	self model add: aMessage.
@@ -37,13 +37,14 @@ ChatPharoSpecChatHistory >> addMessage: aMessage [
 	panel add: chatter 
 ]
 
-{ #category : 'initialization' }
+{ #category : 'actions' }
 ChatPharoSpecChatHistory >> asPromptPrefix [
 	"Should be changed to prefix to not just using string"
 	| prefix |
-	prefix := ''.
-	self model do: [ :message | prefix := prefix, message historyString ].
-	^ prefix
+	prefix := WriteStream on: String new.
+	self model do: [ :message | 
+		message historyStringOn: prefix ].
+	^ prefix contents
 ]
 
 { #category : 'layout' }

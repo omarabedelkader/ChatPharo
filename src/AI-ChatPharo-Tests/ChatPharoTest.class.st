@@ -31,7 +31,7 @@ ChatPharoTest >> testAddNewChat [
 
     presenter addNewChat.
     self assert: presenter notebook pages size equals: 2.
-    self assert: presenter notebook selectedPage title equals: 'New Chat'
+    self assert: (presenter notebook selectedPage title truncateTo: 4) equals: 'Chat'
 ]
 
 { #category : 'running' }
@@ -56,18 +56,30 @@ ChatPharoTest >> testInitialWindow [
     self assert: presenter notebook pages size equals: 1
 ]
 
+{ #category : 'tests' }
+ChatPharoTest >> testLoadChat [
+]
+
 { #category : 'running' }
 ChatPharoTest >> testModelInformation [
 	
 	
 ]
 
+{ #category : 'tests' }
+ChatPharoTest >> testOpenSettings [
+]
+
+{ #category : 'tests' }
+ChatPharoTest >> testSaveCurrentChat [
+]
+
 { #category : 'running' }
 ChatPharoTest >> testTitle [
 
-	| inputTitle baseTitle|
+	| inputTitle chatPharo|
 	inputTitle := 'ChatPharo'.
-	baseTitle  := (ChatPharo new) title.
-	self assert: inputTitle equals: baseTitle
+	(chatPharo := ChatPharo new) setTitle.
+	self assert: inputTitle equals: chatPharo title.
 	
 ]

@@ -29,7 +29,7 @@ ChatPharoSpecChatTest >> fakeLocalModelResponse [
 ChatPharoSpecChatTest >> setUp [
 
     super setUp.
-    chat := ChatPharoSpecChat new.
+    chat := ChatPharoSpecChat newWithParent: ChatPharo new.
     chat initializePresenters. 
 ]
 
@@ -81,6 +81,17 @@ ChatPharoSpecChatTest >> testAskLocalModel [
 	self assert: responseMessage role equals: 'ChatPharo'.
 	self assert: chat inputField text isEmpty
 "
+]
+
+{ #category : 'tests' }
+ChatPharoSpecChatTest >> testCancelOllamaPrompt [
+	"Verifies that cancelOllamaPrompt stops the process, logs 'Canceled', and clears input."
+	self assert: chat ollamaProcess equals: nil.
+	
+	chat ollamaProcess: [ (Delay forSeconds: 2) wait ] fork.
+	chat cancelOllamaPrompt.
+	self assert: (chat history asPromptPrefix includesAll: 'Canceled').
+	self assert: chat inputField text equals: ''
 ]
 
 { #category : 'running' }

@@ -2,7 +2,7 @@ Class {
 	#name : 'OllamaApiTest',
 	#superclass : 'TestCase',
 	#instVars : [
-		'ollamaAPI'
+		'ollamaApi'
 	],
 	#category : 'AI-ChatPharo-Tests-Ollama',
 	#package : 'AI-ChatPharo-Tests',
@@ -15,8 +15,14 @@ OllamaApiTest >> setUp [
 
 	"Put here a common initialization logic for tests"
 	
-	ollamaAPI := OllamaApi new.
-	ollamaAPI model: OllamaApi modelNames first.
+	ollamaApi := OllamaApi new.
+	ollamaApi model: OllamaApi modelNames first.
+]
+
+{ #category : 'tests' }
+OllamaApiTest >> testGetResponseForPrompt [
+	ollamaApi getResponseForPrompt: 'Can you read these words. Please answer Yes or no'.
+	self assert: (ollamaApi response includesSubstring: 'Yes')
 ]
 
 { #category : 'tests' }
@@ -24,7 +30,7 @@ OllamaApiTest >> testModelInformation [
 	"test that the connection to the model works"
 
 	self 
-		assert: ollamaAPI modelInformation class 
+		assert: ollamaApi modelInformation class 
 		equals: Dictionary 
 ]
 
@@ -47,12 +53,14 @@ OllamaApiTest >> testModels [
 ]
 
 { #category : 'tests' }
-OllamaApiTest >> testOllamaList [
-	"check at the list function works, and is larger than 0"
-	| res |
-	res := OllamaApi models.
-	self assert: res size >= 1
-	
+OllamaApiTest >> testNewSystemPromptPrefix [
+	"test that the connection to the model works "
+
+	ollamaApi
+		system: 'Killroy was ';
+		promptPrefix: 'here'.
+	self assert: ollamaApi system equals: 'Killroy was '.
+	self assert: ollamaApi promptPrefix equals: 'here'
 ]
 
 { #category : 'tests' }

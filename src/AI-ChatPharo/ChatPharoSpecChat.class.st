@@ -49,7 +49,7 @@ ChatPharoSpecChat class >> newWithParent: spPresenter [
 	^ specChat 
 ]
 
-{ #category : 'initialization' }
+{ #category : 'actions' }
 ChatPharoSpecChat >> askLocalModel [
 	"This method sends a user's input to an Ollama API and updates the chat history with the response."
 
@@ -69,14 +69,13 @@ ChatPharoSpecChat >> askLocalModel [
 		] fork.
 ]
 
-{ #category : 'initialization' }
+{ #category : 'actions' }
 ChatPharoSpecChat >> cancelOllamaPrompt [
 	"This method sends a user's input to an Ollama API and updates the chat history with the response."
 
-	|  |
-	ollamaProcess terminate.
+	ollamaProcess ifNotNil: [ollamaProcess terminate].
 	history addMessage: (ChatPharoHistorySaver
-                            role: 'ChatPharo'
+                            role: 'assistant'
                             content: 'Canceled').
 	inputField text: ''
 ]
@@ -98,7 +97,6 @@ ChatPharoSpecChat >> clearButton: anObject [
 { #category : 'actions' }
 ChatPharoSpecChat >> clearChat [
 	"Resets chat history by clearing it."
-
     history clear.
 ]
 
@@ -188,6 +186,18 @@ ChatPharoSpecChat >> inputField: anObject [
 { #category : 'accessing' }
 ChatPharoSpecChat >> ollamaModel [
 	^ spParent ollamaModel 
+]
+
+{ #category : 'accessing' }
+ChatPharoSpecChat >> ollamaProcess [
+
+	^ ollamaProcess
+]
+
+{ #category : 'accessing' }
+ChatPharoSpecChat >> ollamaProcess: anObject [
+
+	ollamaProcess := anObject
 ]
 
 { #category : 'accessing' }
