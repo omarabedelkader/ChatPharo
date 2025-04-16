@@ -11,26 +11,40 @@ Class {
 	#name : 'ChatPharoSpecChatHistory',
 	#superclass : 'SpPresenterWithModel',
 	#instVars : [
+		'spParent',
 		'panel'
 	],
 	#category : 'AI-ChatPharo-Spec',
-	#package : 'AI-ChatPharo-Spec'
+	#package : 'AI-ChatPharo',
+	#tag : 'Spec'
 }
 
 { #category : 'instance creation' }
-ChatPharoSpecChatHistory class >> from: messages [
-
+ChatPharoSpecChatHistory class >> from: messages parent: par [
 	^ self basicNew
+		spParent: par;
 		setModelBeforeInitialization: messages;
 		initialize;
 		yourself
 ]
 
-{ #category : 'initialization' }
+{ #category : 'actions' }
 ChatPharoSpecChatHistory >> addMessage: aMessage [
-
+	| chatter |
 	self model add: aMessage.
-	panel add: (ChatPharoSpecChatBubble from: aMessage)
+	chatter := ChatPharoSpecChatBubble from: aMessage parent: self spParent .
+	chatter spParent: self spParent.
+	panel add: chatter 
+]
+
+{ #category : 'actions' }
+ChatPharoSpecChatHistory >> asPromptPrefix [
+	"Should be changed to prefix to not just using string"
+	| prefix |
+	prefix := WriteStream on: String new.
+	self model do: [ :message | 
+		message historyStringOn: prefix ].
+	^ prefix contents
 ]
 
 { #category : 'layout' }
@@ -45,7 +59,7 @@ ChatPharoSpecChatHistory >> initializePresenters [
 	panel := SpBoxLayout newTopToBottom.
 
 	self model do: [ :message |
-		panel add: (ChatPharoSpecChatBubble from: message) expand: true]
+		panel add: (ChatPharoSpecChatBubble from: message parent: self spParent ) expand: true]
 ]
 
 { #category : 'accessing' }
@@ -58,4 +72,16 @@ ChatPharoSpecChatHistory >> panel [
 ChatPharoSpecChatHistory >> panel: anObject [
 
 	panel := anObject
+]
+
+{ #category : 'accessing' }
+ChatPharoSpecChatHistory >> spParent [
+
+	^ spParent
+]
+
+{ #category : 'accessing' }
+ChatPharoSpecChatHistory >> spParent: anObject [
+
+	spParent := anObject
 ]

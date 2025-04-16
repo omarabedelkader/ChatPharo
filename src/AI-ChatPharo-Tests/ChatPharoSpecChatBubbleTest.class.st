@@ -5,19 +5,22 @@ Class {
 		'bubble',
 		'testMessage'
 	],
-	#category : 'AI-ChatPharo-Tests',
-	#package : 'AI-ChatPharo-Tests'
+	#category : 'AI-ChatPharo-Tests-Spec',
+	#package : 'AI-ChatPharo-Tests',
+	#tag : 'Spec'
 }
 
 { #category : 'running' }
 ChatPharoSpecChatBubbleTest >> setUp [
-
+	
 	super setUp.
-	testMessage := LLMAPIChatObjectMessage
+	testMessage := ChatPharoHistorySaver
 		               role: 'user'
 		               content: 'Hello, this is a test message!'.
 
-	bubble := ChatPharoSpecChatBubble from: testMessage
+	bubble := ChatPharoSpecChatBubble 
+		from: testMessage 
+		parent: (ChatPharo new)
 ]
 
 { #category : 'running' }

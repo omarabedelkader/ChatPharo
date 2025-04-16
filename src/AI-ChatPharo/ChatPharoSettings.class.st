@@ -1,5 +1,9 @@
 "
 ### `ChatPharoSettings` Class
+The comments below and the action of this object might no longer be in use.
+But it is left here.
+No tests are written for that particular reason.
+
 Manages the settings and layout of the ChatPharo application within the Pharo Smalltalk environment. This class is responsible for configuring and maintaining the chat settings UI elements such as the notebook and various tabs.
 
 - **`chatSettings`**: Accessor for the chat settings object.
@@ -25,7 +29,8 @@ Class {
 		'hostInput'
 	],
 	#category : 'AI-ChatPharo-Spec',
-	#package : 'AI-ChatPharo-Spec'
+	#package : 'AI-ChatPharo',
+	#tag : 'Spec'
 }
 
 { #category : 'accessing' }

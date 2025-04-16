@@ -1,289 +1,148 @@
 "
-### `OllamaAPI` Class
-Handles interactions with a hypothetical Ollama API server.
-
-- **`query:`**: Sends a query to the Ollama API and returns the response.
-- **`initialize`**: Sets default values and initializes the API instance.
-- **`list`**: Lists available models on the Ollama server.
-- **`delete`**: Deletes a model from the Ollama server.
+Killroy was here, but went away
 "
 Class {
-	#name : 'OllamaAPI',
+	#name : 'OllamaApi',
 	#superclass : 'Object',
 	#instVars : [
 		'model',
-		'host',
-		'port',
-		'stream',
-		'temperature',
-		'num_predict',
-		'top_k',
-		'top_p',
-		'format'
+		'system',
+		'promptPrefix',
+		'response'
 	],
-	#classInstVars : [
-		'defaultModel'
-	],
-	#category : 'AI-ChatPharo-API',
+	#category : 'AI-ChatPharo-Ollama',
 	#package : 'AI-ChatPharo',
-	#tag : 'API'
+	#tag : 'Ollama'
 }
 
-{ #category : 'accessing' }
-OllamaAPI class >> defaultModel [
-
-	^ defaultModel ifNil: [ defaultModel := OCodeLlamaModel class >> #b7 ]
+{ #category : 'ollama models' }
+OllamaApi class >> modelNames [
+	"returns an array with one item per model."
+	^ self models collect: [ :ollamaModel | ollamaModel at: 'name' ]
 ]
 
-{ #category : 'accessing' }
-OllamaAPI class >> defaultModel: anObject [
+{ #category : 'ollama models' }
+OllamaApi class >> models [
+	"returns an array with one item per model. Each item has nested informations, and some arrays"
+	| response  |
 
-	defaultModel := anObject
+	response := ZnClient new get: 'http://localhost:11434/api/tags'.
+	^ (STONJSON fromString: response) at: 'models'  .
 ]
 
-{ #category : 'settings' }
-OllamaAPI class >> ollamaSettings: aBuilder [
-
-	<systemsettings>
-	(aBuilder group: #ChatPharo)
-		parent: #tools;
-		with: [
-			(aBuilder pickOne: #defaultModel)
-				order: -100000;
-				label: 'Ollama Default model';
-				target: self;
-				default: OCodeLlamaModel class >> #b7;
-				domainValues:
-					(((Pragma allNamed: #ollamaInit:) collect: [ :pragma |
-							  pragma arguments first -> pragma method ]) sorted: [ :a :b |
-							 a key < b key ]);
-				ghostHelp: 'Model name' ]
+{ #category : 'instance creation' }
+OllamaApi class >> newSystem: synstemText promptPrefix: promptPrefixText [
+	"Create and return an instance with predefined system and prompt prefix for Ollama queries."
+	| prompter |
+	prompter := self new.
+	prompter system: synstemText.
+	prompter promptPrefix: promptPrefixText.
+	^ prompter 
 ]
 
-{ #category : 'private' }
-OllamaAPI >> addParameterTo: paramDic [
-
-	| options |
-	options := Dictionary new.
-	paramDic at: #options put: options.
-	self temperature ifNotNil: [ :var |
-		options at: #temperature put: var asFloat ].
-	self num_predict ifNotNil: [ :var |
-		options at: #num_predict put: var ].
-	self top_k ifNotNil: [ :var | options at: #top_k put: var ].
-	self top_p ifNotNil: [ :var | options at: #top_p put: var ]
+{ #category : 'ollama models' }
+OllamaApi class >> ollamaVersion [
+	"Retrieve the Ollama version"
+	| response  |
+	
+	response := ZnClient new get: 'http://localhost:11434/api/version'.
+	^ (STONJSON fromString: response) at: 'version'  .
 ]
 
-{ #category : 'private' }
-OllamaAPI >> buildQuery: aTextQuery [
-
-	^ aTextQuery
-]
-
-{ #category : 'api' }
-OllamaAPI >> delete [
-	"Pull the model linked to this API"
-
-	| znClient paramDic |
-	znClient := ZnEasy client.
-	znClient forJsonREST.
-	znClient host: self host.
-	znClient port: self port.
-	znClient path: 'api/delete'.
-	paramDic := Dictionary new.
-	paramDic at: #name put: self model fullName.
-	znClient entity: (ZnEntity json: (NeoJSONWriter toString: paramDic)).
-	^ znClient delete
-]
-
-{ #category : 'accessing' }
-OllamaAPI >> format [
-
-	^ format
-]
-
-{ #category : 'accessing' }
-OllamaAPI >> format: anObject [
-
-	format := anObject
-]
-
-{ #category : 'accessing' }
-OllamaAPI >> formatJson [
-
-	format := 'json'
-]
-
-{ #category : 'accessing' }
-OllamaAPI >> host [
-
-	^ host
-]
-
-{ #category : 'accessing' }
-OllamaAPI >> host: anObject [
-
-	host := anObject
+{ #category : 'ollama models' }
+OllamaApi >> getResponseForPrompt: prompt [
+	"Sends a prompt to an API, receives JSON response, and extracts the 'response' value"
+	| apiGenerateUrl jsonResponse requestDictionary requestBody|
+	apiGenerateUrl := 'http://localhost:11434/api/generate'.
+	requestDictionary := Dictionary newFrom:  { 
+		#model -> model.
+		#system -> self system.
+		#prompt -> (self promptPrefix , ' ', prompt).
+		#stream -> false.
+		#options -> (Dictionary newFrom: {
+    		#temperature -> 0})
+	} .
+	requestBody := (STONJSON toString: requestDictionary).
+	jsonResponse := ZnClient new
+	    url: apiGenerateUrl;
+	    entity: (ZnEntity with: requestBody);
+	    post;
+	    contents.
+	self response: ((STONJSON fromString: jsonResponse) at: 'response').
+	^ self response contents.
 ]
 
 { #category : 'initialization' }
-OllamaAPI >> initialize [
-
+OllamaApi >> initialize [ 
 	super initialize.
-	host := '127.0.0.1'.
-	port := 11434.
-	model := self class defaultModel
-		         valueWithReceiver:
-		         self class defaultModel methodClass instanceSide
-		         arguments: {  }.
-	stream := false
-]
-
-{ #category : 'api' }
-OllamaAPI >> list [
-	"Pull the model linked to this API"
-
-	| znClient |
-	znClient := ZnEasy client.
-	znClient forJsonREST.
-	znClient host: self host.
-	znClient port: self port.
-	znClient path: 'api/tags'.
-	^ znClient get
+	self model: (self class modelNames) first.
+	self system: ''.
+	self promptPrefix: ''.
 ]
 
 { #category : 'accessing' }
-OllamaAPI >> model [
+OllamaApi >> model [
 
 	^ model
 ]
 
 { #category : 'accessing' }
-OllamaAPI >> model: anObject [
+OllamaApi >> model: anObject [
 
 	model := anObject
 ]
 
-{ #category : 'accessing' }
-OllamaAPI >> num_predict [
+{ #category : 'ollama models' }
+OllamaApi >> modelInformation [
+	"Show information about a model including details, modelfile, template, parameters, license, system prompt."
+	"Check https://github.com/ollama/ollama/blob/main/docs/api.md#show-model-information for details"
+	| url jsonResponse requestBody  response|
+	url := 'http://localhost:11434/api/show'.
 
-	^ num_predict
+	requestBody := STONJSON toString: { 
+		#model -> model.
+	} asDictionary.
+	jsonResponse := ZnClient new
+	    url: url;
+	    entity: (ZnEntity with: requestBody);
+	    post;
+	    contents.
+	response := (STONJSON fromString: jsonResponse).
+	^ response contents.
 ]
 
 { #category : 'accessing' }
-OllamaAPI >> num_predict: anObject [
+OllamaApi >> promptPrefix [
 
-	num_predict := anObject
+	^ promptPrefix
 ]
 
 { #category : 'accessing' }
-OllamaAPI >> port [
+OllamaApi >> promptPrefix: anObject [
 
-	^ port
+	promptPrefix := anObject
 ]
 
 { #category : 'accessing' }
-OllamaAPI >> port: anObject [
+OllamaApi >> response [
 
-	port := anObject
-]
-
-{ #category : 'api' }
-OllamaAPI >> pull [
-	"Pull the model linked to this API"
-
-	| znClient paramDic |
-	znClient := ZnEasy client.
-	znClient forJsonREST.
-	znClient host: self host.
-	znClient port: self port.
-	znClient path: 'api/pull'.
-	paramDic := Dictionary new.
-	paramDic at: #name put: self model fullName.
-	paramDic at: #stream put: false.
-	znClient entity: (ZnEntity json: (NeoJSONWriter toString: paramDic)).
-	^ znClient post at: #response
-]
-
-{ #category : 'api' }
-OllamaAPI >> query: aTextQuery [
-
-	| znClient paramDic writer |
-	znClient := ZnClient new.
-	writer := ZnUtils defaultJSONWriter.
-	znClient
-		accept: ZnMimeType applicationJson;
-		contentWriter: [ :data | ZnEntity json: (writer toString: data) ].
-	znClient host: self host.
-	znClient port: self port.
-	znClient path: 'api/generate'.
-	paramDic := Dictionary new.
-	paramDic at: #model put: self model fullName.
-	paramDic at: #prompt put: (self buildQuery: aTextQuery).
-	paramDic at: #stream put: self stream.
-	self format ifNotNil: [ :f | paramDic at: #format put: f ].
-
-
-	self addParameterTo: paramDic.
-	znClient contents: paramDic.
-
-	self stream
-		ifTrue: [
-			znClient streaming: true.
-			^ znClient post ]
-		ifFalse: [
-			| reader | 
-			znClient forJsonREST.
-			reader := ZnUtils defaultJSONReader.
-			znClient contentReader: [ :entity |
-				reader fromString: entity contents ].
-			^ znClient post at: #response ]
+	^ response
 ]
 
 { #category : 'accessing' }
-OllamaAPI >> stream [
+OllamaApi >> response: anObject [
 
-	^ stream
+	response := anObject
 ]
 
 { #category : 'accessing' }
-OllamaAPI >> stream: anObject [
+OllamaApi >> system [
 
-	stream := anObject
+	^ system
 ]
 
 { #category : 'accessing' }
-OllamaAPI >> temperature [
+OllamaApi >> system: anObject [
 
-	^ temperature
-]
-
-{ #category : 'accessing' }
-OllamaAPI >> temperature: anObject [
-
-	temperature := anObject
-]
-
-{ #category : 'accessing' }
-OllamaAPI >> top_k [
-
-	^ top_k
-]
-
-{ #category : 'accessing' }
-OllamaAPI >> top_k: anObject [
-
-	top_k := anObject
-]
-
-{ #category : 'accessing' }
-OllamaAPI >> top_p [
-
-	^ top_p
-]
-
-{ #category : 'accessing' }
-OllamaAPI >> top_p: anObject [
-
-	top_p := anObject
+	system := anObject
 ]

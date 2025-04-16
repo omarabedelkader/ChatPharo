@@ -4,21 +4,24 @@ Class {
 	#instVars : [
 		'history'
 	],
-	#category : 'AI-ChatPharo-Tests',
-	#package : 'AI-ChatPharo-Tests'
+	#category : 'AI-ChatPharo-Tests-Spec',
+	#package : 'AI-ChatPharo-Tests',
+	#tag : 'Spec'
 }
 
 { #category : 'running' }
 ChatPharoSpecChatHistoryTest >> setUp [
 
 	super setUp.
-	history := ChatPharoSpecChatHistory from: OrderedCollection new
+	history := ChatPharoSpecChatHistory 
+		from: OrderedCollection new 
+		parent: ChatPharo new
 ]
 
 { #category : 'running' }
 ChatPharoSpecChatHistoryTest >> tearDown [ 
 
-	history := ChatPharoSpecChatHistory from: OrderedCollection new.
+	history := ChatPharoSpecChatHistory from: OrderedCollection new parent: ChatPharo new.
 	super tearDown
 ]
 
@@ -26,7 +29,7 @@ ChatPharoSpecChatHistoryTest >> tearDown [
 ChatPharoSpecChatHistoryTest >> testAddMessage [
 
     | message |
-    message := LLMAPIChatObjectMessage role: 'user' content: 'Testing'.
+    message := ChatPharoHistorySaver role: 'user' content: 'Testing'.
     history addMessage: message.
 
     self assert: (history model includes: message).
@@ -35,16 +38,28 @@ ChatPharoSpecChatHistoryTest >> testAddMessage [
 
 ]
 
+{ #category : 'tests' }
+ChatPharoSpecChatHistoryTest >> testAsPromptPrefix [
+	"check that the list of history can be rewritten as a string."
+	| res |
+	history model add: (ChatPharoHistorySaver role: 'user' content: 'What is your name' ).
+	history model add: (ChatPharoHistorySaver role: 'assistant' content: 'My name is Aileen' ).
+	res := history asPromptPrefix.
+	self assert: res equals: 'user: What is your name
+assistant: My name is Aileen
+'
+]
+
 { #category : 'running' }
 ChatPharoSpecChatHistoryTest >> testInitializeWithExistingMessages [
 
 	| messages newHistory |
 	messages := OrderedCollection new
-		add: (LLMAPIChatObjectMessage role: 'user' content: 'Hi');
-		add: (LLMAPIChatObjectMessage role: 'assistant' content: 'Hello!');
+		add: (ChatPharoHistorySaver role: 'user' content: 'Hi');
+		add: (ChatPharoHistorySaver role: 'assistant' content: 'Hello!');
 		yourself.
 
-	newHistory := ChatPharoSpecChatHistory from: messages.
+	newHistory := ChatPharoSpecChatHistory from: messages parent: ChatPharo new.
 
 	self assert: newHistory model size equals: 2.
 	self assert: newHistory panel children size equals: 2.

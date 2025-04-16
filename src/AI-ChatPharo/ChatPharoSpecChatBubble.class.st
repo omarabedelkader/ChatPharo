@@ -10,17 +10,19 @@ Class {
 	#name : 'ChatPharoSpecChatBubble',
 	#superclass : 'SpPresenterWithModel',
 	#instVars : [
+		'spParent',
 		'roleText',
 		'contentArea'
 	],
 	#category : 'AI-ChatPharo-Spec',
-	#package : 'AI-ChatPharo-Spec'
+	#package : 'AI-ChatPharo',
+	#tag : 'Spec'
 }
 
 { #category : 'instance creation' }
-ChatPharoSpecChatBubble class >> from: aMessage [
-
+ChatPharoSpecChatBubble class >> from: aMessage parent: par [
 	^ self basicNew
+		spParent: par;
 		setModelBeforeInitialization: aMessage;
 		initialize;
 		yourself
@@ -40,9 +42,12 @@ ChatPharoSpecChatBubble >> contentArea: anObject [
 
 { #category : 'layout' }
 ChatPharoSpecChatBubble >> defaultLayout [
-
+	| modelName displayRole |
+	modelName := self spParent ollamaModel model.
+	displayRole := self model role.
+	displayRole = 'assistant' ifTrue: [ displayRole := displayRole , ' (' , modelName , ')'].
 	^ SpBoxLayout newTopToBottom
-		  add: self model role expand: false;
+		  add: displayRole expand: false;
 		  add: contentArea
 		  withConstraints: [ :constraints | 
 			constraints height: (self class inputTextHeight) * 4 ];
@@ -51,7 +56,6 @@ ChatPharoSpecChatBubble >> defaultLayout [
 
 { #category : 'initialization' }
 ChatPharoSpecChatBubble >> initializePresenters [
-
 	contentArea := MicrodownPresenter new.
 	contentArea document: (Microdown parse: self model content)
 ]
@@ -66,4 +70,16 @@ ChatPharoSpecChatBubble >> roleText [
 ChatPharoSpecChatBubble >> roleText: anObject [
 
 	roleText := anObject
+]
+
+{ #category : 'accessing' }
+ChatPharoSpecChatBubble >> spParent [
+
+	^ spParent
+]
+
+{ #category : 'accessing' }
+ChatPharoSpecChatBubble >> spParent: anObject [
+
+	spParent := anObject
 ]

@@ -13,10 +13,12 @@ Class {
 	#superclass : 'SpPresenter',
 	#instVars : [
 		'toolbar',
-		'notebook'
+		'notebook',
+		'ollamaModel'
 	],
 	#category : 'AI-ChatPharo-Spec',
-	#package : 'AI-ChatPharo-Spec'
+	#package : 'AI-ChatPharo',
+	#tag : 'Spec'
 }
 
 { #category : 'examples' }
@@ -26,12 +28,13 @@ ChatPharo class >> open [
 	^ self new open
 ]
 
-{ #category : 'initialization' }
+{ #category : 'toolbar' }
 ChatPharo >> addNewChat [
 
-    | newPage |
+    | newPage chatName|
+	 chatName := 'Chat ', notebook pages size asString.
     newPage := SpNotebookPage
-        title: 'New Chat'
+        title: chatName
         icon: (self iconNamed: #announcement)
         provider: [ ChatPharoSpecChat new ].
     notebook addPage: newPage.
@@ -39,15 +42,22 @@ ChatPharo >> addNewChat [
 ]
 
 { #category : 'layout' }
-ChatPharo >> defaultLayout [ 
-
+ChatPharo >> defaultLayout [
+	"Layout of ChatPharo. Nicer design wanted..."
+	
+	self setTitle.
     ^ SpBoxLayout newTopToBottom
-        add: toolbar expand: false;
+		  add: (SpBoxLayout newLeftToRight 
+					add: toolbar expand: false;
+					add: (self ollamaModelSelect)
+							expand: true fill: true padding: 20
+							) expand: false;
+
         add: notebook;
         yourself
 ]
 
-{ #category : 'initialization' }
+{ #category : 'toolbar' }
 ChatPharo >> deleteChat: aPageTitle [ 
 
     "Find the page by title and remove it if found."
@@ -61,22 +71,21 @@ ChatPharo >> deleteChat: aPageTitle [
 
 ]
 
-{ #category : 'specs' }
+{ #category : 'TOREMOVE' }
 ChatPharo >> initialExtent [
 
 	| fontWidth rowHeight |
 	fontWidth := (StandardFonts defaultFont widthOfString: 'M').
 	rowHeight := self class inputTextHeight.
-
 	^ (40@25) * (fontWidth @ rowHeight)
 	
 ]
 
 { #category : 'initialization' }
 ChatPharo >> initializePresenters [ 
-
     notebook := self newNotebook.
     toolbar := self newToolbar.
+	 ollamaModel := OllamaApi new.
     
     toolbar add: (SpToolbarButtonPresenter new
         label: 'New Chat';
@@ -116,10 +125,10 @@ ChatPharo >> initializePresenters [
     notebook addPage: (SpNotebookPage
         title: 'Chat'
         icon: (self iconNamed: #announcement)
-        provider: [ ChatPharoSpecChat new ])
+        provider: [ ChatPharoSpecChat newWithParent: self])
 ]
 
-{ #category : 'initialization' }
+{ #category : 'toolbar' }
 ChatPharo >> loadChat [ 
 
     | fileReference jsonData messages newPage |
@@ -132,9 +141,9 @@ ChatPharo >> loadChat [
     fileReference ifNotNil: [
         jsonData := STON fromString: fileReference contents.
         messages := jsonData collect: [ :dict |
-            LLMAPIChatObjectMessage 
+            "LLMAPIChatObjectMessage 
                 role: (dict at: 'role')
-                content: (dict at: 'content')
+                content: (dict at: 'content')"
         ].
         
         newPage := SpNotebookPage
@@ -164,7 +173,24 @@ ChatPharo >> notebook: anObject [
 	notebook := anObject
 ]
 
-{ #category : 'initialization' }
+{ #category : 'accessing' }
+ChatPharo >> ollamaModel [
+	^ ollamaModel 
+]
+
+{ #category : 'layout' }
+ChatPharo >> ollamaModelSelect [
+	"Add to ChatPharo a select ollama model"
+	^ SpDropListPresenter new
+			help: 'Select ollama model';
+			items: OllamaApi modelNames;
+			display: [ :e | e  ];
+			whenSelectedItemChangedDo: [ :ollamaModelName | self ollamaModel model: ollamaModelName];
+			yourself
+		
+]
+
+{ #category : 'toolbar' }
 ChatPharo >> openSettings [ 
 
     | settingsWindow |
@@ -172,10 +198,10 @@ ChatPharo >> openSettings [
     settingsWindow open
 ]
 
-{ #category : 'initialization' }
+{ #category : 'toolbar' }
 ChatPharo >> saveCurrentChat [
 
-    | fileReference jsonData currentChat |    
+    | fileReference jsonData currentChat |
     currentChat := notebook selectedPage presenterProvider value.
     jsonData := STON toStringPretty: (currentChat history model collect: [ :msg |
         Dictionary new
@@ -196,10 +222,9 @@ ChatPharo >> saveCurrentChat [
     ]
 ]
 
-{ #category : 'specs' }
-ChatPharo >> title [
-	
-	^ 'ChatPharo'
+{ #category : 'initialization' }
+ChatPharo >> setTitle [
+	titleHolder := 'ChatPharo'. 
 ]
 
 { #category : 'accessing' }

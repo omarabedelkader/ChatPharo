@@ -4,8 +4,9 @@ Class {
 	#instVars : [
 		'chat'
 	],
-	#category : 'AI-ChatPharo-Tests',
-	#package : 'AI-ChatPharo-Tests'
+	#category : 'AI-ChatPharo-Tests-Spec',
+	#package : 'AI-ChatPharo-Tests',
+	#tag : 'Spec'
 }
 
 { #category : 'running' }
@@ -14,11 +15,11 @@ ChatPharoSpecChatTest >> fakeLocalModelResponse [
 	| userContent |
 	userContent := chat inputField text.
 	chat history addMessage: (
-		LLMAPIChatObjectMessage
+		ChatPharoHistorySaver
 			role: 'user'
 			content: userContent).
 	chat history addMessage: (
-		LLMAPIChatObjectMessage
+		ChatPharoHistorySaver
 			role: 'ChatPharo'
 			content: 'Fake local model response').
 	chat inputField text: ''
@@ -28,7 +29,7 @@ ChatPharoSpecChatTest >> fakeLocalModelResponse [
 ChatPharoSpecChatTest >> setUp [
 
     super setUp.
-    chat := ChatPharoSpecChat new.
+    chat := ChatPharoSpecChat newWithParent: ChatPharo new.
     chat initializePresenters. 
 ]
 
@@ -44,7 +45,7 @@ ChatPharoSpecChatTest >> testAddMessage [
 
     | message |
 
-    message := LLMAPIChatObjectMessage 
+    message := ChatPharoHistorySaver 
         role: 'user' 
         content: 'Test message'.
     
@@ -82,6 +83,17 @@ ChatPharoSpecChatTest >> testAskLocalModel [
 "
 ]
 
+{ #category : 'tests' }
+ChatPharoSpecChatTest >> testCancelOllamaPrompt [
+	"Verifies that cancelOllamaPrompt stops the process, logs 'Canceled', and clears input."
+	self assert: chat ollamaProcess equals: nil.
+	
+	chat ollamaProcess: [ (Delay forSeconds: 2) wait ] fork.
+	chat cancelOllamaPrompt.
+	self assert: (chat history asPromptPrefix includesAll: 'Canceled').
+	self assert: chat inputField text equals: ''
+]
+
 { #category : 'running' }
 ChatPharoSpecChatTest >> testClearButtonExists [
 
@@ -92,7 +104,7 @@ ChatPharoSpecChatTest >> testClearButtonExists [
 ChatPharoSpecChatTest >> testClearChat [
 
 	| message |
-	message := LLMAPIChatObjectMessage
+	message := ChatPharoHistorySaver
 		           role: 'user'
 		           content: 'This is a test message'.
 
