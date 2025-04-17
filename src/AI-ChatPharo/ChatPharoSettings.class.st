@@ -26,7 +26,8 @@ Class {
 		'notebook',
 		'chatSettings',
 		'apiKeyInput',
-		'hostInput'
+		'hostInput',
+        'apiModelDropdown'
 	],
 	#category : 'AI-ChatPharo-Spec',
 	#package : 'AI-ChatPharo',
@@ -67,6 +68,11 @@ ChatPharoSettings >> deleteAllChats [
     self chatSettings notebook selectPageIndex: 1.
 ]
 
+{ #category : 'helpers' }
+ChatPharoSettings >> availableModelNames [
+	^ OllamaApi modelNames
+]
+
 { #category : 'layout' }
 ChatPharoSettings >> initializePresenters [
 
@@ -89,22 +95,35 @@ ChatPharoSettings >> initializePresenters [
 ]
 
 { #category : 'layout' }
-ChatPharoSettings >> newAPITab [ 
+ChatPharoSettings >> newAPITab [
 
-	^ SpPresenter new
-		layout: (SpBoxLayout newTopToBottom
-			add: 'LLM API Key:' expand: false;
-			add: (apiKeyInput := self newTextInput
-				placeholder: 'My key';
-				yourself) expand: false;
-			add: 'LLM Host:' expand: false;
-			add: (hostInput := self newTextInput
-				placeholder: 'api.mistral.ai';
-				yourself) expand: false;
-			yourself);
-		yourself
+    apiModelDropdown := SpComboBoxPresenter new
+        items: self availableModelNames;
+        displayBlock: [:item | item];
+        whenSelectedItemChanged: [ :selected |
+            selected isNil ifFalse: [
+                | api |
+                api := OllamaModelRegistry instance getOrCreateApiForModel: selected.
+                Transcript show: 'Selected model: ', selected; cr.
+                "You can extend this to rebind backend engine if needed"
+            ]
+        ];
+        yourself.
 
-
+    ^ SpPresenter new
+        layout: (SpBoxLayout newTopToBottom
+            add: 'LLM API Key:' expand: false;
+            add: (apiKeyInput := self newTextInput
+                placeholder: 'My key';
+                yourself) expand: false;
+            add: 'LLM Host:' expand: false;
+            add: (hostInput := self newTextInput
+                placeholder: 'api.mistral.ai';
+                yourself) expand: false;
+            add: 'Ollama Model:' expand: false;
+            add: apiModelDropdown expand: false;
+            yourself);
+        yourself
 ]
 
 { #category : 'layout' }
