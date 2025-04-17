@@ -27,7 +27,7 @@ Class {
 		'chatSettings',
 		'apiKeyInput',
 		'hostInput',
-        'apiModelDropdown'
+                'apiModelDropdown'
 	],
 	#category : 'AI-ChatPharo-Spec',
 	#package : 'AI-ChatPharo',
@@ -105,7 +105,7 @@ ChatPharoSettings >> newAPITab [
                 | api |
                 api := OllamaModelRegistry instance getOrCreateApiForModel: selected.
                 Transcript show: 'Selected model: ', selected; cr.
-                "You can extend this to rebind backend engine if needed"
+                
             ]
         ];
         yourself.
