@@ -8,9 +8,9 @@ Class {
 		'role',
 		'content'
 	],
-	#category : 'AI-ChatPharo-Spec',
+	#category : 'AI-ChatPharo-API',
 	#package : 'AI-ChatPharo',
-	#tag : 'Spec'
+	#tag : 'API'
 }
 
 { #category : 'instance creation' }
