@@ -1,11 +1,5 @@
 "
-### `OllamaAPI` Class
-Handles interactions with a hypothetical Ollama API server.
-
-- **`query:`**: Sends a query to the Ollama API and returns the response.
-- **`initialize`**: Sets default values and initializes the API instance.
-- **`list`**: Lists available models on the Ollama server.
-- **`delete`**: Deletes a model from the Ollama server.
+Killroy was here, but went away
 "
 Class {
 	#name : 'OllamaApi',
@@ -56,40 +50,26 @@ OllamaApi class >> ollamaVersion [
 ]
 
 { #category : 'ollama models' }
-OllamaApi >> getStreamedResponseForPrompt: prompt [
-	"Sends a prompt and receives tokens streamed line by line"
-	| apiGenerateUrl requestBody responseStream resultBuffer |
+OllamaApi >> getResponseForPrompt: prompt [
+	"Sends a prompt to an API, receives JSON response, and extracts the 'response' value"
+	| apiGenerateUrl jsonResponse requestDictionary requestBody|
 	apiGenerateUrl := 'http://localhost:11434/api/generate'.
-	requestBody := STONJSON toString: {
+	requestDictionary := Dictionary newFrom:  { 
 		#model -> model.
 		#system -> self system.
 		#prompt -> (self promptPrefix , ' ', prompt).
-		#stream -> true.
+		#stream -> false.
 		#options -> (Dictionary newFrom: {
-			#temperature -> 0.7 })
-	} asDictionary.
-
-	resultBuffer := ''.
-	responseStream := ZnClient new
-		url: apiGenerateUrl;
-		entity: (ZnEntity with: requestBody);
-		headerAt: 'Accept' put: 'text/event-stream';
-		post;
-		stream.
-
-	[responseStream atEnd] whileFalse: [
-		| line parsed token |
-		line := responseStream nextLine.
-		(line isEmpty or: [ line beginsWith: 'data: null' ]) ifFalse: [
-			parsed := STONJSON fromString: (line copyAfter: 'data: ').
-			token := parsed at: 'response' ifAbsent: [''].
-			Transcript show: token; flush.
-			resultBuffer := resultBuffer , token.
-		].
-	].
-
-	response := resultBuffer.
-	^ resultBuffer.
+    		#temperature -> 0})
+	} .
+	requestBody := (STONJSON toString: requestDictionary).
+	jsonResponse := ZnClient new
+	    url: apiGenerateUrl;
+	    entity: (ZnEntity with: requestBody);
+	    post;
+	    contents.
+	self response: ((STONJSON fromString: jsonResponse) at: 'response').
+	^ self response contents.
 ]
 
 { #category : 'initialization' }
@@ -129,40 +109,6 @@ OllamaApi >> modelInformation [
 	    contents.
 	response := (STONJSON fromString: jsonResponse).
 	^ response contents.
-]
-
-{ #category : 'ollama models' }
-OllamaApi class >> ensureModelDownloaded: modelName [
-	| installedModels response |
-	installedModels := self modelNames.
-	(installedModels includes: modelName) ifFalse: [
-		"Call /api/pull"
-		response := ZnClient new
-			url: 'http://localhost:11434/api/pull';
-			entity: (ZnEntity with: (STONJSON toString: { #name -> modelName } asDictionary));
-			post;
-			contents.
-		Transcript show: 'Model "', modelName, '" downloaded.'; cr.
-	].
-]
-
-{ #category : 'ollama models' }
-OllamaApi >> useModelNamed: modelName [
-	(self class modelNames includes: modelName)
-		ifTrue: [ self model: modelName ]
-		ifFalse: [
-			Transcript show: 'Model "', modelName, '" not found. Attempting download...'; cr.
-			self class ensureModelDownloaded: modelName.
-			self model: modelName.
-		].
-]
-
-{ #category : 'instance creation' }
-OllamaApi class >> withDefaultModel [
-	| instance |
-	instance := self new.
-	instance model: (self modelNames ifEmpty: [ self error: 'No models available' ]) first.
-	^ instance
 ]
 
 { #category : 'accessing' }
