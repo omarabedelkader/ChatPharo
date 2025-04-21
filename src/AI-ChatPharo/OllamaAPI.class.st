@@ -57,7 +57,9 @@ OllamaApi >> getResponseForPrompt: prompt [
 	requestDictionary := Dictionary newFrom:  { 
 		#model -> model.
 		#system -> self system.
-		#prompt -> (self promptPrefix , ' ', prompt).
+		#prompt -> (String streamContents: [ :stream |
+			stream nextPutAll: self promptPrefix.
+			prompt ifNotNil: [ stream nextPutAll: ' '; nextPutAll: prompt ] ]).
 		#stream -> false.
 		#options -> (Dictionary newFrom: {
     		#temperature -> 0})

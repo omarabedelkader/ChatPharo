@@ -57,11 +57,10 @@ ChatPharoSpecChat >> askLocalModel [
 	history addMessage: (ChatPharoHistorySaver
                             role: 'user'
                             content: inputField text).
-	ollamaProcess := [ | prompt |
-			prompt := inputField text.
+	ollamaProcess := [
 			inputField text: '(ollama model running)'.
 			self ollamaModel promptPrefix: history asPromptPrefix.
-			result := self ollamaModel getResponseForPrompt: prompt.
+			result := self ollamaModel getResponseForPrompt: nil.
 			inputField text: ''.
 			history addMessage: (ChatPharoHistorySaver
                             role: 'assistant'
