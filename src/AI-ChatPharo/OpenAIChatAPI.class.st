@@ -3,6 +3,7 @@ Class {
 	#superclass : 'Object',
 	#instVars : [
 		'baseURL',
+		'apiKey',
 		'model',
 		'system'
 	],
@@ -12,9 +13,22 @@ Class {
 }
 
 { #category : 'instance creation' }
+OpenAIChatAPI class >> baseURL: baseURL apiKey: apiKey system: system [
+
+	^ self basicNew initializeWithBaseURL: baseURL apiKey: apiKey system: system; yourself
+]
+
+{ #category : 'instance creation' }
 OpenAIChatAPI class >> baseURL: baseURL system: system [
 
-	^ self basicNew initializeWithBaseURL: baseURL system: system; yourself
+	^ self baseURL: baseURL apiKey: nil system: system
+]
+
+{ #category : 'instance creation' }
+OpenAIChatAPI class >> geminiWithAPIKey: apiKey system: system [
+
+	^ self baseURL: (ZnUrl fromString: 'https://generativelanguage.googleapis.com/v1beta/openai')
+		apiKey: apiKey system: system
 ]
 
 { #category : 'instance creation' }
@@ -40,6 +54,7 @@ OpenAIChatAPI >> client [
 
 	^ ZnClient new
 		url: baseURL;
+		setBearerAuthentication: apiKey;
 		yourself
 ]
 
@@ -63,10 +78,11 @@ OpenAIChatAPI >> getResponseForHistory: history [
 ]
 
 { #category : 'initialization' }
-OpenAIChatAPI >> initializeWithBaseURL: initialBaseURL system: initialSystem [
+OpenAIChatAPI >> initializeWithBaseURL: initialBaseURL apiKey: initialAPIKey system: initialSystem [
 
 	self initialize.
 	baseURL := initialBaseURL.
+	apiKey := initialAPIKey.
 	system := initialSystem.
 	self model: self modelNames first.
 ]
