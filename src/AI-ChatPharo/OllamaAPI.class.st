@@ -113,6 +113,12 @@ OllamaApi >> modelInformation [
 	^ response contents.
 ]
 
+{ #category : 'ollama models' }
+OllamaApi >> modelNames [
+
+	^ self class modelNames
+]
+
 { #category : 'accessing' }
 OllamaApi >> promptPrefix [
 
