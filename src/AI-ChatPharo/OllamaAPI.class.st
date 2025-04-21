@@ -52,7 +52,8 @@ OllamaApi class >> ollamaVersion [
 { #category : 'ollama models' }
 OllamaApi >> getResponseForHistory: history [
 
-	^ self promptPrefix: history asPromptPrefix; getResponseForPrompt: nil
+	^ ChatPharoHistorySaver role: 'assistant'
+		content: (self promptPrefix: history asPromptPrefix; getResponseForPrompt: nil)
 ]
 
 { #category : 'ollama models' }

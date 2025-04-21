@@ -61,9 +61,7 @@ ChatPharoSpecChat >> askLocalModel [
 			inputField text: '(ollama model running)'.
 			result := self ollamaModel getResponseForHistory: history.
 			inputField text: ''.
-			history addMessage: (ChatPharoHistorySaver
-                            role: 'assistant'
-                            content: result).
+			history addMessage: result.
 		] fork.
 ]
 

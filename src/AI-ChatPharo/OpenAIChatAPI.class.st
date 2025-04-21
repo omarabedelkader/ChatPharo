@@ -74,7 +74,8 @@ OpenAIChatAPI >> getResponseForHistory: history [
 		post;
 		response.
 	response isSuccess ifFalse: [ Error signal: 'Could not get chat completion' ].
-	^ (((STONJSON fromString: response contents) at: 'choices') first at: 'message') at: 'content'
+	^ ChatPharoHistorySaver role: 'assistant'
+		content: ((((STONJSON fromString: response contents) at: 'choices') first at: 'message') at: 'content')
 ]
 
 { #category : 'initialization' }
