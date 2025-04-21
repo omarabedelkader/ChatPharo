@@ -77,7 +77,7 @@ ChatPharoSpecChatHistory >> panel: anObject [
 { #category : 'openAI API' }
 ChatPharoSpecChatHistory >> putOpenAIChatMessagesOn: stream [
 
-	self model do: [ :historySaver | historySaver putOpenAIChatMessageOn: stream ]
+	self model do: [ :historySaver | historySaver putOpenAIChatMessagesOn: stream ]
 ]
 
 { #category : 'accessing' }

@@ -6,7 +6,8 @@ Class {
 	#superclass : 'Object',
 	#instVars : [
 		'role',
-		'content'
+		'content',
+		'toolCalls'
 	],
 	#category : 'AI-ChatPharo-API',
 	#package : 'AI-ChatPharo',
@@ -16,10 +17,17 @@ Class {
 { #category : 'instance creation' }
 ChatPharoHistorySaver class >> role: aRole content: aContent [
 
+	^ self role: aRole content: aContent toolCalls: nil
+]
+
+{ #category : 'instance creation' }
+ChatPharoHistorySaver class >> role: role content: content toolCalls: toolCalls [
+
 	^ self new
-		  role: aRole;
-		  content: aContent;
-		  yourself
+		role: role;
+		content: content;
+		toolCalls: toolCalls;
+		yourself
 ]
 
 { #category : 'converting' }
@@ -45,9 +53,19 @@ ChatPharoHistorySaver >> historyStringOn: stream [
 ]
 
 { #category : 'openAI API' }
-ChatPharoHistorySaver >> putOpenAIChatMessageOn: stream [
+ChatPharoHistorySaver >> putOpenAIChatMessagesOn: stream [
 
-	stream nextPut: (Dictionary with: 'role' -> self role with: 'content' -> self content)
+	| message |
+
+	message := Dictionary with: 'role' -> role.
+	content ifNotNil: [
+		message add: 'content' -> content ].
+	toolCalls ifNotNil: [
+		message add: 'tool_calls' -> (toolCalls collect: [ :toolCall | toolCall openAIChatToolCall ] as: Array) ].
+	stream nextPut: message.
+	toolCalls ifNotNil: [
+		toolCalls do: [ :toolCall |
+			stream nextPut: toolCall openAIChatToolMessage ] ].
 ]
 
 { #category : 'converting' }
@@ -60,4 +78,23 @@ ChatPharoHistorySaver >> role [
 ChatPharoHistorySaver >> role: anObject [
 
 	role := anObject
+]
+
+{ #category : 'accessing' }
+ChatPharoHistorySaver >> toolCalls [
+
+	^ toolCalls
+]
+
+{ #category : 'accessing' }
+ChatPharoHistorySaver >> toolCalls: newToolCalls [
+
+	toolCalls := newToolCalls
+]
+
+{ #category : 'displaying' }
+ChatPharoHistorySaver >> toolCallsDisplay [
+
+	^ toolCalls ifNotNil: [
+		'(tools called: {1})' format: { ', ' join: (toolCalls collect: [ :toolCall | toolCall functionName ]) } ]
 ]

@@ -59,9 +59,11 @@ ChatPharoSpecChat >> askLocalModel [
                             content: inputField text).
 	ollamaProcess := [
 			inputField text: '(ollama model running)'.
-			result := self ollamaModel getResponseForHistory: history.
+			[
+				result := self ollamaModel getResponseForHistory: history.
+				history addMessage: result.
+			] doWhileTrue: [ result toolCalls notNil ].
 			inputField text: ''.
-			history addMessage: result.
 		] fork.
 ]
 

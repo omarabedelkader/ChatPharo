@@ -46,6 +46,8 @@ ChatPharoSpecChatBubble >> defaultLayout [
 	modelName := self spParent ollamaModel model.
 	displayRole := self model role.
 	displayRole = 'assistant' ifTrue: [ displayRole := displayRole , ' (' , modelName , ')'].
+ 	self model toolCallsDisplay ifNotNil: [ :toolCallsDisplay |
+		displayRole := displayRole , ' ' , toolCallsDisplay ].
 	^ SpBoxLayout newTopToBottom
 		  add: displayRole expand: false;
 		  add: contentArea
@@ -57,7 +59,7 @@ ChatPharoSpecChatBubble >> defaultLayout [
 { #category : 'initialization' }
 ChatPharoSpecChatBubble >> initializePresenters [
 	contentArea := MicrodownPresenter new.
-	contentArea document: (Microdown parse: self model content)
+	contentArea document: (Microdown parse: (self model content ifNil: [ '' ]))
 ]
 
 { #category : 'accessing' }
