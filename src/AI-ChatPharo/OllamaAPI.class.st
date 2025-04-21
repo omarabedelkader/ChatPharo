@@ -50,6 +50,12 @@ OllamaApi class >> ollamaVersion [
 ]
 
 { #category : 'ollama models' }
+OllamaApi >> getResponseForHistory: history [
+
+	^ self promptPrefix: history asPromptPrefix; getResponseForPrompt: nil
+]
+
+{ #category : 'ollama models' }
 OllamaApi >> getResponseForPrompt: prompt [
 	"Sends a prompt to an API, receives JSON response, and extracts the 'response' value"
 	| apiGenerateUrl jsonResponse requestDictionary requestBody|
