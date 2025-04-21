@@ -74,6 +74,12 @@ ChatPharoSpecChatHistory >> panel: anObject [
 	panel := anObject
 ]
 
+{ #category : 'openAI API' }
+ChatPharoSpecChatHistory >> putOpenAIChatMessagesOn: stream [
+
+	self model do: [ :historySaver | historySaver putOpenAIChatMessageOn: stream ]
+]
+
 { #category : 'accessing' }
 ChatPharoSpecChatHistory >> spParent [
 

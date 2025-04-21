@@ -44,6 +44,12 @@ ChatPharoHistorySaver >> historyStringOn: stream [
 		nextPutAll: String cr.
 ]
 
+{ #category : 'openAI API' }
+ChatPharoHistorySaver >> putOpenAIChatMessageOn: stream [
+
+	stream nextPut: (Dictionary with: 'role' -> self role with: 'content' -> self content)
+]
+
 { #category : 'converting' }
 ChatPharoHistorySaver >> role [
 
