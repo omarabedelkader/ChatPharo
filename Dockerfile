@@ -1,29 +1,24 @@
-FROM debian:bookworm-slim
+ARG OLLAMA_VERSION=latest
+FROM ollama/ollama:${OLLAMA_VERSION} AS ollama
 
-# Install common dependencies
-RUN apt-get update && apt-get install -y \
-    curl wget unzip gnupg lsb-release ca-certificates \
-    libcairo2 libc6 libfreetype6 libssl3 \
-    fuse \
- && rm -rf /var/lib/apt/lists/*
+FROM ollama AS base
+RUN apt-get update && apt-get -y install curl
 
-# Install Pharo
-RUN curl -L https://get.pharo.org/64 | bash \
- && mv pharo /usr/local/bin/pharo \
- && mv pharo-vm /usr/local/bin/pharo-vm \
- && mkdir -p /var/pharo/images/default \
- && mv Pharo.image /var/pharo/images/default/Pharo.image \
- && mv Pharo.changes /var/pharo/images/default/Pharo.changes
+FROM base AS builder
+ARG MODEL_NAME
+ARG MODEL_TAG
 
-# Install Ollama
-RUN curl -fsSL https://ollama.com/install.sh | sh
+WORKDIR /model
 
-# Pull a model (this might fail during build if Ollama requires a running service)
-# You can also move this to runtime if it fails here
-RUN /root/.ollama/bin/ollama run codellama:7b || echo "Skipping model pull during build"
+# Start the ollama serve service
+RUN ollama serve & \
+    # Wait for the service to be ready
+    until curl -s http://localhost:11434; do \
+        echo "Waiting for ollama serve to be ready..."; \
+        sleep 5; \
+    done && \
+    # Create the model
+    ollama pull ${MODEL_NAME}:${MODEL_TAG}
 
-# Expose Ollama port
-EXPOSE 11434
-
-# Start both services
-CMD /root/.ollama/bin/ollama serve & /usr/local/bin/pharo /var/pharo/images/default/Pharo.image
+FROM ollama
+COPY --from=builder /root/.ollama /root/.ollama
