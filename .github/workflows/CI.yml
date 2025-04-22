@@ -1,32 +1,72 @@
-name: CI
-
-env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+# .github/workflows/ci-with-ollama.yml
+name: Pharo CI + Ollama
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
-    branches:
-      - main
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      ollama_version:
+        description: 'Ollama version (e.g. latest, 0.1.34)'
+        required: false
+        default: 'latest'
 
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  OLLAMA_VERSION: ${{ github.event.inputs.ollama_version || 'latest' }}
+
+################################################################################
+# 1 ────────────────────────────  START OLLAMA  ────────────────────────────────
+################################################################################
 jobs:
-  build:
+  ollama:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Pull & launch Ollama
+        run: |
+          docker run -d --name ollama \
+            -p 11434:11434 \
+            ollama/ollama:${{ env.OLLAMA_VERSION }}
+
+      - name: Wait for port 11434 to be ready
+        run: |
+          for i in {1..30}; do
+            if curl -fs http://localhost:11434/ > /dev/null; then
+              echo "✅  Ollama is up."
+              exit 0
+            fi
+            echo "⏳  Waiting for Ollama… ($i/30)"
+            sleep 2
+          done
+          echo "❌  Ollama did not start in time!" >&2
+          docker logs ollama || true
+          exit 1
+
+################################################################################
+# 2 ────────────────────────  SMALLTALK / PHARO CI  ────────────────────────────
+################################################################################
+  pharo-ci:
+    needs: ollama 
     strategy:
       matrix:
-        os: [ macos-latest, ubuntu-latest, windows-latest ]
-        smalltalk: [ Pharo64-13, Pharo64-12 ]
+        os:         [macos-latest, ubuntu-latest, windows-latest]
+        smalltalk:  [Pharo64-13, Pharo64-12]
 
     runs-on: ${{ matrix.os }}
     name: ${{ matrix.smalltalk }}
-    
+
     steps:
       - uses: actions/checkout@v4
 
       - uses: hpi-swa/setup-smalltalkCI@v1
         with:
           smalltalk-version: ${{ matrix.smalltalk }}
-      - run: smalltalkci -s ${{ matrix.smalltalk }}
+
+      - name: Run SmalltalkCI tests
+        run: smalltalkci -s ${{ matrix.smalltalk }}
         shell: bash
         timeout-minutes: 15
