@@ -1,63 +1,53 @@
-# .github/workflows/ci-with-ollama.yml
-name: Pharo CI + Ollama
+name: CI ‑‑ Smalltalk test‑matrix ➜ Dockerise Ollama model(s)
 
+###############################################################################
+# 1. Triggers
+###############################################################################
+# – Push / PRs to main (what your Smalltalk CI originally used)
+# – Manual launch with model parameters (what the Docker‑build needs)
+###############################################################################
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   pull_request:
-    branches: [main]
+    branches: [ main ]
   workflow_dispatch:
     inputs:
+      # ───── (single‑model inputs) ─────
+      model_name:
+        description: 'Model name (single build)'
+        required: false
+        default: 'all-minilm'
+      model_tag:
+        description: 'Model tag'
+        required: false
+        default: '22m'
       ollama_version:
-        description: 'Ollama version (e.g. latest, 0.1.34)'
+        description: 'Ollama version'
         required: false
         default: 'latest'
+      short_description:
+        description: 'Short description (single build)'
+        required: false
+      # ───── (multi‑model inputs) ─────
+      build_all:
+        description: 'Build the predefined matrix of models instead?'
+        required: false
+        default: 'false'         # true → build matrix, false → single model
 
-env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  OLLAMA_VERSION: ${{ github.event.inputs.ollama_version || 'latest' }}
-
-################################################################################
-# 1 ────────────────────────────  START OLLAMA  ────────────────────────────────
-################################################################################
+###############################################################################
+# 2. Smalltalk test‑matrix (unchanged code, just renamed the job)
+###############################################################################
 jobs:
-  ollama:
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
 
-    steps:
-      - name: Pull & launch Ollama
-        run: |
-          docker run -d --name ollama \
-            -p 11434:11434 \
-            ollama/ollama:${{ env.OLLAMA_VERSION }}
-
-      - name: Wait for port 11434 to be ready
-        run: |
-          for i in {1..30}; do
-            if curl -fs http://localhost:11434/ > /dev/null; then
-              echo "✅  Ollama is up."
-              exit 0
-            fi
-            echo "⏳  Waiting for Ollama… ($i/30)"
-            sleep 2
-          done
-          echo "❌  Ollama did not start in time!" >&2
-          docker logs ollama || true
-          exit 1
-
-################################################################################
-# 2 ────────────────────────  SMALLTALK / PHARO CI  ────────────────────────────
-################################################################################
-  pharo-ci:
-    needs: ollama 
+  smalltalk-tests:
+    name: "Smalltalk ${{ matrix.smalltalk }} on ${{ matrix.os }}"
     strategy:
       matrix:
-        os:         [macos-latest, ubuntu-latest, windows-latest]
-        smalltalk:  [Pharo64-13, Pharo64-12]
-
+        os:        [ macos-latest, ubuntu-latest, windows-latest ]
+        smalltalk: [ Pharo64-13, Pharo64-12 ]
+      fail-fast: false
     runs-on: ${{ matrix.os }}
-    name: ${{ matrix.smalltalk }}
 
     steps:
       - uses: actions/checkout@v4
@@ -66,7 +56,48 @@ jobs:
         with:
           smalltalk-version: ${{ matrix.smalltalk }}
 
-      - name: Run SmalltalkCI tests
+      - name: Run smalltalkCI
         run: smalltalkci -s ${{ matrix.smalltalk }}
         shell: bash
         timeout-minutes: 15
+
+###############################################################################
+# 3. Docker job(s)
+#    • If build_all == 'true' → build every model in the long list
+#    • Otherwise              → build the single model supplied
+###############################################################################
+
+  docker-build:
+    name: "Dockerise Ollama model(s)"
+    needs: smalltalk-tests       # wait for every matrix job to finish
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Free Disk Space
+        uses: jlumbroso/free-disk-space@54081f138730dfa15788a46383842cd2f914a1be
+        with:
+          tool-cache: true
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      #########################################################################
+      # 3a. Decide which list of models to build
+      #########################################################################
+      - name: Set build matrix (single or multi)
+        id: matrix
+        run: |
+          if [[ "${{ github.event.inputs.build_all }}" == "true" ]]; then
+            echo '::set-output name=models::[{"name":"all-minilm","tag":"22m","description":"Embedding models on very large sentence level datasets"}, {"name":"bge-m3","tag":"567m","description":"BGE‑M3 is a new model from BAAI distinguished for its versatility in Multi‑Functionality, Multi‑Linguality, and Multi‑Granularity"}, {"name":"codegemma","tag":"7b","description":"CodeGemma …"}  /* cut for brevity – copy all your objects here */ ]'
+          else
+            echo "::set-output name=models::[{\"name\":\"${{ github.event.inputs.model_name }}\",\"tag\":\"${{ github.event.inputs.model_tag }}\",\"description\":\"${{ github.event.inputs.short_description }}\"}]"
+          fi
+
+      - name: Build matrix dynamically
+        uses: actions/github-script@v7
+        id: gen-matrix
+        with:
+          script: |
+            const models = JSON.parse('${{ steps.matrix.outputs.models }}')
+            return { matrix: { include: models } }
+          result-encoding: string
