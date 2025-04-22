@@ -1,32 +1,121 @@
-name: CI
+name: CI + Ollama
+
+##############################
+# 1 – Triggers & environment #
+##############################
+on:
+  push:          { branches: [main] }
+  pull_request:  { branches: [main] }
+  workflow_dispatch:
+    inputs:
+      ollama_version:
+        description: 'Ollama version to tag images with (e.g. "latest")'
+        required: true
+        default:  'latest'
 
 env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GITHUB_TOKEN:  ${{ secrets.GITHUB_TOKEN }}
+  OLLAMA_VERSION: ${{ github.event.inputs.ollama_version || 'latest' }}
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
-
+##############################
+# 2 – Single job w/ matrix   #
+##############################
 jobs:
-  build:
-    strategy:
-      matrix:
-        os: [ macos-latest, ubuntu-latest, windows-latest ]
-        smalltalk: [ Pharo64-13, Pharo64-12 ]
-
+  build‑and‑test:
+    name: "${{ matrix.smalltalk }} • ${{ matrix.os }}"
     runs-on: ${{ matrix.os }}
-    name: ${{ matrix.smalltalk }}
-    
-    steps:
-      - uses: actions/checkout@v4
 
-      - uses: hpi-swa/setup-smalltalkCI@v1
-        with:
-          smalltalk-version: ${{ matrix.smalltalk }}
-      - run: smalltalkci -s ${{ matrix.smalltalk }}
-        shell: bash
-        timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        os:        [macos-latest, ubuntu-latest, windows-latest]
+        smalltalk: [Pharo64-13,  Pharo64-12]
+
+    steps:
+
+    # ---------- housekeeping ----------
+    - name: Free disk space (Linux only)
+      if: runner.os == 'Linux'
+      uses: jlumbroso/free-disk-space@v1.3.1
+      with:
+        tool-cache: true
+
+    - uses: actions/checkout@v4
+
+    # ---------- Docker login ----------
+    - name: Log in to Docker Hub
+      env:
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      run: |
+        echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
+
+    # ---------- 1. Build & push *all* Ollama model images ----------
+    - name: Build & push Ollama images
+      env:
+        DOCKER_USERNAME:  ${{ secrets.DOCKER_USERNAME }}
+        OLLAMA_VERSION:   ${{ env.OLLAMA_VERSION }}
+      run: |
+        set -euo pipefail
+
+        # Define your model list:  name tag "short description"
+        MODELS=(
+          "all-minilm 22m  'Embedding models on very large sentence‑level datasets'"
+          "bge-m3 567m     'Versatile model—multi‑function, multi‑lingual, multi‑granularity'"
+          "codegemma 7b    'Lightweight models for diverse coding tasks'"
+          "deepseek-coder 1.3b 'DeepSeek coder model'"
+          "gemma2 2b       'Google Gemma 2'"
+          "llama3.1 8b     'Meta Llama 3.1'"
+          "llama3.2 1b     'Meta Llama 3.2 small (1B)'"
+          "llama3.2 3b     'Meta Llama 3.2 small (3B)'"
+          "llava 7b        'LLaVA multimodal model'"
+          "llava-phi3 3.8b 'Small LLaVA fine‑tuned from Phi‑3'"
+          "mistral 7b      'Mistral AI 7B v0.3'"
+          "moondream 1.8b  'Vision‑language model for edge devices'"
+          "mxbai-embed-large 335m 'Large embedding model from mixedbread.ai'"
+          "nomic-embed-text v1.5 'High‑performing open embedding model'"
+          "phi3 3.8b       'Phi‑3 family'"
+          "phi3.5 3.8b     'Phi‑3.5 lightweight model'"
+          "qwen2 0.5b      'Alibaba Qwen 2 series'"
+          "qwen2.5 0.5b-instruct 'Alibaba Qwen 2.5 (128 K ctx)'"
+          "qwen2.5-coder 1.5b 'Qwen 2.5 coder model'"
+          "snowflake-arctic-embed 335m 'Snowflake Arctic embedding model'"
+          "starcoder2 3b   'StarCoder 2 (3B)'"
+          "reader-lm 1.5b  'HTML→Markdown conversion model'"
+          "bespoke-minicheck 7b 'Bespoke fact‑checking model'"
+          "nemotron-mini 4b 'NVIDIA Nemotron‑Mini'"
+          "smollm 1.7b     'smollm‑1.7B model'"
+          "smollm 360m     'smollm‑360M model'"
+          "smollm 135m     'smollm‑135M model'"
+        )
+
+        # Build & push each image
+        for entry in "${MODELS[@]}"; do
+          # shellcheck disable=SC2206
+          parts=($entry)
+          NAME="${parts[0]}"
+          TAG="${parts[1]}"
+          DESC="${parts[@]:2}"
+
+          IMAGE="${DOCKER_USERNAME}/${NAME}:${OLLAMA_VERSION}-${TAG}"
+          echo "🛠  Building $IMAGE"
+
+          docker build \
+            --build-arg MODEL_NAME="$NAME" \
+            --build-arg MODEL_TAG="$TAG" \
+            --build-arg OLLAMA_VERSION="$OLLAMA_VERSION" \
+            --label "org.opencontainers.image.description=${DESC}" \
+            -t "$IMAGE" .
+
+          docker push "$IMAGE"
+        done
+
+    # ---------- 2. Set up Smalltalk & run tests ----------
+    - uses: hpi-swa/setup-smalltalkCI@v1
+      with:
+        smalltalk-version: ${{ matrix.smalltalk }}
+
+    - name: Run SmalltalkCI tests
+      run: smalltalkci -s ${{ matrix.smalltalk }}
+      shell: bash
+      timeout-minutes: 30
