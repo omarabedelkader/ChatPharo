@@ -50,6 +50,13 @@ OllamaApi class >> ollamaVersion [
 ]
 
 { #category : 'ollama models' }
+OllamaApi >> getResponseForHistory: history [
+
+	^ ChatPharoHistorySaver role: 'assistant'
+		content: (self promptPrefix: history asPromptPrefix; getResponseForPrompt: nil)
+]
+
+{ #category : 'ollama models' }
 OllamaApi >> getResponseForPrompt: prompt [
 	"Sends a prompt to an API, receives JSON response, and extracts the 'response' value"
 	| apiGenerateUrl jsonResponse requestDictionary requestBody|
@@ -57,7 +64,9 @@ OllamaApi >> getResponseForPrompt: prompt [
 	requestDictionary := Dictionary newFrom:  { 
 		#model -> model.
 		#system -> self system.
-		#prompt -> (self promptPrefix , ' ', prompt).
+		#prompt -> (String streamContents: [ :stream |
+			stream nextPutAll: self promptPrefix.
+			prompt ifNotNil: [ stream nextPutAll: ' '; nextPutAll: prompt ] ]).
 		#stream -> false.
 		#options -> (Dictionary newFrom: {
     		#temperature -> 0})
@@ -109,6 +118,12 @@ OllamaApi >> modelInformation [
 	    contents.
 	response := (STONJSON fromString: jsonResponse).
 	^ response contents.
+]
+
+{ #category : 'ollama models' }
+OllamaApi >> modelNames [
+
+	^ self class modelNames
 ]
 
 { #category : 'accessing' }

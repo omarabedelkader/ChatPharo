@@ -21,6 +21,12 @@ Class {
 	#tag : 'Spec'
 }
 
+{ #category : 'instance creation' }
+ChatPharo class >> new [
+
+	^ self on:  OllamaApi new
+]
+
 { #category : 'examples' }
 ChatPharo class >> open [
 	<example>
@@ -85,7 +91,6 @@ ChatPharo >> initialExtent [
 ChatPharo >> initializePresenters [ 
     notebook := self newNotebook.
     toolbar := self newToolbar.
-	 ollamaModel := OllamaApi new.
     
     toolbar add: (SpToolbarButtonPresenter new
         label: 'New Chat';
@@ -183,7 +188,7 @@ ChatPharo >> ollamaModelSelect [
 	"Add to ChatPharo a select ollama model"
 	^ SpDropListPresenter new
 			help: 'Select ollama model';
-			items: OllamaApi modelNames;
+			items: self ollamaModel modelNames;
 			display: [ :e | e  ];
 			whenSelectedItemChangedDo: [ :ollamaModelName | self ollamaModel model: ollamaModelName];
 			yourself
@@ -220,6 +225,12 @@ ChatPharo >> saveCurrentChat [
             nextPutAll: jsonData;
             close
     ]
+]
+
+{ #category : 'accessing - model' }
+ChatPharo >> setModelBeforeInitialization: initialOllamaModel [
+
+	ollamaModel := initialOllamaModel
 ]
 
 { #category : 'initialization' }
