@@ -92,6 +92,7 @@ OpenAIChatToolFunction class >> toolOpenPlayground [
 					with: 'type' -> 'string'
 					with: 'description' -> 'The Pharo Smalltalk code for the Playground'))
 			with: 'required' -> #('code'))
+
 		block: [ :arguments | 
 			| code result |
 			code := arguments at: 'code'.

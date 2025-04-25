@@ -1,3 +1,39 @@
+"
+```smalltalk
+
+(ChatPharo on: (OpenAIChatAPI geminiWithAPIKey: geminiAPIKey
+	system: 'You are an AI coding assistant within the user''s Pharo image.'
+	tools: { OpenAIChatToolFunction toolEvaluateExpression })) open
+	
+```
+
+
+
+```smalltalk
+(ChatPharo on: (OpenAIChatAPI ollamaWithSystem: 'You are an AI assistant.'
+	tools: { OpenAIChatToolFunction toolGetCurrentWeather })) open
+```
+
+```smalltalk
+(ChatPharo on: (OpenAIChatAPI geminiWithAPIKey: geminiAPIKey
+	system: 'You are an AI coding assistant within the user''s Pharo image.'
+	tools: OpenAIChatToolsetOnBrowserEnvironment new tools)) open
+```
+
+```smalltalk
+(ChatPharo on: (OpenAIChatAPI geminiWithAPIKey: geminiAPIKey
+	system: 'You are an AI coding assistant within the user''s Pharo image.'
+	tools: OpenAIChatToolsetOnBrowserEnvironment new tools ,
+		{ OpenAIChatToolFunction toolOpenPlayground })) open
+```
+
+```smalltalk
+(ChatPharo on: (OpenAIChatAPI
+	ollamaWithSystem: 'You are an AI coding assistant within the user''s Pharo image.'
+	tools: OpenAIChatToolsetOnBrowserEnvironment new tools ,
+		{ OpenAIChatToolFunction toolOpenPlayground })) open
+```
+"
 Class {
 	#name : 'OpenAIChatAPI',
 	#superclass : 'Object',
