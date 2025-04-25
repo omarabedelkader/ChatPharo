@@ -1,0 +1,23 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Build the Docker image
+      run: |
+        docker build -t my-ollama-image:Pharo64-13 .
+
+    - name: Run container and pull Ollama model
+      run: |
+        docker run --rm my-ollama-image:Pharo64-13 \
+          bash -c "/root/.ollama/bin/ollama serve & sleep 10 && ollama pull llama3"
