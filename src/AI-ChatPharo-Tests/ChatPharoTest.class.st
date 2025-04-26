@@ -13,7 +13,7 @@ Class {
 ChatPharoTest >> setUp [
 
    super setUp.
-   presenter := ChatPharo new.
+   presenter := ChatPharo open.
 ]
 
 { #category : 'running' }
