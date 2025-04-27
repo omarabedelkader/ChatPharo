@@ -1,5 +1,5 @@
 Class {
-	#name : 'ChatPharoPresenter',
+	#name : 'ChatPharoPresenter2',
 	#superclass : 'SpPresenter',
 	#instVars : [
 		'messagesLayout',
@@ -14,7 +14,7 @@ Class {
 }
 
 { #category : 'initialization' }
-ChatPharoPresenter >> connectPresenters [
+ChatPharoPresenter2 >> connectPresenters [
 
 	messageTextField whenSubmitDo: [ :text | self sendMessage ].
 	submitButton action: [ self sendMessage. ].
@@ -33,7 +33,7 @@ ChatPharoPresenter >> connectPresenters [
 ]
 
 { #category : 'initialization' }
-ChatPharoPresenter >> defaultLayout [
+ChatPharoPresenter2 >> defaultLayout [
 
 	^ SpBoxLayout newVertical
 		add: (SpScrollableLayout with: messagesLayout);
@@ -47,7 +47,7 @@ ChatPharoPresenter >> defaultLayout [
 ]
 
 { #category : 'initialization' }
-ChatPharoPresenter >> initializePresenters [
+ChatPharoPresenter2 >> initializePresenters [
 
 	messageTextField := self newTextInput
 			placeholder: 'Type your message here...';
@@ -75,7 +75,7 @@ ChatPharoPresenter >> initializePresenters [
 ]
 
 { #category : 'initialization' }
-ChatPharoPresenter >> initializeWindow: aWindowPresenter [
+ChatPharoPresenter2 >> initializeWindow: aWindowPresenter [
 	
 	super initializeWindow: aWindowPresenter.
 	
@@ -85,13 +85,13 @@ ChatPharoPresenter >> initializeWindow: aWindowPresenter [
 ]
 
 { #category : 'initialization' }
-ChatPharoPresenter >> sendMessage [
+ChatPharoPresenter2 >> sendMessage [
 
 	model sendMessage: messageTextField text
 ]
 
 { #category : 'initialization' }
-ChatPharoPresenter >> setModelBeforeInitialization: anObject [
+ChatPharoPresenter2 >> setModelBeforeInitialization: anObject [
 
 	model := anObject
 ]

@@ -18,7 +18,7 @@ ChatPharo2 >> chats [
 { #category : 'initialization' }
 ChatPharo2 >> initialize [
 
-	settings := ChatPharoSettings new.
+	settings := ChatPharoSettings2 new.
 	chats := OrderedCollection new
 ]
 
@@ -33,7 +33,7 @@ ChatPharo2 >> newChat [
 { #category : 'initialization' }
 ChatPharo2 >> presenter [
 
-	^ ChatPharoPresenter on: self 
+	^ ChatPharoPresenter2 on: self 
 ]
 
 { #category : 'accessing' }

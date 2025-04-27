@@ -1,5 +1,5 @@
 Class {
-	#name : 'ChatPharoMessage',
+	#name : 'ChatPharoMessage2',
 	#superclass : 'Object',
 	#instVars : [
 		'content',
@@ -11,38 +11,38 @@ Class {
 }
 
 { #category : 'accessing' }
-ChatPharoMessage >> answer [
+ChatPharoMessage2 >> answer [
 
 	^ answer
 ]
 
 { #category : 'accessing' }
-ChatPharoMessage >> answer: anObject [
+ChatPharoMessage2 >> answer: anObject [
 
 	answer := anObject
 ]
 
 { #category : 'accessing' }
-ChatPharoMessage >> content [
+ChatPharoMessage2 >> content [
 
 	^ content
 ]
 
 { #category : 'accessing' }
-ChatPharoMessage >> content: anObject [
+ChatPharoMessage2 >> content: anObject [
 
 	content := anObject
 ]
 
 { #category : 'accessing' }
-ChatPharoMessage >> initialize [
+ChatPharoMessage2 >> initialize [
 
 	content := String empty.
 	answer := String empty
 ]
 
 { #category : 'accessing' }
-ChatPharoMessage >> presenter [
+ChatPharoMessage2 >> presenter [
 
-	^ presenter ifNil:[ presenter := ChatPharoMessagePresenter on: self ]
+	^ presenter ifNil:[ presenter := ChatPharoMessagePresenter2 on: self ]
 ]
