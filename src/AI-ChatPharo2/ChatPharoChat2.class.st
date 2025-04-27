@@ -95,6 +95,13 @@ ChatPharoChat2 >> sendMessage: aText [
 			                 action value: messages last ] ] fork
 ]
 
+{ #category : 'running' }
+ChatPharoChat2 >> waitForPromptProcessDone [ 
+    | promptProcess |
+promptProcess ifNotNil: [ promptProcess waitUntil: [ promptProcess isTerminated ] ].
+
+]
+
 { #category : 'as yet unclassified' }
 ChatPharoChat2 >> whenAnswerReceivedDo: aBlock [
 
