@@ -56,3 +56,42 @@ ChatPharoSpecChatBubbleTest >> testLayoutConstraints [
 	self assert:
 		constraints height equals: (ChatPharoSpecChatBubble inputTextHeight * 4)
 ]
+
+{ #category : 'tests' }
+ChatPharoSpecChatBubbleTest >> testInitiallyCollapsed [
+    
+    self deny: bubble isExpanded.
+]
+
+{ #category : 'tests' }
+ChatPharoSpecChatBubbleTest >> testExpandCollapseToggle [
+    self deny: bubble isExpanded.
+    
+    bubble toggleExpand.
+    self assert: bubble isExpanded.
+    
+    bubble toggleExpand.
+    self deny: bubble isExpanded.
+]
+
+{ #category : 'tests' }
+ChatPharoSpecChatBubbleTest >> testContentChangesOnExpand [
+    
+    | shortContent fullContent |
+    
+    
+    testMessage := ChatPharoHistorySaver
+        role: 'user'
+        content: ('This is a long test message. ' , ('Extra text. ' repeat: 50)).
+
+    bubble := ChatPharoSpecChatBubble from: testMessage parent: (ChatPharo new).
+
+    shortContent := bubble contentArea document asString.
+    
+    bubble toggleExpand.
+
+    fullContent := bubble contentArea document asString.
+    
+    self assert: shortContent ~= fullContent.
+    self assert: (fullContent includesSubstring: 'Extra text').
+]

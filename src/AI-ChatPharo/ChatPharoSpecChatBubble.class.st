@@ -12,7 +12,9 @@ Class {
 	#instVars : [
 		'spParent',
 		'roleText',
-		'contentArea'
+		'contentArea',
+		'isExpanded',
+        'expandButton'
 	],
 	#category : 'AI-ChatPharo-Spec',
 	#package : 'AI-ChatPharo',
@@ -53,13 +55,21 @@ ChatPharoSpecChatBubble >> defaultLayout [
 		  add: contentArea
 		  withConstraints: [ :constraints | 
 			constraints height: (self class inputTextHeight) * 4 ];
+		  add: expandButton expand: false;
 		  yourself
 ]
 
 { #category : 'initialization' }
 ChatPharoSpecChatBubble >> initializePresenters [
-	contentArea := MicrodownPresenter new.
-	contentArea document: (Microdown parse: (self model content ifNil: [ '' ]))
+    isExpanded := false.
+    
+    contentArea := MicrodownPresenter new.
+    expandButton := SpButtonPresenter new.
+    
+    self refreshContent.
+    
+    expandButton label: 'Expand';
+        action: [ self toggleExpand ].
 ]
 
 { #category : 'accessing' }
@@ -84,4 +94,23 @@ ChatPharoSpecChatBubble >> spParent [
 ChatPharoSpecChatBubble >> spParent: anObject [
 
 	spParent := anObject
+]
+
+{ #category : 'actions' }
+ChatPharoSpecChatBubble >> toggleExpand [
+    isExpanded := isExpanded not.
+    self refreshContent.
+]
+
+{ #category : 'helpers' }
+ChatPharoSpecChatBubble >> refreshContent [
+    | fullText shortText |
+    fullText := self model content ifNil: [ '' ].
+    shortText := (fullText size > 400)
+        ifTrue: [ (fullText copyFrom: 1 to: 400) , '...' ]
+        ifFalse: [ fullText ].
+
+    contentArea document: (Microdown parse: (isExpanded ifTrue: [ fullText ] ifFalse: [ shortText ])).
+
+    expandButton label: (isExpanded ifTrue: ['Collapse'] ifFalse: ['Expand']).
 ]
