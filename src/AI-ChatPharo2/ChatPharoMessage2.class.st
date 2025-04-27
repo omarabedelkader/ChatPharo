@@ -1,3 +1,12 @@
+"
+```smalltalk
+(ChatPharoMessage2 new
+
+	content: 'Bonjour';
+	answer: 'Salut';
+	yourself) presenter open.
+```
+"
 Class {
 	#name : 'ChatPharoMessage2',
 	#superclass : 'Object',

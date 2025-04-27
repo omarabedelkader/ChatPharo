@@ -1,3 +1,13 @@
+"
+```smalltalk
+(ChatPharoChat2 new
+	ollamaApi: (OllamaApi new
+		model: 'codellama:7b';
+		yourself);
+	yourself) presenter open.
+	
+```
+"
 Class {
 	#name : 'ChatPharoChat2',
 	#superclass : 'Object',
@@ -74,7 +84,6 @@ ChatPharoChat2 >> presenter [
 { #category : 'as yet unclassified' }
 ChatPharoChat2 >> sendMessage: aText [
 
-	self halt.
 	promptProcess := [
 		                 messages add: (ChatPharoMessage2 new
 				                  content: aText;

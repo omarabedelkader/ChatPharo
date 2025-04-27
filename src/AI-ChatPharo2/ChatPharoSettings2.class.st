@@ -1,3 +1,12 @@
+"
+```smalltalk
+(ChatPharoSettings new
+	useModel: 'codellama:7b';
+	ollamaApi)
+		getResponseForPrompt: 'Bonjour'.
+
+```
+"
 Class {
 	#name : 'ChatPharoSettings2',
 	#superclass : 'Object',

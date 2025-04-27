@@ -80,22 +80,22 @@ ChatPharoSettingsPresenter2 >> initializeWindow: aWindowPresenter [
 ]
 
 { #category : 'initialization' }
-ChatPharoSettingsPresenter2 >> newAPITab [ 
+ChatPharoSettingsPresenter2 >> newAPITab [
 
 	^ SpPresenter new
-		layout: (SpBoxLayout newTopToBottom
-			add: 'LLM API Key:' expand: false;
-			add: (apiKeyInput := self newTextInput
-				placeholder: 'My key';
-				yourself) expand: false;
-			add: 'LLM Host:' expand: false;
-			add: (hostInput := self newTextInput
-				placeholder: 'api.mistral.ai';
-				yourself) expand: false;
-			yourself);
-		yourself
-
-
+		  layout: (SpBoxLayout newTopToBottom
+				   add: 'API Key:' expand: false;
+				   add: (apiKeyInput := self newTextInput
+						                   placeholder: 'My key';
+						                   yourself)
+				   expand: false;
+				   add: 'LLM Host:' expand: false;
+				   add: (hostInput := self newTextInput
+						                 placeholder: 'api.mistral.ai';
+						                 yourself)
+				   expand: false;
+				   yourself);
+		  yourself
 ]
 
 { #category : 'initialization' }
