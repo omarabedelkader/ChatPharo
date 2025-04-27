@@ -50,27 +50,26 @@ ChatPharoChatPresenter2 >> defaultLayout [
 ChatPharoChatPresenter2 >> initializePresenters [
 
 	messageTextField := self newTextInput
-			placeholder: 'Type your message here...';
-			yourself.
-			
+		                    placeholder: 'Type your message here...';
+		                    yourself.
+
 	submitButton := self newButton
-        label: 'Submit';
-        icon: (self iconNamed: #glamorousGo);
-        help: 'Submit prompt';
-		  extent: 100@40;
-        yourself.
+		                label: 'Submit';
+		                icon: (self iconNamed: #glamorousGo);
+		                help: 'Submit prompt';
+		                yourself.
 
 	cancelButton := self newButton
-        label: 'Cancel';
-        icon: (self iconNamed: #delete);
-        help: 'Cancel prompt';
-        yourself.
+		                label: 'Cancel';
+		                icon: (self iconNamed: #delete);
+		                help: 'Cancel prompt';
+		                yourself.
 
 	clearButton := self newButton
-        label: 'Clear Chat';
-        icon: (self iconNamed: #glamorousTrash);
-        help: 'Clear chat history';
-        yourself.
+		               label: 'Clear Chat';
+		               icon: (self iconNamed: #glamorousTrash);
+		               help: 'Clear chat history';
+		               yourself.
 
 	messagesLayout := SpBoxLayout newVertical
 ]

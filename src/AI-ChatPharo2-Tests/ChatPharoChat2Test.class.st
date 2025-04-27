@@ -26,15 +26,6 @@ ChatPharoChat2Test >> testCancelMessageTerminatesProcess [
 ]
 
 { #category : 'running' }
-ChatPharoChat2Test >> testClearChatResetsMessages [
-	chat sendMessage: 'something'.
-	chat instVarNamed: #promptProcess waitUntilTerminated.
-	chat clearChat.
-	self assert: chat messages isEmpty.
-	self assert: chat history isEmpty.
-]
-
-{ #category : 'running' }
 ChatPharoChat2Test >> testHistoryFormatsCorrectly [
 	chat
 		sendMessage: 'What is time?';

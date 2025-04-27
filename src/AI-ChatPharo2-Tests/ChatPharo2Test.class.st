@@ -11,10 +11,10 @@ Class {
 
 { #category : 'running' }
 ChatPharo2Test >> setUp [
+
 	app := ChatPharo2 new.
 	mockApi := MockOllamaApi new.
-	"inject our mock into settings"
-	app settings instVarNamed: #ollamaApi put: mockApi.
+	app settings instVarNamed: #ollamaApi put: mockApi
 ]
 
 { #category : 'running' }
@@ -116,4 +116,12 @@ ChatPharo2Test >> testUseModel [
 	settings := ChatPharoSettings2 new.
 	settings useModel: 'TestModel'.
 	self assert: settings ollamaApi model equals: 'TestModel'.
+]
+
+{ #category : 'running' }
+ChatPharo2Test >> waitForPromptProcessDone [ 
+
+    | proc |
+    proc := self instVarNamed: #promptProcess.
+    proc ifNotNil: [ proc suspend. ].
 ]
