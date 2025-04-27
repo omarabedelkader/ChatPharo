@@ -40,9 +40,10 @@ ChatPharoChat2 >> history [
 	] 
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'initialization' }
 ChatPharoChat2 >> initialize [
 
+	super initialize.
 	messages := OrderedCollection new
 ]
 
@@ -73,19 +74,16 @@ ChatPharoChat2 >> presenter [
 { #category : 'as yet unclassified' }
 ChatPharoChat2 >> sendMessage: aText [
 
-	promptProcess := [ 	
-		messages add: (ChatPharoMessage2 new
-			content: aText;
-			answer: (ollamaApi 
-				system: self history; 
-				getResponseForPrompt: aText);
-			yourself).
-		onAnswerReceived ifNotNil: [ :action |
-			action value: messages last
-		]
-	] fork
-
-	
+	self halt.
+	promptProcess := [
+		                 messages add: (ChatPharoMessage2 new
+				                  content: aText;
+				                  answer: (ollamaApi
+						                   system: self history;
+						                   getResponseForPrompt: aText);
+				                  yourself).
+		                 onAnswerReceived ifNotNil: [ :action |
+			                 action value: messages last ] ] fork
 ]
 
 { #category : 'as yet unclassified' }

@@ -18,6 +18,7 @@ ChatPharo2 >> chats [
 { #category : 'initialization' }
 ChatPharo2 >> initialize [
 
+	super initialize.
 	settings := ChatPharoSettings2 new.
 	chats := OrderedCollection new
 ]

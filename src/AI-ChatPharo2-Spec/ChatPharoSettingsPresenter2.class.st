@@ -28,6 +28,14 @@ ChatPharoSettingsPresenter2 >> connectPresenters [
 	]
 ]
 
+{ #category : 'layout' }
+ChatPharoSettingsPresenter2 >> defaultLayout [
+
+    ^ SpBoxLayout newTopToBottom
+        add: notebook;
+        yourself
+]
+
 { #category : 'initialization' }
 ChatPharoSettingsPresenter2 >> initializePresenters [
 
@@ -132,7 +140,7 @@ ChatPharoSettingsPresenter2 >> notebook: anObject [
 	notebook := anObject
 ]
 
-{ #category : 'initialization' }
+{ #category : 'accessing - model' }
 ChatPharoSettingsPresenter2 >> setModelBeforeInitialization: anObject [
 
 	model := anObject

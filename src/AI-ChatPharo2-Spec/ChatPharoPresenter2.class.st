@@ -7,71 +7,91 @@ Class {
 		'submitButton',
 		'cancelButton',
 		'clearButton',
-		'model'
+		'model',
+		'notebook',
+		'toolbar'
 	],
 	#category : 'AI-ChatPharo2-Spec',
 	#package : 'AI-ChatPharo2-Spec'
 }
 
-{ #category : 'initialization' }
-ChatPharoPresenter2 >> connectPresenters [
+{ #category : 'adding' }
+ChatPharoPresenter2 >> addNewChat [
 
-	messageTextField whenSubmitDo: [ :text | self sendMessage ].
-	submitButton action: [ self sendMessage. ].
-	cancelButton action: [ model cancelMessage ].
-	clearButton action: [ 
-		model messages do: [ :p | 
-			messagesLayout remove: p
-		].
-		model clearChat.
-		
-	].
-	
-	model whenAnswerReceivedDo: [ :message | 
-		messagesLayout add: message presenter	
-	]
+    | newPage chatName|
+	 chatName := 'Chat ', notebook pages size asString.
+	 model newChat.
+    newPage := SpNotebookPage
+        title: chatName
+        icon: (self iconNamed: #announcement)
+        provider: [ model chats last presenter ].
+    notebook addPage: newPage.
+    notebook selectPage: newPage
 ]
 
-{ #category : 'initialization' }
+{ #category : 'layout' }
 ChatPharoPresenter2 >> defaultLayout [
+	"Layout of ChatPharo. Nicer design wanted..."
 
-	^ SpBoxLayout newVertical
-		add: (SpScrollableLayout with: messagesLayout);
-		add: (SpBoxLayout newHorizontal
-			add: messageTextField;
-			add: submitButton;
-			add: cancelButton;
-			yourself 
-		) expand: false;
-		yourself
+    ^ SpBoxLayout newTopToBottom
+		  add: toolbar expand: false;
+        add: notebook;
+        yourself
 ]
 
 { #category : 'initialization' }
-ChatPharoPresenter2 >> initializePresenters [
+ChatPharoPresenter2 >> deleteChat: aPageTitle [ 
 
-	messageTextField := self newTextInput
-			placeholder: 'Type your message here...';
-			yourself.
-			
-	submitButton := self newButton
-        label: 'Submit';
-        icon: (self iconNamed: #glamorousGo);
-        help: 'Submit prompt to Ollama model';
-        yourself.
+    "Find the page by title and remove it if found."
+    | pageToDelete |
+    pageToDelete := notebook pages detect: [:page | page title = aPageTitle] ifNone: [^ self].
+    
+    (self confirm: 'Are you sure you want to delete this chat?')
+        ifTrue: [
+            notebook removePage: pageToDelete.
+        ].
 
-	cancelButton := self newButton
-        label: 'Cancel';
-        icon: (self iconNamed: #delete);
-        help: 'Cancel prompt to Ollama model';
-        yourself.
+]
 
-	clearButton := self newButton
-        label: 'Clear Chat';
-        icon: (self iconNamed: #glamorousTrash);
-        help: 'Clear chat history';
-        yourself.
+{ #category : 'initialization' }
+ChatPharoPresenter2 >> initializePresenters [ 
+    notebook := self newNotebook.
+    toolbar := self newToolbar.
+    
+    toolbar add: (SpToolbarButtonPresenter new
+        label: 'New Chat';
+        icon: (self iconNamed: #add);
+        help: 'Create a new chat';
+        action: [ self addNewChat ];
+        yourself).
 
-	messagesLayout := SpBoxLayout newVertical
+	toolbar add: (SpToolbarButtonPresenter new
+    	label: 'Delete Chat';
+    	icon: (self iconNamed: #delete);
+    	help: 'Delete the selected chat';
+    	action: [ self deleteChat: (notebook selectedPage title) ];
+    	yourself).
+	
+    toolbar add: (SpToolbarButtonPresenter new
+        label: 'Save Chat';
+        icon: (self iconNamed: #smallSave);
+        help: 'Save current chat';
+        action: [ self saveCurrentChat ];
+        yourself).
+        
+    "toolbar add: (SpToolbarButtonPresenter new
+        label: 'Load Chat';
+        icon: (self iconNamed: #smallOpen);
+        help: 'Load saved chat';
+        action: [ self loadChat ];
+        yourself)."
+
+	toolbar add: (SpToolbarButtonPresenter new
+        label: 'Settings';
+        icon: (self iconNamed: #smallConfiguration);
+        help: 'Open settings';
+        action: [ self openSettings ];
+        yourself)
 ]
 
 { #category : 'initialization' }
@@ -80,8 +100,52 @@ ChatPharoPresenter2 >> initializeWindow: aWindowPresenter [
 	super initializeWindow: aWindowPresenter.
 	
 	aWindowPresenter
-		title: 'Pharo chat';
+		title: 'ChatPharo';
 		initialExtent: 800@500
+]
+
+{ #category : 'initialization' }
+ChatPharoPresenter2 >> notebook [
+
+	^ notebook
+]
+
+{ #category : 'initialization' }
+ChatPharoPresenter2 >> notebook: anObject [
+
+	notebook := anObject
+]
+
+{ #category : 'initialization' }
+ChatPharoPresenter2 >> openSettings [
+
+	| settingsWindow |
+	settingsWindow := model settings presenter.
+	settingsWindow open
+]
+
+{ #category : 'initialization' }
+ChatPharoPresenter2 >> saveCurrentChat [
+
+    | fileReference jsonData currentChat |
+    currentChat := notebook selectedPage presenterProvider value.
+    jsonData := STON toStringPretty: (currentChat history model collect: [ :msg |
+        Dictionary new
+            at: 'role' put: msg role;
+            at: 'content' put: msg content;
+            yourself
+    ]).
+    
+    fileReference := UIManager default 
+        chooseForSaveFileReference: 'Save chat'
+        extensions: #('json')
+        path: FileLocator home.
+        
+    fileReference ifNotNil: [
+        fileReference writeStream
+            nextPutAll: jsonData;
+            close
+    ]
 ]
 
 { #category : 'initialization' }
@@ -90,7 +154,7 @@ ChatPharoPresenter2 >> sendMessage [
 	model sendMessage: messageTextField text
 ]
 
-{ #category : 'initialization' }
+{ #category : 'accessing - model' }
 ChatPharoPresenter2 >> setModelBeforeInitialization: anObject [
 
 	model := anObject

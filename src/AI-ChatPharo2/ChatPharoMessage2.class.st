@@ -34,9 +34,10 @@ ChatPharoMessage2 >> content: anObject [
 	content := anObject
 ]
 
-{ #category : 'accessing' }
+{ #category : 'initialization' }
 ChatPharoMessage2 >> initialize [
 
+	super initialize.
 	content := String empty.
 	answer := String empty
 ]

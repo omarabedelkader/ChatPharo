@@ -32,7 +32,7 @@ ChatPharoChatPresenter2 >> connectPresenters [
 	]
 ]
 
-{ #category : 'initialization' }
+{ #category : 'layout' }
 ChatPharoChatPresenter2 >> defaultLayout [
 
 	^ SpBoxLayout newVertical
@@ -90,7 +90,7 @@ ChatPharoChatPresenter2 >> sendMessage [
 	model sendMessage: messageTextField text
 ]
 
-{ #category : 'initialization' }
+{ #category : 'accessing - model' }
 ChatPharoChatPresenter2 >> setModelBeforeInitialization: anObject [
 
 	model := anObject

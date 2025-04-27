@@ -1,3 +1,10 @@
+"
+(ChatPharoMessage2 new
+
+	content: 'Bonjour';
+	answer: 'Salut';
+	yourself) presenter open
+"
 Class {
 	#name : 'ChatPharoMessagePresenter2',
 	#superclass : 'SpPresenter',
@@ -10,7 +17,7 @@ Class {
 	#package : 'AI-ChatPharo2-Spec'
 }
 
-{ #category : 'layout' }
+{ #category : 'initialization' }
 ChatPharoMessagePresenter2 >> connectPresenters [
 
 	contentPresenter document: (Microdown parse: model content).
@@ -45,7 +52,7 @@ ChatPharoMessagePresenter2 >> initializeWindow: aWindowPresenter [
 		initialExtent: 400@200
 ]
 
-{ #category : 'layout' }
+{ #category : 'accessing - model' }
 ChatPharoMessagePresenter2 >> setModelBeforeInitialization: anObject [
 
 	model := anObject

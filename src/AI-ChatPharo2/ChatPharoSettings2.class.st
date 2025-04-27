@@ -10,8 +10,9 @@ Class {
 
 { #category : 'initialization' }
 ChatPharoSettings2 >> initialize [
-	
-	ollamaApi := OllamaApi new.
+
+	super initialize.
+	ollamaApi := OllamaApi new
 ]
 
 { #category : 'initialization' }
