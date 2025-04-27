@@ -57,6 +57,7 @@ ChatPharoChatPresenter2 >> initializePresenters [
         label: 'Submit';
         icon: (self iconNamed: #glamorousGo);
         help: 'Submit prompt';
+		  extent: 100@40;
         yourself.
 
 	cancelButton := self newButton

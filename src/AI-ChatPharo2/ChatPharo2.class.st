@@ -1,3 +1,10 @@
+"
+```samlltalk
+ChatPharo2 new presenter open.
+
+ChatPharoSettings2 new presenter open
+```
+"
 Class {
 	#name : 'ChatPharo2',
 	#superclass : 'Object',

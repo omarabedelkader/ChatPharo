@@ -1,9 +1,9 @@
 Class {
 	#name : 'MockOllamaApi',
-	#superclass : 'OllamaApi',
+	#superclass : 'Object',
 	#instVars : [
-		'modelName',
-		'systemPrompt'
+		'conversationHistory',
+		'currentModel'
 	],
 	#category : 'AI-ChatPharo2-Tests',
 	#package : 'AI-ChatPharo2-Tests'
@@ -11,30 +11,32 @@ Class {
 
 { #category : 'api' }
 MockOllamaApi class >> modelNames [
-    "Answer the list of available mock models"
-    ^ #('mock-model').
+	^ #('mock-default' 'mock-advanced')
 ]
 
-{ #category : 'accessing' }
+{ #category : 'private - uffi' }
 MockOllamaApi >> getResponseForPrompt: aPromptString [
-    "Return a deterministic fake answer so that assertions can
-    match it exactly"
-    ^ 'Mock response to: ', aPromptString.
+	"Return something deterministic and easy to recognise in assertions."
+	conversationHistory addLast: { #userPrompt -> aPromptString }.
+	^ '<<', currentModel asUppercase, '-REPLY to: ', aPromptString, '>>'
 ]
 
-{ #category : 'accessing' }
-MockOllamaApi >> model: aModelName [
-    modelName := aModelName.
+{ #category : 'initialization' }
+MockOllamaApi >> initialize [
+	super initialize.
+	conversationHistory := OrderedCollection new.
+	currentModel := 'mock-default'.
 ]
 
-{ #category : 'accessing' }
-MockOllamaApi >> modelName [
-    ^ modelName.
+{ #category : 'initialization' }
+MockOllamaApi >> model: aString [
+	currentModel := aString.
 ]
 
-{ #category : 'accessing' }
-MockOllamaApi >> system: aHistoryString [
-    "Store the system prompt and answer self for call chaining"
-    systemPrompt := aHistoryString.
-    ^ self.
+{ #category : 'private - uffi' }
+MockOllamaApi >> system: aSystemPrompt [
+	"store the running history just like the real client does and answer self
+	 so that calls can be chained the same way the real API supports."
+	conversationHistory addLast: { #systemPrompt -> aSystemPrompt }.
+	^ self
 ]
