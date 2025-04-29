@@ -21,13 +21,13 @@ Class {
 	#package : 'AI-ChatPharo2'
 }
 
-{ #category : 'as yet unclassified' }
+{ #category : 'running' }
 ChatPharoChat2 >> cancelMessage [
 
 	promptProcess terminate
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'running' }
 ChatPharoChat2 >> clearChat [
 
 	self cancelMessage.
@@ -35,7 +35,7 @@ ChatPharoChat2 >> clearChat [
 
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'running' }
 ChatPharoChat2 >> history [
 
 	^ String streamContents: [ :stream | 
@@ -57,31 +57,31 @@ ChatPharoChat2 >> initialize [
 	messages := OrderedCollection new
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'accessing' }
 ChatPharoChat2 >> messages [
 
 	^ messages
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'accessing' }
 ChatPharoChat2 >> messages: anObject [
 
 	messages := anObject
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'accessing' }
 ChatPharoChat2 >> ollamaApi: anObject [
 
 	ollamaApi := anObject
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'presenters' }
 ChatPharoChat2 >> presenter [
 
 	^ ChatPharoChatPresenter2 on: self
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'running' }
 ChatPharoChat2 >> sendMessage: aText [
 
 	promptProcess := [
@@ -102,7 +102,7 @@ promptProcess ifNotNil: [ promptProcess waitUntil: [ promptProcess isTerminated 
 
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'running' }
 ChatPharoChat2 >> whenAnswerReceivedDo: aBlock [
 
 	onAnswerReceived := aBlock
