@@ -4,12 +4,12 @@ Class {
 	#instVars : [
 		'messagesLayout',
 		'messageTextField',
-		'submitButton',
 		'cancelButton',
 		'clearButton',
 		'model',
 		'notebook',
-		'toolbar'
+		'toolbar',
+		'connectionStatusLabel'
 	],
 	#category : 'AI-ChatPharo2-Spec',
 	#package : 'AI-ChatPharo2-Spec'
@@ -54,32 +54,33 @@ ChatPharoPresenter2 >> deleteChat: aPageTitle [
 ]
 
 { #category : 'initialization' }
-ChatPharoPresenter2 >> initializePresenters [ 
-    notebook := self newNotebook.
-    toolbar := self newToolbar.
-    
-    toolbar add: (SpToolbarButtonPresenter new
-        label: 'New Chat';
-        icon: (self iconNamed: #add);
-        help: 'Create a new chat';
-        action: [ self addNewChat ];
-        yourself).
+ChatPharoPresenter2 >> initializePresenters [
+
+	notebook := self newNotebook.
+	toolbar := self newToolbar.
 
 	toolbar add: (SpToolbarButtonPresenter new
-    	label: 'Delete Chat';
-    	icon: (self iconNamed: #delete);
-    	help: 'Delete the selected chat';
-    	action: [ self deleteChat: (notebook selectedPage title) ];
-    	yourself).
-	
-    toolbar add: (SpToolbarButtonPresenter new
-        label: 'Save Chat';
-        icon: (self iconNamed: #smallSave);
-        help: 'Save current chat';
-        action: [ self saveCurrentChat ];
-        yourself).
-        
-    "toolbar add: (SpToolbarButtonPresenter new
+			 label: 'New Chat';
+			 icon: (self iconNamed: #add);
+			 help: 'Create a new chat';
+			 action: [ self addNewChat ];
+			 yourself).
+
+	toolbar add: (SpToolbarButtonPresenter new
+			 label: 'Delete Chat';
+			 icon: (self iconNamed: #delete);
+			 help: 'Delete the selected chat';
+			 action: [ self deleteChat: notebook selectedPage title ];
+			 yourself).
+
+	toolbar add: (SpToolbarButtonPresenter new
+			 label: 'Save Chat';
+			 icon: (self iconNamed: #smallSave);
+			 help: 'Save current chat';
+			 action: [ self saveCurrentChat ];
+			 yourself).
+
+	"toolbar add: (SpToolbarButtonPresenter new
         label: 'Load Chat';
         icon: (self iconNamed: #smallOpen);
         help: 'Load saved chat';
@@ -87,11 +88,11 @@ ChatPharoPresenter2 >> initializePresenters [
         yourself)."
 
 	toolbar add: (SpToolbarButtonPresenter new
-        label: 'Settings';
-        icon: (self iconNamed: #smallConfiguration);
-        help: 'Open settings';
-        action: [ self openSettings ];
-        yourself)
+			 label: 'Settings';
+			 icon: (self iconNamed: #smallConfiguration);
+			 help: 'Open settings';
+			 action: [ self openSettings ];
+			 yourself)
 ]
 
 { #category : 'initialization' }
