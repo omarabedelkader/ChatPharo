@@ -38,9 +38,10 @@ ChatPharoChatPresenter2 >> defaultLayout [
 	^ SpBoxLayout newVertical
 		add: (SpScrollableLayout with: messagesLayout);
 		add: (SpBoxLayout newHorizontal
+		 spacing: 5;
 			add: messageTextField;
-			add: submitButton;
-			add: cancelButton;
+			add: submitButton expand: false;
+			add: cancelButton expand: false;
 			yourself 
 		) expand: false;
 		yourself
