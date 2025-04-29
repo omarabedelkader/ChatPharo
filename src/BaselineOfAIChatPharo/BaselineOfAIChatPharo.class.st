@@ -40,8 +40,6 @@ BaselineOfAIChatPharo >> baseline: spec [
 			with: [ spec requires: #( 'AI-ChatPharo2' ) ].
 		spec package: 'AI-ChatPharo2-Spec'
 			with: [ spec requires: #( 'AI-ChatPharo2' ) ].
-		spec package: 'AI-ChatPharo2-Tools'
-			with: [ spec requires: #( 'AI-ChatPharo2' ) ].	
 	]
 
 
