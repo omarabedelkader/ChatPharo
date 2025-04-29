@@ -1,6 +1,3 @@
-"
-Killroy was here, but went away
-"
 Class {
 	#name : 'OllamaApi',
 	#superclass : 'Object',
@@ -10,27 +7,35 @@ Class {
 		'promptPrefix',
 		'response'
 	],
-	#category : 'AI-ChatPharo-Ollama',
-	#package : 'AI-ChatPharo',
-	#tag : 'Ollama'
+	#category : 'AI-ChatPharo2-Agent',
+	#package : 'AI-ChatPharo2-Agent'
 }
 
-{ #category : 'ollama models' }
+{ #category : 'connection open/close' }
+OllamaApi class >> isReachable [
+
+	[ self ollamaVersion ] on: NetworkError do: [ ^ false ].
+
+	^ true
+]
+
+{ #category : 'api' }
 OllamaApi class >> modelNames [
 	"returns an array with one item per model."
 	^ self models collect: [ :ollamaModel | ollamaModel at: 'name' ]
 ]
 
-{ #category : 'ollama models' }
+{ #category : 'api' }
 OllamaApi class >> models [
 	"returns an array with one item per model. Each item has nested informations, and some arrays"
 	| response  |
-
+	
+	self isReachable ifFalse: [ ^ OrderedCollection empty ].
 	response := ZnClient new get: 'http://localhost:11434/api/tags'.
-	^ (STONJSON fromString: response) at: 'models'  .
+	^ (STONJSON fromString: response) at: 'models'
 ]
 
-{ #category : 'instance creation' }
+{ #category : 'api' }
 OllamaApi class >> newSystem: synstemText promptPrefix: promptPrefixText [
 	"Create and return an instance with predefined system and prompt prefix for Ollama queries."
 	| prompter |
@@ -40,23 +45,16 @@ OllamaApi class >> newSystem: synstemText promptPrefix: promptPrefixText [
 	^ prompter 
 ]
 
-{ #category : 'ollama models' }
+{ #category : 'api' }
 OllamaApi class >> ollamaVersion [
 	"Retrieve the Ollama version"
 	| response  |
 	
 	response := ZnClient new get: 'http://localhost:11434/api/version'.
-	^ (STONJSON fromString: response) at: 'version'  .
+	^ (STONJSON fromString: response) at: 'version'
 ]
 
-{ #category : 'ollama models' }
-OllamaApi >> getResponseForHistory: history [
-
-	^ ChatPharoHistorySaver role: 'assistant'
-		content: (self promptPrefix: history asPromptPrefix; getResponseForPrompt: nil)
-]
-
-{ #category : 'ollama models' }
+{ #category : 'user prompt' }
 OllamaApi >> getResponseForPrompt: prompt [
 	"Sends a prompt to an API, receives JSON response, and extracts the 'response' value"
 	| apiGenerateUrl jsonResponse requestDictionary requestBody|
@@ -83,8 +81,9 @@ OllamaApi >> getResponseForPrompt: prompt [
 
 { #category : 'initialization' }
 OllamaApi >> initialize [ 
+
 	super initialize.
-	self model: (self class modelNames) first.
+	self model: nil.
 	self system: ''.
 	self promptPrefix: ''.
 ]
@@ -101,7 +100,7 @@ OllamaApi >> model: anObject [
 	model := anObject
 ]
 
-{ #category : 'ollama models' }
+{ #category : 'api' }
 OllamaApi >> modelInformation [
 	"Show information about a model including details, modelfile, template, parameters, license, system prompt."
 	"Check https://github.com/ollama/ollama/blob/main/docs/api.md#show-model-information for details"
@@ -120,7 +119,7 @@ OllamaApi >> modelInformation [
 	^ response contents.
 ]
 
-{ #category : 'ollama models' }
+{ #category : 'api' }
 OllamaApi >> modelNames [
 
 	^ self class modelNames

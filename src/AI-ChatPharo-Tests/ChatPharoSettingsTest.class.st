@@ -14,7 +14,7 @@ Class {
 ChatPharoSettingsTest >> setUp [
 
 	super setUp.
-	settings := ChatPharoSettings new.
+	settings := ChatPharoSettings2 new.
 	settings chatSettings: (ChatPharo new).
 ]
 
