@@ -33,9 +33,16 @@ BaselineOfAIChatPharo >> baseline: spec [
 
 	<baseline>
 	spec for: #common do: [
-		spec package: 'AI-ChatPharo'.
-		spec package: 'AI-ChatPharo-Tests'
-			with: [ spec requires: #( 'AI-ChatPharo' ) ]
+		spec package: 'AI-ChatPharo2'.	
+		spec package: 'AI-ChatPharo2-Tests'
+			with: [ spec requires: #( 'AI-ChatPharo2' ) ].
+		spec package: 'AI-ChatPharo2-Agent'
+			with: [ spec requires: #( 'AI-ChatPharo2' ) ].
+		spec package: 'AI-ChatPharo2-Spec'
+			with: [ spec requires: #( 'AI-ChatPharo2' ) ].
+		spec package: 'AI-ChatPharo2-Tools'
+			with: [ spec requires: #( 'AI-ChatPharo2' ) ].	
 	]
+
 
 ]
