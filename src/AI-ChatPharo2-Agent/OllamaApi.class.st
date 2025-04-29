@@ -54,7 +54,7 @@ OllamaApi class >> ollamaVersion [
 	^ (STONJSON fromString: response) at: 'version'
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'user prompt' }
 OllamaApi >> getResponseForPrompt: prompt [
 	"Sends a prompt to an API, receives JSON response, and extracts the 'response' value"
 	| apiGenerateUrl jsonResponse requestDictionary requestBody|
@@ -88,19 +88,19 @@ OllamaApi >> initialize [
 	self promptPrefix: ''.
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'accessing' }
 OllamaApi >> model [
 
 	^ model
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'accessing' }
 OllamaApi >> model: anObject [
 
 	model := anObject
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'api' }
 OllamaApi >> modelInformation [
 	"Show information about a model including details, modelfile, template, parameters, license, system prompt."
 	"Check https://github.com/ollama/ollama/blob/main/docs/api.md#show-model-information for details"
@@ -119,43 +119,43 @@ OllamaApi >> modelInformation [
 	^ response contents.
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'api' }
 OllamaApi >> modelNames [
 
 	^ self class modelNames
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'accessing' }
 OllamaApi >> promptPrefix [
 
 	^ promptPrefix
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'accessing' }
 OllamaApi >> promptPrefix: anObject [
 
 	promptPrefix := anObject
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'accessing' }
 OllamaApi >> response [
 
 	^ response
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'accessing' }
 OllamaApi >> response: anObject [
 
 	response := anObject
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'accessing' }
 OllamaApi >> system [
 
 	^ system
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'accessing' }
 OllamaApi >> system: anObject [
 
 	system := anObject
