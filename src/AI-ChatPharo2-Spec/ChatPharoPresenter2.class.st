@@ -96,7 +96,7 @@ ChatPharoPresenter2 >> initializePresenters [
 			 icon: (self iconNamed: #smallConfiguration);
 			 help: 'Open settings';
 			 action: [ self openSettings ];
-			 yourself)
+			 yourself).
 
 	| connectedText |
 	connectedText := (model agent isConnected 
