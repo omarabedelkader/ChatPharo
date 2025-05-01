@@ -59,9 +59,3 @@ Agent >> useAdapter: anAdapter [
 
     adapter := anAdapter
 ]
-
-{ #category : 'status' }
-Agent >> isConnected [
-
-    ^ adapter isReachable
-]
