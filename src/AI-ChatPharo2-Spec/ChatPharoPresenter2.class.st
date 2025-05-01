@@ -59,6 +59,10 @@ ChatPharoPresenter2 >> initializePresenters [
 	notebook := self newNotebook.
 	toolbar := self newToolbar.
 
+	connectionStatusLabel := self newLabel.
+	connectionStatusLabel label: 'Checking connection...'.
+	toolbar add: connectionStatusLabel.
+
 	toolbar add: (SpToolbarButtonPresenter new
 			 label: 'New Chat';
 			 icon: (self iconNamed: #add);
@@ -93,6 +97,29 @@ ChatPharoPresenter2 >> initializePresenters [
 			 help: 'Open settings';
 			 action: [ self openSettings ];
 			 yourself)
+
+	| connectedText |
+	connectedText := (model agent isConnected 
+		ifTrue: [ '🟢 Connected' ]
+		ifFalse: [ '🔴 Disconnected' ]).
+	connectionStatusLabel label: connectedText.
+
+	self updateConnectionStatus.
+
+]
+
+{ #category : 'status' }
+ChatPharoPresenter2 >> updateConnectionStatus [
+    [ 
+        [ 
+            | connectedText |
+            connectedText := (model agent isConnected 
+                ifTrue: [ '🟢 Connected' ]
+                ifFalse: [ '🔴 Disconnected' ]).
+            connectionStatusLabel label: connectedText.
+            (Delay forSeconds: 30) wait.
+        ] repeat.
+    ] forkAt: Processor userBackgroundPriority.
 ]
 
 { #category : 'initialization' }
