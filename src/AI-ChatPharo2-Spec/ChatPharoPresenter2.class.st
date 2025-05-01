@@ -56,6 +56,7 @@ ChatPharoPresenter2 >> deleteChat: aPageTitle [
 { #category : 'initialization' }
 ChatPharoPresenter2 >> initializePresenters [
 
+	| connectedText |
 	notebook := self newNotebook.
 	toolbar := self newToolbar.
 
@@ -98,7 +99,6 @@ ChatPharoPresenter2 >> initializePresenters [
 			 action: [ self openSettings ];
 			 yourself).
 
-	| connectedText |
 	connectedText := (model agent isConnected 
 		ifTrue: [ '🟢 Connected' ]
 		ifFalse: [ '🔴 Disconnected' ]).
