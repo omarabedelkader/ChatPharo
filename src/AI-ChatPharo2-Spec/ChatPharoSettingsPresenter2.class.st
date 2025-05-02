@@ -39,6 +39,8 @@ ChatPharoSettingsPresenter2 >> defaultLayout [
 { #category : 'initialization' }
 ChatPharoSettingsPresenter2 >> initializePresenters [
 
+	super initializePresenters.
+
 	notebook := self newNotebook.
 
 	notebook addPage: (SpNotebookPage

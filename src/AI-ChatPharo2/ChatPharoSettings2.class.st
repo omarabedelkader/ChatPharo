@@ -24,10 +24,16 @@ ChatPharoSettings2 >> agent [
 ]
 
 { #category : 'initialization' }
+ChatPharoSettings2 >> availableApis [ 
+
+    ^ { NullAgent. OllamaApi }   "add more as you implement them"
+]
+
+{ #category : 'initialization' }
 ChatPharoSettings2 >> initialize [
 
 	super initialize.
-	agent := OllamaApi new
+	agent := NullAgent new
 ]
 
 { #category : 'initialization' }
@@ -43,7 +49,15 @@ ChatPharoSettings2 >> presenter [
 ]
 
 { #category : 'initialization' }
-ChatPharoSettings2 >> useModel: aModelName [
+ChatPharoSettings2 >> useApi: anAgentClass [ 
+    (anAgentClass inheritsFrom: Agent)
+        ifFalse: [ self error: 'Not an Agent subclass' ].
+    agent := anAgentClass new
 
-	agent model: aModelName
+]
+
+{ #category : 'initialization' }
+ChatPharoSettings2 >> useModel: aModelName [ 
+
+    agent model: aModelName
 ]

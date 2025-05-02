@@ -5,6 +5,12 @@ Class {
 	#package : 'AI-ChatPharo2-Agent'
 }
 
+{ #category : 'api' }
+OllamaApi class >> displayName [ 
+
+    ^ 'Ollama (local LLM)'
+]
+
 { #category : 'connection open/close' }
 OllamaApi class >> isReachable [
 

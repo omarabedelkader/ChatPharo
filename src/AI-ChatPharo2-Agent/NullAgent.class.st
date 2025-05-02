@@ -1,0 +1,30 @@
+Class {
+	#name : 'NullAgent',
+	#superclass : 'Agent',
+	#category : 'AI-ChatPharo2-Agent',
+	#package : 'AI-ChatPharo2-Agent'
+}
+
+{ #category : 'api' }
+NullAgent class >> isReachable [ 
+
+    ^ true "always reachable"
+]
+
+{ #category : 'api' }
+NullAgent class >> modelNames [ 
+
+    ^ #()  "returns an empty collection"
+]
+
+{ #category : 'initialization' }
+NullAgent >> getResponseForPrompt: aString [ 
+    "Do absolutely nothing and return nil or an empty string."
+    ^ ''
+]
+
+{ #category : 'initialization' }
+NullAgent >> modelInformation [ 
+
+    ^ 'No model selected yet'
+]
