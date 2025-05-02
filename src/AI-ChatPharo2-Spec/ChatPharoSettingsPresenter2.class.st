@@ -7,7 +7,8 @@ Class {
 		'hostInput',
 		'ollamaModelDropList',
 		'model',
-		'modelsRefreshButton'
+		'modelsRefreshButton',
+		'apiDropList'
 	],
 	#category : 'AI-ChatPharo2-Spec',
 	#package : 'AI-ChatPharo2-Spec'
@@ -17,15 +18,20 @@ Class {
 ChatPharoSettingsPresenter2 >> connectPresenters [
 
 	modelsRefreshButton action: [
+			ollamaModelDropList items: model models.
+			ollamaModelDropList items ifNotEmpty: [
+				ollamaModelDropList selectFirst ] ].
+
+	apiDropList whenSelectedItemChangedDo: [ :assoc |
+		| apiClass |
+		apiClass := assoc value.
+		model useApi: apiClass.
+
+		"Refresh the model list for the newly‑selected API"
 		ollamaModelDropList items: model models.
-		ollamaModelDropList items ifNotEmpty: [ 
-			ollamaModelDropList selectFirst	
-		]	
+		(ollamaModelDropList items notEmpty)
+			ifTrue: [ ollamaModelDropList selectFirst ].
 	].
-	
-	ollamaModelDropList whenSelectedItemChangedDo: [ :modelName |
-		model useModel: modelName
-	]
 ]
 
 { #category : 'layout' }
@@ -64,6 +70,12 @@ ChatPharoSettingsPresenter2 >> initializePresenters [
 		                       help: 'Refresh models';
 		                       yourself.
 
+	apiDropList := SpDropListPresenter new
+		               help: 'Select backend API';
+		               items: model availableApiChoices;
+		               display: [ :assoc | assoc key ];
+		               yourself.
+		
 	ollamaModelDropList := SpDropListPresenter new
 		                       help: 'Select ollama model';
 		                       items: model models;
@@ -117,17 +129,23 @@ ChatPharoSettingsPresenter2 >> newChatTab [
 
 { #category : 'initialization' }
 ChatPharoSettingsPresenter2 >> newConfigurationTab [
-
 	^ SpPresenter new
-		  layout: (SpBoxLayout newTopToBottom
-				   add: 'Configuration Settings' expand: false;
-				   add: (SpBoxLayout newHorizontal
-						    add: modelsRefreshButton;
-						    add: ollamaModelDropList;
-						    yourself)
-				   expand: false;
-				   yourself);
-		  yourself
+		layout: (SpBoxLayout newTopToBottom
+			add: 'Configuration Settings' expand: false;
+
+			"== NEW row =="
+			add: (SpBoxLayout newHorizontal
+				add: 'API:' expand: false;
+				add: apiDropList;
+				yourself) expand: false;
+
+			add: (SpBoxLayout newHorizontal
+				add: modelsRefreshButton;
+				add: ollamaModelDropList;
+				yourself) expand: false;
+
+			yourself);
+		yourself
 ]
 
 { #category : 'initialization' }

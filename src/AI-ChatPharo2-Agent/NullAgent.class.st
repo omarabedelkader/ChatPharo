@@ -6,6 +6,11 @@ Class {
 }
 
 { #category : 'api' }
+NullAgent class >> displayName [
+	^ 'None (offline)'
+]
+
+{ #category : 'api' }
 NullAgent class >> isReachable [ 
 
     ^ true "always reachable"

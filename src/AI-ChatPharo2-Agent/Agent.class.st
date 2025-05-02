@@ -12,6 +12,12 @@ Class {
 }
 
 { #category : 'api' }
+Agent class >> displayName [
+
+	self subclassResponsibility
+]
+
+{ #category : 'api' }
 Agent class >> isReachable [          
 self subclassResponsibility.
 ]

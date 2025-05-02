@@ -24,6 +24,15 @@ ChatPharoSettings2 >> agent [
 ]
 
 { #category : 'initialization' }
+ChatPharoSettings2 >> availableApiChoices [
+	"Return an OrderedCollection of associations  
+	 displayName -> class so the UI can show the name
+	 but keep the class itself."
+	^ (self availableApis collect: [ :cls |
+			cls displayName -> cls ]) asOrderedCollection
+]
+
+{ #category : 'initialization' }
 ChatPharoSettings2 >> availableApis [ 
 
     ^ { NullAgent. OllamaApi }   "add more as you implement them"
