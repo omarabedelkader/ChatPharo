@@ -1,12 +1,6 @@
 Class {
 	#name : 'OllamaApi',
-	#superclass : 'Object',
-	#instVars : [
-		'model',
-		'system',
-		'promptPrefix',
-		'response'
-	],
+	#superclass : 'Agent',
 	#category : 'AI-ChatPharo2-Agent',
 	#package : 'AI-ChatPharo2-Agent'
 }
@@ -88,18 +82,6 @@ OllamaApi >> initialize [
 	self promptPrefix: ''.
 ]
 
-{ #category : 'accessing' }
-OllamaApi >> model [
-
-	^ model
-]
-
-{ #category : 'accessing' }
-OllamaApi >> model: anObject [
-
-	model := anObject
-]
-
 { #category : 'api' }
 OllamaApi >> modelInformation [
 	"Show information about a model including details, modelfile, template, parameters, license, system prompt."
@@ -123,40 +105,4 @@ OllamaApi >> modelInformation [
 OllamaApi >> modelNames [
 
 	^ self class modelNames
-]
-
-{ #category : 'accessing' }
-OllamaApi >> promptPrefix [
-
-	^ promptPrefix
-]
-
-{ #category : 'accessing' }
-OllamaApi >> promptPrefix: anObject [
-
-	promptPrefix := anObject
-]
-
-{ #category : 'accessing' }
-OllamaApi >> response [
-
-	^ response
-]
-
-{ #category : 'accessing' }
-OllamaApi >> response: anObject [
-
-	response := anObject
-]
-
-{ #category : 'accessing' }
-OllamaApi >> system [
-
-	^ system
-]
-
-{ #category : 'accessing' }
-OllamaApi >> system: anObject [
-
-	system := anObject
 ]

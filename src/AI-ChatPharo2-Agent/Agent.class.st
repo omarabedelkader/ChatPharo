@@ -2,8 +2,8 @@ Class {
 	#name : 'Agent',
 	#superclass : 'Object',
 	#instVars : [
-		'adapter',
-		'systemPrompt',
+		'model',
+		'system',
 		'promptPrefix',
 		'response'
 	],
@@ -11,51 +11,80 @@ Class {
 	#package : 'AI-ChatPharo2-Agent'
 }
 
-{ #category : 'initialization' }
-Agent >> initialize [ 
+{ #category : 'api' }
+Agent class >> isReachable [          
+self subclassResponsibility.
+]
 
-    super initialize.
-    systemPrompt := ''.
-    promptPrefix := ''.
-    response := ''.
+{ #category : 'api' }
+Agent class >> modelNames [           self subclassResponsibility.
 ]
 
 { #category : 'initialization' }
-Agent >> response [ 
+Agent >> getResponseForPrompt: prompt [
 
-    ^ response
+	self subclassResponsibility
 ]
 
 { #category : 'initialization' }
-Agent >> sendPrompt: aPrompt [ 
+Agent >> initialize [
+	super initialize.
+	model        := nil.
+	system       := ''.
+	promptPrefix := ''.
+	response     := nil.
+]
 
-    | fullPrompt |
-    fullPrompt := String streamContents: [ :stream |
-        stream nextPutAll: promptPrefix.
-        aPrompt ifNotNil: [ stream nextPutAll: ' '; nextPutAll: aPrompt ].
-    ].
-    
-    adapter systemPrompt: systemPrompt.
-    adapter prompt: fullPrompt.
-    
-    response := adapter getResponse.
-    ^ response
+{ #category : 'accessing' }
+Agent >> model [
+
+	^ model
+]
+
+{ #category : 'accessing' }
+Agent >> model: anObject [
+
+	model := anObject
 ]
 
 { #category : 'initialization' }
-Agent >> setPromptPrefix: aText [ 
+Agent >> modelInformation [ 
 
-    promptPrefix := aText
+	self subclassResponsibility
 ]
 
-{ #category : 'initialization' }
-Agent >> setSystemPrompt: aText [ 
+{ #category : 'accessing' }
+Agent >> promptPrefix [
 
-    systemPrompt := aText
+	^ promptPrefix
 ]
 
-{ #category : 'initialization' }
-Agent >> useAdapter: anAdapter [ 
+{ #category : 'accessing' }
+Agent >> promptPrefix: anObject [
 
-    adapter := anAdapter
+	promptPrefix := anObject
+]
+
+{ #category : 'accessing' }
+Agent >> response [
+
+	^ response
+]
+
+{ #category : 'accessing' }
+Agent >> response: anObject [
+
+	response := anObject
+]
+
+{ #category : 'accessing' }
+Agent >> system [
+
+	^ system
+]
+
+{ #category : 'accessing' }
+Agent >> system: anObject [
+
+	system := anObject
 ]
