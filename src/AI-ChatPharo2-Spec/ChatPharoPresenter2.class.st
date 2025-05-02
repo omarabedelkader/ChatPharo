@@ -56,8 +56,13 @@ ChatPharoPresenter2 >> deleteChat: aPageTitle [
 { #category : 'initialization' }
 ChatPharoPresenter2 >> initializePresenters [
 
+	| connectedText |
 	notebook := self newNotebook.
 	toolbar := self newToolbar.
+
+	connectionStatusLabel := self newLabel.
+	connectionStatusLabel label: 'Checking connection...'.
+	toolbar add: connectionStatusLabel.
 
 	toolbar add: (SpToolbarButtonPresenter new
 			 label: 'New Chat';
@@ -92,7 +97,29 @@ ChatPharoPresenter2 >> initializePresenters [
 			 icon: (self iconNamed: #smallConfiguration);
 			 help: 'Open settings';
 			 action: [ self openSettings ];
-			 yourself)
+			 yourself).
+
+	connectedText := (model agent isConnected 
+		ifTrue: [ '🟢 Connected' ]
+		ifFalse: [ '🔴 Disconnected' ]).
+	connectionStatusLabel label: connectedText.
+
+	self updateConnectionStatus.
+
+]
+
+{ #category : 'status' }
+ChatPharoPresenter2 >> updateConnectionStatus [
+    [ 
+        [ 
+            | connectedText |
+            connectedText := (model agent isConnected 
+                ifTrue: [ '🟢 Connected' ]
+                ifFalse: [ '🔴 Disconnected' ]).
+            connectionStatusLabel label: connectedText.
+            (Delay forSeconds: 30) wait.
+        ] repeat.
+    ] forkAt: Processor userBackgroundPriority.
 ]
 
 { #category : 'initialization' }
