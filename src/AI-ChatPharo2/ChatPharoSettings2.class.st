@@ -27,7 +27,7 @@ ChatPharoSettings2 >> agent [
 ChatPharoSettings2 >> initialize [
 
 	super initialize.
-	agent := Agent new
+	agent := OllamaApi new
 ]
 
 { #category : 'initialization' }
