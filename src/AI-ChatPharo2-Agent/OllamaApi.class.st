@@ -11,7 +11,7 @@ OllamaApi class >> displayName [
     ^ 'Ollama (local LLM)'
 ]
 
-{ #category : 'connection open/close' }
+{ #category : 'api' }
 OllamaApi class >> isReachable [
 
 	[ self ollamaVersion ] on: NetworkError do: [ ^ false ].
@@ -54,7 +54,7 @@ OllamaApi class >> ollamaVersion [
 	^ (STONJSON fromString: response) at: 'version'
 ]
 
-{ #category : 'user prompt' }
+{ #category : 'initialization' }
 OllamaApi >> getResponseForPrompt: prompt [
 	"Sends a prompt to an API, receives JSON response, and extracts the 'response' value"
 	| apiGenerateUrl jsonResponse requestDictionary requestBody|
@@ -88,7 +88,7 @@ OllamaApi >> initialize [
 	self promptPrefix: ''.
 ]
 
-{ #category : 'api' }
+{ #category : 'initialization' }
 OllamaApi >> modelInformation [
 	"Show information about a model including details, modelfile, template, parameters, license, system prompt."
 	"Check https://github.com/ollama/ollama/blob/main/docs/api.md#show-model-information for details"
