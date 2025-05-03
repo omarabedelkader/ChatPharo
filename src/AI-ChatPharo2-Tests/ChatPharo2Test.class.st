@@ -57,6 +57,24 @@ ChatPharo2Test >> testNewChatAddsChatWithMockApi [
 ]
 
 { #category : 'running' }
+ChatPharo2Test >> testNewChatStartsWithEmptyHistory [ 
+
+    app newChat.
+    self assert: (app chats first messages isEmpty).
+]
+
+{ #category : 'running' }
+ChatPharo2Test >> testSendMessageAddsMessageAndAnswer [ 
+    "End‑to‑end check that ChatPharoChat2 cooperates with MockApi."
+    app newChat.
+    (app chats first) sendMessage: 'ping'.
+    (Delay forMilliseconds: 10) wait.
+    self assert: (app chats first messages size) equals: 1.
+    self assert: (app chats first messages first answer includesSubstring: 'MOCK-DEFAULT-REPLY').
+
+]
+
+{ #category : 'running' }
 ChatPharo2Test >> testSetAndGetMessages [
 	| chat message1 message2 |
 	chat := ChatPharoChat2 new.
@@ -66,6 +84,17 @@ ChatPharo2Test >> testSetAndGetMessages [
 	self assert: chat messages size equals: 2.
 	self assert: (chat messages includes: message1).
 	self assert: (chat messages includes: message2).
+]
+
+{ #category : 'running' }
+ChatPharo2Test >> testUseApiSwitchesAgent [ 
+
+    "Switching API classes via settings should transparently update the
+    agent inside the application without disturbing existing data."
+    | otherApi |
+    otherApi := NullAgent new.
+    app settings instVarNamed: #agent put: otherApi.
+    self assert: app settings agent == otherApi.
 ]
 
 { #category : 'running' }

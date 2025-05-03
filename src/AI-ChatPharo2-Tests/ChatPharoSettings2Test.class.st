@@ -35,6 +35,13 @@ ChatPharoSettings2Test >> testModelsDelegation [
 ]
 
 { #category : 'tests' }
+ChatPharoSettings2Test >> testUseApiReplacesAgentSubclass [ 
+
+    settings useApi: NullAgent.
+    self assert: settings agent class equals: NullAgent.
+]
+
+{ #category : 'tests' }
 ChatPharoSettings2Test >> testUseModel [
 	settings useModel: 'mock-advanced'.
 	self assert: (mockApi instVarNamed: #currentModel) equals: 'mock-advanced'.
