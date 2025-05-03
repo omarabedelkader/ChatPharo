@@ -99,10 +99,10 @@ ChatPharoPresenter2 >> initializePresenters [
 			 action: [ self openSettings ];
 			 yourself).
 
-	connectedText := (model agent isConnected 
-		ifTrue: [ '🟢 Connected' ]
-		ifFalse: [ '🔴 Disconnected' ]).
-	connectionStatusLabel label: connectedText.
+	connectedText := ((model agent) notNil and: [ model agent isConnected ])
+	ifTrue: [ '🟢 Connected' ]
+	ifFalse: [ '🔴 Disconnected' ].
+    connectionStatusLabel label: connectedText.
 
 	self updateConnectionStatus.
 
@@ -113,10 +113,11 @@ ChatPharoPresenter2 >> updateConnectionStatus [
     [ 
         [ 
             | connectedText |
-            connectedText := (model agent isConnected 
-                ifTrue: [ '🟢 Connected' ]
-                ifFalse: [ '🔴 Disconnected' ]).
+            connectedText := ((model agent) notNil and: [ model agent isConnected ])
+	        ifTrue: [ '🟢 Connected' ]
+	        ifFalse: [ '🔴 Disconnected' ].
             connectionStatusLabel label: connectedText.
+
             (Delay forSeconds: 30) wait.
         ] repeat.
     ] forkAt: Processor userBackgroundPriority.
