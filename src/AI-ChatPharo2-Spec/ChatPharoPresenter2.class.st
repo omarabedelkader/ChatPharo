@@ -62,6 +62,7 @@ ChatPharoPresenter2 >> initializePresenters [
 
 	connectionStatusLabel := SpToolbarButtonPresenter new
 		label: 'Checking connection...';
+		action: [ ];
 		enabled: false;
 		yourself.
 
@@ -103,8 +104,8 @@ ChatPharoPresenter2 >> initializePresenters [
 			 yourself).
 
 	connectedText := ((model agent) notNil and: [ model agent isConnected ])
-	ifTrue: [ '🟢 Connected' ]
-	ifFalse: [ '🔴 Disconnected' ].
+	ifTrue: [ 'Connected' ]
+	ifFalse: [ 'Disconnected' ].
     connectionStatusLabel label: connectedText.
 
 	self updateConnectionStatus.
@@ -117,8 +118,8 @@ ChatPharoPresenter2 >> updateConnectionStatus [
         [ 
             | connectedText |
             connectedText := ((model agent) notNil and: [ model agent isConnected ])
-	        ifTrue: [ '🟢 Connected' ]
-	        ifFalse: [ '🔴 Disconnected' ].
+	        ifTrue: [ 'Connected' ]
+	        ifFalse: [ 'Disconnected' ].
             connectionStatusLabel label: connectedText.
 
             (Delay forSeconds: 30) wait.
