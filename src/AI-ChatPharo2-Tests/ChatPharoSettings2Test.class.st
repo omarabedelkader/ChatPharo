@@ -11,9 +11,10 @@ Class {
 
 { #category : 'running' }
 ChatPharoSettings2Test >> setUp [
+
 	settings := ChatPharoSettings2 new.
 	mockApi := MockOllamaApi new.
-	settings instVarNamed: #ollamaApi put: mockApi.
+	settings instVarNamed: #agent put: mockApi
 ]
 
 { #category : 'tests' }
