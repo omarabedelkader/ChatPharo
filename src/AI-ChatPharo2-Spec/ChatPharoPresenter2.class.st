@@ -60,8 +60,11 @@ ChatPharoPresenter2 >> initializePresenters [
 	notebook := self newNotebook.
 	toolbar := self newToolbar.
 
-	connectionStatusLabel := self newLabel.
-	connectionStatusLabel label: 'Checking connection...'.
+	connectionStatusLabel := SpToolbarButtonPresenter new
+		label: 'Checking connection...';
+		enabled: false;
+		yourself.
+
 	toolbar add: connectionStatusLabel.
 
 	toolbar add: (SpToolbarButtonPresenter new
