@@ -70,6 +70,11 @@ ChatPharoChat2 >> messages: anObject [
 ]
 
 { #category : 'accessing' }
+ChatPharoChat2 >> ollamaApi [
+	^ ollamaApi
+]
+
+{ #category : 'accessing' }
 ChatPharoChat2 >> ollamaApi: anObject [
 
 	ollamaApi := anObject
