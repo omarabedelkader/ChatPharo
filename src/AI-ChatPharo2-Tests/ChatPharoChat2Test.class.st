@@ -11,9 +11,10 @@ Class {
 
 { #category : 'running' }
 ChatPharoChat2Test >> setUp [
+
+	super setUp.
 	mockApi := MockOllamaApi new.
-	chat := ChatPharoChat2 new
-		ollamaApi: mockApi.
+	chat := ChatPharoChat2 new ollamaApi: mockApi
 ]
 
 { #category : 'running' }
