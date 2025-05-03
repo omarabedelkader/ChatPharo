@@ -13,7 +13,7 @@ Class {
 ChatPharoChat2Test >> setUp [
 
 	super setUp.
-	mockApi := MockOllamaApi new.
+	mockApi := MockApi new.
 	chat := ChatPharoChat2 new ollamaApi: mockApi
 ]
 

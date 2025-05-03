@@ -1,5 +1,5 @@
 Class {
-	#name : 'MockOllamaApi',
+	#name : 'MockApi',
 	#superclass : 'Object',
 	#instVars : [
 		'conversationHistory',
@@ -10,31 +10,31 @@ Class {
 }
 
 { #category : 'api' }
-MockOllamaApi class >> modelNames [
+MockApi class >> modelNames [
 	^ #('mock-default' 'mock-advanced')
 ]
 
 { #category : 'private - uffi' }
-MockOllamaApi >> getResponseForPrompt: aPromptString [
+MockApi >> getResponseForPrompt: aPromptString [
 	"Return something deterministic and easy to recognise in assertions."
 	conversationHistory addLast: { #userPrompt -> aPromptString }.
 	^ '<<', currentModel asUppercase, '-REPLY to: ', aPromptString, '>>'
 ]
 
 { #category : 'initialization' }
-MockOllamaApi >> initialize [
+MockApi >> initialize [
 	super initialize.
 	conversationHistory := OrderedCollection new.
 	currentModel := 'mock-default'.
 ]
 
 { #category : 'initialization' }
-MockOllamaApi >> model: aString [
+MockApi >> model: aString [
 	currentModel := aString.
 ]
 
 { #category : 'private - uffi' }
-MockOllamaApi >> system: aSystemPrompt [
+MockApi >> system: aSystemPrompt [
 	"store the running history just like the real client does and answer self
 	 so that calls can be chained the same way the real API supports."
 	conversationHistory addLast: { #systemPrompt -> aSystemPrompt }.

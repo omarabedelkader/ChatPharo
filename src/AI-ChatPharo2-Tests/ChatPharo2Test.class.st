@@ -14,7 +14,7 @@ ChatPharo2Test >> setUp [
 
 	super setUp.
 	app := ChatPharo2 new.
-	mockApi := MockOllamaApi new.
+	mockApi := MockApi new.
 	app settings instVarNamed: #agent put: mockApi
 ]
 

@@ -15,7 +15,7 @@ ChatPharoSettings2Test >> setUp [
 	super setUp.
 	
 	settings := ChatPharoSettings2 new.
-	mockApi := MockOllamaApi new.
+	mockApi := MockApi new.
 	settings instVarNamed: #agent put: mockApi
 ]
 
@@ -23,7 +23,7 @@ ChatPharoSettings2Test >> setUp [
 ChatPharoSettings2Test >> testModelsDelegation [
 	self
 		assert: settings models
-		equals: (MockOllamaApi modelNames).
+		equals: (MockApi modelNames).
 
 ]
 
