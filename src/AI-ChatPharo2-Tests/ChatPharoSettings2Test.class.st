@@ -20,6 +20,13 @@ ChatPharoSettings2Test >> setUp [
 ]
 
 { #category : 'tests' }
+ChatPharoSettings2Test >> testAvailableApiChoicesReturnsAssociations [
+	| choices |
+	choices := settings availableApiChoices.
+	self assert: (choices allSatisfy: [ :assoc | assoc key isString and: [ assoc value isClass ] ]).
+]
+
+{ #category : 'tests' }
 ChatPharoSettings2Test >> testModelsDelegation [
 	self
 		assert: settings models

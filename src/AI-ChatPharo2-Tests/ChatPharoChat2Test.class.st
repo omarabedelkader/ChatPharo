@@ -25,3 +25,24 @@ ChatPharoChat2Test >> testCancelMessageTerminatesProcess [
 	chat cancelMessage.
 	self assert: procBefore isTerminated.
 ]
+
+{ #category : 'running' }
+ChatPharoChat2Test >> testClearChatEmptiesMessagesAndStopsProcess [ 
+
+	chat sendMessage: 'Hello'.
+	(Delay forMilliseconds: 10) wait.
+	self assert: chat messages notEmpty.
+	chat clearChat.
+	self assert: chat messages isEmpty.
+]
+
+{ #category : 'running' }
+ChatPharoChat2Test >> testWhenAnswerReceivedDoCallbackIsTriggered [ 
+
+	| triggered |
+	triggered := false.
+	chat whenAnswerReceivedDo: [ :msg | triggered := true ].
+	chat sendMessage: 'Hello'.
+	(Delay forMilliseconds: 10) wait.
+	self assert: triggered.
+]

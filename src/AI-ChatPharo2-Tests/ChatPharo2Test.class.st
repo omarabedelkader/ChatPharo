@@ -31,6 +31,17 @@ ChatPharo2Test >> testInitializeStartsEmpty [
 ]
 
 { #category : 'running' }
+ChatPharo2Test >> testMultipleChatsHaveIndependentMessageHistories [ 
+
+	app newChat.
+	app newChat.
+	app chats first sendMessage: 'Hello'.
+	(Delay forMilliseconds: 10) wait. "allow process to finish"
+	self assert: (app chats first messages size) equals: 1.
+	self assert: (app chats second messages isEmpty).
+]
+
+{ #category : 'running' }
 ChatPharo2Test >> testNewChat [
 	self assert: app chats isEmpty.
 	app newChat.
