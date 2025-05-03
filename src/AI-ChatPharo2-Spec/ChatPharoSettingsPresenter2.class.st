@@ -23,15 +23,16 @@ ChatPharoSettingsPresenter2 >> connectPresenters [
 				ollamaModelDropList selectFirst ] ].
 
 	apiDropList whenSelectedItemChangedDo: [ :assoc |
-		| apiClass |
-		apiClass := assoc value.
-		model useApi: apiClass.
+			| apiClass |
+			apiClass := assoc value.
+			model useApi: apiClass.
+			
+			ollamaModelDropList items: model models.
+			ollamaModelDropList items notEmpty ifTrue: [
+				ollamaModelDropList selectFirst ] ].
 
-		"Refresh the model list for the newly‑selected API"
-		ollamaModelDropList items: model models.
-		(ollamaModelDropList items notEmpty)
-			ifTrue: [ ollamaModelDropList selectFirst ].
-	].
+	ollamaModelDropList whenSelectedItemChangedDo: [ :modelName |
+		model useModel: modelName ]
 ]
 
 { #category : 'layout' }
