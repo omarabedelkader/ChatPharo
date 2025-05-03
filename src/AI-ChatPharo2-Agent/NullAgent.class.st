@@ -23,9 +23,10 @@ NullAgent class >> modelNames [
 ]
 
 { #category : 'initialization' }
-NullAgent >> getResponseForPrompt: aString [ 
-    "Do absolutely nothing and return nil or an empty string."
-    ^ ''
+NullAgent >> getResponseForPrompt: aString [
+	"Do absolutely nothing and return nil or an empty string."
+
+	^ ' No backend is configured. Open Settings → API and choose an API first.'
 ]
 
 { #category : 'initialization' }
