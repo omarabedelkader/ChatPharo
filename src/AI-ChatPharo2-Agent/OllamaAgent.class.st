@@ -1,18 +1,18 @@
 Class {
-	#name : 'OllamaApi',
+	#name : 'OllamaAgent',
 	#superclass : 'Agent',
 	#category : 'AI-ChatPharo2-Agent',
 	#package : 'AI-ChatPharo2-Agent'
 }
 
 { #category : 'api' }
-OllamaApi class >> displayName [ 
+OllamaAgent class >> displayName [ 
 
     ^ 'Ollama (local LLM)'
 ]
 
 { #category : 'api' }
-OllamaApi class >> isReachable [
+OllamaAgent class >> isReachable [
 
 	[ self ollamaVersion ] on: NetworkError do: [ ^ false ].
 
@@ -20,13 +20,13 @@ OllamaApi class >> isReachable [
 ]
 
 { #category : 'api' }
-OllamaApi class >> modelNames [
+OllamaAgent class >> modelNames [
 	"returns an array with one item per model."
 	^ self models collect: [ :ollamaModel | ollamaModel at: 'name' ]
 ]
 
 { #category : 'api' }
-OllamaApi class >> models [
+OllamaAgent class >> models [
 	"returns an array with one item per model. Each item has nested informations, and some arrays"
 	| response  |
 	
@@ -36,7 +36,7 @@ OllamaApi class >> models [
 ]
 
 { #category : 'api' }
-OllamaApi class >> newSystem: synstemText promptPrefix: promptPrefixText [
+OllamaAgent class >> newSystem: synstemText promptPrefix: promptPrefixText [
 	"Create and return an instance with predefined system and prompt prefix for Ollama queries."
 	| prompter |
 	prompter := self new.
@@ -46,7 +46,7 @@ OllamaApi class >> newSystem: synstemText promptPrefix: promptPrefixText [
 ]
 
 { #category : 'api' }
-OllamaApi class >> ollamaVersion [
+OllamaAgent class >> ollamaVersion [
 	"Retrieve the Ollama version"
 	| response  |
 	
@@ -55,12 +55,12 @@ OllamaApi class >> ollamaVersion [
 ]
 
 { #category : 'api' }
-OllamaApi class >> settingsPresenterFor: anAgent [
+OllamaAgent class >> settingsPresenterFor: anAgent [
 	^ OllamaSettingsPresenter on: anAgent
 ]
 
 { #category : 'initialization' }
-OllamaApi >> getResponseForPrompt: prompt [
+OllamaAgent >> getResponseForPrompt: prompt [
 	"Sends a prompt to an API, receives JSON response, and extracts the 'response' value"
 	| apiGenerateUrl jsonResponse requestDictionary requestBody|
 	apiGenerateUrl := 'http://localhost:11434/api/generate'.
@@ -85,7 +85,7 @@ OllamaApi >> getResponseForPrompt: prompt [
 ]
 
 { #category : 'initialization' }
-OllamaApi >> initialize [ 
+OllamaAgent >> initialize [ 
 
 	super initialize.
 	self model: nil.
@@ -94,7 +94,7 @@ OllamaApi >> initialize [
 ]
 
 { #category : 'initialization' }
-OllamaApi >> modelInformation [
+OllamaAgent >> modelInformation [
 	"Show information about a model including details, modelfile, template, parameters, license, system prompt."
 	"Check https://github.com/ollama/ollama/blob/main/docs/api.md#show-model-information for details"
 	| url jsonResponse requestBody  response|
@@ -113,7 +113,7 @@ OllamaApi >> modelInformation [
 ]
 
 { #category : 'api' }
-OllamaApi >> modelNames [
+OllamaAgent >> modelNames [
 
 	^ self class modelNames
 ]

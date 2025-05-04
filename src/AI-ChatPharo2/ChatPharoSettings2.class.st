@@ -35,7 +35,7 @@ ChatPharoSettings2 >> availableApiChoices [
 { #category : 'initialization' }
 ChatPharoSettings2 >> availableApis [ 
 
-    ^ { NullAgent. OllamaApi }   "add more as you implement them"
+    ^ { NullAgent. OllamaAgent }   "add more as you implement them"
 ]
 
 { #category : 'initialization' }
