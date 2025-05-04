@@ -134,16 +134,17 @@ ChatPharoSettingsPresenter2 >> newChatTab [
 
 { #category : 'initialization' }
 ChatPharoSettingsPresenter2 >> newConfigurationTab [
+
 	^ SpPresenter new
-		layout: (SpBoxLayout newTopToBottom
-			add: 'Configuration Settings' expand: false;
-			add: (SpBoxLayout newHorizontal
-				add: 'API:' expand: false;
-				add: apiDropList;
-				yourself) expand: false;
-			add: apiSettingsContainer;   "<<< here"
-			yourself);
-		yourself
+		  layout: (SpBoxLayout newTopToBottom
+				   add: (SpBoxLayout newHorizontal
+						    add: 'API:' expand: false;
+						    add: apiDropList;
+						    yourself)
+				   expand: false;
+				   add: apiSettingsContainer;
+				   yourself);
+		  yourself
 ]
 
 { #category : 'initialization' }

@@ -15,13 +15,13 @@ OllamaSettingsPresenter >> connectPresenters [
 	modelsDrop whenSelectedItemChangedDo: [:name | model model: name ].
 ]
 
-{ #category : 'initialization' }
+{ #category : 'layout' }
 OllamaSettingsPresenter >> defaultLayout [
-	^ SpBoxLayout newHorizontal
-		add: refreshButton expand: false;
-		add: modelsDrop;
-		yourself
 
+	^ SpBoxLayout newHorizontal
+		  add: refreshButton expand: false;
+		  add: modelsDrop  expand: false;
+		  yourself
 ]
 
 { #category : 'initialization' }
@@ -75,7 +75,7 @@ OllamaSettingsPresenter >> refreshModels [
 	modelsDrop items ifNotEmpty: [ modelsDrop selectFirst ].
 ]
 
-{ #category : 'initialization' }
+{ #category : 'accessing - model' }
 OllamaSettingsPresenter >> setModelBeforeInitialization: anAgent [
 	model := anAgent
 ]
