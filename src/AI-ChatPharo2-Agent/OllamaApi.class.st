@@ -160,9 +160,3 @@ OllamaApi >> system: anObject [
 
 	system := anObject
 ]
-
-{ #category : 'accessing' }
-OllamaApi >> isConnected [
-	
-	^ self class isReachable
-]
