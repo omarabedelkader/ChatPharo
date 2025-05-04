@@ -1,8 +1,9 @@
 Class {
 	#name : 'ChatPharoMessage2Test',
 	#superclass : 'TestCase',
-	#category : 'AI-ChatPharo2-Tests',
-	#package : 'AI-ChatPharo2-Tests'
+	#category : 'AI-ChatPharo2-Tests-Core',
+	#package : 'AI-ChatPharo2-Tests',
+	#tag : 'Core'
 }
 
 { #category : 'tests' }

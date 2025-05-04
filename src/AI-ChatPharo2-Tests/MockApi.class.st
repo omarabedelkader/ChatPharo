@@ -5,8 +5,9 @@ Class {
 		'conversationHistory',
 		'currentModel'
 	],
-	#category : 'AI-ChatPharo2-Tests',
-	#package : 'AI-ChatPharo2-Tests'
+	#category : 'AI-ChatPharo2-Tests-Agent',
+	#package : 'AI-ChatPharo2-Tests',
+	#tag : 'Agent'
 }
 
 { #category : 'api' }

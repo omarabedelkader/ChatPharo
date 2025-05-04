@@ -5,8 +5,9 @@ Class {
 		'app',
 		'mockApi'
 	],
-	#category : 'AI-ChatPharo2-Tests',
-	#package : 'AI-ChatPharo2-Tests'
+	#category : 'AI-ChatPharo2-Tests-Core',
+	#package : 'AI-ChatPharo2-Tests',
+	#tag : 'Core'
 }
 
 { #category : 'running' }
@@ -51,9 +52,12 @@ ChatPharo2Test >> testNewChat [
 
 { #category : 'running' }
 ChatPharo2Test >> testNewChatAddsChatWithMockApi [
+
 	app newChat.
 	self assert: app chats size equals: 1.
-	self assert: (app chats first instVarNamed: #ollamaApi) equals: mockApi.
+	self
+		assert: (app chats first instVarNamed: #agent)
+		equals: mockApi
 ]
 
 { #category : 'running' }

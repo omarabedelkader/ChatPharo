@@ -34,7 +34,7 @@ ChatPharo2 >> initialize [
 ChatPharo2 >> newChat [
 
 	chats add: (ChatPharoChat2 new
-		ollamaApi: self settings agent;
+		agent: self settings agent;
 		yourself)
 ]
 
