@@ -26,6 +26,13 @@ self subclassResponsibility.
 Agent class >> modelNames [           self subclassResponsibility.
 ]
 
+{ #category : 'api' }
+Agent class >> settingsPresenterFor: anAgent [   "default"
+	"Return a presenter (or nil) that lets the user edit the agent’s
+	 specific configuration.  Subclasses override."
+	^ nil
+]
+
 { #category : 'initialization' }
 Agent >> getResponseForPrompt: prompt [
 

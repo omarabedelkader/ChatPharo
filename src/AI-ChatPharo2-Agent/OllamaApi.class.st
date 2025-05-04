@@ -54,6 +54,11 @@ OllamaApi class >> ollamaVersion [
 	^ (STONJSON fromString: response) at: 'version'
 ]
 
+{ #category : 'api' }
+OllamaApi class >> settingsPresenterFor: anAgent [
+	^ OllamaSettingsPresenter on: anAgent
+]
+
 { #category : 'initialization' }
 OllamaApi >> getResponseForPrompt: prompt [
 	"Sends a prompt to an API, receives JSON response, and extracts the 'response' value"

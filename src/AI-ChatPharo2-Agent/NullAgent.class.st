@@ -22,6 +22,11 @@ NullAgent class >> modelNames [
     ^ #()  "returns an empty collection"
 ]
 
+{ #category : 'api' }
+NullAgent class >> settingsPresenterFor: anAgent [
+	^ nil   "Nothing to configure"
+]
+
 { #category : 'initialization' }
 NullAgent >> getResponseForPrompt: aString [
 	"Do absolutely nothing and return nil or an empty string."
