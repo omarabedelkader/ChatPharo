@@ -6,9 +6,9 @@ Class {
 }
 
 { #category : 'api' }
-OllamaAgent class >> displayName [ 
+OllamaAgent class >> displayName [
 
-    ^ 'Ollama (local LLM)'
+	^ 'Ollama'
 ]
 
 { #category : 'api' }
