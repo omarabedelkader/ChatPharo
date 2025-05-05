@@ -15,7 +15,8 @@ Class {
 		'messages',
 		'ollamaApi',
 		'promptProcess',
-		'onAnswerReceived'
+		'onAnswerReceived',
+		'title'
 	],
 	#category : 'AI-ChatPharo2',
 	#package : 'AI-ChatPharo2'
@@ -106,4 +107,16 @@ promptProcess ifNotNil: [ promptProcess waitUntil: [ promptProcess isTerminated 
 ChatPharoChat2 >> whenAnswerReceivedDo: aBlock [
 
 	onAnswerReceived := aBlock
+]
+
+{ #category : 'accessing' }
+ChatPharoChat2 >> title [
+
+	^ title
+]
+
+{ #category : 'accessing' }
+ChatPharoChat2 >> title: aString [
+
+	title := aString
 ]
