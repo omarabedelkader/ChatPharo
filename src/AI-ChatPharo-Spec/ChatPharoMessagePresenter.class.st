@@ -49,7 +49,7 @@ ChatPharoMessagePresenter >> initializeWindow: aWindowPresenter [
 	
 	aWindowPresenter
 		title: 'Message presenter';
-		initialExtent: 400@00
+		initialExtent: 400@200
 ]
 
 { #category : 'accessing - model' }

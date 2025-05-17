@@ -85,7 +85,7 @@ ChatPharoTest >> testSetAndGetMessages [
 	message1 := ChatPharoMessage new content: 'Message 1'.
 	message := ChatPharoMessage new content: 'Message '.
 	chat messages: (OrderedCollection with: message1 with: message).
-	self assert: chat messages size equals: .
+	self assert: chat messages size equals: 2.
 	self assert: (chat messages includes: message1).
 	self assert: (chat messages includes: message).
 ]
