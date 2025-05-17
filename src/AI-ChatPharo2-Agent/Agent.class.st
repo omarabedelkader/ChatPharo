@@ -42,10 +42,10 @@ Agent >> getResponseForPrompt: prompt [
 { #category : 'initialization' }
 Agent >> initialize [
 	super initialize.
-	model        := nil.
+	model        := ''.
 	system       := ''.
 	promptPrefix := ''.
-	response     := nil.
+	response     := ''.
 ]
 
 { #category : 'accessing' }
@@ -100,4 +100,9 @@ Agent >> system [
 Agent >> system: anObject [
 
 	system := anObject
+]
+
+{ #category : 'accessing' }
+Agent >> useAdapter: anAdapter [
+    self model: anAdapter.
 ]

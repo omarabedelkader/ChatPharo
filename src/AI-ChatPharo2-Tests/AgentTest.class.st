@@ -3,12 +3,37 @@ Class {
 	#superclass : 'TestCase',
 	#instVars : [
 		'agent',
-		'mockAdapter'
+		'mockAdapter',
+		'systemPrompt'
 	],
 	#category : 'AI-ChatPharo2-Tests-Agent',
 	#package : 'AI-ChatPharo2-Tests',
 	#tag : 'Agent'
 }
+
+{ #category : 'accessing' }
+AgentTest >> agent [
+
+	^ agent
+]
+
+{ #category : 'accessing' }
+AgentTest >> agent: anObject [
+
+	agent := anObject
+]
+
+{ #category : 'accessing' }
+AgentTest >> mockAdapter [
+
+	^ mockAdapter
+]
+
+{ #category : 'accessing' }
+AgentTest >> mockAdapter: anObject [
+
+	mockAdapter := anObject
+]
 
 { #category : 'running' }
 AgentTest >> setUp [
@@ -16,15 +41,27 @@ AgentTest >> setUp [
     super setUp.
     mockAdapter := MockAdapter new.
     agent := Agent new.
-    agent useAdapter: mockAdapter  
+    agent useAdapter: mockAdapter.
+]
+
+{ #category : 'accessing' }
+AgentTest >> systemPrompt [
+
+	^ systemPrompt
+]
+
+{ #category : 'accessing' }
+AgentTest >> systemPrompt: anObject [
+
+	systemPrompt := anObject
 ]
 
 { #category : 'running' }
 AgentTest >> testInitializeSetsDefaultStrings [ 
 
-    self assert: agent instVarNamed: #systemPrompt equals: ''.
-    self assert: agent instVarNamed: #promptPrefix equals: ''.
-    self assert: agent response equals: ''
+self assert: agent system equals: ''.
+self assert: agent promptPrefix equals: ''.
+self assert: agent response equals: ''.
 ]
 
 { #category : 'running' }
