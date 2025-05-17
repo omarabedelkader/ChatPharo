@@ -49,3 +49,11 @@ ChatPharo2 >> settings [
 
 	^ settings
 ]
+
+{ #category : 'accessing' }
+ChatPharo2 >> agent [
+	
+    ^ self chats isEmpty
+        ifTrue: [ nil ]
+        ifFalse: [ self chats last ollamaApi ]
+]

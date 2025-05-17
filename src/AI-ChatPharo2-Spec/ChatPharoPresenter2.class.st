@@ -19,8 +19,8 @@ Class {
 ChatPharoPresenter2 >> addNewChat [
 
     | newPage chatName|
-	 chatName := 'Chat ', notebook pages size asString.
-	 model newChat.
+	chatName := 'Chat ', notebook pages size asString.
+	model newChat.
     newPage := SpNotebookPage
         title: chatName
         icon: (self iconNamed: #announcement)
@@ -60,39 +60,82 @@ ChatPharoPresenter2 >> initializePresenters [
 	toolbar := self newToolbar.
 
 	toolbar add: (SpToolbarButtonPresenter new
-			 label: 'New Chat';
-			 icon: (self iconNamed: #add);
-			 help: 'Create a new chat';
-			 action: [ self addNewChat ];
-			 yourself).
+		label: 'New Chat';
+		icon: (self iconNamed: #add);
+		help: 'Create a new chat';
+		action: [ self addNewChat ];
+		yourself).
 
 	toolbar add: (SpToolbarButtonPresenter new
-			 label: 'Delete Chat';
-			 icon: (self iconNamed: #delete);
-			 help: 'Delete the selected chat';
-			 action: [ self deleteChat: notebook selectedPage title ];
-			 yourself).
+		label: 'Delete Chat';
+		icon: (self iconNamed: #delete);
+		help: 'Delete the selected chat';
+		action: [ self deleteChat: notebook selectedPage title ];
+		yourself).
 
 	toolbar add: (SpToolbarButtonPresenter new
-			 label: 'Save Chat';
-			 icon: (self iconNamed: #smallSave);
-			 help: 'Save current chat';
-			 action: [ self saveCurrentChat ];
-			 yourself).
+		label: 'Save Chat';
+		icon: (self iconNamed: #smallSave);
+		help: 'Save current chat';
+		action: [ self saveCurrentChat ];
+		yourself).
 
 	"toolbar add: (SpToolbarButtonPresenter new
-        label: 'Load Chat';
-        icon: (self iconNamed: #smallOpen);
-        help: 'Load saved chat';
-        action: [ self loadChat ];
-        yourself)."
+		label: 'Load Chat';
+		icon: (self iconNamed: #smallOpen);
+		help: 'Load saved chat';
+		action: [ self loadChat ];
+		yourself)."
 
 	toolbar add: (SpToolbarButtonPresenter new
-			 label: 'Settings';
-			 icon: (self iconNamed: #smallConfiguration);
-			 help: 'Open settings';
-			 action: [ self openSettings ];
-			 yourself)
+		label: 'Settings';
+		icon: (self iconNamed: #smallConfiguration);
+		help: 'Open settings';
+		action: [ self openSettings ];
+		yourself).
+
+	
+	toolbar add: (SpToolbarButtonPresenter new
+		label: 'Refresh Connection';
+		icon: (self iconNamed: #refresh);
+		help: 'Manually refresh connection status';
+		action: [ self updateConnectionStatusOnce ];
+		yourself).
+
+	connectionStatusLabel := SpToolbarButtonPresenter new
+		label: 'Checking connection...';
+		action: [ ];
+		enabled: false;
+		yourself.
+
+	toolbar add: connectionStatusLabel.
+
+	self updateConnectionStatus.
+]
+
+{ #category : 'status' }
+ChatPharoPresenter2 >> updateConnectionStatus [
+	[
+		[
+			self updateConnectionStatusOnce.
+			(Delay forSeconds: 10) wait. 
+		] repeat.
+	] forkAt: Processor userBackgroundPriority.
+]
+
+{ #category : 'status' }
+ChatPharoPresenter2 >> updateConnectionStatusOnce [
+
+	| connectedText color |
+	connectedText := ((model agent) notNil and: [ model agent isConnected ])
+		ifTrue: [ 'Connected' ]
+		ifFalse: [ 'Disconnected' ].
+
+	connectionStatusLabel
+		label: connectedText;
+		help: (connectedText = 'Connected'
+			ifTrue: [ 'Connected to Ollama server' ]
+			ifFalse: [ 'Not connected to Ollama server' ]).
 ]
 
 { #category : 'initialization' }
