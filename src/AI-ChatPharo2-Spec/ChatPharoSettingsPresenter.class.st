@@ -1,5 +1,5 @@
 Class {
-	#name : 'ChatPharoSettingsPresenter2',
+	#name : 'ChatPharoSettingsPresenter',
 	#superclass : 'SpPresenter',
 	#instVars : [
 		'notebook',
@@ -16,7 +16,7 @@ Class {
 }
 
 { #category : 'initialization' }
-ChatPharoSettingsPresenter2 >> connectPresenters [
+ChatPharoSettingsPresenter >> connectPresenters [
 
 	modelsRefreshButton action: [
 			ollamaModelDropList items: model models.
@@ -39,7 +39,7 @@ apiDropList whenSelectedItemChangedDo: [:assoc |
 ]
 
 { #category : 'layout' }
-ChatPharoSettingsPresenter2 >> defaultLayout [
+ChatPharoSettingsPresenter >> defaultLayout [
 
     ^ SpBoxLayout newTopToBottom
         add: notebook;
@@ -47,7 +47,7 @@ ChatPharoSettingsPresenter2 >> defaultLayout [
 ]
 
 { #category : 'initialization' }
-ChatPharoSettingsPresenter2 >> initializePresenters [
+ChatPharoSettingsPresenter >> initializePresenters [
 
 	super initializePresenters.
 
@@ -89,7 +89,7 @@ ChatPharoSettingsPresenter2 >> initializePresenters [
 ]
 
 { #category : 'initialization' }
-ChatPharoSettingsPresenter2 >> initializeWindow: aWindowPresenter [
+ChatPharoSettingsPresenter >> initializeWindow: aWindowPresenter [
 	
 	super initializeWindow: aWindowPresenter.
 	
@@ -99,7 +99,7 @@ ChatPharoSettingsPresenter2 >> initializeWindow: aWindowPresenter [
 ]
 
 { #category : 'initialization' }
-ChatPharoSettingsPresenter2 >> newAPITab [
+ChatPharoSettingsPresenter >> newAPITab [
 
 	^ SpPresenter new
 		  layout: (SpBoxLayout newTopToBottom
@@ -118,7 +118,7 @@ ChatPharoSettingsPresenter2 >> newAPITab [
 ]
 
 { #category : 'initialization' }
-ChatPharoSettingsPresenter2 >> newChatTab [
+ChatPharoSettingsPresenter >> newChatTab [
 
     ^ SpPresenter new
         layout: (SpBoxLayout newTopToBottom
@@ -133,7 +133,7 @@ ChatPharoSettingsPresenter2 >> newChatTab [
 ]
 
 { #category : 'initialization' }
-ChatPharoSettingsPresenter2 >> newConfigurationTab [
+ChatPharoSettingsPresenter >> newConfigurationTab [
 
 	^ SpPresenter new
 		  layout: (SpBoxLayout newTopToBottom
@@ -148,19 +148,19 @@ ChatPharoSettingsPresenter2 >> newConfigurationTab [
 ]
 
 { #category : 'initialization' }
-ChatPharoSettingsPresenter2 >> notebook [
+ChatPharoSettingsPresenter >> notebook [
 
 	^ notebook
 ]
 
 { #category : 'initialization' }
-ChatPharoSettingsPresenter2 >> notebook: anObject [
+ChatPharoSettingsPresenter >> notebook: anObject [
 
 	notebook := anObject
 ]
 
 { #category : 'accessing - model' }
-ChatPharoSettingsPresenter2 >> setModelBeforeInitialization: anObject [
+ChatPharoSettingsPresenter >> setModelBeforeInitialization: anObject [
 
 	model := anObject
 ]

@@ -1,5 +1,5 @@
 Class {
-	#name : 'ChatPharoPresenter2',
+	#name : 'ChatPharoPresenter',
 	#superclass : 'SpPresenter',
 	#instVars : [
 		'messagesLayout',
@@ -16,7 +16,7 @@ Class {
 }
 
 { #category : 'adding' }
-ChatPharoPresenter2 >> addNewChat [
+ChatPharoPresenter >> addNewChat [
 
     | newPage chatName|
 	 chatName := 'Chat ', notebook pages size asString.
@@ -30,7 +30,7 @@ ChatPharoPresenter2 >> addNewChat [
 ]
 
 { #category : 'layout' }
-ChatPharoPresenter2 >> defaultLayout [
+ChatPharoPresenter >> defaultLayout [
 	"Layout of ChatPharo. Nicer design wanted..."
 
     ^ SpBoxLayout newTopToBottom
@@ -40,7 +40,7 @@ ChatPharoPresenter2 >> defaultLayout [
 ]
 
 { #category : 'initialization' }
-ChatPharoPresenter2 >> deleteChat: aPageTitle [ 
+ChatPharoPresenter >> deleteChat: aPageTitle [ 
 
     "Find the page by title and remove it if found."
     | pageToDelete |
@@ -54,7 +54,7 @@ ChatPharoPresenter2 >> deleteChat: aPageTitle [
 ]
 
 { #category : 'initialization' }
-ChatPharoPresenter2 >> initializePresenters [
+ChatPharoPresenter >> initializePresenters [
 
 	notebook := self newNotebook.
 	toolbar := self newToolbar.
@@ -96,7 +96,7 @@ ChatPharoPresenter2 >> initializePresenters [
 ]
 
 { #category : 'initialization' }
-ChatPharoPresenter2 >> initializeWindow: aWindowPresenter [
+ChatPharoPresenter >> initializeWindow: aWindowPresenter [
 	
 	super initializeWindow: aWindowPresenter.
 	
@@ -106,19 +106,19 @@ ChatPharoPresenter2 >> initializeWindow: aWindowPresenter [
 ]
 
 { #category : 'initialization' }
-ChatPharoPresenter2 >> notebook [
+ChatPharoPresenter >> notebook [
 
 	^ notebook
 ]
 
 { #category : 'initialization' }
-ChatPharoPresenter2 >> notebook: anObject [
+ChatPharoPresenter >> notebook: anObject [
 
 	notebook := anObject
 ]
 
 { #category : 'initialization' }
-ChatPharoPresenter2 >> openSettings [
+ChatPharoPresenter >> openSettings [
 
 	| settingsWindow |
 	settingsWindow := model settings presenter.
@@ -126,7 +126,7 @@ ChatPharoPresenter2 >> openSettings [
 ]
 
 { #category : 'initialization' }
-ChatPharoPresenter2 >> saveCurrentChat [
+ChatPharoPresenter >> saveCurrentChat [
 
     | fileReference jsonData currentChat |
     currentChat := notebook selectedPage presenterProvider value.
@@ -150,13 +150,13 @@ ChatPharoPresenter2 >> saveCurrentChat [
 ]
 
 { #category : 'initialization' }
-ChatPharoPresenter2 >> sendMessage [
+ChatPharoPresenter >> sendMessage [
 
 	model sendMessage: messageTextField text
 ]
 
 { #category : 'accessing - model' }
-ChatPharoPresenter2 >> setModelBeforeInitialization: anObject [
+ChatPharoPresenter >> setModelBeforeInitialization: anObject [
 
 	model := anObject
 ]

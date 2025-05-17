@@ -6,7 +6,7 @@
 	yourself) presenter open
 "
 Class {
-	#name : 'ChatPharoMessagePresenter2',
+	#name : 'ChatPharoMessagePresenter',
 	#superclass : 'SpPresenter',
 	#instVars : [
 		'model',
@@ -18,14 +18,14 @@ Class {
 }
 
 { #category : 'initialization' }
-ChatPharoMessagePresenter2 >> connectPresenters [
+ChatPharoMessagePresenter >> connectPresenters [
 
 	contentPresenter document: (Microdown parse: model content).
 	answerPresenter document: (Microdown parse: model answer)
 ]
 
 { #category : 'layout' }
-ChatPharoMessagePresenter2 >> defaultLayout [
+ChatPharoMessagePresenter >> defaultLayout [
 
 	^ SpBoxLayout newVertical
 		add: 'User' expand: false;
@@ -36,14 +36,14 @@ ChatPharoMessagePresenter2 >> defaultLayout [
 ]
 
 { #category : 'layout' }
-ChatPharoMessagePresenter2 >> initializePresenters [ 
+ChatPharoMessagePresenter >> initializePresenters [ 
 
 	contentPresenter := MicrodownPresenter new.
 	answerPresenter := MicrodownPresenter new.
 ]
 
 { #category : 'layout' }
-ChatPharoMessagePresenter2 >> initializeWindow: aWindowPresenter [
+ChatPharoMessagePresenter >> initializeWindow: aWindowPresenter [
 	
 	super initializeWindow: aWindowPresenter.
 	
@@ -53,7 +53,7 @@ ChatPharoMessagePresenter2 >> initializeWindow: aWindowPresenter [
 ]
 
 { #category : 'accessing - model' }
-ChatPharoMessagePresenter2 >> setModelBeforeInitialization: anObject [
+ChatPharoMessagePresenter >> setModelBeforeInitialization: anObject [
 
 	model := anObject
 ]

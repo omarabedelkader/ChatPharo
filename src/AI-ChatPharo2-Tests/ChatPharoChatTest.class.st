@@ -1,5 +1,5 @@
 Class {
-	#name : 'ChatPharoChat2Test',
+	#name : 'ChatPharoChatTest',
 	#superclass : 'TestCase',
 	#instVars : [
 		'chat',
@@ -11,15 +11,15 @@ Class {
 }
 
 { #category : 'running' }
-ChatPharoChat2Test >> setUp [
+ChatPharoChatTest >> setUp [
 
 	super setUp.
 	mockApi := MockApi new.
-	chat := ChatPharoChat2 new agent: mockApi
+	chat := ChatPharoChat new agent: mockApi
 ]
 
 { #category : 'running' }
-ChatPharoChat2Test >> testCancelMessageTerminatesProcess [
+ChatPharoChatTest >> testCancelMessageTerminatesProcess [
 	| procBefore |
 	chat sendMessage: 'long task'.
 	procBefore := chat instVarNamed: #promptProcess.
@@ -28,7 +28,7 @@ ChatPharoChat2Test >> testCancelMessageTerminatesProcess [
 ]
 
 { #category : 'running' }
-ChatPharoChat2Test >> testClearChatEmptiesMessagesAndStopsProcess [ 
+ChatPharoChatTest >> testClearChatEmptiesMessagesAndStopsProcess [ 
 
 	chat sendMessage: 'Hello'.
 	(Delay forMilliseconds: 10) wait.
@@ -38,9 +38,9 @@ ChatPharoChat2Test >> testClearChatEmptiesMessagesAndStopsProcess [
 ]
 
 { #category : 'running' }
-ChatPharoChat2Test >> testHistoryFormatsPairs [ 
+ChatPharoChatTest >> testHistoryFormatsPairs [ 
 
-    chat messages add: (ChatPharoMessage2 new
+    chat messages add: (ChatPharoMessage new
                             content: 'c';
                             answer: 'a').
     self assert: (chat history includesSubstring: 'User: c').
@@ -48,7 +48,7 @@ ChatPharoChat2Test >> testHistoryFormatsPairs [
 ]
 
 { #category : 'running' }
-ChatPharoChat2Test >> testSendMessageForksProcess [ 
+ChatPharoChatTest >> testSendMessageForksProcess [ 
     | proc |
     chat sendMessage: 'x'.
 
@@ -58,7 +58,7 @@ ChatPharoChat2Test >> testSendMessageForksProcess [
 ]
 
 { #category : 'running' }
-ChatPharoChat2Test >> testWhenAnswerReceivedDoCallbackIsTriggered [ 
+ChatPharoChatTest >> testWhenAnswerReceivedDoCallbackIsTriggered [ 
 
 	| triggered |
 	triggered := false.

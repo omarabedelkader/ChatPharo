@@ -1,5 +1,5 @@
 Class {
-	#name : 'ChatPharoChatPresenter2',
+	#name : 'ChatPharoChatPresenter',
 	#superclass : 'SpPresenter',
 	#instVars : [
 		'messagesLayout',
@@ -14,7 +14,7 @@ Class {
 }
 
 { #category : 'initialization' }
-ChatPharoChatPresenter2 >> connectPresenters [
+ChatPharoChatPresenter >> connectPresenters [
 
 	messageTextField whenSubmitDo: [ :text | self sendMessage ].
 	submitButton action: [ self sendMessage. ].
@@ -33,7 +33,7 @@ ChatPharoChatPresenter2 >> connectPresenters [
 ]
 
 { #category : 'layout' }
-ChatPharoChatPresenter2 >> defaultLayout [
+ChatPharoChatPresenter >> defaultLayout [
     ^ SpBoxLayout newVertical
           add: (SpScrollableLayout with: messagesLayout);
           add: (SpBoxLayout newHorizontal
@@ -47,7 +47,7 @@ ChatPharoChatPresenter2 >> defaultLayout [
 ]
 
 { #category : 'initialization' }
-ChatPharoChatPresenter2 >> initializePresenters [
+ChatPharoChatPresenter >> initializePresenters [
 
 	messageTextField := self newTextInput
 		                    placeholder: 'Type your message here...';
@@ -75,7 +75,7 @@ ChatPharoChatPresenter2 >> initializePresenters [
 ]
 
 { #category : 'initialization' }
-ChatPharoChatPresenter2 >> initializeWindow: aWindowPresenter [
+ChatPharoChatPresenter >> initializeWindow: aWindowPresenter [
 	
 	super initializeWindow: aWindowPresenter.
 	
@@ -85,13 +85,13 @@ ChatPharoChatPresenter2 >> initializeWindow: aWindowPresenter [
 ]
 
 { #category : 'initialization' }
-ChatPharoChatPresenter2 >> sendMessage [
+ChatPharoChatPresenter >> sendMessage [
 
 	model sendMessage: messageTextField text
 ]
 
 { #category : 'accessing - model' }
-ChatPharoChatPresenter2 >> setModelBeforeInitialization: anObject [
+ChatPharoChatPresenter >> setModelBeforeInitialization: anObject [
 
 	model := anObject
 ]

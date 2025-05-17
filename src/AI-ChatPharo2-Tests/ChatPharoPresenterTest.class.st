@@ -1,5 +1,5 @@
 Class {
-	#name : 'ChatPharoPresenter2Test',
+	#name : 'ChatPharoPresenterTest',
 	#superclass : 'TestCase',
 	#instVars : [
 		'app',
@@ -11,16 +11,16 @@ Class {
 }
 
 { #category : 'running' }
-ChatPharoPresenter2Test >> setUp [ 
+ChatPharoPresenterTest >> setUp [ 
 
     super setUp.
-    app := ChatPharo2 new.
-    presenter := ChatPharoPresenter2 on: app.
+    app := ChatPharo new.
+    presenter := ChatPharoPresenter on: app.
     presenter initializePresenters
 ]
 
 { #category : 'running' }
-ChatPharoPresenter2Test >> testAddNewChatAddsNotebookPage [ 
+ChatPharoPresenterTest >> testAddNewChatAddsNotebookPage [ 
 
     presenter addNewChat.
     self assert: (presenter notebook pages size) equals: 1

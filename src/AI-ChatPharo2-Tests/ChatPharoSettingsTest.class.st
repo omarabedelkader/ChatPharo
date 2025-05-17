@@ -1,5 +1,5 @@
 Class {
-	#name : 'ChatPharoSettings2Test',
+	#name : 'ChatPharoSettingsTest',
 	#superclass : 'TestCase',
 	#instVars : [
 		'settings',
@@ -11,24 +11,24 @@ Class {
 }
 
 { #category : 'running' }
-ChatPharoSettings2Test >> setUp [
+ChatPharoSettingsTest >> setUp [
 
 	super setUp.
 	
-	settings := ChatPharoSettings2 new.
+	settings := ChatPharoSettings new.
 	mockApi := MockApi new.
 	settings instVarNamed: #agent put: mockApi
 ]
 
 { #category : 'tests' }
-ChatPharoSettings2Test >> testAvailableApiChoicesReturnsAssociations [
+ChatPharoSettingsTest >> testAvailableApiChoicesReturnsAssociations [
 	| choices |
 	choices := settings availableApiChoices.
 	self assert: (choices allSatisfy: [ :assoc | assoc key isString and: [ assoc value isClass ] ]).
 ]
 
 { #category : 'tests' }
-ChatPharoSettings2Test >> testModelsDelegation [
+ChatPharoSettingsTest >> testModelsDelegation [
 	self
 		assert: settings models
 		equals: (MockApi modelNames).
@@ -36,14 +36,14 @@ ChatPharoSettings2Test >> testModelsDelegation [
 ]
 
 { #category : 'tests' }
-ChatPharoSettings2Test >> testUseApiReplacesAgentSubclass [ 
+ChatPharoSettingsTest >> testUseApiReplacesAgentSubclass [ 
 
     settings useApi: NullAgent.
     self assert: settings agent class equals: NullAgent.
 ]
 
 { #category : 'tests' }
-ChatPharoSettings2Test >> testUseModel [
+ChatPharoSettingsTest >> testUseModel [
 	settings useModel: 'mock-advanced'.
 	self assert: (mockApi instVarNamed: #currentModel) equals: 'mock-advanced'.
 ]

@@ -1,5 +1,5 @@
 Class {
-	#name : 'ChatPharoTemporaryChat2Test',
+	#name : 'ChatPharoTemporaryChatTest',
 	#superclass : 'TestCase',
 	#instVars : [
 		'tmp'
@@ -10,14 +10,14 @@ Class {
 }
 
 { #category : 'running' }
-ChatPharoTemporaryChat2Test >> setUp [
+ChatPharoTemporaryChatTest >> setUp [
 	super setUp.
-	tmp := ChatPharoTemporaryChat2 new.
+	tmp := ChatPharoTemporaryChat new.
 
 ]
 
 { #category : 'running' }
-ChatPharoTemporaryChat2Test >> testCancelInvokesBlock [
+ChatPharoTemporaryChatTest >> testCancelInvokesBlock [
 	| flag |
 	flag := false.
 	tmp onCancel: [ flag := true ].
@@ -26,7 +26,7 @@ ChatPharoTemporaryChat2Test >> testCancelInvokesBlock [
 ]
 
 { #category : 'running' }
-ChatPharoTemporaryChat2Test >> testSubmitInvokesBlockWithText [
+ChatPharoTemporaryChatTest >> testSubmitInvokesBlockWithText [
 	| captured |
 	captured := nil.
 	tmp

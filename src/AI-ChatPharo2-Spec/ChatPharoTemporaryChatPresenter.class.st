@@ -11,7 +11,7 @@ presenter open
 ```
 "
 Class {
-	#name : 'ChatPharoTemporaryChatPresenter2',
+	#name : 'ChatPharoTemporaryChatPresenter',
 	#superclass : 'SpPresenter',
 	#instVars : [
 		'model',
@@ -24,13 +24,13 @@ Class {
 }
 
 { #category : 'initialization' }
-ChatPharoTemporaryChatPresenter2 >> connectPresenters [ 
+ChatPharoTemporaryChatPresenter >> connectPresenters [ 
 
     textField whenSubmitDo: [ model text: textField text. model submit ].
 ]
 
 { #category : 'layout' }
-ChatPharoTemporaryChatPresenter2 >> defaultLayout [
+ChatPharoTemporaryChatPresenter >> defaultLayout [
 
 	^ SpBoxLayout newVertical
 		  add: textField;
@@ -43,7 +43,7 @@ ChatPharoTemporaryChatPresenter2 >> defaultLayout [
 ]
 
 { #category : 'initialization' }
-ChatPharoTemporaryChatPresenter2 >> initializePresenters [ 
+ChatPharoTemporaryChatPresenter >> initializePresenters [ 
 
     textField := self newTextInput placeholder: 'Enter something...' yourself.
 
@@ -61,7 +61,7 @@ ChatPharoTemporaryChatPresenter2 >> initializePresenters [
 ]
 
 { #category : 'layout' }
-ChatPharoTemporaryChatPresenter2 >> initializeWindow: aWindowPresenter [
+ChatPharoTemporaryChatPresenter >> initializeWindow: aWindowPresenter [
 
 	super initializeWindow: aWindowPresenter.
 	aWindowPresenter
@@ -70,7 +70,7 @@ ChatPharoTemporaryChatPresenter2 >> initializeWindow: aWindowPresenter [
 ]
 
 { #category : 'accessing - model' }
-ChatPharoTemporaryChatPresenter2 >> setModelBeforeInitialization: anObject [ 
+ChatPharoTemporaryChatPresenter >> setModelBeforeInitialization: anObject [ 
 
     model := anObject
 ]

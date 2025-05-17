@@ -1,5 +1,5 @@
 Class {
-	#name : 'ChatPharoMessage2Test',
+	#name : 'ChatPharoMessageTest',
 	#superclass : 'TestCase',
 	#category : 'AI-ChatPharo2-Tests-Core',
 	#package : 'AI-ChatPharo2-Tests',
@@ -7,9 +7,9 @@ Class {
 }
 
 { #category : 'tests' }
-ChatPharoMessage2Test >> testAccessors [
+ChatPharoMessageTest >> testAccessors [
 	| msg |
-	msg := ChatPharoMessage2 new
+	msg := ChatPharoMessage new
 		content: 'Hi';
 		answer: 'Hello!'.
 	self assert: msg content equals: 'Hi'.
@@ -17,10 +17,10 @@ ChatPharoMessage2Test >> testAccessors [
 ]
 
 { #category : 'tests' }
-ChatPharoMessage2Test >> testPresenterIsLazyInitialized [ 
+ChatPharoMessageTest >> testPresenterIsLazyInitialized [ 
 
 	| msg presenter1 presenter2 |
-	msg := ChatPharoMessage2 new.
+	msg := ChatPharoMessage new.
 	presenter1 := msg presenter.
 	presenter2 := msg presenter.
 	self assert: presenter1 == presenter2.
