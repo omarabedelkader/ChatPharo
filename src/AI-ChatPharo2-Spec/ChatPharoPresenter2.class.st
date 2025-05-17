@@ -18,9 +18,11 @@ Class {
 { #category : 'adding' }
 ChatPharoPresenter2 >> addNewChat [
 
-    | newPage chatName|
+    | newPage chatName chat |
 	 chatName := 'Chat ', notebook pages size asString.
-	 model newChat.
+     chat := model newChat.
+     chat title: chatName.
+
     newPage := SpNotebookPage
         title: chatName
         icon: (self iconNamed: #announcement)
@@ -48,6 +50,7 @@ ChatPharoPresenter2 >> deleteChat: aPageTitle [
     
     (self confirm: 'Are you sure you want to delete this chat?')
         ifTrue: [
+			model deleteChatWithTitle: aPageTitle.
             notebook removePage: pageToDelete.
         ].
 
