@@ -11,29 +11,47 @@ Class {
 	#name : 'ChatPharoSettings2',
 	#superclass : 'Object',
 	#instVars : [
-		'ollamaApi'
+		'agent'
 	],
 	#category : 'AI-ChatPharo2',
 	#package : 'AI-ChatPharo2'
 }
 
 { #category : 'initialization' }
+ChatPharoSettings2 >> agent [
+
+	^ agent
+]
+
+{ #category : 'initialization' }
+ChatPharoSettings2 >> availableApiChoices [
+	"Return an OrderedCollection of associations  
+	 displayName -> class so the UI can show the name
+	 but keep the class itself."
+	^ (self availableApis collect: [ :cls |
+			cls displayName -> cls ]) asOrderedCollection
+]
+
+{ #category : 'initialization' }
+ChatPharoSettings2 >> availableApis [
+
+	^ {
+		  NullAgent.
+		  OllamaAgent.
+		GeminiAgent } "add more as you implement them"
+]
+
+{ #category : 'initialization' }
 ChatPharoSettings2 >> initialize [
 
 	super initialize.
-	ollamaApi := OllamaApi new
+	agent := NullAgent new
 ]
 
 { #category : 'initialization' }
 ChatPharoSettings2 >> models [
 
-	^ ollamaApi class modelNames
-]
-
-{ #category : 'initialization' }
-ChatPharoSettings2 >> ollamaApi [
-
-	^ ollamaApi
+	^ agent class modelNames
 ]
 
 { #category : 'initialization' }
@@ -43,7 +61,15 @@ ChatPharoSettings2 >> presenter [
 ]
 
 { #category : 'initialization' }
-ChatPharoSettings2 >> useModel: aModelName [
+ChatPharoSettings2 >> useApi: anAgentClass [ 
+    (anAgentClass inheritsFrom: Agent)
+        ifFalse: [ self error: 'Not an Agent subclass' ].
+    agent := anAgentClass new
 
-	ollamaApi model: aModelName
+]
+
+{ #category : 'initialization' }
+ChatPharoSettings2 >> useModel: aModelName [ 
+
+    agent model: aModelName
 ]

@@ -5,23 +5,41 @@ Class {
 		'settings',
 		'mockApi'
 	],
-	#category : 'AI-ChatPharo2-Tests',
-	#package : 'AI-ChatPharo2-Tests'
+	#category : 'AI-ChatPharo2-Tests-Core',
+	#package : 'AI-ChatPharo2-Tests',
+	#tag : 'Core'
 }
 
 { #category : 'running' }
 ChatPharoSettings2Test >> setUp [
+
+	super setUp.
+	
 	settings := ChatPharoSettings2 new.
-	mockApi := MockOllamaApi new.
-	settings instVarNamed: #ollamaApi put: mockApi.
+	mockApi := MockApi new.
+	settings instVarNamed: #agent put: mockApi
+]
+
+{ #category : 'tests' }
+ChatPharoSettings2Test >> testAvailableApiChoicesReturnsAssociations [
+	| choices |
+	choices := settings availableApiChoices.
+	self assert: (choices allSatisfy: [ :assoc | assoc key isString and: [ assoc value isClass ] ]).
 ]
 
 { #category : 'tests' }
 ChatPharoSettings2Test >> testModelsDelegation [
 	self
 		assert: settings models
-		equals: (MockOllamaApi modelNames).
+		equals: (MockApi modelNames).
 
+]
+
+{ #category : 'tests' }
+ChatPharoSettings2Test >> testUseApiReplacesAgentSubclass [ 
+
+    settings useApi: NullAgent.
+    self assert: settings agent class equals: NullAgent.
 ]
 
 { #category : 'tests' }

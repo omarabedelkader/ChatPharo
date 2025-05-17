@@ -69,7 +69,7 @@ ChatPharoTemporaryChatPresenter2 >> initializeWindow: aWindowPresenter [
 		initialExtent: 800 @ 500
 ]
 
-{ #category : 'layout' }
+{ #category : 'accessing - model' }
 ChatPharoTemporaryChatPresenter2 >> setModelBeforeInitialization: anObject [ 
 
     model := anObject

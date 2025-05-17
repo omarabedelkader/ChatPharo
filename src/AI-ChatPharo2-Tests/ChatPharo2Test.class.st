@@ -5,16 +5,18 @@ Class {
 		'app',
 		'mockApi'
 	],
-	#category : 'AI-ChatPharo2-Tests',
-	#package : 'AI-ChatPharo2-Tests'
+	#category : 'AI-ChatPharo2-Tests-Core',
+	#package : 'AI-ChatPharo2-Tests',
+	#tag : 'Core'
 }
 
 { #category : 'running' }
 ChatPharo2Test >> setUp [
 
+	super setUp.
 	app := ChatPharo2 new.
-	mockApi := MockOllamaApi new.
-	app settings instVarNamed: #ollamaApi put: mockApi
+	mockApi := MockApi new.
+	app settings instVarNamed: #agent put: mockApi
 ]
 
 { #category : 'running' }
@@ -30,6 +32,17 @@ ChatPharo2Test >> testInitializeStartsEmpty [
 ]
 
 { #category : 'running' }
+ChatPharo2Test >> testMultipleChatsHaveIndependentMessageHistories [ 
+
+	app newChat.
+	app newChat.
+	app chats first sendMessage: 'Hello'.
+	(Delay forMilliseconds: 10) wait. "allow process to finish"
+	self assert: (app chats first messages size) equals: 1.
+	self assert: (app chats second messages isEmpty).
+]
+
+{ #category : 'running' }
 ChatPharo2Test >> testNewChat [
 	self assert: app chats isEmpty.
 	app newChat.
@@ -39,9 +52,30 @@ ChatPharo2Test >> testNewChat [
 
 { #category : 'running' }
 ChatPharo2Test >> testNewChatAddsChatWithMockApi [
+
 	app newChat.
 	self assert: app chats size equals: 1.
-	self assert: (app chats first instVarNamed: #ollamaApi) equals: mockApi.
+	self
+		assert: (app chats first instVarNamed: #agent)
+		equals: mockApi
+]
+
+{ #category : 'running' }
+ChatPharo2Test >> testNewChatStartsWithEmptyHistory [ 
+
+    app newChat.
+    self assert: (app chats first messages isEmpty).
+]
+
+{ #category : 'running' }
+ChatPharo2Test >> testSendMessageAddsMessageAndAnswer [ 
+    "End‑to‑end check that ChatPharoChat2 cooperates with MockApi."
+    app newChat.
+    (app chats first) sendMessage: 'ping'.
+    (Delay forMilliseconds: 10) wait.
+    self assert: (app chats first messages size) equals: 1.
+    self assert: (app chats first messages first answer includesSubstring: 'MOCK-DEFAULT-REPLY').
+
 ]
 
 { #category : 'running' }
@@ -57,9 +91,20 @@ ChatPharo2Test >> testSetAndGetMessages [
 ]
 
 { #category : 'running' }
+ChatPharo2Test >> testUseApiSwitchesAgent [ 
+
+    "Switching API classes via settings should transparently update the
+    agent inside the application without disturbing existing data."
+    | otherApi |
+    otherApi := NullAgent new.
+    app settings instVarNamed: #agent put: otherApi.
+    self assert: app settings agent == otherApi.
+]
+
+{ #category : 'running' }
 ChatPharo2Test >> testUseModel [
 	| settings |
 	settings := ChatPharoSettings2 new.
 	settings useModel: 'TestModel'.
-	self assert: settings ollamaApi model equals: 'TestModel'.
+	self assert: settings agent model equals: 'TestModel'.
 ]

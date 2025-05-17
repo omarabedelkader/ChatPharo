@@ -13,13 +13,19 @@ Class {
 	#superclass : 'Object',
 	#instVars : [
 		'messages',
-		'ollamaApi',
+		'agent',
 		'promptProcess',
 		'onAnswerReceived'
 	],
 	#category : 'AI-ChatPharo2',
 	#package : 'AI-ChatPharo2'
 }
+
+{ #category : 'accessing' }
+ChatPharoChat2 >> agent: anObject [
+
+	agent := anObject
+]
 
 { #category : 'running' }
 ChatPharoChat2 >> cancelMessage [
@@ -69,12 +75,6 @@ ChatPharoChat2 >> messages: anObject [
 	messages := anObject
 ]
 
-{ #category : 'accessing' }
-ChatPharoChat2 >> ollamaApi: anObject [
-
-	ollamaApi := anObject
-]
-
 { #category : 'presenters' }
 ChatPharoChat2 >> presenter [
 
@@ -87,7 +87,7 @@ ChatPharoChat2 >> sendMessage: aText [
 	promptProcess := [
 		                 messages add: (ChatPharoMessage2 new
 				                  content: aText;
-				                  answer: (ollamaApi
+				                  answer: (agent
 						                   system: self history;
 						                   getResponseForPrompt: aText);
 				                  yourself).

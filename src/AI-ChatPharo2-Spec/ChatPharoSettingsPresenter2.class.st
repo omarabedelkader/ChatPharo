@@ -7,7 +7,9 @@ Class {
 		'hostInput',
 		'ollamaModelDropList',
 		'model',
-		'modelsRefreshButton'
+		'modelsRefreshButton',
+		'apiDropList',
+		'apiSettingsContainer'
 	],
 	#category : 'AI-ChatPharo2-Spec',
 	#package : 'AI-ChatPharo2-Spec'
@@ -17,15 +19,23 @@ Class {
 ChatPharoSettingsPresenter2 >> connectPresenters [
 
 	modelsRefreshButton action: [
-		ollamaModelDropList items: model models.
-		ollamaModelDropList items ifNotEmpty: [ 
-			ollamaModelDropList selectFirst	
-		]	
-	].
-	
-	ollamaModelDropList whenSelectedItemChangedDo: [ :modelName |
-		model useModel: modelName
-	]
+			ollamaModelDropList items: model models.
+			ollamaModelDropList items ifNotEmpty: [
+				ollamaModelDropList selectFirst ] ].
+
+apiDropList whenSelectedItemChangedDo: [:assoc |
+    | apiClass newPresenter |
+    apiClass := assoc value.
+    model useApi: apiClass.
+
+    apiSettingsContainer removeAll.
+
+    newPresenter := apiClass settingsPresenterFor: model agent.
+    newPresenter ifNotNil: [ apiSettingsContainer add: newPresenter ].
+
+    "uncomment the next line only if the UI fails to refresh automatically"
+    "apiSettingsContainer changedWorld"
+].
 ]
 
 { #category : 'layout' }
@@ -39,7 +49,10 @@ ChatPharoSettingsPresenter2 >> defaultLayout [
 { #category : 'initialization' }
 ChatPharoSettingsPresenter2 >> initializePresenters [
 
+	super initializePresenters.
+
 	notebook := self newNotebook.
+		apiSettingsContainer := SpBoxLayout newTopToBottom.
 
 	notebook addPage: (SpNotebookPage
 			 title: 'Chat'
@@ -61,6 +74,12 @@ ChatPharoSettingsPresenter2 >> initializePresenters [
 		                       icon: (self iconNamed: #refresh);
 		                       help: 'Refresh models';
 		                       yourself.
+
+	apiDropList := SpDropListPresenter new
+		               help: 'Select backend API';
+		               items: model availableApiChoices;
+		               display: [ :assoc | assoc key ];
+		               yourself.
 
 	ollamaModelDropList := SpDropListPresenter new
 		                       help: 'Select ollama model';
@@ -118,12 +137,12 @@ ChatPharoSettingsPresenter2 >> newConfigurationTab [
 
 	^ SpPresenter new
 		  layout: (SpBoxLayout newTopToBottom
-				   add: 'Configuration Settings' expand: false;
 				   add: (SpBoxLayout newHorizontal
-						    add: modelsRefreshButton;
-						    add: ollamaModelDropList;
+						    add: 'API:' expand: false;
+						    add: apiDropList;
 						    yourself)
 				   expand: false;
+				   add: apiSettingsContainer;
 				   yourself);
 		  yourself
 ]
