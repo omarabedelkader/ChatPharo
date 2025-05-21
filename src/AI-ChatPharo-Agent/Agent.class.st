@@ -40,6 +40,12 @@ Agent >> getResponseForPrompt: prompt [
 ]
 
 { #category : 'initialization' }
+Agent >> history [
+    "Return the history if available"
+    ^ nil
+]
+
+{ #category : 'initialization' }
 Agent >> initialize [
 	super initialize.
 	model        := ''.

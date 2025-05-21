@@ -36,6 +36,11 @@ ChatPharoChat >> addUserMessage: text [
 ]
 
 { #category : 'accessing' }
+ChatPharoChat >> agent [
+    ^ agent ifNotNil: [ agent history: history. agent ]
+]
+
+{ #category : 'accessing' }
 ChatPharoChat >> agent: anObject [
 
 	agent := anObject

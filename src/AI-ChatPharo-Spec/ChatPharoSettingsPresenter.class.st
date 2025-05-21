@@ -9,7 +9,8 @@ Class {
 		'model',
 		'modelsRefreshButton',
 		'apiDropList',
-		'apiSettingsContainer'
+		'apiSettingsContainer',
+		'applicationE'
 	],
 	#category : 'AI-ChatPharo-Spec',
 	#package : 'AI-ChatPharo-Spec'
@@ -52,12 +53,17 @@ ChatPharoSettingsPresenter >> initializePresenters [
 	super initializePresenters.
 
 	notebook := self newNotebook.
-		apiSettingsContainer := SpBoxLayout newTopToBottom.
+	apiSettingsContainer := SpBoxLayout newTopToBottom.
 
 	notebook addPage: (SpNotebookPage
 			 title: 'Chat'
 			 icon: (self iconNamed: #announcement)
 			 provider: [ self newChatTab ]).
+			
+	notebook addPage: (SpNotebookPage
+			 title: 'History'
+			 icon: (self iconNamed: #history)
+			 provider: [ self newHistoryTab ]).
 
 	notebook addPage: (SpNotebookPage
 			 title: 'API'
@@ -143,6 +149,27 @@ ChatPharoSettingsPresenter >> newConfigurationTab [
 						    yourself)
 				   expand: false;
 				   add: apiSettingsContainer;
+				   yourself);
+		  yourself
+]
+
+{ #category : 'initialization' }
+ChatPharoSettingsPresenter >> newHistoryTab [
+
+	| historyText historyView |
+	historyText := model agent
+		               ifNotNil: [
+				               model agent history
+					               ifNotNil: [ model agent history asPromptPrefix ]
+					               ifNil: [ 'No history available.' ] ]
+		               ifNil: [ 'No agent configured.' ].
+
+	historyView := self newText.
+	historyView text: historyText asText.
+
+	^ SpPresenter new
+		  layout: (SpBoxLayout newTopToBottom
+				   add: historyView;
 				   yourself);
 		  yourself
 ]
