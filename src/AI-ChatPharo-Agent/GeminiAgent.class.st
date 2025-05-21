@@ -126,6 +126,11 @@ GeminiAgent >> initialize [
 	temperature := 0.7
 ]
 
+{ #category : 'as yet unclassified' }
+GeminiAgent >> modelInformation [
+	^ self shouldBeImplemented
+]
+
 { #category : 'accessing' }
 GeminiAgent >> temperature [
 
