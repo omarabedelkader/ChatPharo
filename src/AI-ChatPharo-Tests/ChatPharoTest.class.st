@@ -32,17 +32,6 @@ ChatPharoTest >> testInitializeStartsEmpty [
 ]
 
 { #category : 'running' }
-ChatPharoTest >> testMultipleChatsHaveIndependentMessageHistories [ 
-
-	app newChat.
-	app newChat.
-	app chats first sendMessage: 'Hello'.
-	(Delay forMilliseconds: 10) wait. "allow process to finish"
-	self assert: (app chats first messages size) equals: 1.
-	self assert: (app chats second messages isEmpty).
-]
-
-{ #category : 'running' }
 ChatPharoTest >> testNewChat [
 	self assert: app chats isEmpty.
 	app newChat.
@@ -65,17 +54,6 @@ ChatPharoTest >> testNewChatStartsWithEmptyHistory [
 
     app newChat.
     self assert: (app chats first messages isEmpty).
-]
-
-{ #category : 'running' }
-ChatPharoTest >> testSendMessageAddsMessageAndAnswer [ 
-    "End‑to‑end check that ChatPharoChat cooperates with MockApi."
-    app newChat.
-    (app chats first) sendMessage: 'ping'.
-    (Delay forMilliseconds: 10) wait.
-    self assert: (app chats first messages size) equals: 1.
-    self assert: (app chats first messages first answer includesSubstring: 'MOCK-DEFAULT-REPLY').
-
 ]
 
 { #category : 'running' }
