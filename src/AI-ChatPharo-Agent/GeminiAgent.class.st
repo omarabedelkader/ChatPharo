@@ -65,44 +65,17 @@ GeminiAgent >> apiKey: anObject [
 ]
 
 { #category : 'initialization' }
-GeminiAgent >> getResponseForPrompt: userPrompt [
-	"Build JSON → POST → extract the assistant text"
-	| url body jsonResponse |
-	
-	url  := String streamContents: [ :s |
-		s
-			nextPutAll: 'https://';
-			nextPutAll: host;
-			nextPutAll: '/v1/models/';
-			nextPutAll: model;
-			nextPutAll: ':generateContent?key=';
-			nextPutAll: apiKey ].
-
-	body := STONJSON toString: {
-		'contents' -> {			"Gemini chat format"
-			Dictionary newFrom: {
-				'role'  -> 'user'.
-				'parts' -> { Dictionary newFrom: {
-					'text' -> ((promptPrefix ifEmpty: [''] ifNotEmpty: [promptPrefix , ' ']) , userPrompt)
-				}}
-			}
-		}.
-		'safetySettings' -> #().
-		'generationConfig' -> Dictionary newFrom: {
-			'temperature' -> temperature.
-			'maxOutputTokens' -> 4096 } 
-	}.
-
-	jsonResponse := ZnClient new
-		url: url;
-		entity: (ZnEntity with: body contentType: ZnMimeType applicationJson);
-		post;
-		contents.
-
-	"Gemini returns { 'candidates':[ { 'content': { 'parts':[ {text: …} ]}} ] }"
-	^ (((STONJSON fromString: jsonResponse)
-			at: 'candidates') first
-			atPath: 'content.parts.1.text').
+GeminiAgent >> getResponseForPrompt: userPrompt [ 
+	| api result |
+	api := OpenAIChatAPI
+		geminiWithAPIKey: apiKey
+		system: (system ifEmpty: ['']).
+	temperature ifNotNil:[
+		api model: model ].
+	"prepare history as ChatPharoHistorySaver objects"
+	result := api getResponseForHistory:
+		(ChatPharoHistorySaver role:'user' content:userPrompt).
+	^ result content  "return plain assistant text to existing UI"
 ]
 
 { #category : 'accessing' }

@@ -17,11 +17,26 @@ OllamaSettingsPresenter >> connectPresenters [
 
 { #category : 'layout' }
 OllamaSettingsPresenter >> defaultLayout [
+    | mainLayout rowLayout |
 
-	^ SpBoxLayout newHorizontal
-		  add: refreshButton expand: false;
-		  add: modelsDrop  expand: false;
-		  yourself
+    "Horizontal row with label, button and drop-down"
+    rowLayout := SpBoxLayout newHorizontal
+        spacing: 8;
+        add: (self newLabel label: 'Available models:') expand: false;
+        add: self refreshButton expand: false;
+        add: self modelsDrop height: 30;
+        yourself.
+
+    "Main vertical layout"
+    mainLayout := SpBoxLayout newTopToBottom
+        spacing: 8;
+        borderWidth: 8;
+        beNotHomogeneous;
+        add: rowLayout expand: false;
+        yourself.
+
+    ^ mainLayout
+
 ]
 
 { #category : 'initialization' }
