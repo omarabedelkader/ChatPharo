@@ -2,15 +2,18 @@
 ```smalltalk
 | chat gemini |
 gemini := GeminiAgent new
-	apiKey: 'YOUR‑KEY';
-	model: 'gemini-pro';
+	apiKey: '';
+	model: 'models/gemini-2.0-flash';
 	yourself.
 
 chat := ChatPharoChat new
-	ollamaApi: gemini;   ""the ivar is badly named, but still just an Agent""
+	agent: gemini;
 	yourself.
 
-chat presenter open.
+chat sendMessage: 'Hello Gemini!'.
+chat waitForPromptProcessDone.
+(chat messages last answer) inspect.
+
 ```
 "
 Class {
