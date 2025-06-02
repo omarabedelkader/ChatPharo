@@ -105,18 +105,18 @@ ChatPharoChat >> presenter [
 
 { #category : 'running' }
 ChatPharoChat >> sendMessage: aText [
-
+	
 	self addUserMessage: aText.
 	promptProcess := [
-		                 | answer |
-		                 agent promptPrefix: history asPromptPrefix.
+		| backend answer |
+		backend := self agent.
 		
-							history inspect.
-							agent inspect.
-		                 answer := agent getResponseForPrompt: aText.
-		                 self addAssistantMessage: answer.
-		                 onAnswerReceived ifNotNil: [ :blk |
-			                 blk value: messages last ] ] fork
+		backend promptPrefix: history asPromptPrefix.
+		answer := backend getResponseForPrompt: aText.
+		
+		self addAssistantMessage: answer.
+		onAnswerReceived ifNotNil: [ :blk | blk value: messages last ]
+	] fork
 ]
 
 { #category : 'running' }
