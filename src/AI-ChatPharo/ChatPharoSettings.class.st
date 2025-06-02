@@ -36,16 +36,16 @@ ChatPharoSettings >> availableApiChoices [
 ChatPharoSettings >> availableApis [
 
 	^ {
-		  NullAgent.
-		  OllamaAgent.
-		GeminiAgent } "add more as you implement them"
+		  ChatPharoNullAgent.
+		  ChatPharoOllamaAgent.
+		ChatPharoGeminiAgent } "add more as you implement them"
 ]
 
 { #category : 'initialization' }
 ChatPharoSettings >> initialize [
 
 	super initialize.
-	agent := NullAgent new
+	agent := ChatPharoNullAgent new
 ]
 
 { #category : 'initialization' }

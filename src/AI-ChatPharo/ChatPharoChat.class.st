@@ -73,7 +73,7 @@ ChatPharoChat >> historyPromptPrefix [
 ChatPharoChat >> initialize [
 
 	super initialize.
-	history := ChatHistory new.
+	history := ChatPharoHistory new.
 	messages := OrderedCollection new
 ]
 

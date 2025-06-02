@@ -56,7 +56,7 @@ GeminiSettingsPresenter >> initializePresenters [
 	hostField         := self newTextInput placeholder:'generativelanguage.googleapis.com'.
 	apiKeyField       := self newTextInput placeholder:'AI…'.
 	modelDrop         := SpDropListPresenter new
-							items: GeminiAgent modelNames;
+							items: ChatPharoGeminiAgent modelNames;
 							display: [:m|m].
 	temperatureSlider := SpSliderPresenter new
 							min: 0; max: 1; value: model temperature.

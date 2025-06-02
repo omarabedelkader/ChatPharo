@@ -1,41 +1,41 @@
 Class {
-	#name : 'NullAgent',
-	#superclass : 'Agent',
+	#name : 'ChatPharoNullAgent',
+	#superclass : 'ChatPharoAgent',
 	#category : 'AI-ChatPharo-Agent',
 	#package : 'AI-ChatPharo-Agent'
 }
 
 { #category : 'api' }
-NullAgent class >> displayName [
+ChatPharoNullAgent class >> displayName [
 	^ 'None (offline)'
 ]
 
 { #category : 'api' }
-NullAgent class >> isReachable [ 
+ChatPharoNullAgent class >> isReachable [ 
 
     ^ true "always reachable"
 ]
 
 { #category : 'api' }
-NullAgent class >> modelNames [ 
+ChatPharoNullAgent class >> modelNames [ 
 
     ^ #()  "returns an empty collection"
 ]
 
 { #category : 'api' }
-NullAgent class >> settingsPresenterFor: anAgent [
+ChatPharoNullAgent class >> settingsPresenterFor: anAgent [
 	^ nil   "Nothing to configure"
 ]
 
 { #category : 'initialization' }
-NullAgent >> getResponseForPrompt: aString [
+ChatPharoNullAgent >> getResponseForPrompt: aString [
 	"Do absolutely nothing and return nil or an empty string."
 
 	^ ' No backend is configured. Open Settings → API and choose an API first.'
 ]
 
 { #category : 'initialization' }
-NullAgent >> modelInformation [ 
+ChatPharoNullAgent >> modelInformation [ 
 
     ^ 'No model selected yet'
 ]

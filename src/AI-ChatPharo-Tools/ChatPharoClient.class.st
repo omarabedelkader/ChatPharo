@@ -1,5 +1,5 @@
 Class {
-	#name : 'OpenAIChatToolFunction',
+	#name : 'ChatPharoClient',
 	#superclass : 'Object',
 	#instVars : [
 		'name',
@@ -12,7 +12,7 @@ Class {
 }
 
 { #category : 'as yet unclassified' }
-OpenAIChatToolFunction class >> name: n description: d parameters: p block: b [ 
+ChatPharoClient class >> name: n description: d parameters: p block: b [ 
 
 	^ self basicNew
 		initializeWithName: n description: d parameters: p block: b;
@@ -20,56 +20,56 @@ OpenAIChatToolFunction class >> name: n description: d parameters: p block: b [
 ]
 
 { #category : 'initialization' }
-OpenAIChatToolFunction >> applyTo: json [ 
+ChatPharoClient >> applyTo: json [ 
 
 	^ block value: json
 ]
 
 { #category : 'accessing' }
-OpenAIChatToolFunction >> block [
+ChatPharoClient >> block [
 
 	^ block
 ]
 
 { #category : 'accessing' }
-OpenAIChatToolFunction >> block: anObject [
+ChatPharoClient >> block: anObject [
 
 	block := anObject
 ]
 
 { #category : 'accessing' }
-OpenAIChatToolFunction >> description [
+ChatPharoClient >> description [
 
 	^ description
 ]
 
 { #category : 'accessing' }
-OpenAIChatToolFunction >> description: anObject [
+ChatPharoClient >> description: anObject [
 
 	description := anObject
 ]
 
 { #category : 'initialization' }
-OpenAIChatToolFunction >> initializeWithName: n description: d parameters: p block: b [ 
+ChatPharoClient >> initializeWithName: n description: d parameters: p block: b [ 
 
 	super initialize.
 	name := n. description := d. parameters := p. block := b.
 ]
 
 { #category : 'accessing' }
-OpenAIChatToolFunction >> name [
+ChatPharoClient >> name [
 
 	^ name
 ]
 
 { #category : 'accessing' }
-OpenAIChatToolFunction >> name: anObject [
+ChatPharoClient >> name: anObject [
 
 	name := anObject
 ]
 
 { #category : 'initialization' }
-OpenAIChatToolFunction >> openAIChatTool [ 
+ChatPharoClient >> openAIChatTool [ 
 
 	^ Dictionary
 		with:'type'->'function'
@@ -80,13 +80,13 @@ OpenAIChatToolFunction >> openAIChatTool [
 ]
 
 { #category : 'accessing' }
-OpenAIChatToolFunction >> parameters [
+ChatPharoClient >> parameters [
 
 	^ parameters
 ]
 
 { #category : 'accessing' }
-OpenAIChatToolFunction >> parameters: anObject [
+ChatPharoClient >> parameters: anObject [
 
 	parameters := anObject
 ]

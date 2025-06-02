@@ -1,5 +1,5 @@
 Class {
-	#name : 'OpenAIChatAPI',
+	#name : 'ChatPharoTool',
 	#superclass : 'Object',
 	#instVars : [
 		'baseURL',
@@ -13,7 +13,7 @@ Class {
 }
 
 { #category : 'as yet unclassified' }
-OpenAIChatAPI class >> baseURL: baseURL apiKey: apiKey system: system [
+ChatPharoTool class >> baseURL: baseURL apiKey: apiKey system: system [
 
 	^ self
 		  baseURL: baseURL
@@ -23,7 +23,7 @@ OpenAIChatAPI class >> baseURL: baseURL apiKey: apiKey system: system [
 ]
 
 { #category : 'as yet unclassified' }
-OpenAIChatAPI class >> baseURL: baseURL apiKey: apiKey system: system tools: tools [
+ChatPharoTool class >> baseURL: baseURL apiKey: apiKey system: system tools: tools [
 
 	^ self basicNew
 		  initializeWithBaseURL: baseURL
@@ -34,13 +34,13 @@ OpenAIChatAPI class >> baseURL: baseURL apiKey: apiKey system: system tools: too
 ]
 
 { #category : 'as yet unclassified' }
-OpenAIChatAPI class >> baseURL: baseURL system: system [
+ChatPharoTool class >> baseURL: baseURL system: system [
 
 	^ self baseURL: baseURL system: system tools: nil
 ]
 
 { #category : 'as yet unclassified' }
-OpenAIChatAPI class >> baseURL: baseURL system: system tools: tools [
+ChatPharoTool class >> baseURL: baseURL system: system tools: tools [
 
 	^ self
 		  baseURL: baseURL
@@ -50,13 +50,13 @@ OpenAIChatAPI class >> baseURL: baseURL system: system tools: tools [
 ]
 
 { #category : 'as yet unclassified' }
-OpenAIChatAPI class >> geminiWithAPIKey: apiKey system: system [
+ChatPharoTool class >> geminiWithAPIKey: apiKey system: system [
 
 	^ self geminiWithAPIKey: apiKey system: system tools: nil
 ]
 
 { #category : 'as yet unclassified' }
-OpenAIChatAPI class >> geminiWithAPIKey: apiKey system: system tools: tools [
+ChatPharoTool class >> geminiWithAPIKey: apiKey system: system tools: tools [
 
 	^ self
 		  baseURL: (ZnUrl fromString:
@@ -67,31 +67,31 @@ OpenAIChatAPI class >> geminiWithAPIKey: apiKey system: system tools: tools [
 ]
 
 { #category : 'as yet unclassified' }
-OpenAIChatAPI class >> ollamaWithSystem: system [ 
+ChatPharoTool class >> ollamaWithSystem: system [ 
 
 	^ self ollamaWithSystem: system tools: nil
 ]
 
 { #category : 'as yet unclassified' }
-OpenAIChatAPI class >> ollamaWithSystem: system tools: tools [ 
+ChatPharoTool class >> ollamaWithSystem: system tools: tools [ 
 
 	^ self baseURL: (ZnUrl fromString: 'http://localhost:11434/v1') system: system tools: tools
 ]
 
 { #category : 'accessing' }
-OpenAIChatAPI >> apiKey [
+ChatPharoTool >> apiKey [
 
 	^ apiKey
 ]
 
 { #category : 'accessing' }
-OpenAIChatAPI >> apiKey: anObject [
+ChatPharoTool >> apiKey: anObject [
 
 	apiKey := anObject
 ]
 
 { #category : 'initialization' }
-OpenAIChatAPI >> applyToolFunction: functionName arguments: arguments [ 
+ChatPharoTool >> applyToolFunction: functionName arguments: arguments [ 
 
 	tools do:[:tool|
 		tool name = functionName ifTrue:[
@@ -100,19 +100,19 @@ OpenAIChatAPI >> applyToolFunction: functionName arguments: arguments [
 ]
 
 { #category : 'accessing' }
-OpenAIChatAPI >> baseURL [
+ChatPharoTool >> baseURL [
 
 	^ baseURL
 ]
 
 { #category : 'accessing' }
-OpenAIChatAPI >> baseURL: anObject [
+ChatPharoTool >> baseURL: anObject [
 
 	baseURL := anObject
 ]
 
 { #category : 'initialization' }
-OpenAIChatAPI >> client [ 
+ChatPharoTool >> client [ 
 
 	^ ZnClient new
 		url: baseURL;
@@ -121,7 +121,7 @@ OpenAIChatAPI >> client [
 ]
 
 { #category : 'initialization' }
-OpenAIChatAPI >> getResponseForHistory: history [ 
+ChatPharoTool >> getResponseForHistory: history [ 
 
 	| messages data response message |
 	messages := Array streamContents: [ :stream |
@@ -150,7 +150,7 @@ OpenAIChatAPI >> getResponseForHistory: history [
 ]
 
 { #category : 'initialization' }
-OpenAIChatAPI >> initializeWithBaseURL: initialBaseURL apiKey: initialAPIKey system: initialSystem tools: initialTools [ 
+ChatPharoTool >> initializeWithBaseURL: initialBaseURL apiKey: initialAPIKey system: initialSystem tools: initialTools [ 
 
 	super initialize.
 	baseURL := initialBaseURL.
@@ -161,19 +161,19 @@ OpenAIChatAPI >> initializeWithBaseURL: initialBaseURL apiKey: initialAPIKey sys
 ]
 
 { #category : 'accessing' }
-OpenAIChatAPI >> model [
+ChatPharoTool >> model [
 
 	^ model
 ]
 
 { #category : 'accessing' }
-OpenAIChatAPI >> model: anObject [
+ChatPharoTool >> model: anObject [
 
 	model := anObject
 ]
 
 { #category : 'initialization' }
-OpenAIChatAPI >> modelNames [ 
+ChatPharoTool >> modelNames [ 
 
 	| response |
 	response := self client addPathSegment:'models'; get; response.
@@ -182,19 +182,19 @@ OpenAIChatAPI >> modelNames [
 ]
 
 { #category : 'accessing' }
-OpenAIChatAPI >> system [
+ChatPharoTool >> system [
 
 	^ system
 ]
 
 { #category : 'accessing' }
-OpenAIChatAPI >> system: anObject [
+ChatPharoTool >> system: anObject [
 
 	system := anObject
 ]
 
 { #category : 'initialization' }
-OpenAIChatAPI >> toolCallsFromMessage: message [ 
+ChatPharoTool >> toolCallsFromMessage: message [ 
 
 	^ message at:'tool_calls'
 		ifPresent:[:calls|
@@ -211,13 +211,13 @@ OpenAIChatAPI >> toolCallsFromMessage: message [
 ]
 
 { #category : 'accessing' }
-OpenAIChatAPI >> tools [
+ChatPharoTool >> tools [
 
 	^ tools
 ]
 
 { #category : 'accessing' }
-OpenAIChatAPI >> tools: anObject [
+ChatPharoTool >> tools: anObject [
 
 	tools := anObject
 ]

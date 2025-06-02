@@ -74,7 +74,7 @@ ChatPharoTest >> testUseApiSwitchesAgent [
     "Switching API classes via settings should transparently update the
     agent inside the application without disturbing existing data."
     | otherApi |
-    otherApi := NullAgent new.
+    otherApi := ChatPharoNullAgent new.
     app settings instVarNamed: #agent put: otherApi.
     self assert: app settings agent == otherApi.
 ]

@@ -1,5 +1,5 @@
 Class {
-	#name : 'ChatHistoryMessage',
+	#name : 'ChatPharoHistoryMessage',
 	#superclass : 'Object',
 	#instVars : [
 		'role',
@@ -11,13 +11,13 @@ Class {
 }
 
 { #category : 'as yet unclassified' }
-ChatHistoryMessage class >> role: aRole content: content [ 
+ChatPharoHistoryMessage class >> role: aRole content: content [ 
 
     ^ self role: aRole content: content toolCalls: nil
 ]
 
 { #category : 'as yet unclassified' }
-ChatHistoryMessage class >> role: role content: content toolCalls: toolCalls [ 
+ChatPharoHistoryMessage class >> role: role content: content toolCalls: toolCalls [ 
 
     ^ self new
         role: role;
@@ -27,7 +27,7 @@ ChatHistoryMessage class >> role: role content: content toolCalls: toolCalls [
 ]
 
 { #category : 'accessing' }
-ChatHistoryMessage >> chatMessagesOn: aStream [
+ChatPharoHistoryMessage >> chatMessagesOn: aStream [
 
     | msg |
     msg := Dictionary with: 'role' -> role.
@@ -40,19 +40,19 @@ ChatHistoryMessage >> chatMessagesOn: aStream [
 ]
 
 { #category : 'accessing' }
-ChatHistoryMessage >> content [
+ChatPharoHistoryMessage >> content [
 
 	^ content
 ]
 
 { #category : 'accessing' }
-ChatHistoryMessage >> content: anObject [
+ChatPharoHistoryMessage >> content: anObject [
 
 	content := anObject
 ]
 
 { #category : 'accessing' }
-ChatHistoryMessage >> historyStringOn: aStream [ 
+ChatPharoHistoryMessage >> historyStringOn: aStream [ 
 
     aStream
         nextPutAll: role;
@@ -62,25 +62,25 @@ ChatHistoryMessage >> historyStringOn: aStream [
 ]
 
 { #category : 'accessing' }
-ChatHistoryMessage >> role [
+ChatPharoHistoryMessage >> role [
 
 	^ role
 ]
 
 { #category : 'accessing' }
-ChatHistoryMessage >> role: anObject [
+ChatPharoHistoryMessage >> role: anObject [
 
 	role := anObject
 ]
 
 { #category : 'accessing' }
-ChatHistoryMessage >> toolCalls [
+ChatPharoHistoryMessage >> toolCalls [
 
 	^ toolCalls
 ]
 
 { #category : 'accessing' }
-ChatHistoryMessage >> toolCalls: anObject [
+ChatPharoHistoryMessage >> toolCalls: anObject [
 
 	toolCalls := anObject
 ]

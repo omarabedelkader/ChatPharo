@@ -5,7 +5,7 @@ ChatPharo new settings agent class name.
 ```
 "
 Class {
-	#name : 'Agent',
+	#name : 'ChatPharoAgent',
 	#superclass : 'Object',
 	#instVars : [
 		'model',
@@ -19,43 +19,43 @@ Class {
 }
 
 { #category : 'api' }
-Agent class >> displayName [
+ChatPharoAgent class >> displayName [
 
 	self subclassResponsibility
 ]
 
 { #category : 'api' }
-Agent class >> isReachable [          
+ChatPharoAgent class >> isReachable [          
 self subclassResponsibility.
 ]
 
 { #category : 'api' }
-Agent class >> modelNames [           self subclassResponsibility.
+ChatPharoAgent class >> modelNames [           self subclassResponsibility.
 ]
 
 { #category : 'api' }
-Agent class >> settingsPresenterFor: anAgent [   "default"
+ChatPharoAgent class >> settingsPresenterFor: anAgent [   "default"
 	"Return a presenter (or nil) that lets the user edit the agent’s
 	 specific configuration.  Subclasses override."
 	^ nil
 ]
 
 { #category : 'initialization' }
-Agent >> getResponseForPrompt: prompt [
+ChatPharoAgent >> getResponseForPrompt: prompt [
 
 	self subclassResponsibility
 ]
 
 { #category : 'accessing' }
-Agent >> history [                     ^ history
+ChatPharoAgent >> history [                     ^ history
 ]
 
 { #category : 'accessing' }
-Agent >> history: aHistory [           history := aHistory
+ChatPharoAgent >> history: aHistory [           history := aHistory
 ]
 
 { #category : 'initialization' }
-Agent >> initialize [
+ChatPharoAgent >> initialize [
 	super initialize.
 	model        := ''.
 	system       := ''.
@@ -64,60 +64,60 @@ Agent >> initialize [
 ]
 
 { #category : 'accessing' }
-Agent >> model [
+ChatPharoAgent >> model [
 
 	^ model
 ]
 
 { #category : 'accessing' }
-Agent >> model: anObject [
+ChatPharoAgent >> model: anObject [
 
 	model := anObject
 ]
 
 { #category : 'initialization' }
-Agent >> modelInformation [ 
+ChatPharoAgent >> modelInformation [ 
 
 	self subclassResponsibility
 ]
 
 { #category : 'accessing' }
-Agent >> promptPrefix [
+ChatPharoAgent >> promptPrefix [
 
 	^ promptPrefix
 ]
 
 { #category : 'accessing' }
-Agent >> promptPrefix: anObject [
+ChatPharoAgent >> promptPrefix: anObject [
 
 	promptPrefix := anObject
 ]
 
 { #category : 'accessing' }
-Agent >> response [
+ChatPharoAgent >> response [
 
 	^ response
 ]
 
 { #category : 'accessing' }
-Agent >> response: anObject [
+ChatPharoAgent >> response: anObject [
 
 	response := anObject
 ]
 
 { #category : 'accessing' }
-Agent >> system [
+ChatPharoAgent >> system [
 
 	^ system
 ]
 
 { #category : 'accessing' }
-Agent >> system: anObject [
+ChatPharoAgent >> system: anObject [
 
 	system := anObject
 ]
 
 { #category : 'accessing' }
-Agent >> useAdapter: anAdapter [
+ChatPharoAgent >> useAdapter: anAdapter [
     self model: anAdapter.
 ]

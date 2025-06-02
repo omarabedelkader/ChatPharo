@@ -1,5 +1,5 @@
 Class {
-	#name : 'ChatHistory',
+	#name : 'ChatPharoHistory',
 	#superclass : 'Object',
 	#instVars : [
 		'messages'
@@ -9,50 +9,50 @@ Class {
 }
 
 { #category : 'initialization' }
-ChatHistory >> addAssistant: text [
+ChatPharoHistory >> addAssistant: text [
 
-    self addMessage: (ChatHistoryMessage role:'assistant' content: text)
+    self addMessage: (ChatPharoHistoryMessage role:'assistant' content: text)
 ]
 
 { #category : 'initialization' }
-ChatHistory >> addMessage: aHistoryMessage [
+ChatPharoHistory >> addMessage: aHistoryMessage [
 
     messages add: aHistoryMessage
 ]
 
 { #category : 'initialization' }
-ChatHistory >> addUser: text [ 
+ChatPharoHistory >> addUser: text [ 
 
-    self addMessage: (ChatHistoryMessage role:'user' content: text)
+    self addMessage: (ChatPharoHistoryMessage role:'user' content: text)
 ]
 
 { #category : 'initialization' }
-ChatHistory >> asPromptPrefix [ 
+ChatPharoHistory >> asPromptPrefix [ 
 
     ^ String streamContents:[ :s | messages do:[ :m | m historyStringOn: s ] ]
 ]
 
 { #category : 'initialization' }
-ChatHistory >> chatMessagesOn: aStream [ 
+ChatPharoHistory >> chatMessagesOn: aStream [ 
 
     messages do:[ :m | m putOpenAIChatMessagesOn: aStream ]
 ]
 
 { #category : 'initialization' }
-ChatHistory >> clear [
+ChatPharoHistory >> clear [
 
     messages removeAll
 ]
 
 { #category : 'initialization' }
-ChatHistory >> initialize [
+ChatPharoHistory >> initialize [
 
     super initialize.
     messages := OrderedCollection new
 ]
 
 { #category : 'initialization' }
-ChatHistory >> messages [
+ChatPharoHistory >> messages [
  ^ messages 
 
 ]

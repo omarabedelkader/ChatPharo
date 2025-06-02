@@ -1,5 +1,5 @@
 Class {
-	#name : 'ChatHistoryToolCall',
+	#name : 'ChatPharoHistoryToolCall',
 	#superclass : 'Object',
 	#instVars : [
 		'id',
@@ -12,61 +12,61 @@ Class {
 }
 
 { #category : 'as yet unclassified' }
-ChatHistoryToolCall class >> id: anId functionName: aName arguments: someArgs content: aContent [ 
+ChatPharoHistoryToolCall class >> id: anId functionName: aName arguments: someArgs content: aContent [ 
 
     ^ self basicNew initializeWithID: anId functionName: aName arguments: someArgs content: aContent; yourself
 ]
 
 { #category : 'accessing' }
-ChatHistoryToolCall >> arguments [
+ChatPharoHistoryToolCall >> arguments [
 
 	^ arguments
 ]
 
 { #category : 'accessing' }
-ChatHistoryToolCall >> arguments: anObject [
+ChatPharoHistoryToolCall >> arguments: anObject [
 
 	arguments := anObject
 ]
 
 { #category : 'accessing' }
-ChatHistoryToolCall >> content [
+ChatPharoHistoryToolCall >> content [
 
 	^ content
 ]
 
 { #category : 'accessing' }
-ChatHistoryToolCall >> content: anObject [
+ChatPharoHistoryToolCall >> content: anObject [
 
 	content := anObject
 ]
 
 { #category : 'accessing' }
-ChatHistoryToolCall >> functionName [
+ChatPharoHistoryToolCall >> functionName [
 
 	^ functionName
 ]
 
 { #category : 'accessing' }
-ChatHistoryToolCall >> functionName: anObject [
+ChatPharoHistoryToolCall >> functionName: anObject [
 
 	functionName := anObject
 ]
 
 { #category : 'accessing' }
-ChatHistoryToolCall >> id [
+ChatPharoHistoryToolCall >> id [
 
 	^ id
 ]
 
 { #category : 'accessing' }
-ChatHistoryToolCall >> id: anObject [
+ChatPharoHistoryToolCall >> id: anObject [
 
 	id := anObject
 ]
 
 { #category : 'initialization' }
-ChatHistoryToolCall >> initializeWithID: anId functionName: aName arguments: someArgs content: aContent [ 
+ChatPharoHistoryToolCall >> initializeWithID: anId functionName: aName arguments: someArgs content: aContent [ 
 
     id := anId.
     functionName := aName.
@@ -75,7 +75,7 @@ ChatHistoryToolCall >> initializeWithID: anId functionName: aName arguments: som
 ]
 
 { #category : 'initialization' }
-ChatHistoryToolCall >> toolCall [ 
+ChatPharoHistoryToolCall >> toolCall [ 
 
     ^ Dictionary
         with: 'type' -> 'function'
@@ -84,7 +84,7 @@ ChatHistoryToolCall >> toolCall [
 ]
 
 { #category : 'initialization' }
-ChatHistoryToolCall >> toolMessage [ 
+ChatPharoHistoryToolCall >> toolMessage [ 
 
     ^ Dictionary with: 'role' -> 'tool' with: 'tool_call_id' -> id with: 'content' -> content
 ]

@@ -1,5 +1,5 @@
 Class {
-	#name : 'OpenAIChatToolsetOnBrowserEnvironment',
+	#name : 'ChatPharoBrowserEnvironment',
 	#superclass : 'Object',
 	#instVars : [
 		'browserEnvironment',
@@ -10,19 +10,19 @@ Class {
 }
 
 { #category : 'instance creation' }
-OpenAIChatToolsetOnBrowserEnvironment class >> browserEnvironment: env [ 
+ChatPharoBrowserEnvironment class >> browserEnvironment: env [ 
 
 	^ self basicNew initializeWithEnvironment: env; yourself
 ]
 
 { #category : 'instance creation' }
-OpenAIChatToolsetOnBrowserEnvironment class >> new [ 
+ChatPharoBrowserEnvironment class >> new [ 
 
 	^ self browserEnvironment: RBBrowserEnvironment default
 ]
 
 { #category : 'initialization' }
-OpenAIChatToolsetOnBrowserEnvironment >> applyFunctionFindMethodsWithSubstring: arguments [
+ChatPharoBrowserEnvironment >> applyFunctionFindMethodsWithSubstring: arguments [
 
 	| substring methods |
 	substring := arguments at: 'substring'.
@@ -40,7 +40,7 @@ OpenAIChatToolsetOnBrowserEnvironment >> applyFunctionFindMethodsWithSubstring: 
 ]
 
 { #category : 'initialization' }
-OpenAIChatToolsetOnBrowserEnvironment >> applyFunctionGetClassComments: arguments [
+ChatPharoBrowserEnvironment >> applyFunctionGetClassComments: arguments [
 
 	^ self
 		  response: 'comment_per_class'
@@ -49,7 +49,7 @@ OpenAIChatToolsetOnBrowserEnvironment >> applyFunctionGetClassComments: argument
 ]
 
 { #category : 'initialization' }
-OpenAIChatToolsetOnBrowserEnvironment >> applyFunctionGetClassDefinitions: arguments [
+ChatPharoBrowserEnvironment >> applyFunctionGetClassDefinitions: arguments [
 
 	^ self
 		  response: 'definition_per_class'
@@ -66,7 +66,7 @@ OpenAIChatToolsetOnBrowserEnvironment >> applyFunctionGetClassDefinitions: argum
 ]
 
 { #category : 'initialization' }
-OpenAIChatToolsetOnBrowserEnvironment >> applyFunctionGetClassMethods: arguments [
+ChatPharoBrowserEnvironment >> applyFunctionGetClassMethods: arguments [
 
 	| selectorsOnly |
 	selectorsOnly := arguments at: 'selectors_only'.
@@ -96,7 +96,7 @@ OpenAIChatToolsetOnBrowserEnvironment >> applyFunctionGetClassMethods: arguments
 ]
 
 { #category : 'initialization' }
-OpenAIChatToolsetOnBrowserEnvironment >> applyFunctionGetClassSubclasses: arguments [
+ChatPharoBrowserEnvironment >> applyFunctionGetClassSubclasses: arguments [
 
 	^ self
 		  response: 'subclasses_per_class'
@@ -108,7 +108,7 @@ OpenAIChatToolsetOnBrowserEnvironment >> applyFunctionGetClassSubclasses: argume
 ]
 
 { #category : 'initialization' }
-OpenAIChatToolsetOnBrowserEnvironment >> applyFunctionGetClassesInPackages: arguments [
+ChatPharoBrowserEnvironment >> applyFunctionGetClassesInPackages: arguments [
 
 	| classesPerPackage notFoundPackages |
 	classesPerPackage := Dictionary new.
@@ -133,7 +133,7 @@ OpenAIChatToolsetOnBrowserEnvironment >> applyFunctionGetClassesInPackages: argu
 ]
 
 { #category : 'initialization' }
-OpenAIChatToolsetOnBrowserEnvironment >> applyFunctionGetPackages: arguments [
+ChatPharoBrowserEnvironment >> applyFunctionGetPackages: arguments [
 
 	^ Dictionary with: 'packages'
 		  ->
@@ -142,19 +142,19 @@ OpenAIChatToolsetOnBrowserEnvironment >> applyFunctionGetPackages: arguments [
 ]
 
 { #category : 'accessing' }
-OpenAIChatToolsetOnBrowserEnvironment >> browserEnvironment [
+ChatPharoBrowserEnvironment >> browserEnvironment [
 
 	^ browserEnvironment
 ]
 
 { #category : 'accessing' }
-OpenAIChatToolsetOnBrowserEnvironment >> browserEnvironment: anObject [
+ChatPharoBrowserEnvironment >> browserEnvironment: anObject [
 
 	browserEnvironment := anObject
 ]
 
 { #category : 'initialization' }
-OpenAIChatToolsetOnBrowserEnvironment >> classesInPackageNamed: packageName [
+ChatPharoBrowserEnvironment >> classesInPackageNamed: packageName [
 
 	^ (self packageNamed: packageName) ifNotNil: [ :package |
 			  package definedClasses select: [ :class |
@@ -162,9 +162,9 @@ OpenAIChatToolsetOnBrowserEnvironment >> classesInPackageNamed: packageName [
 ]
 
 { #category : 'initialization' }
-OpenAIChatToolsetOnBrowserEnvironment >> functionFindMethodsWithSubstring [
+ChatPharoBrowserEnvironment >> functionFindMethodsWithSubstring [
 
-	^ OpenAIChatToolFunction
+	^ ChatPharoClient
 		  name: 'find_methods_with_substring'
 		  description:
 		  'Finds methods whose source includes the given substring. Results are capped at 50 methods.'
@@ -180,9 +180,9 @@ OpenAIChatToolsetOnBrowserEnvironment >> functionFindMethodsWithSubstring [
 ]
 
 { #category : 'initialization' }
-OpenAIChatToolsetOnBrowserEnvironment >> functionGetClassComments [
+ChatPharoBrowserEnvironment >> functionGetClassComments [
 
-	^ OpenAIChatToolFunction
+	^ ChatPharoClient
 		  name: 'get_class_comments'
 		  description: 'Gets the comment of each class.'
 		  parameters: (Dictionary
@@ -198,9 +198,9 @@ OpenAIChatToolsetOnBrowserEnvironment >> functionGetClassComments [
 ]
 
 { #category : 'initialization' }
-OpenAIChatToolsetOnBrowserEnvironment >> functionGetClassDefinitions [
+ChatPharoBrowserEnvironment >> functionGetClassDefinitions [
 
-	^ OpenAIChatToolFunction
+	^ ChatPharoClient
 		  name: 'get_class_definitions'
 		  description:
 		  'Gets the definitions of each class: its superclass, its instance variables, its class variables, the package it is in and its tag.'
@@ -217,9 +217,9 @@ OpenAIChatToolsetOnBrowserEnvironment >> functionGetClassDefinitions [
 ]
 
 { #category : 'initialization' }
-OpenAIChatToolsetOnBrowserEnvironment >> functionGetClassMethods [
+ChatPharoBrowserEnvironment >> functionGetClassMethods [
 
-	^ OpenAIChatToolFunction
+	^ ChatPharoClient
 		  name: 'get_class_methods'
 		  description:
 		  'Gets the source code, or just the selectors, of each method for the given classes, organized per protocol and grouped by instance side and class side.'
@@ -243,9 +243,9 @@ OpenAIChatToolsetOnBrowserEnvironment >> functionGetClassMethods [
 ]
 
 { #category : 'initialization' }
-OpenAIChatToolsetOnBrowserEnvironment >> functionGetClassSubclasses [
+ChatPharoBrowserEnvironment >> functionGetClassSubclasses [
 
-	^ OpenAIChatToolFunction
+	^ ChatPharoClient
 		  name: 'get_class_subclasses'
 		  description: 'Gets the subclasses of each given class.'
 		  parameters: (Dictionary
@@ -261,9 +261,9 @@ OpenAIChatToolsetOnBrowserEnvironment >> functionGetClassSubclasses [
 ]
 
 { #category : 'initialization' }
-OpenAIChatToolsetOnBrowserEnvironment >> functionGetClassesInPackages [
+ChatPharoBrowserEnvironment >> functionGetClassesInPackages [
 
-	^ OpenAIChatToolFunction
+	^ ChatPharoClient
 		  name: 'get_classes_in_packages'
 		  description: 'Gets the classes in each given package.'
 		  parameters: (Dictionary
@@ -279,9 +279,9 @@ OpenAIChatToolsetOnBrowserEnvironment >> functionGetClassesInPackages [
 ]
 
 { #category : 'initialization' }
-OpenAIChatToolsetOnBrowserEnvironment >> functionGetPackages [
+ChatPharoBrowserEnvironment >> functionGetPackages [
 
-	^ OpenAIChatToolFunction
+	^ ChatPharoClient
 		  name: 'get_packages'
 		  description: 'Gets all of the packages.'
 		  parameters: (Dictionary
@@ -292,7 +292,7 @@ OpenAIChatToolsetOnBrowserEnvironment >> functionGetPackages [
 ]
 
 { #category : 'initialization' }
-OpenAIChatToolsetOnBrowserEnvironment >> initializeWithEnvironment: env [
+ChatPharoBrowserEnvironment >> initializeWithEnvironment: env [
 
 	browserEnvironment := env.
 	tools := {
@@ -306,7 +306,7 @@ OpenAIChatToolsetOnBrowserEnvironment >> initializeWithEnvironment: env [
 ]
 
 { #category : 'initialization' }
-OpenAIChatToolsetOnBrowserEnvironment >> methodsWithSubstring: substring cappedAt: maximumNumberOfMethods [
+ChatPharoBrowserEnvironment >> methodsWithSubstring: substring cappedAt: maximumNumberOfMethods [
 
 	| methods |
 	methods := OrderedCollection new.
@@ -318,13 +318,13 @@ OpenAIChatToolsetOnBrowserEnvironment >> methodsWithSubstring: substring cappedA
 ]
 
 { #category : 'initialization' }
-OpenAIChatToolsetOnBrowserEnvironment >> packageNamed: packageName [
+ChatPharoBrowserEnvironment >> packageNamed: packageName [
 
 	^ self browserEnvironment packageAt: packageName ifAbsent: [ nil ]
 ]
 
 { #category : 'initialization' }
-OpenAIChatToolsetOnBrowserEnvironment >> response: resultKey collect: block forClassesNamed: classNames [
+ChatPharoBrowserEnvironment >> response: resultKey collect: block forClassesNamed: classNames [
 
 	| resultPerClass classesNotFound |
 	resultPerClass := Dictionary new.
@@ -343,13 +343,13 @@ OpenAIChatToolsetOnBrowserEnvironment >> response: resultKey collect: block forC
 ]
 
 { #category : 'accessing' }
-OpenAIChatToolsetOnBrowserEnvironment >> tools [
+ChatPharoBrowserEnvironment >> tools [
 
 	^ tools
 ]
 
 { #category : 'accessing' }
-OpenAIChatToolsetOnBrowserEnvironment >> tools: anObject [
+ChatPharoBrowserEnvironment >> tools: anObject [
 
 	tools := anObject
 ]

@@ -17,8 +17,8 @@ chat waitForPromptProcessDone.
 ```
 "
 Class {
-	#name : 'GeminiAgent',
-	#superclass : 'Agent',
+	#name : 'ChatPharoGeminiAgent',
+	#superclass : 'ChatPharoAgent',
 	#instVars : [
 		'host',
 		'apiKey',
@@ -29,13 +29,13 @@ Class {
 }
 
 { #category : 'api' }
-GeminiAgent class >> displayName [
+ChatPharoGeminiAgent class >> displayName [
 
 	^ 'Gemini'
 ]
 
 { #category : 'api' }
-GeminiAgent class >> isReachable [
+ChatPharoGeminiAgent class >> isReachable [
 	[ | url |
 		url := 'https://generativelanguage.googleapis.com/v1beta/models?key=dummy'.
 		ZnClient new head: url.
@@ -43,7 +43,7 @@ GeminiAgent class >> isReachable [
 ]
 
 { #category : 'api' }
-GeminiAgent class >> modelNames [
+ChatPharoGeminiAgent class >> modelNames [
 
 	"Gemini’s REST does not expose a discover‑models endpoint
 	 yet, so list a few common ones."
@@ -51,26 +51,26 @@ GeminiAgent class >> modelNames [
 ]
 
 { #category : 'api' }
-GeminiAgent class >> settingsPresenterFor: anAgent [
+ChatPharoGeminiAgent class >> settingsPresenterFor: anAgent [
 	^ GeminiSettingsPresenter on: anAgent
 ]
 
 { #category : 'accessing' }
-GeminiAgent >> apiKey [
+ChatPharoGeminiAgent >> apiKey [
 
 	^ apiKey
 ]
 
 { #category : 'accessing' }
-GeminiAgent >> apiKey: anObject [
+ChatPharoGeminiAgent >> apiKey: anObject [
 
 	apiKey := anObject
 ]
 
 { #category : 'initialization' }
-GeminiAgent >> getResponseForPrompt: userPrompt [ 
+ChatPharoGeminiAgent >> getResponseForPrompt: userPrompt [ 
 	| api result |
-	api := OpenAIChatAPI
+	api := ChatPharoTool
 		geminiWithAPIKey: apiKey
 		system: (system ifEmpty: ['']).
 	temperature ifNotNil:[
@@ -82,19 +82,19 @@ GeminiAgent >> getResponseForPrompt: userPrompt [
 ]
 
 { #category : 'accessing' }
-GeminiAgent >> host [
+ChatPharoGeminiAgent >> host [
 
 	^ host
 ]
 
 { #category : 'accessing' }
-GeminiAgent >> host: anObject [
+ChatPharoGeminiAgent >> host: anObject [
 
 	host := anObject
 ]
 
 { #category : 'initialization' }
-GeminiAgent >> initialize [
+ChatPharoGeminiAgent >> initialize [
 	super initialize.
 	host        := 'generativelanguage.googleapis.com'.
 	apiKey      := ''.
@@ -103,18 +103,18 @@ GeminiAgent >> initialize [
 ]
 
 { #category : 'as yet unclassified' }
-GeminiAgent >> modelInformation [
+ChatPharoGeminiAgent >> modelInformation [
 	^ self shouldBeImplemented
 ]
 
 { #category : 'accessing' }
-GeminiAgent >> temperature [
+ChatPharoGeminiAgent >> temperature [
 
 	^ temperature
 ]
 
 { #category : 'accessing' }
-GeminiAgent >> temperature: anObject [
+ChatPharoGeminiAgent >> temperature: anObject [
 
 	temperature := anObject
 ]

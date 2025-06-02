@@ -38,8 +38,8 @@ ChatPharoSettingsTest >> testModelsDelegation [
 { #category : 'tests' }
 ChatPharoSettingsTest >> testUseApiReplacesAgentSubclass [ 
 
-    settings useApi: NullAgent.
-    self assert: settings agent class equals: NullAgent.
+    settings useApi: ChatPharoNullAgent.
+    self assert: settings agent class equals: ChatPharoNullAgent.
 ]
 
 { #category : 'tests' }

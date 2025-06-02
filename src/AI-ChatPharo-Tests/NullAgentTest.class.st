@@ -8,7 +8,7 @@ Class {
 
 { #category : 'tests' }
 NullAgentTest >> testDisplayName [ 
-    self assert: NullAgent displayName equals: 'None (offline)'
+    self assert: ChatPharoNullAgent displayName equals: 'None (offline)'
 
 
 ]
@@ -17,30 +17,30 @@ NullAgentTest >> testDisplayName [
 NullAgentTest >> testGetResponseForPromptReturnsWarning [ 
 
     | msg |
-    msg := (NullAgent new getResponseForPrompt: 'ignored').
+    msg := (ChatPharoNullAgent new getResponseForPrompt: 'ignored').
     self assert: (msg includesSubstring: 'No backend is configured')
 ]
 
 { #category : 'tests' }
 NullAgentTest >> testIsAlwaysReachable [ 
 
-    self assert: NullAgent isReachable
+    self assert: ChatPharoNullAgent isReachable
 ]
 
 { #category : 'tests' }
 NullAgentTest >> testModelInformationDefault [ 
 
-    self assert: (NullAgent new modelInformation) equals: 'No model selected yet'
+    self assert: (ChatPharoNullAgent new modelInformation) equals: 'No model selected yet'
 ]
 
 { #category : 'tests' }
 NullAgentTest >> testModelNamesIsEmpty [ 
 
-    self assert: NullAgent modelNames isEmpty
+    self assert: ChatPharoNullAgent modelNames isEmpty
 ]
 
 { #category : 'tests' }
 NullAgentTest >> testSettingsPresenterIsNil [ 
 
-    self assert: (NullAgent settingsPresenterFor: nil) isNil
+    self assert: (ChatPharoNullAgent settingsPresenterFor: nil) isNil
 ]
