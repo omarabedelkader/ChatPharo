@@ -61,11 +61,9 @@ ChatPharoSettings >> presenter [
 ]
 
 { #category : 'initialization' }
-ChatPharoSettings >> useApi: anAgentClass [ 
-    (anAgentClass inheritsFrom: Agent)
-        ifFalse: [ self error: 'Not an Agent subclass' ].
-    agent := anAgentClass new
+ChatPharoSettings >> useApi: anAgentClass [
 
+    agent := anAgentClass new
 ]
 
 { #category : 'initialization' }

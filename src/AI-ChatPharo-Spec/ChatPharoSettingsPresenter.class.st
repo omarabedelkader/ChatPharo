@@ -24,19 +24,20 @@ ChatPharoSettingsPresenter >> connectPresenters [
 			ollamaModelDropList items ifNotEmpty: [
 				ollamaModelDropList selectFirst ] ].
 
-apiDropList whenSelectedItemChangedDo: [:assoc |
-    | apiClass newPresenter |
-    apiClass := assoc value.
-    model useApi: apiClass.
+	apiDropList whenSelectedItemChangedDo: [ :assoc |
+			| apiClass newPresenter |
+			apiClass := assoc value.
+			model useApi: apiClass.
 
-    apiSettingsContainer removeAll.
+			apiSettingsContainer removeAll.
 
-    newPresenter := apiClass settingsPresenterFor: model agent.
-    newPresenter ifNotNil: [ apiSettingsContainer add: newPresenter ].
-
-    "uncomment the next line only if the UI fails to refresh automatically"
-    "apiSettingsContainer changedWorld"
-].
+			newPresenter := apiClass settingsPresenterFor: model agent.
+			newPresenter ifNotNil: [ apiSettingsContainer add: newPresenter ].
+	apiDropList whenSelectedItemChangedDo: [ :assoc |
+		model useApi: assoc value.
+		self refreshApiSettings ].
+			"uncomment the next line only if the UI fails to refresh automatically"
+			"apiSettingsContainer changedWorld" ]
 ]
 
 { #category : 'layout' }
@@ -59,7 +60,7 @@ ChatPharoSettingsPresenter >> initializePresenters [
 			 title: 'Chat'
 			 icon: (self iconNamed: #announcement)
 			 provider: [ self newChatTab ]).
-			
+
 	notebook addPage: (SpNotebookPage
 			 title: 'History'
 			 icon: (self iconNamed: #history)
@@ -91,7 +92,15 @@ ChatPharoSettingsPresenter >> initializePresenters [
 		                       help: 'Select ollama model';
 		                       items: model models;
 		                       display: [ :e | e ];
-		                       yourself
+		                       yourself.
+		
+	apiDropList
+		selectItem: (model availableApiChoices
+			detect: [ :assoc | assoc value = model agent class ]
+			ifNone: [ model availableApiChoices first ]).
+
+	"NEW ► build the settings panel that matches the current agent"
+	self refreshApiSettings.
 ]
 
 { #category : 'initialization' }
@@ -184,6 +193,17 @@ ChatPharoSettingsPresenter >> notebook [
 ChatPharoSettingsPresenter >> notebook: anObject [
 
 	notebook := anObject
+]
+
+{ #category : 'initialization' }
+ChatPharoSettingsPresenter >> refreshApiSettings [
+
+	"Re-create the right sub-panel and force a redraw."
+	| newPresenter |
+	apiSettingsContainer removeAll.
+	newPresenter := model agent class settingsPresenterFor: model agent.
+	newPresenter ifNotNil: [ apiSettingsContainer add: newPresenter ].
+	apiSettingsContainer changed  "← makes the UI actually update"
 ]
 
 { #category : 'accessing - model' }

@@ -1,3 +1,9 @@
+"
+```smalltalk
+
+ChatPharo new settings agent class name.
+```
+"
 Class {
 	#name : 'Agent',
 	#superclass : 'Object',
