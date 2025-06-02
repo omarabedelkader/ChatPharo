@@ -5,7 +5,8 @@ Class {
 		'model',
 		'system',
 		'promptPrefix',
-		'response'
+		'response',
+		'history'
 	],
 	#category : 'AI-ChatPharo-Agent',
 	#package : 'AI-ChatPharo-Agent'
@@ -39,10 +40,12 @@ Agent >> getResponseForPrompt: prompt [
 	self subclassResponsibility
 ]
 
-{ #category : 'initialization' }
-Agent >> history [
-    "Return the history if available"
-    ^ nil
+{ #category : 'accessing' }
+Agent >> history [                     ^ history
+]
+
+{ #category : 'accessing' }
+Agent >> history: aHistory [           history := aHistory
 ]
 
 { #category : 'initialization' }

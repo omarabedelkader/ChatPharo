@@ -14,32 +14,51 @@ Class {
 
 { #category : 'as yet unclassified' }
 OpenAIChatAPI class >> baseURL: baseURL apiKey: apiKey system: system [
-	^ self baseURL: baseURL apiKey: apiKey system: system tools: nil
+
+	^ self
+		  baseURL: baseURL
+		  apiKey: apiKey
+		  system: system
+		  tools: nil
 ]
 
 { #category : 'as yet unclassified' }
-OpenAIChatAPI class >> baseURL: baseURL apiKey: apiKey system: system tools: tools [ 
+OpenAIChatAPI class >> baseURL: baseURL apiKey: apiKey system: system tools: tools [
 
-	^ self basicNew initializeWithBaseURL: baseURL apiKey: apiKey system: system tools: tools; yourself
+	^ self basicNew
+		  initializeWithBaseURL: baseURL
+		  apiKey: apiKey
+		  system: system
+		  tools: tools;
+		  yourself
+]
 
+{ #category : 'as yet unclassified' }
+OpenAIChatAPI class >> baseURL: baseURL system: system [
+
+	^ self baseURL: baseURL system: system tools: nil
+]
+
+{ #category : 'as yet unclassified' }
+OpenAIChatAPI class >> baseURL: baseURL system: system tools: tools [
+
+	^ self
+		  baseURL: baseURL
+		  apiKey: nil
+		  system: system
+		  tools: tools
 ]
 
 { #category : 'as yet unclassified' }
 OpenAIChatAPI class >> geminiWithAPIKey: apiKey system: system [
 
-	| anOpenAIChatAPI |
-	anOpenAIChatAPI := self new.
-
-	^ anOpenAIChatAPI geminiWithAPIKey: apiKey system: system tools: nil
+	^ self geminiWithAPIKey: apiKey system: system tools: nil
 ]
 
 { #category : 'as yet unclassified' }
 OpenAIChatAPI class >> geminiWithAPIKey: apiKey system: system tools: tools [
 
-	| anOpenAIChatAPI |
-	anOpenAIChatAPI := self new.
-
-	^ anOpenAIChatAPI
+	^ self
 		  baseURL: (ZnUrl fromString:
 				   'https://generativelanguage.googleapis.com/v1beta/openai')
 		  apiKey: apiKey
