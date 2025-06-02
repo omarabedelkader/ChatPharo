@@ -1,3 +1,11 @@
+"
+Concrete agent for a **local Ollama server**.
+
+* Connectivity helpers ping `http://localhost:11434`.
+* Discovers available models via `/api/tags`, asks completions via `/api/generate`, shows model metadata via `/api/show`.
+* Uses JSON directly, not `ChatPharoTool`, because the Ollama REST schema is simpler.
+* **Why** – wraps the Ollama CLI/daemon behind the polymorphic `ChatPharoAgent` façade so the rest of ChatPharo can treat it exactly like any cloud model.
+"
 Class {
 	#name : 'ChatPharoOllamaAgent',
 	#superclass : 'ChatPharoAgent',

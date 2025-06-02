@@ -1,4 +1,12 @@
 "
+One **conversation transcript**.
+
+* Keeps an ordered list of UI `ChatPharoMessage` objects **and** a non-UI `ChatPharoHistory` that mirrors the same information in LLM-friendly format.
+* Drives asynchronous prompting: forks a light process that asks the agent and posts the assistant reply back into both collections.
+* Can clear its own history, cancel an in-flight request, and notify listeners when a reply arrives.
+* **Why** – encapsulates everything that makes a single chat tick, so multiple chats can live side-by-side in a notebook UI.
+
+
 ```smalltalk
 (ChatPharoChat new
 	ollamaApi: (OllamaApi new

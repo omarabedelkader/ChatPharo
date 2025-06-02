@@ -1,4 +1,12 @@
 "
+User-editable configuration.
+
+* Knows the currently selected `agent`.
+* Produces the list of **available API choices** by returning associations `displayName -> class`.
+* Delegates model selection (`useModel:`) and agent swapping (`useApi:`) to the agent it owns.
+* **Why** – separates persistent/user-configurable concerns from transient chat state.
+
+
 ```smalltalk
 (ChatPharoSettings new
 	useModel: 'codellama:7b';

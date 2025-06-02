@@ -1,3 +1,6 @@
+"
+Shell window that shows a toolbar and a notebook of chats. Lets the user create/delete/save chats and open the global settings dialog.
+"
 Class {
 	#name : 'ChatPharoPresenter',
 	#superclass : 'SpPresenter',

@@ -1,4 +1,11 @@
 "
+A **single user-and-assistant pair** as shown in the chat transcript.
+
+* Just two strings: `content` (user) and `answer` (assistant).
+* Knows how to build its own presenter lazily.
+* **Why** – minimal View-Model used by the layout engine; keeps UI state separate from LLM history objects.
+
+
 ```smalltalk
 (ChatPharoMessage new
 

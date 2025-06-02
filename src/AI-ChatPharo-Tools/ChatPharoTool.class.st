@@ -1,3 +1,11 @@
+"
+A **general OpenAI-style REST client**.
+
+* Configured through a family of factory methods (`geminiWithAPIKey:`, `ollamaWithSystem:` …) which set `baseURL`, `apiKey`, default `model`, etc.
+* Accepts a list of **tools** (see `ChatPharoClient`) so that function-calling requests can be routed automatically.
+* Central routine `getResponseForHistory:` posts *one composite JSON* (`model`, `messages`, optional `tools/tool_choice`) to `/chat/completions`, then converts the reply back into `ChatPharoHistorySaver` plus `ChatPharoHistorySaverToolCall` objects.
+* **Why** – unifies all “talk to an LLM” code in one tested component, eliminating duplication in the agent subclasses.
+"
 Class {
 	#name : 'ChatPharoTool',
 	#superclass : 'Object',

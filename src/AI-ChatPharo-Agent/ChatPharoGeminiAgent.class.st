@@ -1,4 +1,12 @@
 "
+Concrete agent for **Google Gemini REST**.
+
+* Holds extra knobs: `apiKey`, `host`, `temperature`.
+* Builds a `ChatPharoTool` preconfigured for Google’s “OpenAI-compatible” endpoint and delegates the heavy lifting to it.
+* **Why** – same role as the Ollama agent but targeting Gemini; packaging all Gemini-specific wiring in one place keeps the rest of the codebase backend-agnostic.
+
+
+
 ```smalltalk
 | chat gemini |
 gemini := GeminiAgent new

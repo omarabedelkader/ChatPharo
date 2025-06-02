@@ -1,3 +1,6 @@
+"
+Counterpart produced by ChatPharoTool when the assistant requests a function call; later replayed as JSON so the model sees the result.
+"
 Class {
 	#name : 'ChatPharoHistorySaverToolCall',
 	#superclass : 'Object',

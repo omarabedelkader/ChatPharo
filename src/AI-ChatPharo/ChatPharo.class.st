@@ -1,4 +1,11 @@
 "
+The **application root-object**.
+
+* Owns global `settings` (which agent to use) and an ordered collection of open `chats`.
+* Spawns new chat sessions through `newChat`.
+* **Why** – single source of truth for top-level state; presenters bind to it to build windows/toolbars.
+
+
 ```samlltalk
 ChatPharo new presenter open.
 

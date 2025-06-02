@@ -1,3 +1,6 @@
+"
+Multi-tab dialog (Chat, History, API, Configuration). Hosts per-agent sub-presenters (see below) and general actions such as “Delete all chats”.
+"
 Class {
 	#name : 'ChatPharoSettingsPresenter',
 	#superclass : 'SpPresenter',

@@ -1,3 +1,10 @@
+"
+Metadata wrapper for **one tool/function**.
+
+* Stores `name`, human `description`, JSON `parameters` schema, and the executable Smalltalk block.
+* Can be serialised into the format expected by OpenAI’s `tool` array.
+* **Why** – clean separation between *declaring* a tool (what it is) and *executing* it (done later by `ChatPharoTool` when the assistant calls it).
+"
 Class {
 	#name : 'ChatPharoClient',
 	#superclass : 'Object',

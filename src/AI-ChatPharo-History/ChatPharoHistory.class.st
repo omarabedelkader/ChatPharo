@@ -1,3 +1,6 @@
+"
+Ordered collection of ChatPharoHistoryMessage objects; can dump itself as a plain “role: content” string (asPromptPrefix) or the full JSON structure OpenAI expects (chatMessagesOn:).
+"
 Class {
 	#name : 'ChatPharoHistory',
 	#superclass : 'Object',

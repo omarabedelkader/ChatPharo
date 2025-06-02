@@ -1,4 +1,7 @@
 "
+Small window with a text input plus Submit / Cancel buttons, bound to a ChatPharoTemporaryChat.
+
+
 ```smalltalk
 | tempChat presenter |
 tempChat := ChatPharoTemporaryChat new.

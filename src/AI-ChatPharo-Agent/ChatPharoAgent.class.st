@@ -1,6 +1,15 @@
 "
-```smalltalk
+The root of the “agent” hierarchy.
+It **defines the common contract** any concrete backend must respect:
 
+* **State it holds** – current `model`, optional `system` prompt, a rolling `history`, the `promptPrefix` serialised from that history, and the most recent `response`.
+* **Public surface** –
+
+  * *Class side* helpers (`displayName`, `isReachable`, `modelNames`, `settingsPresenterFor:`) so the settings UI can list and configure agents at run time.
+  * *Instance side* service `getResponseForPrompt:` which subclasses must override to actually call an LLM.
+* **Why it matters** – Everywhere else in ChatPharo the UI can just rely on “an agent” without caring whether it talks to Gemini, Ollama or something else. The abstract class enforces that interchangeability.
+
+```smalltalk
 ChatPharo new settings agent class name.
 ```
 "

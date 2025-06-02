@@ -1,3 +1,6 @@
+"
+Sub-panel inserted by ChatPharoSettingsPresenter when the Gemini agent is selected. Edits host, apiKey, model, and temperature.
+"
 Class {
 	#name : 'GeminiSettingsPresenter',
 	#superclass : 'SpPresenter',

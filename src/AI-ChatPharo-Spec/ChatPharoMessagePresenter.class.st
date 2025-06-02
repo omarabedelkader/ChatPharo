@@ -1,9 +1,12 @@
 "
-(ChatPharoMessage new
+Renders one ChatPharoMessage using Microdown for rich text.
 
+```smalltalk
+(ChatPharoMessage new
 	content: 'Bonjour';
 	answer: 'Salut';
 	yourself) presenter open
+```
 "
 Class {
 	#name : 'ChatPharoMessagePresenter',

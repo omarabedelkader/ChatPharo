@@ -1,3 +1,6 @@
+"
+UI for one chat tab: scrollable message column, a text field, and buttons for submit/cancel/clear. Receives push updates when the model posts a new assistant message.
+"
 Class {
 	#name : 'ChatPharoChatPresenter',
 	#superclass : 'SpPresenter',

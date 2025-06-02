@@ -1,3 +1,10 @@
+"
+A **do-nothing placeholder** used when the user has not yet chosen a real backend.
+
+* Always claims to be reachable and reports “no models”.
+* `getResponseForPrompt:` answers a fixed string reminding the user to configure an API.
+* **Why** – lets the rest of the application start and render its UI even when no LLM credentials are present; prevents accidental network calls.
+"
 Class {
 	#name : 'ChatPharoNullAgent',
 	#superclass : 'ChatPharoAgent',

@@ -1,3 +1,6 @@
+"
+Equivalent sub-panel for the Ollama agent: lists local models and lets the user refresh/re-select them.
+"
 Class {
 	#name : 'OllamaSettingsPresenter',
 	#superclass : 'SpPresenter',

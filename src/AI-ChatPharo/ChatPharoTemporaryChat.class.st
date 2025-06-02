@@ -1,3 +1,10 @@
+"
+Lightweight **one-shot prompt model** used by pop-ups or modal dialogs.
+
+* Stores a free-text buffer plus two callbacks: `onSubmit` and `onCancel`.
+* No history, no agent – its only job is to forward the entered text to whoever opened the dialog.
+* **Why** – avoids dragging the full chat infrastructure into places where you only need a quick prompt.
+"
 Class {
 	#name : 'ChatPharoTemporaryChat',
 	#superclass : 'Object',

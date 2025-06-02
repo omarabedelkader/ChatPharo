@@ -1,3 +1,6 @@
+"
+Wraps one executed tool call in a form that can be injected back into the chat log to keep the assistant and the tool responses in sync.
+"
 Class {
 	#name : 'ChatPharoHistoryToolCall',
 	#superclass : 'Object',

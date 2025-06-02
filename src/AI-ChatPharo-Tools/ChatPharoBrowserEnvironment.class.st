@@ -1,3 +1,9 @@
+"
+Bridges the **running Pharo image itself** to the LLM via function calling.
+
+* Wraps a *Refactoring Browser* environment and exposes read-only queries such as “get class comments”, “list packages”, “find methods containing a substring”… each exported as a `ChatPharoClient` tool.
+* **Why** – empowers the LLM to answer questions about the live codebase while ChatPharo is running, without hard-coding any particular query set inside agents.
+"
 Class {
 	#name : 'ChatPharoBrowserEnvironment',
 	#superclass : 'Object',

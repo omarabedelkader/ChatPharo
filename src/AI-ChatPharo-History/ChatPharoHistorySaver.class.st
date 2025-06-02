@@ -1,3 +1,6 @@
+"
+Thin convenience subclass used inside agents when they build synthetic history entries (e.g., the solitary user prompt passed to ChatPharoTool).
+"
 Class {
 	#name : 'ChatPharoHistorySaver',
 	#superclass : 'Object',

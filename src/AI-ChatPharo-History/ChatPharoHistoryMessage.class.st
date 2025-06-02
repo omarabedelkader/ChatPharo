@@ -1,3 +1,6 @@
+"
+Immutable value object with role, content, and optional toolCalls. Knows how to render itself in both textual and JSON forms.
+"
 Class {
 	#name : 'ChatPharoHistoryMessage',
 	#superclass : 'Object',
