@@ -10,6 +10,8 @@ The **application root-object**.
 ChatPharo new presenter open.
 
 ChatPharoSettings new presenter open
+
+
 ```
 "
 Class {
