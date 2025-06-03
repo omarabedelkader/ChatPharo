@@ -90,7 +90,8 @@ ChatPharoChatPresenter >> initializeWindow: aWindowPresenter [
 { #category : 'initialization' }
 ChatPharoChatPresenter >> sendMessage [
 
-	model sendMessage: messageTextField text
+	model sendMessage: messageTextField text.
+	messageTextField text:''
 ]
 
 { #category : 'accessing - model' }
