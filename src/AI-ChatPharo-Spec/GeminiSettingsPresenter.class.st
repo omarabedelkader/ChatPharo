@@ -59,21 +59,20 @@ GeminiSettingsPresenter >> initializePresenters [
 	super initializePresenters.
 	hostField := self newTextInput placeholder:
 		             'generativelanguage.googleapis.com'.
-	apiKeyField := self newTextInput placeholder: 'AI…'.
-modelDrop         := SpDropListPresenter new.
-        self refreshModels.
+	apiKeyField := self newTextInput placeholder: 'API-KEY'.
+	modelDrop := SpDropListPresenter new.
+	self refreshModels.
 	temperatureSlider := SpSliderPresenter new
 		                     min: 0;
 		                     max: 1;
 		                     value: model temperature.
 
-	"Bind widgets → model"
 	hostField whenTextChangedDo: [ :t | model host: t ].
-        apiKeyField whenTextChangedDo: [:t|
-                model apiKey: t.
-                self refreshModels ].
-        modelDrop  whenSelectedItemChangedDo: [:m| model model: m ].
-        temperatureSlider whenValueChangedDo: [:v| model temperature: v ]
+	apiKeyField whenTextChangedDo: [ :t |
+			model apiKey: t.
+			self refreshModels ].
+	modelDrop whenSelectedItemChangedDo: [ :m | model model: m ].
+	temperatureSlider whenValueChangedDo: [ :v | model temperature: v ]
 ]
 
 { #category : 'accessing' }
@@ -106,7 +105,8 @@ GeminiSettingsPresenter >> refreshModels [
 
 { #category : 'accessing - model' }
 GeminiSettingsPresenter >> setModelBeforeInitialization: anAgent [
-	model := anAgent	"instance of GeminiAgent"
+
+	model := anAgent
 ]
 
 { #category : 'accessing' }

@@ -52,10 +52,10 @@ ChatPharoGeminiAgent class >> isReachable [
 
 { #category : 'api' }
 ChatPharoGeminiAgent class >> modelNames [
-
 	"Gemini’s REST does not expose a discover‑models endpoint
 	 yet, so list a few common ones."
-	^ #('gemini-pro' 'gemini-pro-vision')
+
+	^ #( 'Enter your API-Key' )
 ]
 
 { #category : 'api' }
@@ -76,17 +76,16 @@ ChatPharoGeminiAgent >> apiKey: anObject [
 ]
 
 { #category : 'initialization' }
-ChatPharoGeminiAgent >> getResponseForPrompt: userPrompt [ 
+ChatPharoGeminiAgent >> getResponseForPrompt: userPrompt [
+
 	| api result |
 	api := ChatPharoTool
-		geminiWithAPIKey: apiKey
-		system: (system ifEmpty: ['']).
-	temperature ifNotNil:[
-		api model: model ].
-	"prepare history as ChatPharoHistorySaver objects"
+		       geminiWithAPIKey: apiKey
+		       system: (system ifEmpty: [ '' ]).
+	temperature ifNotNil: [ api model: model ].
 	result := api getResponseForHistory:
-		(ChatPharoHistorySaver role:'user' content:userPrompt).
-	^ result content  "return plain assistant text to existing UI"
+		          (ChatPharoHistorySaver role: 'user' content: userPrompt).
+	^ result content
 ]
 
 { #category : 'accessing' }
@@ -103,10 +102,11 @@ ChatPharoGeminiAgent >> host: anObject [
 
 { #category : 'initialization' }
 ChatPharoGeminiAgent >> initialize [
+
 	super initialize.
-	host        := 'generativelanguage.googleapis.com'.
-	apiKey      := ''.
-	model       := 'gemini-pro'.
+	host := 'generativelanguage.googleapis.com'.
+	apiKey := ''.
+	model := ''.
 	temperature := 0.7
 ]
 
