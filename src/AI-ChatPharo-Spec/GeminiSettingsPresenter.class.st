@@ -55,20 +55,25 @@ GeminiSettingsPresenter >> hostField: anObject [
 
 { #category : 'initialization' }
 GeminiSettingsPresenter >> initializePresenters [
+
 	super initializePresenters.
-	hostField         := self newTextInput placeholder:'generativelanguage.googleapis.com'.
-	apiKeyField       := self newTextInput placeholder:'AI…'.
-	modelDrop         := SpDropListPresenter new
-							items: ChatPharoGeminiAgent modelNames;
-							display: [:m|m].
+	hostField := self newTextInput placeholder:
+		             'generativelanguage.googleapis.com'.
+	apiKeyField := self newTextInput placeholder: 'AI…'.
+modelDrop         := SpDropListPresenter new.
+        self refreshModels.
 	temperatureSlider := SpSliderPresenter new
-							min: 0; max: 1; value: model temperature.
+		                     min: 0;
+		                     max: 1;
+		                     value: model temperature.
 
 	"Bind widgets → model"
-	hostField whenTextChangedDo: [:t| model host: t ].
-	apiKeyField whenTextChangedDo: [:t| model apiKey: t ].
-	modelDrop  whenSelectedItemChangedDo: [:m| model model: m ].
-	temperatureSlider whenValueChangedDo: [:v| model temperature: v ]
+	hostField whenTextChangedDo: [ :t | model host: t ].
+        apiKeyField whenTextChangedDo: [:t|
+                model apiKey: t.
+                self refreshModels ].
+        modelDrop  whenSelectedItemChangedDo: [:m| model model: m ].
+        temperatureSlider whenValueChangedDo: [:v| model temperature: v ]
 ]
 
 { #category : 'accessing' }
@@ -87,6 +92,16 @@ GeminiSettingsPresenter >> modelDrop [
 GeminiSettingsPresenter >> modelDrop: anObject [
 
 	modelDrop := anObject
+]
+
+{ #category : 'initialization' }
+GeminiSettingsPresenter >> refreshModels [ 
+
+
+        modelDrop
+                items: model modelNames;
+                display: [ :m | m ].
+        modelDrop items ifNotEmpty: [ modelDrop selectFirst ]
 ]
 
 { #category : 'accessing - model' }

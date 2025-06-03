@@ -116,6 +116,18 @@ ChatPharoGeminiAgent >> modelInformation [
 ]
 
 { #category : 'accessing' }
+ChatPharoGeminiAgent >> modelNames [ 
+
+        apiKey isEmpty ifTrue: [ ^ self class modelNames ].
+
+        ^ [
+                (ChatPharoTool
+                        geminiWithAPIKey: apiKey
+                        system: nil) modelNames
+        ] on: Error do: [ self class modelNames ]
+]
+
+{ #category : 'accessing' }
 ChatPharoGeminiAgent >> temperature [
 
 	^ temperature
