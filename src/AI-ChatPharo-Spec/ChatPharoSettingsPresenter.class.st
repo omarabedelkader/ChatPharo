@@ -27,20 +27,19 @@ ChatPharoSettingsPresenter >> connectPresenters [
 			ollamaModelDropList items ifNotEmpty: [
 				ollamaModelDropList selectFirst ] ].
 
-	apiDropList whenSelectedItemChangedDo: [ :assoc |
-			| apiClass newPresenter |
-			apiClass := assoc value.
-			model useApi: apiClass.
+apiDropList whenSelectedItemChangedDo: [:assoc |
+    | apiClass newPresenter |
+    apiClass := assoc value.
+    model useApi: apiClass.
 
-			apiSettingsContainer removeAll.
+    apiSettingsContainer removeAll.
 
-			newPresenter := apiClass settingsPresenterFor: model agent.
-			newPresenter ifNotNil: [ apiSettingsContainer add: newPresenter ].
-	apiDropList whenSelectedItemChangedDo: [ :assoc |
-		model useApi: assoc value.
-		self refreshApiSettings ].
-			"uncomment the next line only if the UI fails to refresh automatically"
-			"apiSettingsContainer changedWorld" ]
+    newPresenter := apiClass settingsPresenterFor: model agent.
+    newPresenter ifNotNil: [ apiSettingsContainer add: newPresenter ].
+
+    "uncomment the next line only if the UI fails to refresh automatically"
+    "apiSettingsContainer changedWorld"
+].
 ]
 
 { #category : 'layout' }

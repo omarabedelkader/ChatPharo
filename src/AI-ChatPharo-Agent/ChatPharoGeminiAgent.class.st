@@ -126,3 +126,8 @@ ChatPharoGeminiAgent >> temperature: anObject [
 
 	temperature := anObject
 ]
+
+{ #category : 'as yet unclassified' }
+ChatPharoGeminiAgent >> tools [
+    ^ ChatPharoBrowserEnvironment new tools
+]
