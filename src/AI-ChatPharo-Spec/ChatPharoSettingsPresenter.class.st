@@ -13,7 +13,8 @@ Class {
 		'modelsRefreshButton',
 		'apiDropList',
 		'apiSettingsContainer',
-		'applicationE'
+		'applicationE',
+		'systemPromptInput'
 	],
 	#category : 'AI-ChatPharo-Spec',
 	#package : 'AI-ChatPharo-Spec'
@@ -27,19 +28,17 @@ ChatPharoSettingsPresenter >> connectPresenters [
 			ollamaModelDropList items ifNotEmpty: [
 				ollamaModelDropList selectFirst ] ].
 
-apiDropList whenSelectedItemChangedDo: [:assoc |
-    | apiClass newPresenter |
-    apiClass := assoc value.
-    model useApi: apiClass.
+	apiDropList whenSelectedItemChangedDo: [ :assoc |
+			| apiClass newPresenter |
+			apiClass := assoc value.
+			model useApi: apiClass.
 
-    apiSettingsContainer removeAll.
+			apiSettingsContainer removeAll.
 
-    newPresenter := apiClass settingsPresenterFor: model agent.
-    newPresenter ifNotNil: [ apiSettingsContainer add: newPresenter ].
-
-    "uncomment the next line only if the UI fails to refresh automatically"
-    "apiSettingsContainer changedWorld"
-].
+			newPresenter := apiClass settingsPresenterFor: model agent.
+			newPresenter ifNotNil: [ apiSettingsContainer add: newPresenter ].
+			systemPromptInput text: model agent system. ].
+		systemPromptInput whenTextChangedDo: [ :text | model agent system: text ].
 ]
 
 { #category : 'layout' }
@@ -90,12 +89,14 @@ ChatPharoSettingsPresenter >> initializePresenters [
 		                       items: model models;
 		                       display: [ :e | e ];
 		                       yourself.
-
+        systemPromptInput := self newTextInput
+                                       placeholder: 'System prompt...';
+                                       text: model agent system;
+                                       yourself.
 	apiDropList selectItem: (model availableApiChoices
 			 detect: [ :assoc | assoc value = model agent class ]
 			 ifNone: [ model availableApiChoices first ]).
 
-	"NEW ► build the settings panel that matches the current agent"
 	self refreshApiSettings
 ]
 
@@ -112,16 +113,25 @@ ChatPharoSettingsPresenter >> initializeWindow: aWindowPresenter [
 { #category : 'initialization' }
 ChatPharoSettingsPresenter >> newChatTab [
 
-    ^ SpPresenter new
-        layout: (SpBoxLayout newTopToBottom
-            add: (SpButtonPresenter new
-                label: 'Delete All Chats';
-                icon: (self iconNamed: #delete);
-                help: 'Delete all chats';
-                action: [ self deleteAllChats ];
-                yourself) expand: false;
-            yourself);
-        yourself
+	^ SpPresenter new
+		  layout: (SpBoxLayout newTopToBottom
+				   add: (SpButtonPresenter new
+						    label: 'Delete All Chats';
+						    icon: (self iconNamed: #delete);
+						    help: 'Delete all chats';
+						    action: [ self deleteAllChats ];
+						    yourself)
+				   expand: false;
+				                                add: (SpBoxLayout newHorizontal
+                                                    spacing: 8;
+                                                    add: 'System:' expand: false;
+                                                    add: systemPromptInput;
+                                                    yourself)
+                                   expand: false;
+                                   add: apiSettingsContainer;
+                                   yourself);
+				   yourself;
+		  yourself
 ]
 
 { #category : 'initialization' }
