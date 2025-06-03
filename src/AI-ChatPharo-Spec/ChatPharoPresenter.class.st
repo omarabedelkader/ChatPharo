@@ -34,26 +34,23 @@ ChatPharoPresenter >> addNewChat [
 
 { #category : 'layout' }
 ChatPharoPresenter >> defaultLayout [
-	"Layout of ChatPharo. Nicer design wanted..."
 
-    ^ SpBoxLayout newTopToBottom
+	^ SpBoxLayout newTopToBottom
 		  add: toolbar expand: false;
-        add: notebook;
-        yourself
+		  add: notebook;
+		  yourself
 ]
 
 { #category : 'initialization' }
-ChatPharoPresenter >> deleteChat: aPageTitle [ 
+ChatPharoPresenter >> deleteChat: aPageTitle [
 
-    "Find the page by title and remove it if found."
-    | pageToDelete |
-    pageToDelete := notebook pages detect: [:page | page title = aPageTitle] ifNone: [^ self].
-    
-    (self confirm: 'Are you sure you want to delete this chat?')
-        ifTrue: [
-            notebook removePage: pageToDelete.
-        ].
+	| pageToDelete |
+	pageToDelete := notebook pages
+		                detect: [ :page | page title = aPageTitle ]
+		                ifNone: [ ^ self ].
 
+	(self confirm: 'Are you sure you want to delete this chat?') ifTrue: [
+		notebook removePage: pageToDelete ]
 ]
 
 { #category : 'initialization' }

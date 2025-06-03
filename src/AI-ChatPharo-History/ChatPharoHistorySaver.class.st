@@ -13,12 +13,12 @@ Class {
 	#package : 'AI-ChatPharo-History'
 }
 
-{ #category : 'as yet unclassified' }
+{ #category : 'contents' }
 ChatPharoHistorySaver class >> role: r content: c [
 	^ self role: r content: c toolCalls: nil
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'contents' }
 ChatPharoHistorySaver class >> role: r content: c toolCalls: t [ 
 
 	^ self new
@@ -38,13 +38,13 @@ ChatPharoHistorySaver >> content: anObject [
 	content := anObject
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'history' }
 ChatPharoHistorySaver >> historyStringOn: strm [ 
 
 	strm nextPutAll: role; nextPutAll: ': '; nextPutAll: content; cr
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'history' }
 ChatPharoHistorySaver >> putOpenAIChatMessagesOn: stream [
 		| msg |
 		msg := Dictionary with: 'role' -> role.

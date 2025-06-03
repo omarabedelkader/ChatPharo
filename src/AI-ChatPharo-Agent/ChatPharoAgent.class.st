@@ -43,9 +43,9 @@ ChatPharoAgent class >> modelNames [           self subclassResponsibility.
 ]
 
 { #category : 'api' }
-ChatPharoAgent class >> settingsPresenterFor: anAgent [   "default"
-	"Return a presenter (or nil) that lets the user edit the agent’s
-	 specific configuration.  Subclasses override."
+ChatPharoAgent class >> settingsPresenterFor: anAgent [
+
+	"Return a presenter (or nil) that lets the user edit the agent’s specific configuration."
 	^ nil
 ]
 

@@ -69,11 +69,6 @@ ChatPharoSettingsPresenter >> initializePresenters [
 			 provider: [ self newHistoryTab ]).
 
 	notebook addPage: (SpNotebookPage
-			 title: 'API'
-			 icon: (self iconNamed: #announcement)
-			 provider: [ self newAPITab ]).
-
-	notebook addPage: (SpNotebookPage
 			 title: 'Configuration'
 			 icon: (self iconNamed: #announcement)
 			 provider: [ self newConfigurationTab ]).
@@ -95,14 +90,13 @@ ChatPharoSettingsPresenter >> initializePresenters [
 		                       items: model models;
 		                       display: [ :e | e ];
 		                       yourself.
-		
-	apiDropList
-		selectItem: (model availableApiChoices
-			detect: [ :assoc | assoc value = model agent class ]
-			ifNone: [ model availableApiChoices first ]).
+
+	apiDropList selectItem: (model availableApiChoices
+			 detect: [ :assoc | assoc value = model agent class ]
+			 ifNone: [ model availableApiChoices first ]).
 
 	"NEW ► build the settings panel that matches the current agent"
-	self refreshApiSettings.
+	self refreshApiSettings
 ]
 
 { #category : 'initialization' }
@@ -113,25 +107,6 @@ ChatPharoSettingsPresenter >> initializeWindow: aWindowPresenter [
 	aWindowPresenter
 		title: 'ChatPharo settings';
 		initialExtent: 800@500
-]
-
-{ #category : 'initialization' }
-ChatPharoSettingsPresenter >> newAPITab [
-
-	^ SpPresenter new
-		  layout: (SpBoxLayout newTopToBottom
-				   add: 'API Key:' expand: false;
-				   add: (apiKeyInput := self newTextInput
-						                   placeholder: 'My key';
-						                   yourself)
-				   expand: false;
-				   add: 'LLM Host:' expand: false;
-				   add: (hostInput := self newTextInput
-						                 placeholder: 'api.mistral.ai';
-						                 yourself)
-				   expand: false;
-				   yourself);
-		  yourself
 ]
 
 { #category : 'initialization' }
@@ -200,12 +175,11 @@ ChatPharoSettingsPresenter >> notebook: anObject [
 { #category : 'initialization' }
 ChatPharoSettingsPresenter >> refreshApiSettings [
 
-	"Re-create the right sub-panel and force a redraw."
 	| newPresenter |
 	apiSettingsContainer removeAll.
 	newPresenter := model agent class settingsPresenterFor: model agent.
 	newPresenter ifNotNil: [ apiSettingsContainer add: newPresenter ].
-	apiSettingsContainer changed  "← makes the UI actually update"
+	apiSettingsContainer changed 
 ]
 
 { #category : 'accessing - model' }

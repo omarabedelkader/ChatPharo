@@ -1,3 +1,6 @@
+"
+a mock class
+"
 Class {
 	#name : 'MockAdapter',
 	#superclass : 'Object',
@@ -6,9 +9,9 @@ Class {
 		'lastPrompt',
 		'lastSystem'
 	],
-	#category : 'AI-ChatPharo-Tests-Agent',
+	#category : 'AI-ChatPharo-Tests-Mock',
 	#package : 'AI-ChatPharo-Tests',
-	#tag : 'Agent'
+	#tag : 'Mock'
 }
 
 { #category : 'initialization' }

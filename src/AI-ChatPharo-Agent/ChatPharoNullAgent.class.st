@@ -18,25 +18,19 @@ ChatPharoNullAgent class >> displayName [
 ]
 
 { #category : 'api' }
-ChatPharoNullAgent class >> isReachable [ 
+ChatPharoNullAgent class >> isReachable [
 
-    ^ true "always reachable"
+	^ true 
 ]
 
 { #category : 'api' }
-ChatPharoNullAgent class >> modelNames [ 
+ChatPharoNullAgent class >> modelNames [
 
-    ^ #()  "returns an empty collection"
-]
-
-{ #category : 'api' }
-ChatPharoNullAgent class >> settingsPresenterFor: anAgent [
-	^ nil   "Nothing to configure"
+	^ #(  )
 ]
 
 { #category : 'initialization' }
 ChatPharoNullAgent >> getResponseForPrompt: aString [
-	"Do absolutely nothing and return nil or an empty string."
 
 	^ ' No backend is configured. Open Settings → API and choose an API first.'
 ]

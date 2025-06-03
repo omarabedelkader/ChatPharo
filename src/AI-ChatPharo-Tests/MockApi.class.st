@@ -1,3 +1,6 @@
+"
+a mock class
+"
 Class {
 	#name : 'MockApi',
 	#superclass : 'Object',
@@ -5,9 +8,9 @@ Class {
 		'conversationHistory',
 		'currentModel'
 	],
-	#category : 'AI-ChatPharo-Tests-Agent',
+	#category : 'AI-ChatPharo-Tests-Mock',
 	#package : 'AI-ChatPharo-Tests',
-	#tag : 'Agent'
+	#tag : 'Mock'
 }
 
 { #category : 'api' }
@@ -17,9 +20,10 @@ MockApi class >> modelNames [
 
 { #category : 'private - uffi' }
 MockApi >> getResponseForPrompt: aPromptString [
-	"Return something deterministic and easy to recognise in assertions."
-	conversationHistory addLast: { #userPrompt -> aPromptString }.
-	^ '<<', currentModel asUppercase, '-REPLY to: ', aPromptString, '>>'
+
+	conversationHistory addLast: { (#userPrompt -> aPromptString) }.
+	^ '<<' , currentModel asUppercase , '-REPLY to: ' , aPromptString
+	  , '>>'
 ]
 
 { #category : 'initialization' }
@@ -36,8 +40,7 @@ MockApi >> model: aString [
 
 { #category : 'private - uffi' }
 MockApi >> system: aSystemPrompt [
-	"store the running history just like the real client does and answer self
-	 so that calls can be chained the same way the real API supports."
-	conversationHistory addLast: { #systemPrompt -> aSystemPrompt }.
+
+	conversationHistory addLast: { (#systemPrompt -> aSystemPrompt) }.
 	^ self
 ]

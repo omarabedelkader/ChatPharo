@@ -38,9 +38,11 @@ ChatPharoChat >> addAssistantMessage: answerText [
 
 { #category : 'running' }
 ChatPharoChat >> addUserMessage: text [
-    history addUser: text.
-    "UI model"
-    messages add: (ChatPharoMessage new content: text; yourself)
+
+	history addUser: text.
+	messages add: (ChatPharoMessage new
+			 content: text;
+			 yourself)
 ]
 
 { #category : 'accessing' }

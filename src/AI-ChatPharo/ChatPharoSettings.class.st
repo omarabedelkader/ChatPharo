@@ -33,11 +33,9 @@ ChatPharoSettings >> agent [
 
 { #category : 'initialization' }
 ChatPharoSettings >> availableApiChoices [
-	"Return an OrderedCollection of associations  
-	 displayName -> class so the UI can show the name
-	 but keep the class itself."
-	^ (self availableApis collect: [ :cls |
-			cls displayName -> cls ]) asOrderedCollection
+
+	^ (self availableApis collect: [ :cls | cls displayName -> cls ])
+		  asOrderedCollection
 ]
 
 { #category : 'initialization' }
@@ -46,7 +44,7 @@ ChatPharoSettings >> availableApis [
 	^ {
 		  ChatPharoNullAgent.
 		  ChatPharoOllamaAgent.
-		ChatPharoGeminiAgent } "add more as you implement them"
+		  ChatPharoGeminiAgent }
 ]
 
 { #category : 'initialization' }

@@ -13,13 +13,13 @@ Class {
 	#package : 'AI-ChatPharo-History'
 }
 
-{ #category : 'as yet unclassified' }
+{ #category : 'contents' }
 ChatPharoHistoryMessage class >> role: aRole content: content [ 
 
     ^ self role: aRole content: content toolCalls: nil
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'contents' }
 ChatPharoHistoryMessage class >> role: role content: content toolCalls: toolCalls [ 
 
     ^ self new

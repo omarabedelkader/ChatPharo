@@ -52,8 +52,6 @@ ChatPharoGeminiAgent class >> isReachable [
 
 { #category : 'api' }
 ChatPharoGeminiAgent class >> modelNames [
-	"Gemini’s REST does not expose a discover‑models endpoint
-	 yet, so list a few common ones."
 
 	^ #( 'Enter your API-Key' )
 ]
@@ -110,7 +108,7 @@ ChatPharoGeminiAgent >> initialize [
 	temperature := 0.7
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'initialization' }
 ChatPharoGeminiAgent >> modelInformation [
 	^ self shouldBeImplemented
 ]
@@ -139,7 +137,7 @@ ChatPharoGeminiAgent >> temperature: anObject [
 	temperature := anObject
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'tools support' }
 ChatPharoGeminiAgent >> tools [
     ^ ChatPharoBrowserEnvironment new tools
 ]

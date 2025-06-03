@@ -74,7 +74,7 @@ ChatPharoChatPresenter >> initializePresenters [
 		               help: 'Clear chat history';
 		               yourself.
 
-	messagesLayout := SpBoxLayout newVertical
+	messagesLayout := SpBoxLayout newVertical.
 ]
 
 { #category : 'initialization' }

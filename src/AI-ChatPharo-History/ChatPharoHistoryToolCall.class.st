@@ -14,7 +14,7 @@ Class {
 	#package : 'AI-ChatPharo-History'
 }
 
-{ #category : 'as yet unclassified' }
+{ #category : 'contents' }
 ChatPharoHistoryToolCall class >> id: anId functionName: aName arguments: someArgs content: aContent [ 
 
     ^ self basicNew initializeWithID: anId functionName: aName arguments: someArgs content: aContent; yourself

@@ -17,103 +17,91 @@ Class {
 }
 
 { #category : 'initialization' }
-OllamaSettingsPresenter >> connectPresenters [ 
+OllamaSettingsPresenter >> connectPresenters [
 
-    "When the user picks a different Ollama model:"
-    modelsDrop whenSelectedItemChangedDo: [:name | model model: name ].
-
-    "When the user edits the host field (e.g. 'api.myhost.com'): update the agent"
-    hostInput whenTextChangedDo: [:text | model host: text ].
-
-    "When the user edits the port field (e.g. '11434'): update the agent"
-    portInput whenTextChangedDo: [:text | model port: text ].
-
-    "When the user edits the temperature field (e.g. '0.7'): parse as Number and update"
-    temperatureInput whenTextChangedDo: [:text |
-        | num |
-        num := 0.0.
-        [ num := text asNumber ] on: Error do: [ :ex | num := model temperature ].  "keep old if parse fails"
-        model temperature: num
-    ].
+	modelsDrop whenSelectedItemChangedDo: [ :name | model model: name ].
+	hostInput whenTextChangedDo: [ :text | model host: text ].
+	portInput whenTextChangedDo: [ :text | model port: text ].
+	temperatureInput whenTextChangedDo: [ :text |
+			| num |
+			num := 0.0.
+			[ num := text asNumber ]
+				on: Error
+				do: [ :ex | num := model temperature ].
+			model temperature: num ]
 ]
 
 { #category : 'layout' }
-OllamaSettingsPresenter >> defaultLayout [ 
+OllamaSettingsPresenter >> defaultLayout [
 
-    | mainLayout rowLayout modelRow hostRow portRow tempRow |
+	| mainLayout rowLayout modelRow hostRow portRow tempRow |
+	modelRow := SpBoxLayout newHorizontal
+		            spacing: 8;
+		            add: (self newLabel label: 'Available models:')
+		            expand: false;
+		            add: self refreshButton expand: false;
+		            add: self modelsDrop height: 30;
+		            yourself.
 
-    "First row: model label, refresh button, and drop-down"
-    modelRow := SpBoxLayout newHorizontal
-        spacing: 8;
-        add: (self newLabel label: 'Available models:') expand: false;
-        add: self refreshButton expand: false;
-        add: self modelsDrop height: 30;
-        yourself.
+	hostRow := SpBoxLayout newHorizontal
+		           spacing: 8;
+		           add: (self newLabel label: 'Host (e.g. localhost):')
+		           expand: false;
+		           add: hostInput expand: true;
+		           yourself.
 
-    "Second row: host label + text input"
-    hostRow := SpBoxLayout newHorizontal
-        spacing: 8;
-        add: (self newLabel label: 'Host (e.g. localhost):') expand: false;
-        add: hostInput expand: true;
-        yourself.
+	portRow := SpBoxLayout newHorizontal
+		           spacing: 8;
+		           add: (self newLabel label: 'Port (e.g. 11434):')
+		           expand: false;
+		           add: portInput expand: true;
+		           yourself.
 
-    "Third row: port label + text input"
-    portRow := SpBoxLayout newHorizontal
-        spacing: 8;
-        add: (self newLabel label: 'Port (e.g. 11434):') expand: false;
-        add: portInput expand: true;
-        yourself.
+	tempRow := SpBoxLayout newHorizontal
+		           spacing: 8;
+		           add: (self newLabel label: 'Temperature (0.0 – 1.0):')
+		           expand: false;
+		           add: temperatureInput expand: true;
+		           yourself.
+		
+	mainLayout := SpBoxLayout newTopToBottom
+		              spacing: 8;
+		              borderWidth: 8;
+		              beNotHomogeneous;
+		              add: modelRow expand: false;
+		              add: hostRow expand: false;
+		              add: portRow expand: false;
+		              add: tempRow expand: false;
+		              yourself.
 
-    "Fourth row: temperature label + text input"
-    tempRow := SpBoxLayout newHorizontal
-        spacing: 8;
-        add: (self newLabel label: 'Temperature (0.0 – 1.0):') expand: false;
-        add: temperatureInput  expand: true;
-        yourself.
-
-    "Main vertical layout"
-    mainLayout := SpBoxLayout newTopToBottom
-        spacing: 8;
-        borderWidth: 8;
-        beNotHomogeneous;
-        add: modelRow expand: false;
-        add: hostRow expand: false;
-        add: portRow expand: false;
-        add: tempRow expand: false;
-        yourself.
-
-    ^ mainLayout
+	^ mainLayout
 ]
 
 { #category : 'initialization' }
-OllamaSettingsPresenter >> initializePresenters [ 
+OllamaSettingsPresenter >> initializePresenters [
 
-    super initializePresenters.
+	super initializePresenters.
 
-    "Create the drop-list and button for models"
-    modelsDrop    := SpDropListPresenter new.
-    refreshButton := self newButton
-        label: 'Refresh';
-        icon: (self iconNamed: #refresh);
-        action: [ self refreshModels ].
-    self refreshModels.
+	modelsDrop := SpDropListPresenter new.
+	refreshButton := self newButton
+		                 label: 'Refresh';
+		                 icon: (self iconNamed: #refresh);
+		                 action: [ self refreshModels ].
+	self refreshModels.
+	hostInput := self newTextInput
+		             placeholder: 'localhost';
+		             text: model host;
+		             yourself.
 
-    "Create host, port, temperature inputs and set their initial texts from the agent"
-    hostInput := self newTextInput
-        placeholder: 'localhost';
-        text: (model host);
-        yourself.
+	portInput := self newTextInput
+		             placeholder: '11434';
+		             text: model port;
+		             yourself.
 
-    portInput := self newTextInput
-        placeholder: '11434';
-        text: (model port);
-        yourself.
-
-    temperatureInput := self newTextInput
-        placeholder: '0.0';
-        text: (model temperature asString);
-        yourself.
-
+	temperatureInput := self newTextInput
+		                    placeholder: '0.0';
+		                    text: model temperature asString;
+		                    yourself
 ]
 
 { #category : 'accessing' }

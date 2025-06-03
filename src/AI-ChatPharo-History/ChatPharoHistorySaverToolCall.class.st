@@ -14,7 +14,7 @@ Class {
 	#package : 'AI-ChatPharo-History'
 }
 
-{ #category : 'as yet unclassified' }
+{ #category : 'contents' }
 ChatPharoHistorySaverToolCall class >> id: anId functionName: aFn arguments: args content: c [ 
 
 	^ self basicNew initializeWithID: anId functionName: aFn arguments: args content: c; yourself
@@ -69,10 +69,12 @@ ChatPharoHistorySaverToolCall >> id: anObject [
 ]
 
 { #category : 'initialization' }
-ChatPharoHistorySaverToolCall >> initializeWithID: anId functionName: aFn arguments: args content: c [ 
+ChatPharoHistorySaverToolCall >> initializeWithID: anId functionName: aFn arguments: args content: c [
 
-	super initialize.
-	id := anId. functionName := aFn. arguments := args. content := c
+	id := anId.
+	functionName := aFn.
+	arguments := args.
+	content := c
 ]
 
 { #category : 'initialization' }
