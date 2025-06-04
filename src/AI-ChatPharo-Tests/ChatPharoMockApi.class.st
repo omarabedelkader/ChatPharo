@@ -3,7 +3,7 @@ a mock class
 "
 Class {
 	#name : 'ChatPharoMockApi',
-	#superclass : 'ChatPharoTool',
+	#superclass : 'Object',
 	#instVars : [
 		'conversationHistory',
 		'currentModel'

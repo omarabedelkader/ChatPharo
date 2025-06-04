@@ -19,12 +19,12 @@ ChatPharoBrowser class >> packageActivation [
 { #category : 'building' }
 ChatPharoBrowser >> build [
 
-    | chat presenter |
-    chat := ChatPharoChat new
-        agent: ChatPharoSettings default agent;
-        yourself.
-    presenter := chat presenter.
-    self addMorph: presenter build fullFrame: LayoutFrame identity
+	| chat presenter |
+	chat := ChatPharoChat new
+		        agent: ChatPharoSettings default agent;
+		        yourself.
+	presenter := chat presenter.
+	self addMorph: presenter build fullFrame: LayoutFrame identity
 ]
 
 { #category : 'accessing' }
