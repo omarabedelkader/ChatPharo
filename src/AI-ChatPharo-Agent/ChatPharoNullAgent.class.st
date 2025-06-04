@@ -32,7 +32,7 @@ ChatPharoNullAgent class >> modelNames [
 { #category : 'initialization' }
 ChatPharoNullAgent >> getResponseForPrompt: aString [
 
-	^ ' No backend is configured. Open Settings → API and choose an API first.'
+	^ ' No backend is configured. Open Settings → Configuration and select an API first.'
 ]
 
 { #category : 'initialization' }
