@@ -20,7 +20,7 @@ Class {
 	#package : 'AI-ChatPharo-Tools'
 }
 
-{ #category : 'as yet unclassified' }
+{ #category : 'instance creation' }
 ChatPharoTool class >> baseURL: baseURL apiKey: apiKey system: system [
 
 	^ self
@@ -30,7 +30,7 @@ ChatPharoTool class >> baseURL: baseURL apiKey: apiKey system: system [
 		  tools: nil
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'instance creation' }
 ChatPharoTool class >> baseURL: baseURL apiKey: apiKey system: system tools: tools [
 
 	^ self basicNew
@@ -41,13 +41,13 @@ ChatPharoTool class >> baseURL: baseURL apiKey: apiKey system: system tools: too
 		  yourself
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'instance creation' }
 ChatPharoTool class >> baseURL: baseURL system: system [
 
 	^ self baseURL: baseURL system: system tools: nil
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'instance creation' }
 ChatPharoTool class >> baseURL: baseURL system: system tools: tools [
 
 	^ self
@@ -57,13 +57,13 @@ ChatPharoTool class >> baseURL: baseURL system: system tools: tools [
 		  tools: tools
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'instance creation' }
 ChatPharoTool class >> geminiWithAPIKey: apiKey system: system [
 
 	^ self geminiWithAPIKey: apiKey system: system tools: nil
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'instance creation' }
 ChatPharoTool class >> geminiWithAPIKey: apiKey system: system tools: tools [
 
 	^ self
@@ -74,13 +74,19 @@ ChatPharoTool class >> geminiWithAPIKey: apiKey system: system tools: tools [
 		  tools: tools
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'instance creation' }
+ChatPharoTool class >> new [
+
+	^ self ollamaWithSystem: nil
+]
+
+{ #category : 'instance creation' }
 ChatPharoTool class >> ollamaWithSystem: system [ 
 
 	^ self ollamaWithSystem: system tools: nil
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'instance creation' }
 ChatPharoTool class >> ollamaWithSystem: system tools: tools [ 
 
 	^ self baseURL: (ZnUrl fromString: 'http://localhost:11434/v1') system: system tools: tools
