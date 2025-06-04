@@ -15,7 +15,7 @@ ChatPharoTest >> setUp [
 
 	super setUp.
 	app := ChatPharo new.
-	mockApi := ChatPharoMockApi new.
+	mockApi := MockApi new.
 	app settings instVarNamed: #agent put: mockApi
 ]
 

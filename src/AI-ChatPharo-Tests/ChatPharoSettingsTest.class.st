@@ -16,7 +16,7 @@ ChatPharoSettingsTest >> setUp [
 	super setUp.
 	
 	settings := ChatPharoSettings new.
-	mockApi := ChatPharoMockApi new.
+	mockApi := MockApi new.
 	settings instVarNamed: #agent put: mockApi
 ]
 
@@ -31,7 +31,7 @@ ChatPharoSettingsTest >> testAvailableApiChoicesReturnsAssociations [
 ChatPharoSettingsTest >> testModelsDelegation [
 	self
 		assert: settings models
-		equals: (ChatPharoMockApi modelNames).
+		equals: (MockApi modelNames).
 
 ]
 

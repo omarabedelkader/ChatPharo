@@ -2,7 +2,7 @@
 a mock class
 "
 Class {
-	#name : 'ChatPharoMockApi',
+	#name : 'MockApi',
 	#superclass : 'Object',
 	#instVars : [
 		'conversationHistory',
@@ -14,12 +14,12 @@ Class {
 }
 
 { #category : 'api' }
-ChatPharoMockApi class >> modelNames [
+MockApi class >> modelNames [
 	^ #('mock-default' 'mock-advanced')
 ]
 
 { #category : 'private - uffi' }
-ChatPharoMockApi >> getResponseForPrompt: aPromptString [
+MockApi >> getResponseForPrompt: aPromptString [
 
 	conversationHistory addLast: { (#userPrompt -> aPromptString) }.
 	^ '<<' , currentModel asUppercase , '-REPLY to: ' , aPromptString
@@ -27,19 +27,19 @@ ChatPharoMockApi >> getResponseForPrompt: aPromptString [
 ]
 
 { #category : 'initialization' }
-ChatPharoMockApi >> initialize [
+MockApi >> initialize [
 	super initialize.
 	conversationHistory := OrderedCollection new.
 	currentModel := 'mock-default'.
 ]
 
 { #category : 'initialization' }
-ChatPharoMockApi >> model: aString [
+MockApi >> model: aString [
 	currentModel := aString.
 ]
 
 { #category : 'private - uffi' }
-ChatPharoMockApi >> system: aSystemPrompt [
+MockApi >> system: aSystemPrompt [
 
 	conversationHistory addLast: { (#systemPrompt -> aSystemPrompt) }.
 	^ self
