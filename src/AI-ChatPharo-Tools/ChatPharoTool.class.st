@@ -137,39 +137,30 @@ ChatPharoTool >> client [
 { #category : 'initialization' }
 ChatPharoTool >> getResponseForHistory: history [ 
 
-        | messages data response message reply |
+	| messages data response message |
+	messages := Array streamContents: [ :stream |
+		system ifNotNil: [
+			stream nextPut: (Dictionary with: 'role'->'system' with: 'content'->system) ].
+		history putOpenAIChatMessagesOn: stream ].
 
-        messages := Array streamContents: [ :stream |
-                system ifNotNil: [
-                        stream nextPut: (Dictionary with:'role'->'system' with:'content'->system) ].
-                history putOpenAIChatMessagesOn: stream ] asOrderedCollection.
+	data := Dictionary with:'model'->model with:'messages'->messages.
+	tools ifNotNil:[
+		data add:'tools'->(tools collect:[:t| t openAIChatTool ] as:Array);
+		add:'tool_choice'->'auto'].
 
-        [
-                data := Dictionary
-                                with:'model'->model
-                                with:'messages'->messages asArray.
-                tools ifNotNil:[
-                        data add:'tools'->(tools collect:[:t| t openAIChatTool ] as:Array);
-                        add:'tool_choice'->'auto'].
+	response := self client addPath: #('chat' 'completions');
+		entity:(ZnEntity json:(STONJSON toString:data));
+		timeout:(Duration minutes:5) asSeconds;
+		post;
+		response.
 
-                response := self client addPath: #('chat' 'completions');
-                        entity:(ZnEntity json:(STONJSON toString:data));
-                        timeout:(Duration minutes:5) asSeconds;
-                        post;
-                        response.
+	response isSuccess ifFalse:[ Error signal:'Could not get chat completion' ].
 
-                response isSuccess ifFalse:[ Error signal:'Could not get chat completion' ].
-
-                message := ((STONJSON fromString: response contents) at:'choices') first at:'message'.
-                reply := ChatPharoHistorySaver
-                                role:'assistant'
-                                content:(message at:'content' ifAbsent:[ nil ])
-                                toolCalls:(self toolCallsFromMessage: message).
-
-                messages addAll:(Array streamContents:[ :s | reply putOpenAIChatMessagesOn: s ]).
-        ] whileTrue:[ reply toolCalls notNil ].
-
-        ^ reply
+	message := ((STONJSON fromString: response contents) at:'choices') first at:'message'.
+	^ ChatPharoHistorySaver
+		role:'assistant'
+		content:(message at:'content' ifAbsent:[ nil ])
+		toolCalls:(self toolCallsFromMessage: message)
 
 ]
 

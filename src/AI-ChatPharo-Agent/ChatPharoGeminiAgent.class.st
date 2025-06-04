@@ -76,16 +76,15 @@ ChatPharoGeminiAgent >> apiKey: anObject [
 { #category : 'initialization' }
 ChatPharoGeminiAgent >> getResponseForPrompt: userPrompt [
 
-        | api reply |
-        api := ChatPharoTool
-                       geminiWithAPIKey: apiKey
-                       system: (system ifEmpty: [ '' ])
-                       tools: self tools.
-        temperature ifNotNil: [ api model: model ].
-        reply := api getResponseForHistory: self history.
-        self history addMessage:
-                (ChatPharoHistoryMessage role: 'assistant' content: reply content toolCalls: reply toolCalls).
-        ^ reply content
+	| api result |
+	api := ChatPharoTool
+		       geminiWithAPIKey: apiKey
+		       system: (system ifEmpty: [ '' ]).
+	temperature ifNotNil: [ api model: model ].
+	result := api getResponseForHistory:
+		          (ChatPharoHistorySaver role: 'user' content: userPrompt).
+		
+	^ result content
 ]
 
 { #category : 'accessing' }
