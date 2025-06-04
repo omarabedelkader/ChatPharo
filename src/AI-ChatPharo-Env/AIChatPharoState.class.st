@@ -26,3 +26,7 @@ AIChatPharoState class >> aiWorldMenuOn: aBuilder [
 					icon: (self iconNamed: #smallConfiguration);
 					help: 'Open ChatPharo settings' ]
 ]
+
+{ #category : 'see class side' }
+AIChatPharoState >> seeClassSide [
+]
