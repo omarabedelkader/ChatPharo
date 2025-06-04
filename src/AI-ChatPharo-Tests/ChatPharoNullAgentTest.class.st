@@ -1,5 +1,5 @@
 Class {
-	#name : 'NullAgentTest',
+	#name : 'ChatPharoNullAgentTest',
 	#superclass : 'TestCase',
 	#category : 'AI-ChatPharo-Tests-Agent',
 	#package : 'AI-ChatPharo-Tests',
@@ -7,14 +7,14 @@ Class {
 }
 
 { #category : 'tests' }
-NullAgentTest >> testDisplayName [ 
+ChatPharoNullAgentTest >> testDisplayName [ 
     self assert: ChatPharoNullAgent displayName equals: 'None (offline)'
 
 
 ]
 
 { #category : 'tests' }
-NullAgentTest >> testGetResponseForPromptReturnsWarning [ 
+ChatPharoNullAgentTest >> testGetResponseForPromptReturnsWarning [ 
 
     | msg |
     msg := (ChatPharoNullAgent new getResponseForPrompt: 'ignored').
@@ -22,25 +22,25 @@ NullAgentTest >> testGetResponseForPromptReturnsWarning [
 ]
 
 { #category : 'tests' }
-NullAgentTest >> testIsAlwaysReachable [ 
+ChatPharoNullAgentTest >> testIsAlwaysReachable [ 
 
     self assert: ChatPharoNullAgent isReachable
 ]
 
 { #category : 'tests' }
-NullAgentTest >> testModelInformationDefault [ 
+ChatPharoNullAgentTest >> testModelInformationDefault [ 
 
     self assert: (ChatPharoNullAgent new modelInformation) equals: 'No model selected yet'
 ]
 
 { #category : 'tests' }
-NullAgentTest >> testModelNamesIsEmpty [ 
+ChatPharoNullAgentTest >> testModelNamesIsEmpty [ 
 
     self assert: ChatPharoNullAgent modelNames isEmpty
 ]
 
 { #category : 'tests' }
-NullAgentTest >> testSettingsPresenterIsNil [ 
+ChatPharoNullAgentTest >> testSettingsPresenterIsNil [ 
 
     self assert: (ChatPharoNullAgent settingsPresenterFor: nil) isNil
 ]
