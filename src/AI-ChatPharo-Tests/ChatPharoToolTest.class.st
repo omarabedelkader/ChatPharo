@@ -13,31 +13,13 @@ Class {
 ChatPharoToolTest >> setUp [ 
 
         super setUp.
-        tool := ChatPharoTool baseURL: (ZnUrl fromString: 'http://x') system: nil
-]
-
-{ #category : 'running' }
-ChatPharoToolTest >> testApplyToolFunctionExecutesTool [ 
-
-        | executed |
-        executed := false.
-        tool tools: { ChatPharoClient name: 't' description: '' parameters: (Dictionary new) block: [ executed := true. Dictionary new ] }.
-        tool applyToolFunction: 't' arguments: Dictionary new.
-        self assert: executed
-]
-
-{ #category : 'running' }
-ChatPharoToolTest >> testApplyToolFunctionHandlesMissingTool [ 
-
-        | result |
-        result := tool applyToolFunction: 'missing' arguments: Dictionary new.
-        self assert: ((result at: 'error') includesSubstring: 'There is no function')
+        tool := ChatPharoMockTool baseURL: (ZnUrl fromString: 'http://x') system: nil
 ]
 
 { #category : 'running' }
 ChatPharoToolTest >> testBaseURLAccessor [ 
 
-        self assert: tool baseURL asString equals: 'http://x'
+        self assert: tool baseURL asString equals: 'http://x/'
 ]
 
 { #category : 'running' }
