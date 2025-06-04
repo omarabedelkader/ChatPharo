@@ -1,6 +1,6 @@
 Class {
 	#name : 'ChatPharoMockTool',
-	#superclass : 'ChatPharoTool',
+	#superclass : 'Object',
 	#instVars : [
 		'conversationHistory',
 		'currentModel'
