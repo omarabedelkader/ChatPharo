@@ -1,12 +1,12 @@
 Class {
-	#name : 'CPWorldMenu',
+	#name : 'AIChatPharoWorldMenu',
 	#superclass : 'RSObject',
 	#category : 'AI-ChatPharo-Env',
 	#package : 'AI-ChatPharo-Env'
 }
 
 { #category : 'loading' }
-CPWorldMenu class >> loadExporters [
+AIChatPharoWorldMenu class >> loadExporters [
 
 	Metacello new
 		githubUser: 'omarabedelkader'
@@ -18,7 +18,7 @@ CPWorldMenu class >> loadExporters [
 ]
 
 { #category : 'loading' }
-CPWorldMenu class >> loadFullVersion [
+AIChatPharoWorldMenu class >> loadFullVersion [
 	"TODO do not discard changes"
 
 	(UIManager default confirm:
@@ -38,7 +38,7 @@ CPWorldMenu class >> loadFullVersion [
 ]
 
 { #category : 'loading' }
-CPWorldMenu class >> menu00ChatPharoOn: aBuilder [
+AIChatPharoWorldMenu class >> menu00ChatPharoOn: aBuilder [
 
 	<worldMenu>
 	(aBuilder item: #ChatPharo)
@@ -67,7 +67,7 @@ CPWorldMenu class >> menu00ChatPharoOn: aBuilder [
 ]
 
 { #category : 'loading' }
-CPWorldMenu class >> menu04DocumentationOn: aBuilder [
+AIChatPharoWorldMenu class >> menu04DocumentationOn: aBuilder [
 
 	<worldMenu>
 	(aBuilder item: #ChatPharoDocumentation)
@@ -83,7 +83,7 @@ CPWorldMenu class >> menu04DocumentationOn: aBuilder [
 ]
 
 { #category : 'loading' }
-CPWorldMenu class >> menu06LoadFullVersionOn: aBuilder [
+AIChatPharoWorldMenu class >> menu06LoadFullVersionOn: aBuilder [
 
 	<worldMenu>
 	(aBuilder item: #ChatPharoLoadFullVersion)
@@ -95,7 +95,7 @@ CPWorldMenu class >> menu06LoadFullVersionOn: aBuilder [
 ]
 
 { #category : 'loading' }
-CPWorldMenu class >> menu07ChatPharoOn: aBuilder [
+AIChatPharoWorldMenu class >> menu07ChatPharoOn: aBuilder [
 
 	<worldMenu>
 	(aBuilder item: #ChatPharoLoadFullVersion)
@@ -107,5 +107,5 @@ CPWorldMenu class >> menu07ChatPharoOn: aBuilder [
 ]
 
 { #category : 'see class side' }
-CPWorldMenu >> seeClassSide [
+AIChatPharoWorldMenu >> seeClassSide [
 ]
