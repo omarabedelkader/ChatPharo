@@ -18,24 +18,30 @@ ChatPharoState class >> aiWorldMenuOn: aBuilder [
 		with: [
 				(aBuilder item: #AskChatPharo)
 					action: [ ChatPharo new presenter open ];
+					label: 'Ask ChatPharo';
 					icon: (self iconNamed: #settings);
 					help: 'Ask ChatPharo'.
-				(aBuilder item: #ChatPharo)
+					
+				(aBuilder item: #TempChatPharo)
 					action: [ ChatPharo new presenter open ];
+					label: 'Temp ChatPharo';
 					icon: (self iconNamed: #settings);
 					help: 'Open Temp Chat'.
 
 				(aBuilder item: #ChatPharoSettings)
 					action: [ ChatPharoSettings new presenter open ];
+					label: 'ChatPharo Settings';
 					icon: (self iconNamed: #smallConfiguration);
 					help: 'Open ChatPharo settings'.
-					
-				(aBuilder item: #ChatPharoDocumentation)
-					action: [ WebBrowser openOn: 'https://github.com/omarabedelkader/ChatPharo/wiki'];
-					icon: (self iconNamed: #smallHelp);
-					help: 'Will open the webpage https://github.com/omarabedelkader/ChatPharo/wiki'.
-		]
 
+				(aBuilder item: #ChatPharoDocumentation)
+					action: [
+						WebBrowser openOn:
+								'https://github.com/omarabedelkader/ChatPharo/wiki' ];
+					label: 'ChatPharo Wiki';
+					icon: (self iconNamed: #smallHelp);
+					help:
+						'Will open the webpage https://github.com/omarabedelkader/ChatPharo/wiki' ]
 ]
 
 { #category : 'see class side' }
