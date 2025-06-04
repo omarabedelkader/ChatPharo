@@ -21,9 +21,49 @@ Class {
 	#instVars : [
 		'agent'
 	],
+	#classInstVars : [
+		'Default'
+	],
 	#category : 'AI-ChatPharo',
 	#package : 'AI-ChatPharo'
 }
+
+{ #category : 'accessing' }
+ChatPharoSettings class >> default [ 
+
+    Default ifNil: [ Default := self loadOrNew ].
+    ^ Default
+]
+
+{ #category : 'accessing' }
+ChatPharoSettings class >> loadOrNew [ 
+
+    | path file settings |
+path := FileLocator imageDirectory / 'chatpharo-settings.ston'.
+
+    file := path exists ifTrue: [ path readStream ] ifFalse: [ ^ self new ].
+    
+    [ settings := STON fromStream: file ]
+        on: Error
+        do: [ ^ self new ].
+        
+    ^ settings
+]
+
+{ #category : 'accessing' }
+ChatPharoSettings class >> resetDefault [ 
+
+    Default := nil
+]
+
+{ #category : 'accessing' }
+ChatPharoSettings class >> saveDefault [ 
+
+    | path |
+    path := FileLocator imageDirectory / 'chatpharo-settings.ston'.
+    path writeStreamDo: [ :stream | STON put: self default onStream: stream ].
+
+]
 
 { #category : 'initialization' }
 ChatPharoSettings >> agent [
@@ -69,11 +109,13 @@ ChatPharoSettings >> presenter [
 { #category : 'initialization' }
 ChatPharoSettings >> useApi: anAgentClass [
 
-    agent := anAgentClass new
+	agent := anAgentClass new.
+	self class saveDefault
 ]
 
 { #category : 'initialization' }
-ChatPharoSettings >> useModel: aModelName [ 
+ChatPharoSettings >> useModel: aModelName [
 
-    agent model: aModelName
+	agent model: aModelName.
+	self class saveDefault
 ]

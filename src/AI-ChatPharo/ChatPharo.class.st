@@ -35,7 +35,7 @@ ChatPharo >> chats [
 ChatPharo >> initialize [
 
 	super initialize.
-	settings := ChatPharoSettings new.
+	settings := ChatPharoSettings default.
 	chats := OrderedCollection new
 ]
 
