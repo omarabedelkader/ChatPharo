@@ -69,7 +69,7 @@ ChatPharoSettingsPresenter >> initializePresenters [
 
 	notebook addPage: (SpNotebookPage
 			 title: 'Configuration'
-			 icon: (self iconNamed: #announcement)
+			 icon: (self iconNamed: #smallConfiguration)
 			 provider: [ self newConfigurationTab ]).
 
 	modelsRefreshButton := self newButton
@@ -89,10 +89,10 @@ ChatPharoSettingsPresenter >> initializePresenters [
 		                       items: model models;
 		                       display: [ :e | e ];
 		                       yourself.
-        systemPromptInput := self newTextInput
-                                       placeholder: 'System prompt...';
-                                       text: model agent system;
-                                       yourself.
+	systemPromptInput := self newTextInput
+		                     placeholder: 'System prompt...';
+		                     text: model agent system;
+		                     yourself.
 	apiDropList selectItem: (model availableApiChoices
 			 detect: [ :assoc | assoc value = model agent class ]
 			 ifNone: [ model availableApiChoices first ]).

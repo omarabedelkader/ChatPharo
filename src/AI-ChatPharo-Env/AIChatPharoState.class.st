@@ -10,21 +10,19 @@ Class {
 
 { #category : 'world state' }
 AIChatPharoState class >> aiWorldMenuOn: aBuilder [
-    <worldMenu>
-    (aBuilder item: #AI)
-        order: 10;
-        help: 'Tools to explore and modify the image';
-        with: [
-	
-            (aBuilder item: #'ChatPharo')
-                action: [ ChatPharo new presenter open ];
-		  icon: (self iconNamed: #setting);
-                help: 'Open ChatPharo'.
 
-            (aBuilder item: #'ChatPharoSettings')
-                action: [ ChatPharoSettings new presenter open ];
-		  icon: (self iconNamed: #setting);
-                help: 'Open ChatPharo settings'
-        ].
+	<worldMenu>
+	(aBuilder item: #AI)
+		order: 10;
+		help: 'Tools to explore and modify the image';
+		with: [
+				(aBuilder item: #ChatPharo)
+					action: [ ChatPharo new presenter open ];
+					icon: (self iconNamed: #settings);
+					help: 'Open ChatPharo'.
 
+				(aBuilder item: #ChatPharoSettings)
+					action: [ ChatPharoSettings new presenter open ];
+					icon: (self iconNamed: #smallConfiguration);
+					help: 'Open ChatPharo settings' ]
 ]
