@@ -48,5 +48,10 @@ BaselineOfAIChatPharo >> baseline: spec [
 				with: [ spec requires: #( 'AI-ChatPharo' ) ].
 			spec
 				package: 'AI-ChatPharo-History'
-				with: [ spec requires: #( 'AI-ChatPharo' ) ] ]
+				with: [ spec requires: #( 'AI-ChatPharo' ) ].
+			spec
+				package: 'AI-ChatPharo-Env'
+				with: [ spec requires: #( 'AI-ChatPharo' ) ] ]	
+				
+			
 ]
