@@ -29,7 +29,7 @@ ChatPharoState class >> aiWorldMenuOn: aBuilder [
 					help: 'Open Temp Chat'.
 
 				(aBuilder item: #ChatPharoSettings)
-					action: [ ChatPharoSettings default presenter open ];
+					action: [ ChatPharoSettings new presenter open ];
 					label: 'ChatPharo Settings';
 					icon: (self iconNamed: #smallConfiguration);
 					help: 'Open ChatPharo settings'.

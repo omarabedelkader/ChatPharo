@@ -122,15 +122,14 @@ ChatPharoSettingsPresenter >> newChatTab [
 						    action: [ self deleteAllChats ];
 						    yourself)
 				   expand: false;
-				                                add: (SpBoxLayout newHorizontal
-                                                    spacing: 8;
-                                                    add: 'System:' expand: false;
-                                                    add: systemPromptInput;
-                                                    yourself)
-                                   expand: false;
-                                   add: apiSettingsContainer;
-                                   yourself);
-				   yourself;
+				   add: (SpBoxLayout newHorizontal
+						    spacing: 8;
+						    add: 'System:' expand: false;
+						    add: systemPromptInput;
+						    yourself)
+				   expand: false;
+				   yourself);
+		  yourself;
 		  yourself
 ]
 

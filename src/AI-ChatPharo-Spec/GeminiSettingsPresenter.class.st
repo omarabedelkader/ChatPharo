@@ -29,16 +29,17 @@ GeminiSettingsPresenter >> apiKeyField: anObject [
 
 { #category : 'layout' }
 GeminiSettingsPresenter >> defaultLayout [
+
 	^ SpBoxLayout newTopToBottom
-		add:'Host:' expand:false;
-		add:hostField expand:false;
-		add:'API‑Key:' expand:false;
-		add:apiKeyField expand:false;
-		add:'Model:' expand:false;
-		add:modelDrop expand:false;
-		add:'Temperature:' expand:false;
-		add:temperatureSlider expand:false;
-		yourself
+		  add: 'Host:' expand: false;
+		  add: hostField expand: false;
+		  add: 'API-KEY:' expand: false;
+		  add: apiKeyField expand: false;
+		  add: 'Model:' expand: false;
+		  add: modelDrop expand: false;
+		  add: 'Temperature:' expand: false;
+		  add: temperatureSlider expand: false;
+		  yourself
 ]
 
 { #category : 'accessing' }
