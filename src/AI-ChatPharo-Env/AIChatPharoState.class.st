@@ -18,10 +18,12 @@ AIChatPharoState class >> aiWorldMenuOn: aBuilder [
 	
             (aBuilder item: #'ChatPharo')
                 action: [ ChatPharo new presenter open ];
+		  icon: (self iconNamed: #setting);
                 help: 'Open ChatPharo'.
 
             (aBuilder item: #'ChatPharoSettings')
                 action: [ ChatPharoSettings new presenter open ];
+		  icon: (self iconNamed: #setting);
                 help: 'Open ChatPharo settings'
         ].
 
