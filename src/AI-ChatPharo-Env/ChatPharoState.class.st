@@ -2,14 +2,14 @@
 This a class that class chatpharo at user request inside a specific env
 "
 Class {
-	#name : 'AIChatPharoState',
+	#name : 'ChatPharoState',
 	#superclass : 'WorldState',
 	#category : 'AI-ChatPharo-Env',
 	#package : 'AI-ChatPharo-Env'
 }
 
 { #category : 'world state' }
-AIChatPharoState class >> aiWorldMenuOn: aBuilder [
+ChatPharoState class >> aiWorldMenuOn: aBuilder [
 
 	<worldMenu>
 	(aBuilder item: #AI)
@@ -28,5 +28,5 @@ AIChatPharoState class >> aiWorldMenuOn: aBuilder [
 ]
 
 { #category : 'see class side' }
-AIChatPharoState >> seeClassSide [
+ChatPharoState >> seeClassSide [
 ]
