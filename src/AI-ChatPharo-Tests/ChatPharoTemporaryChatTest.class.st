@@ -35,3 +35,18 @@ ChatPharoTemporaryChatTest >> testSubmitInvokesBlockWithText [
 	tmp submit.
 	self assert: captured equals: 'payload'.
 ]
+
+{ #category : 'running' }
+ChatPharoTemporaryChatTest >> testSubmitWithoutBlockIsSafe [ 
+
+        tmp text: 'bar'.
+        tmp submit.
+        self assert: tmp text equals: 'bar'.
+]
+
+{ #category : 'running' }
+ChatPharoTemporaryChatTest >> testTextAccessor [ 
+
+        tmp text: 'foo'.
+        self assert: tmp text equals: 'foo'.
+]

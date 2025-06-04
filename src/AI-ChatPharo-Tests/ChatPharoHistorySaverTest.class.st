@@ -1,0 +1,69 @@
+Class {
+	#name : 'ChatPharoHistorySaverTest',
+	#superclass : 'TestCase',
+	#instVars : [
+		'saver'
+	],
+	#category : 'AI-ChatPharo-Tests-History',
+	#package : 'AI-ChatPharo-Tests',
+	#tag : 'History'
+}
+
+{ #category : 'running' }
+ChatPharoHistorySaverTest >> setUp [ 
+
+        super setUp.
+        saver := ChatPharoHistorySaver role: 'user' content: 'hi'
+]
+
+{ #category : 'running' }
+ChatPharoHistorySaverTest >> testContentSetterGetter [ 
+
+        saver content: 'bye'.
+        self assert: saver content equals: 'bye'.
+
+]
+
+{ #category : 'running' }
+ChatPharoHistorySaverTest >> testHistoryStringOnOutputsCorrectFormat [ 
+
+        | s |
+        s := String new writeStream.
+        saver historyStringOn: s.
+        self assert: (s contents includesSubstring: 'user: hi').
+]
+
+{ #category : 'running' }
+ChatPharoHistorySaverTest >> testOpenAIChatMessagesOnWithToolCalls [ 
+
+        | call strm |
+        call := ChatPharoHistorySaverToolCall id: '1' functionName: 'f' arguments: '{}' content: 'c'.
+        saver toolCalls: { call }.
+        strm := Array new writeStream.
+        saver putOpenAIChatMessagesOn: strm.
+        self assert: (strm contents first at: 'tool_calls') notNil.
+]
+
+{ #category : 'running' }
+ChatPharoHistorySaverTest >> testOpenAIChatMessagesOnWithoutToolCalls [ 
+
+        | strm |
+        strm := Array new writeStream.
+        saver putOpenAIChatMessagesOn: strm.
+        self assert: (strm contents first at: 'role') equals: 'user'.
+]
+
+{ #category : 'running' }
+ChatPharoHistorySaverTest >> testRoleContentCreation [ 
+
+        self assert: saver role equals: 'user'.
+        self assert: saver content equals: 'hi'.
+]
+
+{ #category : 'running' }
+ChatPharoHistorySaverTest >> testRoleSetterGetter [ 
+
+        saver role: 'assistant'.
+        self assert: saver role equals: 'assistant'.
+
+]
