@@ -2,33 +2,33 @@
 Sub-panel inserted by ChatPharoSettingsPresenter when the Gemini agent is selected. Edits host, apiKey, model, and temperature.
 "
 Class {
-	#name : 'GeminiSettingsPresenter',
+	#name : 'ChatPharoGeminiSettingsPresenter',
 	#superclass : 'SpPresenter',
 	#instVars : [
 		'hostField',
 		'apiKeyField',
 		'modelDrop',
-		'temperatureSlider',
-		'model'
+		'model',
+		'temperatureInput'
 	],
 	#category : 'AI-ChatPharo-Spec',
 	#package : 'AI-ChatPharo-Spec'
 }
 
 { #category : 'accessing' }
-GeminiSettingsPresenter >> apiKeyField [
+ChatPharoGeminiSettingsPresenter >> apiKeyField [
 
 	^ apiKeyField
 ]
 
 { #category : 'accessing' }
-GeminiSettingsPresenter >> apiKeyField: anObject [
+ChatPharoGeminiSettingsPresenter >> apiKeyField: anObject [
 
 	apiKeyField := anObject
 ]
 
 { #category : 'layout' }
-GeminiSettingsPresenter >> defaultLayout [
+ChatPharoGeminiSettingsPresenter >> defaultLayout [
 
 	^ SpBoxLayout newTopToBottom
 		  add: 'Host:' expand: false;
@@ -38,64 +38,69 @@ GeminiSettingsPresenter >> defaultLayout [
 		  add: 'Model:' expand: false;
 		  add: modelDrop expand: false;
 		  add: 'Temperature:' expand: false;
-		  add: temperatureSlider expand: false;
+		  add: temperatureInput expand: false;
 		  yourself
 ]
 
 { #category : 'accessing' }
-GeminiSettingsPresenter >> hostField [
+ChatPharoGeminiSettingsPresenter >> hostField [
 
 	^ hostField
 ]
 
 { #category : 'accessing' }
-GeminiSettingsPresenter >> hostField: anObject [
+ChatPharoGeminiSettingsPresenter >> hostField: anObject [
 
 	hostField := anObject
 ]
 
 { #category : 'initialization' }
-GeminiSettingsPresenter >> initializePresenters [
+ChatPharoGeminiSettingsPresenter >> initializePresenters [
 
 	super initializePresenters.
 	hostField := self newTextInput placeholder:
 		             'generativelanguage.googleapis.com'.
+		
 	apiKeyField := self newTextInput placeholder: 'API-KEY'.
+	
 	modelDrop := SpDropListPresenter new.
+	
 	self refreshModels.
-	temperatureSlider := SpSliderPresenter new
-		                     min: 0;
-		                     max: 1;
-		                     value: model temperature.
 
 	hostField whenTextChangedDo: [ :t | model host: t ].
+	
 	apiKeyField whenTextChangedDo: [ :t |
 			model apiKey: t.
 			self refreshModels ].
+		
 	modelDrop whenSelectedItemChangedDo: [ :m | model model: m ].
-	temperatureSlider whenValueChangedDo: [ :v | model temperature: v ]
+	
+	temperatureInput := self newTextInput
+		                    placeholder: '0.0';
+		                    text: model temperature asString;
+		                    yourself
 ]
 
 { #category : 'accessing' }
-GeminiSettingsPresenter >> model [
+ChatPharoGeminiSettingsPresenter >> model [
 
 	^ model
 ]
 
 { #category : 'accessing' }
-GeminiSettingsPresenter >> modelDrop [
+ChatPharoGeminiSettingsPresenter >> modelDrop [
 
 	^ modelDrop
 ]
 
 { #category : 'accessing' }
-GeminiSettingsPresenter >> modelDrop: anObject [
+ChatPharoGeminiSettingsPresenter >> modelDrop: anObject [
 
 	modelDrop := anObject
 ]
 
 { #category : 'initialization' }
-GeminiSettingsPresenter >> refreshModels [ 
+ChatPharoGeminiSettingsPresenter >> refreshModels [ 
 
 
         modelDrop
@@ -105,19 +110,7 @@ GeminiSettingsPresenter >> refreshModels [
 ]
 
 { #category : 'accessing - model' }
-GeminiSettingsPresenter >> setModelBeforeInitialization: anAgent [
+ChatPharoGeminiSettingsPresenter >> setModelBeforeInitialization: anAgent [
 
 	model := anAgent
-]
-
-{ #category : 'accessing' }
-GeminiSettingsPresenter >> temperatureSlider [
-
-	^ temperatureSlider
-]
-
-{ #category : 'accessing' }
-GeminiSettingsPresenter >> temperatureSlider: anObject [
-
-	temperatureSlider := anObject
 ]

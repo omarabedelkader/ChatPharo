@@ -14,7 +14,7 @@ Class {
 ChatPharoChatTest >> setUp [
 
 	super setUp.
-	mockApi := MockApi new.
+	mockApi := ChatPharoMockApi new.
 	chat := ChatPharoChat new agent: mockApi
 ]
 

@@ -2,7 +2,7 @@
 Equivalent sub-panel for the Ollama agent: lists local models and lets the user refresh/re-select them.
 "
 Class {
-	#name : 'OllamaSettingsPresenter',
+	#name : 'ChatPharoOllamaSettingsPresenter',
 	#superclass : 'SpPresenter',
 	#instVars : [
 		'model',
@@ -17,7 +17,7 @@ Class {
 }
 
 { #category : 'initialization' }
-OllamaSettingsPresenter >> connectPresenters [
+ChatPharoOllamaSettingsPresenter >> connectPresenters [
 
 	modelsDrop whenSelectedItemChangedDo: [ :name | model model: name ].
 	hostInput whenTextChangedDo: [ :text | model host: text ].
@@ -32,7 +32,7 @@ OllamaSettingsPresenter >> connectPresenters [
 ]
 
 { #category : 'layout' }
-OllamaSettingsPresenter >> defaultLayout [
+ChatPharoOllamaSettingsPresenter >> defaultLayout [
 
 	| mainLayout rowLayout modelRow hostRow portRow tempRow |
 	modelRow := SpBoxLayout newHorizontal
@@ -78,7 +78,7 @@ OllamaSettingsPresenter >> defaultLayout [
 ]
 
 { #category : 'initialization' }
-OllamaSettingsPresenter >> initializePresenters [
+ChatPharoOllamaSettingsPresenter >> initializePresenters [
 
 	super initializePresenters.
 
@@ -105,37 +105,37 @@ OllamaSettingsPresenter >> initializePresenters [
 ]
 
 { #category : 'accessing' }
-OllamaSettingsPresenter >> model [
+ChatPharoOllamaSettingsPresenter >> model [
 
 	^ model
 ]
 
 { #category : 'accessing' }
-OllamaSettingsPresenter >> modelsDrop [
+ChatPharoOllamaSettingsPresenter >> modelsDrop [
 
 	^ modelsDrop
 ]
 
 { #category : 'accessing' }
-OllamaSettingsPresenter >> modelsDrop: anObject [
+ChatPharoOllamaSettingsPresenter >> modelsDrop: anObject [
 
 	modelsDrop := anObject
 ]
 
 { #category : 'accessing' }
-OllamaSettingsPresenter >> refreshButton [
+ChatPharoOllamaSettingsPresenter >> refreshButton [
 
 	^ refreshButton
 ]
 
 { #category : 'accessing' }
-OllamaSettingsPresenter >> refreshButton: anObject [
+ChatPharoOllamaSettingsPresenter >> refreshButton: anObject [
 
 	refreshButton := anObject
 ]
 
 { #category : 'initialization' }
-OllamaSettingsPresenter >> refreshModels [ 
+ChatPharoOllamaSettingsPresenter >> refreshModels [ 
 
     modelsDrop
         items: model class modelNames;
@@ -144,6 +144,6 @@ OllamaSettingsPresenter >> refreshModels [
 ]
 
 { #category : 'accessing - model' }
-OllamaSettingsPresenter >> setModelBeforeInitialization: anAgent [
+ChatPharoOllamaSettingsPresenter >> setModelBeforeInitialization: anAgent [
 	model := anAgent
 ]

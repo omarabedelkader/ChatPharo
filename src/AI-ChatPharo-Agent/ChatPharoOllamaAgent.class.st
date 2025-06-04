@@ -85,7 +85,7 @@ ChatPharoOllamaAgent class >> ollamaVersion [
 
 { #category : 'api' }
 ChatPharoOllamaAgent class >> settingsPresenterFor: anAgent [
-	^ OllamaSettingsPresenter on: anAgent
+	^ ChatPharoOllamaSettingsPresenter on: anAgent
 ]
 
 { #category : 'initialization' }

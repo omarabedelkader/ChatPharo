@@ -58,7 +58,7 @@ ChatPharoGeminiAgent class >> modelNames [
 
 { #category : 'api' }
 ChatPharoGeminiAgent class >> settingsPresenterFor: anAgent [
-	^ GeminiSettingsPresenter on: anAgent
+	^ ChatPharoGeminiSettingsPresenter on: anAgent
 ]
 
 { #category : 'accessing' }

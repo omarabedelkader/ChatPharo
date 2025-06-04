@@ -2,7 +2,7 @@
 a mock class
 "
 Class {
-	#name : 'MockAdapter',
+	#name : 'ChatPharoMockAdapter',
 	#superclass : 'Object',
 	#instVars : [
 		'nextReplyString',
@@ -15,45 +15,45 @@ Class {
 }
 
 { #category : 'initialization' }
-MockAdapter >> getResponse [ 
+ChatPharoMockAdapter >> getResponse [ 
 
     ^ nextReplyString
 ]
 
 { #category : 'initialization' }
-MockAdapter >> initialize [ 
+ChatPharoMockAdapter >> initialize [ 
 
     super initialize.
     nextReplyString := 'MOCK'.
 ]
 
 { #category : 'initialization' }
-MockAdapter >> lastPrompt [ 
+ChatPharoMockAdapter >> lastPrompt [ 
 
     ^ lastPrompt
 ]
 
 { #category : 'initialization' }
-MockAdapter >> lastSystem [ 
+ChatPharoMockAdapter >> lastSystem [ 
 
     ^ lastSystem
 ]
 
 { #category : 'initialization' }
-MockAdapter >> nextReply: aString [ 
+ChatPharoMockAdapter >> nextReply: aString [ 
 
     nextReplyString := aString.
     ^ self
 ]
 
 { #category : 'initialization' }
-MockAdapter >> prompt: aString [ 
+ChatPharoMockAdapter >> prompt: aString [ 
 
     lastPrompt := aString
 ]
 
 { #category : 'initialization' }
-MockAdapter >> systemPrompt: aString [ 
+ChatPharoMockAdapter >> systemPrompt: aString [ 
 
     lastSystem := aString
 ]
