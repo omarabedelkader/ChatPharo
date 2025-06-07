@@ -74,6 +74,24 @@ ChatPharoTool class >> geminiWithAPIKey: apiKey system: system tools: tools [
 		  tools: tools
 ]
 
+{ #category : 'as yet unclassified' }
+ChatPharoTool class >> mistralWithAPIKey: apiKey system: system [ 
+
+
+        ^ self mistralWithAPIKey: apiKey system: system tools: nil
+]
+
+{ #category : 'as yet unclassified' }
+ChatPharoTool class >> mistralWithAPIKey: apiKey system: system tools: tools [ 
+
+
+        ^ self
+                  baseURL: (ZnUrl fromString: 'https://api.mistral.ai/v1')
+                  apiKey: apiKey
+                  system: system
+                  tools: tools
+]
+
 { #category : 'instance creation' }
 ChatPharoTool class >> new [
 

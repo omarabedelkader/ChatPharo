@@ -39,7 +39,9 @@ self subclassResponsibility.
 ]
 
 { #category : 'api' }
-ChatPharoAgent class >> modelNames [           self subclassResponsibility.
+ChatPharoAgent class >> modelNames [
+
+	self subclassResponsibility
 ]
 
 { #category : 'api' }
