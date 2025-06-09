@@ -16,12 +16,6 @@ ChatPharoState class >> aiWorldMenuOn: aBuilder [
 		order: 10;
 		help: 'Tools to explore and modify the image';
 		with: [
-				(aBuilder item: #AskChatPharo)
-					action: [ ChatPharo new presenter open ];
-					label: 'Ask ChatPharo';
-					icon: (self iconNamed: #settings);
-					help: 'Ask ChatPharo'.
-
 				(aBuilder item: #TempChatPharo)
 					action: [ ChatPharo new presenter open ];
 					label: 'Temp ChatPharo';
