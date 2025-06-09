@@ -19,11 +19,11 @@ ChatPharoState class >> aiWorldMenuOn: aBuilder [
 				(aBuilder item: #TempChatPharo)
 					action: [ ChatPharo new presenter open ];
 					label: 'Temp ChatPharo';
-					icon: (self iconNamed: #settings);
+					icon: (self iconNamed: #announcement);
 					help: 'Open Temp Chat'.
 
 				(aBuilder item: #ChatPharoSettings)
-					action: [ ChatPharoSettings new presenter open ];
+					action: [ ChatPharoSettings default presenter open ];
 					label: 'ChatPharo Settings';
 					icon: (self iconNamed: #smallConfiguration);
 					help: 'Open ChatPharo settings'.
