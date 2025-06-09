@@ -16,6 +16,12 @@ ChatPharoBrowser class >> packageActivation [
     ^ ClyTabActivationStrategyAnnotation for: Package asCalypsoItemContext
 ]
 
+{ #category : 'accessing' }
+ChatPharoBrowser class >> tabOrder [
+
+	^ -20
+]
+
 { #category : 'building' }
 ChatPharoBrowser >> build [
 
