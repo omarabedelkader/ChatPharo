@@ -10,7 +10,8 @@ Class {
 		'submitButton',
 		'cancelButton',
 		'clearButton',
-		'model'
+		'model',
+		'inspectButton'
 	],
 	#category : 'AI-ChatPharo-Spec',
 	#package : 'AI-ChatPharo-Spec'
@@ -29,6 +30,7 @@ ChatPharoChatPresenter >> connectPresenters [
 		model clearChat.
 		
 	].
+	inspectButton action: [ model inspect ].
 	
 	model whenAnswerReceivedDo: [ :message | 
 		messagesLayout add: message presenter	
@@ -44,6 +46,7 @@ ChatPharoChatPresenter >> defaultLayout [
                    add: messageTextField;
                    add: submitButton expand: false;
                    add: cancelButton expand: false;
+						 add: inspectButton expand: false;
                    yourself)
           expand: false;
           yourself
@@ -72,6 +75,12 @@ ChatPharoChatPresenter >> initializePresenters [
 		               label: 'Clear Chat';
 		               icon: (self iconNamed: #glamorousTrash);
 		               help: 'Clear chat history';
+		               yourself.
+		
+	inspectButton := self newButton
+		               label: 'Inspect';
+		               icon: (self iconNamed: #inspect);
+		               help: 'Inspect the chat object';
 		               yourself.
 
 	messagesLayout := SpBoxLayout newVertical.
