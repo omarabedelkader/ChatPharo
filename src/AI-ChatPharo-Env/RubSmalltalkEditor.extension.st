@@ -3,5 +3,7 @@ Extension { #name : 'RubSmalltalkEditor' }
 { #category : '*AI-ChatPharo-Env' }
 RubSmalltalkEditor >> openChatCharo [
 
-	ChatPharo new presenter open
+	 | selected |
+    selected := self selection asString.
+    ChatPharo ask: selected
 ]

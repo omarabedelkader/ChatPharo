@@ -25,6 +25,17 @@ Class {
 	#package : 'AI-ChatPharo'
 }
 
+{ #category : 'as yet unclassified' }
+ChatPharo class >> ask: text [ 
+
+        | chat |
+        chat := ChatPharoChat new
+                        agent: ChatPharoSettings default agent;
+                        yourself.
+        chat presenter open.
+        text ifNotEmpty: [ chat sendMessage: text ]
+]
+
 { #category : 'initialization' }
 ChatPharo >> chats [
 
