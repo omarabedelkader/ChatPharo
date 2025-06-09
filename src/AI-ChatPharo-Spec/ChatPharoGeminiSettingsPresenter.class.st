@@ -58,23 +58,27 @@ ChatPharoGeminiSettingsPresenter >> hostField: anObject [
 ChatPharoGeminiSettingsPresenter >> initializePresenters [
 
 	super initializePresenters.
-	hostField := self newTextInput placeholder:
-		             'generativelanguage.googleapis.com'.
-		
-	apiKeyField := self newTextInput placeholder: 'API-KEY'.
-	
+	hostField := self newTextInput 
+							placeholder:'generativelanguage.googleapis.com';
+							text: model host.
+
+	apiKeyField := self newTextInput
+							placeholder: 'API-KEY';
+							text: model apiKey.
+									
+
 	modelDrop := SpDropListPresenter new.
-	
+
 	self refreshModels.
 
 	hostField whenTextChangedDo: [ :t | model host: t ].
-	
+
 	apiKeyField whenTextChangedDo: [ :t |
 			model apiKey: t.
 			self refreshModels ].
-		
+
 	modelDrop whenSelectedItemChangedDo: [ :m | model model: m ].
-	
+
 	temperatureInput := self newTextInput
 		                    placeholder: '0.0';
 		                    text: model temperature asString;
