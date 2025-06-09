@@ -39,7 +39,7 @@ ChatPharoSettingsPresenter >> connectPresenters [
 			newPresenter ifNotNil: [ apiSettingsContainer add: newPresenter ].
 			systemPromptInput text: model agent systemPrompt ].
 	systemPromptInput whenTextChangedDo: [ :text |
-		model agent system: text ]
+		model agent systemPrompt: text ]
 ]
 
 { #category : 'layout' }

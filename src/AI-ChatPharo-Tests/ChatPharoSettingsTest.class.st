@@ -20,6 +20,13 @@ ChatPharoSettingsTest >> setUp [
 	settings instVarNamed: #agent put: mockApi
 ]
 
+{ #category : 'running' }
+ChatPharoSettingsTest >> tearDown [
+
+	ChatPharoSettings resetDefault.
+	super tearDown
+]
+
 { #category : 'tests' }
 ChatPharoSettingsTest >> testAvailableApiChoicesReturnsAssociations [
 	| choices |

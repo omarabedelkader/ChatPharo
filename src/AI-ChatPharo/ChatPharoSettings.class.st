@@ -53,9 +53,11 @@ ChatPharoSettings class >> loadOrNew [
 ]
 
 { #category : 'accessing' }
-ChatPharoSettings class >> resetDefault [ 
+ChatPharoSettings class >> resetDefault [
 
-    Default := nil
+	<script>
+	Default := nil.
+	'chatpharo-settings.ston' asFileReference deleteIfAbsent: [ "do nothing" ]
 ]
 
 { #category : 'accessing' }

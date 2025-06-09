@@ -20,6 +20,13 @@ ChatPharoTest >> setUp [
 ]
 
 { #category : 'running' }
+ChatPharoTest >> tearDown [
+
+	ChatPharoSettings resetDefault.
+	super tearDown
+]
+
+{ #category : 'running' }
 ChatPharoTest >> testAddNewChat [
 	app newChat.
 	self assert: app chats size equals: 1.
