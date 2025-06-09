@@ -73,12 +73,12 @@ ChatPharoPresenter >> initializePresenters [
 			 action: [ self deleteChat: notebook selectedPage title ];
 			 yourself).
 
-	toolbar add: (SpToolbarButtonPresenter new
+	"toolbar add: (SpToolbarButtonPresenter new
 			 label: 'Save Chat';
 			 icon: (self iconNamed: #smallSave);
 			 help: 'Save current chat';
 			 action: [ self saveCurrentChat ];
-			 yourself).
+			 yourself)."
 
 	"toolbar add: (SpToolbarButtonPresenter new
         label: 'Load Chat';
