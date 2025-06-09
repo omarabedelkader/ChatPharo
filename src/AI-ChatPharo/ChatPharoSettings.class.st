@@ -29,25 +29,27 @@ Class {
 }
 
 { #category : 'accessing' }
-ChatPharoSettings class >> default [ 
+ChatPharoSettings class >> default [
 
-    Default ifNil: [ Default := self loadOrNew ].
-    ^ Default
+	Default ifNil: [ Default := self loadOrNew ].
+	^ Default
 ]
 
 { #category : 'accessing' }
-ChatPharoSettings class >> loadOrNew [ 
+ChatPharoSettings class >> loadOrNew [
 
-    | path file settings |
-path := FileLocator imageDirectory / 'chatpharo-settings.ston'.
+	| path file settings |
+	path := FileLocator imageDirectory / 'chatpharo-settings.ston'.
 
-    file := path exists ifTrue: [ path readStream ] ifFalse: [ ^ self new ].
-    
-    [ settings := STON fromStream: file ]
-        on: Error
-        do: [ ^ self new ].
-        
-    ^ settings
+	file := path exists
+		        ifTrue: [ path readStream ]
+		        ifFalse: [ ^ self new ].
+
+	[ settings := STON fromStream: file ]
+		on: Error
+		do: [ ^ self new ].
+
+	^ settings
 ]
 
 { #category : 'accessing' }
@@ -57,12 +59,12 @@ ChatPharoSettings class >> resetDefault [
 ]
 
 { #category : 'accessing' }
-ChatPharoSettings class >> saveDefault [ 
+ChatPharoSettings class >> saveDefault [
 
-    | path |
-    path := FileLocator imageDirectory / 'chatpharo-settings.ston'.
-    path writeStreamDo: [ :stream | STON put: self default onStream: stream ].
-
+	| path |
+	path := FileLocator imageDirectory / 'chatpharo-settings.ston'.
+	path writeStreamDo: [ :stream |
+		STON put: self default onStream: stream ]
 ]
 
 { #category : 'initialization' }

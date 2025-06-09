@@ -37,8 +37,9 @@ ChatPharoSettingsPresenter >> connectPresenters [
 
 			newPresenter := apiClass settingsPresenterFor: model agent.
 			newPresenter ifNotNil: [ apiSettingsContainer add: newPresenter ].
-			systemPromptInput text: model agent system. ].
-		systemPromptInput whenTextChangedDo: [ :text | model agent system: text ].
+			systemPromptInput text: model agent systemPrompt ].
+	systemPromptInput whenTextChangedDo: [ :text |
+		model agent system: text ]
 ]
 
 { #category : 'layout' }
@@ -91,7 +92,7 @@ ChatPharoSettingsPresenter >> initializePresenters [
 		                       yourself.
 	systemPromptInput := self newTextInput
 		                     placeholder: 'System prompt...';
-		                     text: model agent system;
+		                     text: model agent systemPrompt;
 		                     yourself.
 	apiDropList selectItem: (model availableApiChoices
 			 detect: [ :assoc | assoc value = model agent class ]

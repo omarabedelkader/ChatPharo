@@ -13,8 +13,8 @@ Class {
 		'baseURL',
 		'apiKey',
 		'model',
-		'system',
-		'tools'
+		'tools',
+		'systemPrompt'
 	],
 	#category : 'AI-ChatPharo-Tools',
 	#package : 'AI-ChatPharo-Tools'
@@ -157,8 +157,8 @@ ChatPharoTool >> getResponseForHistory: history [
 
 	| messages data response message |
 	messages := Array streamContents: [ :stream |
-		system ifNotNil: [
-			stream nextPut: (Dictionary with: 'role'->'system' with: 'content'->system) ].
+		systemPrompt ifNotNil: [
+			stream nextPut: (Dictionary with: 'role'->'system' with: 'content'->systemPrompt) ].
 		history putOpenAIChatMessagesOn: stream ].
 
 	data := Dictionary with:'model'->model with:'messages'->messages.
@@ -188,7 +188,7 @@ ChatPharoTool >> initializeWithBaseURL: initialBaseURL apiKey: initialAPIKey sys
 	super initialize.
 	baseURL := initialBaseURL.
 	apiKey  := initialAPIKey.
-	system  := initialSystem.
+	systemPrompt  := initialSystem.
 	tools   := initialTools.
 	self model: self modelNames first.
 ]
@@ -215,15 +215,15 @@ ChatPharoTool >> modelNames [
 ]
 
 { #category : 'accessing' }
-ChatPharoTool >> system [
+ChatPharoTool >> systemPrompt [
 
-	^ system
+	^ systemPrompt
 ]
 
 { #category : 'accessing' }
-ChatPharoTool >> system: anObject [
+ChatPharoTool >> systemPrompt: anObject [
 
-	system := anObject
+	systemPrompt := anObject
 ]
 
 { #category : 'initialization' }

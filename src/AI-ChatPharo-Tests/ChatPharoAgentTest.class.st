@@ -31,8 +31,8 @@ ChatPharoAgentTest >> testPromptPrefixSetterGetter [
 ]
 
 { #category : 'running' }
-ChatPharoAgentTest >> testSystemSetterGetter [ 
+ChatPharoAgentTest >> testSystemSetterGetter [
 
-        agent system: 's'.
-        self assert: agent system equals: 's'.
+	agent systemPrompt: 's'.
+	self assert: agent systemPrompt equals: 's'
 ]

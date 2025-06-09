@@ -18,10 +18,10 @@ Class {
 	#superclass : 'Object',
 	#instVars : [
 		'model',
-		'system',
 		'promptPrefix',
 		'response',
-		'history'
+		'history',
+		'systemPrompt'
 	],
 	#category : 'AI-ChatPharo-Agent',
 	#package : 'AI-ChatPharo-Agent'
@@ -69,7 +69,7 @@ ChatPharoAgent >> history: aHistory [           history := aHistory
 ChatPharoAgent >> initialize [
 	super initialize.
 	model        := ''.
-	system       := ''.
+	systemPrompt       := ''.
 	promptPrefix := ''.
 	response     := ''.
 ]
@@ -117,15 +117,15 @@ ChatPharoAgent >> response: anObject [
 ]
 
 { #category : 'accessing' }
-ChatPharoAgent >> system [
+ChatPharoAgent >> systemPrompt [
 
-	^ system
+	^ systemPrompt
 ]
 
 { #category : 'accessing' }
-ChatPharoAgent >> system: anObject [
+ChatPharoAgent >> systemPrompt: anObject [
 
-	system := anObject
+	systemPrompt := anObject
 ]
 
 { #category : 'accessing' }

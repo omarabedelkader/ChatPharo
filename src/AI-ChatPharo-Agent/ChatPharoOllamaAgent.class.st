@@ -68,7 +68,7 @@ ChatPharoOllamaAgent class >> newSystem: synstemText promptPrefix: promptPrefixT
 
 	| prompter |
 	prompter := self new.
-	prompter system: synstemText.
+	prompter systemPrompt: synstemText.
 	prompter promptPrefix: promptPrefixText.
 	^ prompter
 ]
@@ -96,7 +96,7 @@ ChatPharoOllamaAgent >> getResponseForPrompt: prompt [
 
 	requestDictionary := Dictionary newFrom: {
 			                     (#model -> model).
-			                     (#system -> self system).
+			                     (#systemPrompt -> self systemPrompt).
 			                     (#prompt
 			                      -> (String streamContents: [ :stream |
 						                       stream nextPutAll: self promptPrefix.
@@ -142,7 +142,7 @@ ChatPharoOllamaAgent >> initialize [
 	port := self class defaultPort.
 	temperature := 0.0.
 	self model: nil.
-	self system: ''.
+	self systemPrompt: ''.
 	self promptPrefix: ''
 ]
 
