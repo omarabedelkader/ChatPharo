@@ -79,7 +79,8 @@ ChatPharoGeminiAgent >> getResponseForPrompt: userPrompt [
 	| api result |
 	api := ChatPharoTool
 		       geminiWithAPIKey: apiKey
-		       system: (systemPrompt ifEmpty: [ '' ]).
+		       system: (systemPrompt ifEmpty: [ '' ])
+				tools: self tools. 
 	temperature ifNotNil: [ api model: model ].
 	result := api getResponseForHistory:
 		          (ChatPharoHistorySaver role: 'user' content: userPrompt).
