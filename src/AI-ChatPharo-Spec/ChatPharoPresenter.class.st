@@ -29,7 +29,9 @@ ChatPharoPresenter >> addNewChat [
         icon: (self iconNamed: #announcement)
         provider: [ model chats last presenter ].
     notebook addPage: newPage.
-    notebook selectPage: newPage
+    notebook selectPage: newPage.
+
+	self updateConnectionStatusOnce.
 ]
 
 { #category : 'layout' }
@@ -92,7 +94,24 @@ ChatPharoPresenter >> initializePresenters [
 			 icon: (self iconNamed: #smallConfiguration);
 			 help: 'Open settings';
 			 action: [ self openSettings ];
-			 yourself)
+			 yourself).
+
+	connectionStatusLabel := SpToolbarButtonPresenter new
+        label: 'Checking connection...';
+        enabled: false;
+        action: [ ];
+        yourself.
+
+    toolbar add: connectionStatusLabel.
+
+	toolbar add: (SpToolbarButtonPresenter new
+             label: 'Refresh Connection';
+             icon: (self iconNamed: #refresh);
+             help: 'Manually check LLM connection status';
+             action: [ self updateConnectionStatusOnce ];
+             yourself).
+
+	self updateConnectionStatusOnce.
 ]
 
 { #category : 'initialization' }
@@ -159,4 +178,21 @@ ChatPharoPresenter >> sendMessage [
 ChatPharoPresenter >> setModelBeforeInitialization: anObject [
 
 	model := anObject
+]
+
+{ #category : 'status' }
+ChatPharoPresenter >> updateConnectionStatusOnce [
+
+    | agent statusText |
+    agent := model activeAgent.
+
+    statusText := (agent notNil and: [ agent class isReachable ])
+        ifTrue: [ 'Connected' ]
+        ifFalse: [ 'Disconnected' ].
+
+    connectionStatusLabel
+        label: statusText;
+        help: (statusText = 'Connected'
+            ifTrue: [ 'Connected to backend (e.g., Ollama)' ]
+            ifFalse: [ 'No connection to backend' ]).
 ]
