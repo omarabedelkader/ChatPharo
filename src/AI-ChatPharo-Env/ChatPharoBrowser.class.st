@@ -46,7 +46,6 @@ ChatPharoBrowser >> packagename: anObject [
 ]
 
 { #category : 'building' }
-ChatPharoBrowser >> setUpModelFromContext [ 
-
+ChatPharoBrowser >> setUpModelFromContext [
     packageName := context lastSelectedClassGroup name
 ]

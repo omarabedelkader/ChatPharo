@@ -30,7 +30,8 @@ Class {
 	#instVars : [
 		'host',
 		'apiKey',
-		'temperature'
+		'temperature',
+		'packageName'
 	],
 	#category : 'AI-ChatPharo-Agent',
 	#package : 'AI-ChatPharo-Agent'
@@ -74,20 +75,25 @@ ChatPharoGeminiAgent >> apiKey: anObject [
 ]
 
 { #category : 'initialization' }
-ChatPharoGeminiAgent >> getResponseForPrompt: userPrompt [ 
+ChatPharoGeminiAgent >> getResponseForPrompt: userPrompt [
 
-    | api result |
+    | api result fullSystemPrompt |
+    fullSystemPrompt := String streamContents: [:s |
+        s nextPutAll: (systemPrompt ifEmpty: [ '' ]).
+        packageName ifNotNil: [
+            s nextPutAll: ' The user is currently browsing the package '; nextPutAll: packageName; nextPut: $. ] ].
+
     api := ChatPharoTool
-               geminiWithAPIKey: apiKey
-               system: (systemPrompt ifEmpty: [ '' ])
-               tools: self tools.                    "<<< pass the tools array"
+        geminiWithAPIKey: apiKey
+        system: fullSystemPrompt
+        tools: self tools.
 
-    model ifNotEmpty: [ api model: model ].         "<<< was guarded by `temperature` by mistake"
+    model ifNotEmpty: [ api model: model ].
 
     result := api getResponseForHistory:
-                  (ChatPharoHistorySaver
-                       role: 'user'
-                       content: userPrompt).
+        (ChatPharoHistorySaver
+            role: 'user'
+            content: userPrompt).
 
     ^ result content
 ]
@@ -129,6 +135,11 @@ ChatPharoGeminiAgent >> modelNames [
                         geminiWithAPIKey: apiKey
                         system: nil) modelNames
         ] on: Error do: [ self class modelNames ]
+]
+
+{ #category : 'accessing' }
+ChatPharoGeminiAgent >> packageName: aString [
+    self systemPrompt: ('You are an AI coding assistant. The user is currently browsing the package ', aString, '.')
 ]
 
 { #category : 'accessing' }

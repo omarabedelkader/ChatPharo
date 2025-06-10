@@ -179,15 +179,16 @@ ChatPharoClient >> name: anObject [
 	name := anObject
 ]
 
-{ #category : 'initialization' }
-ChatPharoClient >> openAIChatTool [ 
+{ #category : 'accessing' }
+ChatPharoClient >> openAIChatTool [
 
-	^ Dictionary
-		with:'type'->'function'
-		with:'function'->(Dictionary
-			with:'name'->name
-			with:'description'->description
-			with:'parameters'->parameters)
+    ^ Dictionary
+        with: 'type' -> 'function'
+        with: 'function' -> (Dictionary
+            with: 'name' -> self name
+            with: 'description' -> self description
+            with: 'parameters' -> self parameters)
+
 ]
 
 { #category : 'accessing' }
