@@ -69,6 +69,14 @@ ChatPharoSettings class >> saveDefault [
 		STON put: self default onStream: stream ]
 ]
 
+{ #category : 'accessing' }
+ChatPharoSettings class >> setDefault: aSettings [ 
+
+	"Replace the singleton that #default answers.
+	 Used by mutator methods before they write the settings file."
+	Default := aSettings
+]
+
 { #category : 'initialization' }
 ChatPharoSettings >> agent [
 
@@ -114,6 +122,7 @@ ChatPharoSettings >> presenter [
 ChatPharoSettings >> useApi: anAgentClass [
 
 	agent := anAgentClass new.
+	self class setDefault: self.
 	self class saveDefault
 ]
 
@@ -121,5 +130,6 @@ ChatPharoSettings >> useApi: anAgentClass [
 ChatPharoSettings >> useModel: aModelName [
 
 	agent model: aModelName.
+	self class setDefault: self. 
 	self class saveDefault
 ]
