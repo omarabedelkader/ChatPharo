@@ -190,7 +190,7 @@ ChatPharoTool >> initializeWithBaseURL: initialBaseURL apiKey: initialAPIKey sys
 	apiKey  := initialAPIKey.
 	systemPrompt  := initialSystem.
 	tools   := initialTools.
-	self model: self modelNames first.
+	self model: self modelNames first
 ]
 
 { #category : 'accessing' }

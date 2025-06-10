@@ -76,26 +76,22 @@ ChatPharoGeminiAgent >> apiKey: anObject [
 
 { #category : 'initialization' }
 ChatPharoGeminiAgent >> getResponseForPrompt: userPrompt [
+	| api result |
+	
+	self halt.
+	api := ChatPharoTool
+		geminiWithAPIKey: apiKey
+		system: self systemPrompt
+		tools: self tools.
 
-    | api result fullSystemPrompt |
-    fullSystemPrompt := String streamContents: [:s |
-        s nextPutAll: (systemPrompt ifEmpty: [ '' ]).
-        packageName ifNotNil: [
-            s nextPutAll: ' The user is currently browsing the package '; nextPutAll: packageName; nextPut: $. ] ].
+	model ifNotEmpty: [ api model: model ].
 
-    api := ChatPharoTool
-        geminiWithAPIKey: apiKey
-        system: 'You are an AI coding assistant within the user''s Pharo image. The user is currently browsing the package. Assume that the user''s question is about classes and methods in this package, proactively explore its code.'
-        tools: self tools.
+	result := api getResponseForHistory:
+		(ChatPharoHistorySaver
+			role: 'user'
+			content: userPrompt).
 
-    model ifNotEmpty: [ api model: model ].
-
-    result := api getResponseForHistory:
-        (ChatPharoHistorySaver
-            role: 'user'
-            content: userPrompt).
-
-    ^ result content
+	^ result content
 ]
 
 { #category : 'accessing' }
@@ -139,7 +135,9 @@ ChatPharoGeminiAgent >> modelNames [
 
 { #category : 'accessing' }
 ChatPharoGeminiAgent >> packageName: aString [
-    self systemPrompt: ('You are an AI coding assistant. The user is currently browsing the package ', aString, '.')
+
+	packageName := aString.
+	self systemPrompt: 'You are an AI coding assistant inside the user''s Pharo image. The user is currently browsing the package ', packageName ,' Assume the user''s question is about classes or methods in that package and proactively explore its code.'
 ]
 
 { #category : 'accessing' }

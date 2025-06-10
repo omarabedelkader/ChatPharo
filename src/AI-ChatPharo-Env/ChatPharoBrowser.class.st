@@ -2,8 +2,8 @@ Class {
 	#name : 'ChatPharoBrowser',
 	#superclass : 'ClyBrowserToolMorph',
 	#instVars : [
-		'packagename',
-		'packageName'
+		'packageName',
+		'chat'
 	],
 	#category : 'AI-ChatPharo-Env',
 	#package : 'AI-ChatPharo-Env'
@@ -24,28 +24,37 @@ ChatPharoBrowser class >> tabOrder [
 
 { #category : 'building' }
 ChatPharoBrowser >> build [
-
-	| chat presenter |
 	chat := ChatPharoChat new
-		        agent: ChatPharoSettings default agent;
-		        yourself.
-	presenter := chat presenter.
-	self addMorph: presenter build fullFrame: LayoutFrame identity
+		agent: ChatPharoSettings default agent;
+		yourself.
+	self addMorph: chat presenter build fullFrame: LayoutFrame identity.
+	self updateAgentPackageName
 ]
 
 { #category : 'accessing' }
-ChatPharoBrowser >> packagename [
+ChatPharoBrowser >> packageName [
 
-	^ packagename
+	^ packageName
 ]
 
 { #category : 'accessing' }
-ChatPharoBrowser >> packagename: anObject [
+ChatPharoBrowser >> packageName: anObject [
 
-	packagename := anObject
+	packageName := anObject
 ]
 
-{ #category : 'building' }
+{ #category : 'initialization' }
 ChatPharoBrowser >> setUpModelFromContext [
-    packageName := context lastSelectedClassGroup name
+	"Calypso calls this every time the tab is (re)built or the user
+	 switches to another package."
+	packageName := context lastSelectedClassGroup name.
+	self updateAgentPackageName
+
+]
+
+{ #category : 'initialization' }
+ChatPharoBrowser >> updateAgentPackageName [
+
+	(chat notNil and: [ chat agent respondsTo: #packageName: ]) ifTrue: [
+		chat agent packageName: packageName ].
 ]
