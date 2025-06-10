@@ -54,6 +54,15 @@ ChatPharoPresenter >> deleteChat: aPageTitle [
 ]
 
 { #category : 'initialization' }
+ChatPharoPresenter >> deleteSelectedChat [
+
+    notebook selectedPage
+        ifNil: [ ^ self inform: 'No chat selected.' ].
+
+    self deleteChat: notebook selectedPage title
+]
+
+{ #category : 'initialization' }
 ChatPharoPresenter >> initializePresenters [
 
 	notebook := self newNotebook.
@@ -70,7 +79,7 @@ ChatPharoPresenter >> initializePresenters [
 			 label: 'Delete Chat';
 			 icon: (self iconNamed: #delete);
 			 help: 'Delete the selected chat';
-			 action: [ self deleteChat: notebook selectedPage title ];
+			 action: [ self deleteSelectedChat ];
 			 yourself).
 
 	"toolbar add: (SpToolbarButtonPresenter new

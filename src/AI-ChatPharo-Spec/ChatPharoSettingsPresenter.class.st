@@ -116,13 +116,14 @@ ChatPharoSettingsPresenter >> newChatTab [
 
 	^ SpPresenter new
 		  layout: (SpBoxLayout newTopToBottom
+		"
 				   add: (SpButtonPresenter new
 						    label: 'Delete All Chats';
 						    icon: (self iconNamed: #delete);
 						    help: 'Delete all chats';
 						    action: [ self deleteAllChats ];
 						    yourself)
-				   expand: false;
+				   expand: false;"
 				   add: (SpBoxLayout newHorizontal
 						    spacing: 8;
 						    add: 'System:' expand: false;
