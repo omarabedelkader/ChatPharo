@@ -12,9 +12,10 @@ Class {
 ChatPharoState class >> aiWorldMenuOn: aBuilder [
 
 	<worldMenu>
-	(aBuilder item: #AI)
+	(aBuilder item: #ChatPharo)
 		order: 10;
-		help: 'Tools to explore and modify the image';
+		icon:(self iconNamed: #announcement);
+		help: 'An AI Assistant';
 		with: [
 				(aBuilder item: #TempChatPharo)
 					action: [ ChatPharo new presenter open ];

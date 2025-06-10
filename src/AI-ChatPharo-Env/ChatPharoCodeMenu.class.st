@@ -13,8 +13,8 @@ ChatPharoCodeMenu class >> menuOn: aBuilder [
 	<RubSmalltalkCodeMenu>
 	(aBuilder item: #'Ask ChatPharo' translated)
 		order: 9;
-		keyText: 'd';
+		keyText: 'cp';
 		selector: #openChatCharo;
 		help: nil;
-		iconName: #announcement.
+		iconName: #announcement
 ]
