@@ -85,7 +85,7 @@ ChatPharoGeminiAgent >> getResponseForPrompt: userPrompt [
 
     api := ChatPharoTool
         geminiWithAPIKey: apiKey
-        system: fullSystemPrompt
+        system: 'You are an AI coding assistant within the user''s Pharo image. The user is currently browsing the package. Assume that the user''s question is about classes and methods in this package, proactively explore its code.'
         tools: self tools.
 
     model ifNotEmpty: [ api model: model ].

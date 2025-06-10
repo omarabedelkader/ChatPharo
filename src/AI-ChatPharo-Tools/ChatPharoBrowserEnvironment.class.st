@@ -308,7 +308,8 @@ ChatPharoBrowserEnvironment >> initializeWithEnvironment: env [
 		         self functionGetClassComments.
 		         self functionGetClassMethods.
 		         self functionGetClassSubclasses.
-		         self functionFindMethodsWithSubstring }
+		         self functionFindMethodsWithSubstring.
+					ChatPharoClient toolOpenPlayground  }
 ]
 
 { #category : 'initialization' }

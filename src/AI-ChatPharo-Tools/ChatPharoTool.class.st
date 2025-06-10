@@ -221,9 +221,9 @@ ChatPharoTool >> systemPrompt [
 ]
 
 { #category : 'accessing' }
-ChatPharoTool >> systemPrompt: anObject [
+ChatPharoTool >> systemPrompt: aString [
 
-	systemPrompt := anObject
+	^ systemPrompt := aString 
 ]
 
 { #category : 'initialization' }
