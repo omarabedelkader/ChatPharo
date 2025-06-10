@@ -74,18 +74,22 @@ ChatPharoGeminiAgent >> apiKey: anObject [
 ]
 
 { #category : 'initialization' }
-ChatPharoGeminiAgent >> getResponseForPrompt: userPrompt [
+ChatPharoGeminiAgent >> getResponseForPrompt: userPrompt [ 
 
-	| api result |
-	api := ChatPharoTool
-		       geminiWithAPIKey: apiKey
-		       system: (systemPrompt ifEmpty: [ '' ])
-				tools: self tools. 
-	temperature ifNotNil: [ api model: model ].
-	result := api getResponseForHistory:
-		          (ChatPharoHistorySaver role: 'user' content: userPrompt).
-		
-	^ result content
+    | api result |
+    api := ChatPharoTool
+               geminiWithAPIKey: apiKey
+               system: (systemPrompt ifEmpty: [ '' ])
+               tools: self tools.                    "<<< pass the tools array"
+
+    model ifNotEmpty: [ api model: model ].         "<<< was guarded by `temperature` by mistake"
+
+    result := api getResponseForHistory:
+                  (ChatPharoHistorySaver
+                       role: 'user'
+                       content: userPrompt).
+
+    ^ result content
 ]
 
 { #category : 'accessing' }
