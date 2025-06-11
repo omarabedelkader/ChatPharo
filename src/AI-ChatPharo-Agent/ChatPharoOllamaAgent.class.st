@@ -65,8 +65,6 @@ ChatPharoOllamaAgent class >> isReachable [
 { #category : 'api' }
 ChatPharoOllamaAgent class >> isValidModel: aModelName [ 
 
-    "Return true if aModelName describes a model that the Ollama server recognises."
-
     self isReachable ifFalse: [ ^ false ].
     [
         ZnClient new
@@ -131,6 +129,7 @@ ChatPharoOllamaAgent class >> pullModel: aModelName [
 
 { #category : 'api' }
 ChatPharoOllamaAgent class >> settingsPresenterFor: anAgent [
+
 	^ ChatPharoOllamaSettingsPresenter on: anAgent
 ]
 

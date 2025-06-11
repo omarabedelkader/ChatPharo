@@ -38,3 +38,14 @@ ChatPharoMistralAgent class >> settingsPresenterFor: anAgent [
 
     ^ ChatPharoMistralSettingsPresenter on: anAgent
 ]
+
+{ #category : 'initialization' }
+ChatPharoMistralAgent >> getResponseForPrompt: prompt [
+
+	self shouldBeImplemented 
+]
+
+{ #category : 'information' }
+ChatPharoMistralAgent >> modelInformation [
+	^ self shouldBeImplemented
+]

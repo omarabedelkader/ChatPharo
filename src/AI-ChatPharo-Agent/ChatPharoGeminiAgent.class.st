@@ -45,6 +45,7 @@ ChatPharoGeminiAgent class >> displayName [
 
 { #category : 'api' }
 ChatPharoGeminiAgent class >> isReachable [
+
 	[ | url |
 		url := 'https://generativelanguage.googleapis.com/v1beta/models?key=dummy'.
 		ZnClient new head: url.
@@ -59,6 +60,7 @@ ChatPharoGeminiAgent class >> modelNames [
 
 { #category : 'api' }
 ChatPharoGeminiAgent class >> settingsPresenterFor: anAgent [
+
 	^ ChatPharoGeminiSettingsPresenter on: anAgent
 ]
 
@@ -78,7 +80,6 @@ ChatPharoGeminiAgent >> apiKey: anObject [
 ChatPharoGeminiAgent >> getResponseForPrompt: userPrompt [
 	| api result |
 	
-	self halt.
 	api := ChatPharoTool
 		geminiWithAPIKey: apiKey
 		system: self systemPrompt

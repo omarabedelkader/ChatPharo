@@ -10,7 +10,6 @@ Class {
 
 { #category : 'menu' }
 ChatPharoCodeMenu class >> menuOn: aBuilder [
-	"Specify the menu used when writing code."
 
 	<contextMenu>
 	<RubSmalltalkCodeMenu>

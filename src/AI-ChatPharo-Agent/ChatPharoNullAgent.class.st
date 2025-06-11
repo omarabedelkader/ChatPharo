@@ -14,6 +14,7 @@ Class {
 
 { #category : 'api' }
 ChatPharoNullAgent class >> displayName [
+
 	^ 'None (offline)'
 ]
 

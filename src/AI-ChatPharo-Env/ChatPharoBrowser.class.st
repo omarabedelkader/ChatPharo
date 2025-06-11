@@ -48,8 +48,7 @@ ChatPharoBrowser >> packageName: anObject [
 
 { #category : 'initialization' }
 ChatPharoBrowser >> setUpModelFromContext [
-	"Calypso calls this every time the tab is (re)built or the user
-	 switches to another package."
+
 	packageName := context lastSelectedClassGroup name.
 	self updateAgentPackageName
 

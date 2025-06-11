@@ -47,7 +47,6 @@ ChatPharoAgent class >> modelNames [
 { #category : 'api' }
 ChatPharoAgent class >> settingsPresenterFor: anAgent [
 
-	"Return a presenter (or nil) that lets the user edit the agent’s specific configuration."
 	^ nil
 ]
 
