@@ -115,18 +115,26 @@ ChatPharoOllamaSettingsPresenter >> initializePresenters [
 		                    placeholder: '0.0';
 		                    text: model temperature asString;
 		                    yourself.
-	        installInput := self newTextInput
-                                placeholder: 'model name (e.g. codellama:7b)';
-                                yourself.
+	installInput := self newTextInput
+		                placeholder: 'model name (e.g. codellama:7b)';
+		                yourself.
 
-        installButton := self newButton
-                                label: 'Install';
-                                icon: (self iconNamed: #add);
+	installButton := self newButton
+		                 label: 'Install';
+		                 icon: (self iconNamed: #add);
                                 action: [
                                         model class pullModel: installInput text.
-                                        self refreshModels
+                                        self refreshModels.
+                                        (model class isValidModel: installInput text)
+                                                ifTrue: [
+                                                        model class pullModel: installInput text.
+                                                        self refreshModels
+                                                ]
+                                                ifFalse: [
+                                                        self inform: 'Model ', installInput text, ' not found.'
+                                                ]
                                 ];
-                                yourself
+		                 yourself
 ]
 
 { #category : 'accessing' }
