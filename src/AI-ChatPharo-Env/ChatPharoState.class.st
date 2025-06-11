@@ -14,11 +14,13 @@ ChatPharoState class >> aiWorldMenuOn: aBuilder [
 	<worldMenu>
 	(aBuilder item: #ChatPharo)
 		order: 10;
-		icon:(self iconNamed: #announcement);
+		icon: (self iconNamed: #announcement);
 		help: 'An AI Assistant';
 		with: [
 				(aBuilder item: #TempChatPharo)
 					action: [ ChatPharo new presenter open ];
+					order:0;
+					keyText: 'o,c';
 					label: 'Temp ChatPharo';
 					icon: (self iconNamed: #announcement);
 					help: 'Open Temp Chat'.
