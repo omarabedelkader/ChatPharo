@@ -84,15 +84,17 @@ ChatPharoOllamaAgent class >> ollamaVersion [
 ]
 
 { #category : 'api' }
-ChatPharoOllamaAgent class >> pullModel: aModelName [ 
+ChatPharoOllamaAgent class >> pullModel: aModelName [
 
-    "Trigger Ollama to download the given model by name."
-    self isReachable ifFalse: [ ^ self error: 'Ollama server not reachable' ].
-    ZnClient new
-        url: 'http://' , self defaultHost , ':' , self defaultPort , '/api/pull';
-        entity: (ZnEntity with: (STONJSON toString: { #name -> aModelName } asDictionary));
-        post;
-        yourself
+	self isReachable ifFalse: [
+		^ self error: 'Ollama server not reachable' ].
+	ZnClient new
+		url:
+			'http://' , self defaultHost , ':' , self defaultPort , '/api/pull';
+		entity: (ZnEntity with:
+					 (STONJSON toString: { (#name -> aModelName) } asDictionary));
+		post;
+		yourself
 ]
 
 { #category : 'api' }

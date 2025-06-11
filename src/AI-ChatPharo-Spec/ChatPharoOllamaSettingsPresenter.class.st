@@ -10,7 +10,11 @@ Class {
 		'refreshButton',
 		'hostInput',
 		'portInput',
-		'temperatureInput'
+		'temperatureInput',
+		'installInput',
+		'installButton',
+		'pullButton',
+		'pullInput'
 	],
 	#category : 'AI-ChatPharo-Spec',
 	#package : 'AI-ChatPharo-Spec'
@@ -28,20 +32,28 @@ ChatPharoOllamaSettingsPresenter >> connectPresenters [
 			[ num := text asNumber ]
 				on: Error
 				do: [ :ex | num := model temperature ].
-			model temperature: num ]
+			model temperature: num ].
 ]
 
 { #category : 'layout' }
 ChatPharoOllamaSettingsPresenter >> defaultLayout [
 
-	| mainLayout rowLayout modelRow hostRow portRow tempRow |
+	| mainLayout rowLayout modelRow hostRow portRow tempRow installRow |
 	modelRow := SpBoxLayout newHorizontal
 		            spacing: 8;
 		            add: (self newLabel label: 'Available models:')
 		            expand: false;
+		            add: self modelsDrop expand: true;
 		            add: self refreshButton expand: false;
-		            add: self modelsDrop height: 30;
 		            yourself.
+
+	installRow := SpBoxLayout newHorizontal
+		              spacing: 8;
+		              add: (self newLabel label: 'Pull model:')
+		              expand: false;
+		              add: installInput expand: true;
+		              add: installButton expand: false;
+		              yourself.
 
 	hostRow := SpBoxLayout newHorizontal
 		           spacing: 8;
@@ -63,12 +75,13 @@ ChatPharoOllamaSettingsPresenter >> defaultLayout [
 		           expand: false;
 		           add: temperatureInput expand: true;
 		           yourself.
-		
+
 	mainLayout := SpBoxLayout newTopToBottom
 		              spacing: 8;
 		              borderWidth: 8;
 		              beNotHomogeneous;
 		              add: modelRow expand: false;
+		              add: installRow expand: false;
 		              add: hostRow expand: false;
 		              add: portRow expand: false;
 		              add: tempRow expand: false;
@@ -101,7 +114,43 @@ ChatPharoOllamaSettingsPresenter >> initializePresenters [
 	temperatureInput := self newTextInput
 		                    placeholder: '0.0';
 		                    text: model temperature asString;
-		                    yourself
+		                    yourself.
+	        installInput := self newTextInput
+                                placeholder: 'model name (e.g. codellama:7b)';
+                                yourself.
+
+        installButton := self newButton
+                                label: 'Install';
+                                icon: (self iconNamed: #add);
+                                action: [
+                                        model class pullModel: installInput text.
+                                        self refreshModels
+                                ];
+                                yourself
+]
+
+{ #category : 'accessing' }
+ChatPharoOllamaSettingsPresenter >> installButton [
+
+	^ installButton
+]
+
+{ #category : 'accessing' }
+ChatPharoOllamaSettingsPresenter >> installButton: anObject [
+
+	installButton := anObject
+]
+
+{ #category : 'accessing' }
+ChatPharoOllamaSettingsPresenter >> installInput [
+
+	^ installInput
+]
+
+{ #category : 'accessing' }
+ChatPharoOllamaSettingsPresenter >> installInput: anObject [
+
+	installInput := anObject
 ]
 
 { #category : 'accessing' }
