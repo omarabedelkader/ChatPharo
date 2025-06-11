@@ -38,18 +38,16 @@ ChatPharoSettings class >> default [
 { #category : 'accessing' }
 ChatPharoSettings class >> loadOrNew [
 
-	| path file settings |
+	| path file |
 	path := FileLocator imageDirectory / 'chatpharo-settings.ston'.
 
 	file := path exists
 		        ifTrue: [ path readStream ]
 		        ifFalse: [ ^ self new ].
 
-	[ settings := STON fromStream: file ]
+	[ ^ STON fromStream: file ]
 		on: Error
 		do: [ ^ self new ].
-
-	^ settings
 ]
 
 { #category : 'accessing' }
@@ -57,7 +55,8 @@ ChatPharoSettings class >> resetDefault [
 
 	<script>
 	Default := nil.
-	'chatpharo-settings.ston' asFileReference deleteIfAbsent: [ "do nothing" ]
+	'chatpharo-settings.ston' asFileReference deleteIfAbsent: [ "do nothing" ].
+	^self
 ]
 
 { #category : 'accessing' }
@@ -66,14 +65,13 @@ ChatPharoSettings class >> saveDefault [
 	| path |
 	path := FileLocator imageDirectory / 'chatpharo-settings.ston'.
 	path writeStreamDo: [ :stream |
-		STON put: self default onStream: stream ]
+		STON put: self default onStream: stream ].
+	^self
 ]
 
 { #category : 'accessing' }
 ChatPharoSettings class >> setDefault: aSettings [ 
 
-	"Replace the singleton that #default answers.
-	 Used by mutator methods before they write the settings file."
 	Default := aSettings
 ]
 

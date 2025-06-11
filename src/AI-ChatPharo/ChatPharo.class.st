@@ -25,7 +25,7 @@ Class {
 	#package : 'AI-ChatPharo'
 }
 
-{ #category : 'as yet unclassified' }
+{ #category : 'context' }
 ChatPharo class >> ask: text [ 
 
         | chat |
