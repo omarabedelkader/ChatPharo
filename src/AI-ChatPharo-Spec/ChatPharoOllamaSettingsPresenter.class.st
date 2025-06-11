@@ -14,7 +14,7 @@ Class {
 		'installInput',
 		'installButton',
 		'pullButton',
-		'pullInput'
+		'deleteButton'
 	],
 	#category : 'AI-ChatPharo-Spec',
 	#package : 'AI-ChatPharo-Spec'
@@ -53,6 +53,7 @@ ChatPharoOllamaSettingsPresenter >> defaultLayout [
 		              expand: false;
 		              add: installInput expand: true;
 		              add: installButton expand: false;
+						 add: deleteButton expand: false;
 		              yourself.
 
 	hostRow := SpBoxLayout newHorizontal
@@ -90,6 +91,18 @@ ChatPharoOllamaSettingsPresenter >> defaultLayout [
 	^ mainLayout
 ]
 
+{ #category : 'accessing' }
+ChatPharoOllamaSettingsPresenter >> deleteButton [ 
+
+        ^ deleteButton
+]
+
+{ #category : 'accessing' }
+ChatPharoOllamaSettingsPresenter >> deleteButton: anObject [ 
+
+        deleteButton := anObject
+]
+
 { #category : 'initialization' }
 ChatPharoOllamaSettingsPresenter >> initializePresenters [
 
@@ -122,19 +135,25 @@ ChatPharoOllamaSettingsPresenter >> initializePresenters [
 	installButton := self newButton
 		                 label: 'Install';
 		                 icon: (self iconNamed: #add);
+		                 action: [
+				                 model class pullModel: installInput text.
+				                 self refreshModels.
+				                 (model class isValidModel: installInput text)
+					                 ifTrue: [
+							                 model class pullModel: installInput text.
+							                 self refreshModels ]
+					                 ifFalse: [
+						                 self inform:
+								                 'Model ' , installInput text , ' not found.' ] ];
+		                 yourself.
+	 deleteButton := self newButton
+                                label: 'Delete';
+                                icon: (self iconNamed: #delete);
                                 action: [
-                                        model class pullModel: installInput text.
-                                        self refreshModels.
-                                        (model class isValidModel: installInput text)
-                                                ifTrue: [
-                                                        model class pullModel: installInput text.
-                                                        self refreshModels
-                                                ]
-                                                ifFalse: [
-                                                        self inform: 'Model ', installInput text, ' not found.'
-                                                ]
+                                        model class deleteModel: installInput text.
+                                        self refreshModels
                                 ];
-		                 yourself
+yourself
 ]
 
 { #category : 'accessing' }

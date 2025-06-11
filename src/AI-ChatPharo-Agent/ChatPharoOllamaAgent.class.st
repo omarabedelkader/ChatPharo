@@ -31,6 +31,21 @@ ChatPharoOllamaAgent class >> defaultPort [
 ]
 
 { #category : 'api' }
+ChatPharoOllamaAgent class >> deleteModel: aModelName [ 
+
+
+        self isReachable ifFalse: [
+                ^ self error: 'Ollama server not reachable' ].
+        ZnClient new
+                url:
+                        'http://' , self defaultHost , ':' , self defaultPort , '/api/delete';
+                entity: (ZnEntity with:
+                                         (STONJSON toString: { (#name -> aModelName) } asDictionary));
+                delete;
+                yourself
+]
+
+{ #category : 'api' }
 ChatPharoOllamaAgent class >> displayName [
 
 	^ 'Ollama'
