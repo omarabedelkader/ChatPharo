@@ -1,3 +1,6 @@
+"
+Not uspported yet
+"
 Class {
 	#name : 'ChatPharoMistralAgent',
 	#superclass : 'ChatPharoAgent',

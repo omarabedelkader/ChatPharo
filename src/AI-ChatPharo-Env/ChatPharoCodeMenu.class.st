@@ -1,3 +1,6 @@
+"
+Extention to suppord Ask ChatPharo when selecting a context
+"
 Class {
 	#name : 'ChatPharoCodeMenu',
 	#superclass : 'RubSmalltalkCodeMode',

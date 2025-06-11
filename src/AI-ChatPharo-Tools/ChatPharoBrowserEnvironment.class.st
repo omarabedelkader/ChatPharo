@@ -11,8 +11,9 @@ Class {
 		'browserEnvironment',
 		'tools'
 	],
-	#category : 'AI-ChatPharo-Tools',
-	#package : 'AI-ChatPharo-Tools'
+	#category : 'AI-ChatPharo-Tools-System Browser',
+	#package : 'AI-ChatPharo-Tools',
+	#tag : 'System Browser'
 }
 
 { #category : 'instance creation' }

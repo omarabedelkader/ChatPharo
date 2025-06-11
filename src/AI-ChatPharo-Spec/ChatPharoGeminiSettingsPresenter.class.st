@@ -11,8 +11,9 @@ Class {
 		'model',
 		'temperatureInput'
 	],
-	#category : 'AI-ChatPharo-Spec',
-	#package : 'AI-ChatPharo-Spec'
+	#category : 'AI-ChatPharo-Spec-Agent',
+	#package : 'AI-ChatPharo-Spec',
+	#tag : 'Agent'
 }
 
 { #category : 'accessing' }

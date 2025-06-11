@@ -16,8 +16,9 @@ Class {
 		'contentPresenter',
 		'answerPresenter'
 	],
-	#category : 'AI-ChatPharo-Spec',
-	#package : 'AI-ChatPharo-Spec'
+	#category : 'AI-ChatPharo-Spec-Core',
+	#package : 'AI-ChatPharo-Spec',
+	#tag : 'Core'
 }
 
 { #category : 'initialization' }

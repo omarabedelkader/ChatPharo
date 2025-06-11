@@ -1,3 +1,6 @@
+"
+An extension that support the ChatPharo tool calling form the System browser
+"
 Class {
 	#name : 'ChatPharoBrowser',
 	#superclass : 'ClyBrowserToolMorph',
