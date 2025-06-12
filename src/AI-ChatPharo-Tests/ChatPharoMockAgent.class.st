@@ -2,7 +2,7 @@
 a mock class
 "
 Class {
-	#name : 'MockApi',
+	#name : 'ChatPharoMockAgent',
 	#superclass : 'Object',
 	#instVars : [
 		'conversationHistory',
@@ -14,12 +14,12 @@ Class {
 }
 
 { #category : 'api' }
-MockApi class >> modelNames [
+ChatPharoMockAgent class >> modelNames [
 	^ #('mock-default' 'mock-advanced')
 ]
 
 { #category : 'private - uffi' }
-MockApi >> getResponseForPrompt: aPromptString [
+ChatPharoMockAgent >> getResponseForPrompt: aPromptString [
 
 	conversationHistory addLast: { (#userPrompt -> aPromptString) }.
 	^ '<<' , currentModel asUppercase , '-REPLY to: ' , aPromptString
@@ -27,62 +27,62 @@ MockApi >> getResponseForPrompt: aPromptString [
 ]
 
 { #category : 'private - uffi' }
-MockApi >> history [ 
+ChatPharoMockAgent >> history [ 
 
         ^ conversationHistory
 ]
 
 { #category : 'private - uffi' }
-MockApi >> history: aHistory [ 
+ChatPharoMockAgent >> history: aHistory [ 
 
         "ignore history"
 ]
 
 { #category : 'initialization' }
-MockApi >> initialize [
+ChatPharoMockAgent >> initialize [
 	super initialize.
 	conversationHistory := OrderedCollection new.
 	currentModel := 'mock-default'.
 ]
 
 { #category : 'initialization' }
-MockApi >> model [
+ChatPharoMockAgent >> model [
 
         ^ currentModel
 ]
 
 { #category : 'initialization' }
-MockApi >> model: aString [
+ChatPharoMockAgent >> model: aString [
 	currentModel := aString.
 ]
 
 { #category : 'private - uffi' }
-MockApi >> promptPrefix [ 
+ChatPharoMockAgent >> promptPrefix [ 
 
         ^ ''
 ]
 
 { #category : 'private - uffi' }
-MockApi >> promptPrefix: aString [ 
+ChatPharoMockAgent >> promptPrefix: aString [ 
 
         "ignored for tests"
 ]
 
 { #category : 'private - uffi' }
-MockApi >> system: aSystemPrompt [
+ChatPharoMockAgent >> system: aSystemPrompt [
 
 	conversationHistory addLast: { (#systemPrompt -> aSystemPrompt) }.
 	^ self
 ]
 
 { #category : 'accessing' }
-MockApi >> systemPrompt [ 
+ChatPharoMockAgent >> systemPrompt [ 
 
         ^ ''
 ]
 
 { #category : 'private - uffi' }
-MockApi >> systemPrompt: aString [ 
+ChatPharoMockAgent >> systemPrompt: aString [ 
 
         self system: aString
 ]

@@ -16,7 +16,7 @@ ChatPharoSettingsTest >> setUp [
 	super setUp.
 	
 	settings := ChatPharoSettings new.
-	mockApi := MockApi new.
+	mockApi := ChatPharoMockAgent new.
 	settings instVarNamed: #agent put: mockApi
 ]
 
@@ -55,7 +55,7 @@ ChatPharoSettingsTest >> testEnableDisableBrowserTool [
 ChatPharoSettingsTest >> testModelsDelegation [
 	self
 		assert: settings models
-		equals: (MockApi modelNames).
+		equals: (ChatPharoMockAgent modelNames).
 
 ]
 
