@@ -10,10 +10,12 @@ Class {
 	#tag : 'Extentions'
 }
 
-{ #category : 'initialization' }
+{ #category : 'layout' }
 ChatPharoBrowserSystemPromptInputPresenter >> defaultLayout [ 
 
-    ^ textInput
+    ^ SpBoxLayout newTopToBottom
+        add: textInput;
+        yourself
 ]
 
 { #category : 'initialization' }

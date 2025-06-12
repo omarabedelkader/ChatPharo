@@ -71,7 +71,7 @@ ChatPharoSettingsPresenter >> ensureBrowserExtensionTab [
 	browserExtensionPage ifNil: [
 			browserExtensionPage := SpNotebookPage
 				                        title: 'System Browser'
-				                        icon: (self iconNamed: #browser)
+				                        icon: (self iconNamed: #nautilus)
 				                        provider: [
 				                       ChatPharoBrowserExtensionSettingsPresenter on: model  ].
 			notebook addPage: browserExtensionPage ]
