@@ -65,6 +65,13 @@ ChatPharoHistoryMessage >> historyStringOn: aStream [
 ]
 
 { #category : 'accessing' }
+ChatPharoHistoryMessage >> putOpenAIChatMessagesOn: aStream [
+    "Adaptor so that both Saver and Message respond to the same selector."
+    
+    ^ self chatMessagesOn: aStream
+]
+
+{ #category : 'accessing' }
 ChatPharoHistoryMessage >> role [
 
 	^ role

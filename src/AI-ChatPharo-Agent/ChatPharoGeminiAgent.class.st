@@ -83,21 +83,26 @@ ChatPharoGeminiAgent >> apiKey: anObject [
 { #category : 'initialization' }
 ChatPharoGeminiAgent >> getResponseForPrompt: userPrompt [
 
+	| api result |
+	"Build a ChatPharoTool on-the-fly, reuse *our* history so the
+     conversation and tool calls stay in sync."
+	api := ChatPharoTool
+		       geminiWithAPIKey: apiKey
+		       system: self systemPrompt
+		       tools: self tools.
 
-    | api assistantMessage |
-    history ifNil: [ history := ChatPharoHistory new ].
-    history addMessage: (ChatPharoHistorySaver
-                            role: 'user'
-                            content: userPrompt).
-    api := ChatPharoTool
-              geminiWithAPIKey: apiKey
-              system: self systemPrompt
-              tools: self tools.
-    model ifNotEmpty: [ api model: model ].
-    assistantMessage := api getResponseForHistory: history.
-    history addMessage: assistantMessage.
+	model ifNotEmpty: [ api model: model ].
 
-    ^ assistantMessage content
+	"Append the new user message to the rolling history that the
+     ChatPharoChat presenter maintains for this agent."
+	self history ifNil: [ self history: ChatPharoHistory new ].
+	self history addMessage:
+		(ChatPharoHistorySaver role: 'user' content: userPrompt).
+
+	result := api getResponseForHistory: self history.
+	self history addMessage: result.
+
+	^ result content
 ]
 
 { #category : 'accessing' }

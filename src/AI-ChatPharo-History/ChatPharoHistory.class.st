@@ -59,3 +59,11 @@ ChatPharoHistory >> messages [
  ^ messages 
 
 ]
+
+{ #category : 'initialization' }
+ChatPharoHistory >> putOpenAIChatMessagesOn: aStream [
+    "Adaptor so that history works with ChatPharoTool,
+    which expects this selector."
+    
+    ^ self chatMessagesOn: aStream
+]
