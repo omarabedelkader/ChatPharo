@@ -30,6 +30,12 @@ ChatPharoNullAgent class >> modelNames [
 	^ #(  )
 ]
 
+{ #category : 'api' }
+ChatPharoNullAgent class >> settingsPresenterFor: anAgent [ 
+
+    ^ ChatPharoNullSettingsPresenter on: anAgent
+]
+
 { #category : 'initialization' }
 ChatPharoNullAgent >> getResponseForPrompt: aString [
 
