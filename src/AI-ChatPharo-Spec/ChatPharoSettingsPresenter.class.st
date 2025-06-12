@@ -45,20 +45,19 @@ ChatPharoSettingsPresenter >> connectPresenters [
 			newPresenter ifNotNil: [ apiSettingsContainer add: newPresenter ].
 
 			"Update system prompt inputs"
-			systemPromptInput text: model agent systemPrompt.
-			browserSystemPromptInput text: model agent browserSystemPrompt ].
+			systemPromptInput text: model agent systemPrompt. ].
 
 	"Bind text inputs to model"
-	systemPromptInput whenTextChangedDo: [ :text |
-		model agent systemPrompt: text ].
+        systemPromptInput whenTextChangedDo: [ :text |
+                model agent systemPrompt: text ].
 
 	browserSystemPromptInput whenTextChangedDo: [ :text |
 		model agent browserSystemPrompt: text ].
 
 	"Bind checkbox state to model"
 	browserExtensionCheckBox whenChangedDo: [ :presenter |
-		model browserExtensionEnabled: presenter.
-		self updateBrowserExtensionTab ]
+			model browserExtensionEnabled: presenter.
+			self updateBrowserExtensionTab ]
 ]
 
 { #category : 'layout' }
@@ -131,10 +130,7 @@ ChatPharoSettingsPresenter >> initializePresenters [
 		                     text: model agent systemPrompt;
 		                     yourself.
 
-	browserSystemPromptInput := self newTextInput
-		                            placeholder: 'Browser system prompt...';
-		                            text: model agent browserSystemPrompt;
-		                            yourself.
+browserSystemPromptInput := self newBrowserSystemPromptInput.
 
 	browserExtensionCheckBox := self newCheckBox
 		                            label: 'Enable browser tab';
@@ -162,30 +158,42 @@ ChatPharoSettingsPresenter >> initializeWindow: aWindowPresenter [
 { #category : 'initialization' }
 ChatPharoSettingsPresenter >> newBrowserExtensionSettingsTab [
 
-    | toolsLayout |
-    toolsLayout := SpBoxLayout newTopToBottom.
-    ChatPharoBrowserEnvironment new tools do: [ :tool |
-        | cb |
-        cb := self newCheckBox
-            label: tool name;
-            state: (model browserToolsEnabled includes: tool name);
-            yourself.
-        cb whenChangedDo: [ :checked |
-            checked
-                ifTrue: [ model enableBrowserTool: tool name ]
-                ifFalse: [ model disableBrowserTool: tool name ]
-        ].
-        toolsLayout add: cb expand: false
-    ].
-    ^ SpPresenter new
-        layout: (SpBoxLayout newTopToBottom
-            add: (SpBoxLayout newHorizontal
-                add: 'Browser Prompt:' expand: false;
-                add: browserSystemPromptInput;
-                yourself) expand: false;
-            add: toolsLayout;
-            yourself);
-        yourself
+	| toolsLayout |
+	 browserSystemPromptInput := self newBrowserSystemPromptInput.
+	toolsLayout := SpBoxLayout newTopToBottom.
+	ChatPharoBrowserEnvironment new tools do: [ :tool |
+			| cb |
+			cb := self newCheckBox
+				      label: tool name;
+				      state: (model browserToolsEnabled includes: tool name);
+				      yourself.
+			cb whenChangedDo: [ :checked |
+					checked
+						ifTrue: [ model enableBrowserTool: tool name ]
+						ifFalse: [ model disableBrowserTool: tool name ] ].
+			toolsLayout add: cb expand: false ].
+	^ SpPresenter new
+		  layout: (SpBoxLayout newTopToBottom
+				   add: (SpBoxLayout newHorizontal
+						    add: 'Browser Prompt:' expand: false;
+						    add: browserSystemPromptInput;
+						    yourself)
+				   expand: false;
+				   add: toolsLayout;
+				   yourself);
+		  yourself
+]
+
+{ #category : 'initialization' }
+ChatPharoSettingsPresenter >> newBrowserSystemPromptInput [ 
+    | input |
+    input := self newTextInput
+        placeholder: 'Browser system prompt...';
+        text: model agent browserSystemPrompt;
+        yourself.
+    input whenTextChangedDo: [ :text | model agent browserSystemPrompt: text ].
+    ^ input
+
 ]
 
 { #category : 'initialization' }
