@@ -161,6 +161,16 @@ ChatPharoBrowserEnvironment >> browserEnvironment: anObject [
 ]
 
 { #category : 'initialization' }
+ChatPharoBrowserEnvironment >> classNamed: className [
+    "Return the class object whose *unqualified* name equals className,
+    or nil if it is absent from the current browserEnvironment."
+    
+    ^ self browserEnvironment
+        at: className asSymbol
+        ifAbsent: [ nil ]
+]
+
+{ #category : 'initialization' }
 ChatPharoBrowserEnvironment >> classesInPackageNamed: packageName [
 
 	^ (self packageNamed: packageName) ifNotNil: [ :package |
@@ -326,16 +336,21 @@ ChatPharoBrowserEnvironment >> methodsWithSubstring: substring cappedAt: maximum
 ]
 
 { #category : 'initialization' }
-ChatPharoBrowserEnvironment >> packageNamed: packageName [ 
+ChatPharoBrowserEnvironment >> packageNamed: packageName [
+    "Find a package by exact or case-insensitive name.  
+     Previous version stopped in the debugger (`self halt.`) and
+     always exited at the first ^ — hence many tools never worked."
 
-        | normalized |
-self halt.
-	^ self browserEnvironment packageAt: packageName ifAbsent: [ nil ].
+    | direct normalised |
+    direct := self browserEnvironment
+                 packageAt: packageName
+                 ifAbsent: [ nil ].
+    direct ifNotNil: [ ^ direct ].
 
-        normalized := packageName asLowercase.
-        ^ self browserEnvironment packages
-                detect: [ :pkg | pkg name asLowercase = normalized ]
-                ifNone: [ nil ]
+    normalised := packageName asLowercase.
+    ^ self browserEnvironment packages
+            detect: [ :pkg | pkg name asLowercase = normalised ]
+            ifNone: [ nil ]
 ]
 
 { #category : 'initialization' }
