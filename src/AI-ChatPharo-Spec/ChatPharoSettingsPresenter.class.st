@@ -51,9 +51,6 @@ ChatPharoSettingsPresenter >> connectPresenters [
         systemPromptInput whenTextChangedDo: [ :text |
                 model agent systemPrompt: text ].
 
-	browserSystemPromptInput whenTextChangedDo: [ :text |
-		model agent browserSystemPrompt: text ].
-
 	"Bind checkbox state to model"
 	browserExtensionCheckBox whenChangedDo: [ :presenter |
 			model browserExtensionEnabled: presenter.
@@ -76,7 +73,7 @@ ChatPharoSettingsPresenter >> ensureBrowserExtensionTab [
 				                        title: 'System Browser'
 				                        icon: (self iconNamed: #browser)
 				                        provider: [
-				                        self newBrowserExtensionSettingsTab ].
+				                       ChatPharoBrowserExtensionSettingsPresenter on: model  ].
 			notebook addPage: browserExtensionPage ]
 ]
 
@@ -130,8 +127,6 @@ ChatPharoSettingsPresenter >> initializePresenters [
 		                     text: model agent systemPrompt;
 		                     yourself.
 
-browserSystemPromptInput := self newBrowserSystemPromptInput.
-
 	browserExtensionCheckBox := self newCheckBox
 		                            label: 'Enable browser tab';
 		                            state: model browserExtensionEnabled;
@@ -153,47 +148,6 @@ ChatPharoSettingsPresenter >> initializeWindow: aWindowPresenter [
 	aWindowPresenter
 		title: 'ChatPharo settings';
 		initialExtent: 800@500
-]
-
-{ #category : 'initialization' }
-ChatPharoSettingsPresenter >> newBrowserExtensionSettingsTab [
-
-	| toolsLayout |
-	 browserSystemPromptInput := self newBrowserSystemPromptInput.
-	toolsLayout := SpBoxLayout newTopToBottom.
-	ChatPharoBrowserEnvironment new tools do: [ :tool |
-			| cb |
-			cb := self newCheckBox
-				      label: tool name;
-				      state: (model browserToolsEnabled includes: tool name);
-				      yourself.
-			cb whenChangedDo: [ :checked |
-					checked
-						ifTrue: [ model enableBrowserTool: tool name ]
-						ifFalse: [ model disableBrowserTool: tool name ] ].
-			toolsLayout add: cb expand: false ].
-	^ SpPresenter new
-		  layout: (SpBoxLayout newTopToBottom
-				   add: (SpBoxLayout newHorizontal
-						    add: 'Browser Prompt:' expand: false;
-						    add: browserSystemPromptInput;
-						    yourself)
-				   expand: false;
-				   add: toolsLayout;
-				   yourself);
-		  yourself
-]
-
-{ #category : 'initialization' }
-ChatPharoSettingsPresenter >> newBrowserSystemPromptInput [ 
-    | input |
-    input := self newTextInput
-        placeholder: 'Browser system prompt...';
-        text: model agent browserSystemPrompt;
-        yourself.
-    input whenTextChangedDo: [ :text | model agent browserSystemPrompt: text ].
-    ^ input
-
 ]
 
 { #category : 'initialization' }
