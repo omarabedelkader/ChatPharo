@@ -40,26 +40,24 @@ BaselineOfAIChatPharo class >> postLoad: spec [
 BaselineOfAIChatPharo >> baseline: spec [
 
 	<baseline>
-	spec for: #common do: [
-			spec package: 'AI-ChatPharo'.
-			spec
-				package: 'AI-ChatPharo-Tests'
-				with: [ spec requires: #( 'AI-ChatPharo' ) ].
-			spec
-				package: 'AI-ChatPharo-Agent'
-				with: [ spec requires: #( 'AI-ChatPharo' ) ].
-			spec
-				package: 'AI-ChatPharo-Spec'
-				with: [ spec requires: #( 'AI-ChatPharo' ) ].
-			spec
-				package: 'AI-ChatPharo-Tools'
-				with: [ spec requires: #( 'AI-ChatPharo' ) ].
-			spec
-				package: 'AI-ChatPharo-History'
-				with: [ spec requires: #( 'AI-ChatPharo' ) ].
-			spec
-				package: 'AI-ChatPharo-Env'
-				with: [ spec requires: #( 'AI-ChatPharo' ) ] ]	
-				
-			
+        spec for: #common do: [
+                        spec package: 'AI-ChatPharo'.
+                        spec
+                                package: 'AI-ChatPharo-Agent'
+                                with: [ spec requires: #( 'AI-ChatPharo' ) ].
+                        spec
+                                package: 'AI-ChatPharo-Spec'
+                                with: [ spec requires: #( 'AI-ChatPharo' ) ].
+                        spec
+                                package: 'AI-ChatPharo-Tools'
+                                with: [ spec requires: #( 'AI-ChatPharo' ) ].
+                        spec
+                                package: 'AI-ChatPharo-History'
+                                with: [ spec requires: #( 'AI-ChatPharo' ) ].
+                        spec
+                                package: 'AI-ChatPharo-Env'
+                                with: [ spec requires: #( 'AI-ChatPharo' ) ].
+                        spec
+                                package: 'AI-ChatPharo-Tests'
+                                with: [ spec requires: #( 'AI-ChatPharo' 'AI-ChatPharo-Agent' 'AI-ChatPharo-Spec' 'AI-ChatPharo-Tools' 'AI-ChatPharo-History' 'AI-ChatPharo-Env' ) ] ]
 ]
