@@ -19,7 +19,8 @@ Class {
 	#name : 'ChatPharoSettings',
 	#superclass : 'Object',
 	#instVars : [
-		'agent'
+		'agent',
+		'browserExtensionEnabled'
 	],
 	#classInstVars : [
 		'Default'
@@ -45,9 +46,12 @@ ChatPharoSettings class >> loadOrNew [
 		        ifTrue: [ path readStream ]
 		        ifFalse: [ ^ self new ].
 
-	[ ^ STON fromStream: file ]
-		on: Error
-		do: [ ^ self new ].
+        [
+            | settings |
+            settings := STON fromStream: file.
+            settings browserExtensionEnabled ifNil: [ settings browserExtensionEnabled: false ].
+            ^ settings
+        ] on: Error do: [ ^ self new ].
 ]
 
 { #category : 'accessing' }
@@ -98,10 +102,23 @@ ChatPharoSettings >> availableApis [
 ]
 
 { #category : 'initialization' }
+ChatPharoSettings >> browserExtensionEnabled [ 
+
+        ^ browserExtensionEnabled
+]
+
+{ #category : 'initialization' }
+ChatPharoSettings >> browserExtensionEnabled: aBoolean [ 
+
+        browserExtensionEnabled := aBoolean
+]
+
+{ #category : 'initialization' }
 ChatPharoSettings >> initialize [
 
 	super initialize.
-	agent := ChatPharoNullAgent new
+	agent := ChatPharoNullAgent new.
+	 browserExtensionEnabled := false
 ]
 
 { #category : 'initialization' }

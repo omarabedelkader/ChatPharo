@@ -63,6 +63,18 @@ ChatPharoAgent class >> settingsPresenterFor: anAgent [
 	^ nil
 ]
 
+{ #category : 'accessing' }
+ChatPharoAgent >> browserSystemPrompt [ 
+
+        ^ browserSystemPrompt
+]
+
+{ #category : 'accessing' }
+ChatPharoAgent >> browserSystemPrompt: aString [ 
+
+        browserSystemPrompt := aString
+]
+
 { #category : 'initialization' }
 ChatPharoAgent >> getResponseForPrompt: prompt [
 

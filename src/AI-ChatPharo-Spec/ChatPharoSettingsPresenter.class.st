@@ -15,7 +15,8 @@ Class {
 		'apiSettingsContainer',
 		'applicationE',
 		'systemPromptInput',
-		'browserSystemPromptInput'
+		'browserSystemPromptInput',
+		'browserExtensionCheckBox'
 	],
 	#category : 'AI-ChatPharo-Spec-Core',
 	#package : 'AI-ChatPharo-Spec',
@@ -23,25 +24,49 @@ Class {
 }
 
 { #category : 'initialization' }
-ChatPharoSettingsPresenter >> connectPresenters [
+ChatPharoSettingsPresenter >> connectPresenters [ 
 
-	modelsRefreshButton action: [
-			ollamaModelDropList items: model models.
-			ollamaModelDropList items ifNotEmpty: [
-				ollamaModelDropList selectFirst ] ].
+    "Refresh models on button action"
+    modelsRefreshButton action: [
+        ollamaModelDropList items: model models.
+        ollamaModelDropList items ifNotEmpty: [
+            ollamaModelDropList selectFirst
+        ].
+    ].
 
-	apiDropList whenSelectedItemChangedDo: [ :assoc |
-			| apiClass newPresenter |
-			apiClass := assoc value.
-			model useApi: apiClass.
+    "Handle API dropdown selection"
+    apiDropList whenSelectedItemChangedDo: [ :assoc |
+        | apiClass newPresenter |
+        apiClass := assoc value.
+        model useApi: apiClass.
 
-			apiSettingsContainer removeAll.
+        "Clear old settings and install new presenter"
+        apiSettingsContainer removeAll.
+        newPresenter := apiClass settingsPresenterFor: model agent.
+        newPresenter ifNotNil: [
+            apiSettingsContainer add: newPresenter
+        ].
 
-			newPresenter := apiClass settingsPresenterFor: model agent.
-			newPresenter ifNotNil: [ apiSettingsContainer add: newPresenter ].
-			systemPromptInput text: model agent systemPrompt ].
-	systemPromptInput whenTextChangedDo: [ :text |
-		model agent systemPrompt: text ]
+        "Update system prompt inputs"
+        systemPromptInput text: model agent systemPrompt.
+        browserSystemPromptInput text: model agent browserSystemPrompt.
+    ].
+
+    "Bind text inputs to model"
+    systemPromptInput whenTextChangedDo: [ :text |
+        model agent systemPrompt: text
+    ].
+
+    browserSystemPromptInput whenTextChangedDo: [ :text |
+        model agent browserSystemPrompt: text
+    ].
+
+    "Bind checkbox state to model"
+browserExtensionCheckBox whenChangedDo: [ :presenter |
+    model browserExtensionEnabled: presenter
+].
+
+
 ]
 
 { #category : 'layout' }
@@ -74,6 +99,11 @@ ChatPharoSettingsPresenter >> initializePresenters [
 			 title: 'Configuration'
 			 icon: (self iconNamed: #smallConfiguration)
 			 provider: [ self newConfigurationTab ]).
+			
+	notebook addPage: (SpNotebookPage
+                         title: 'Extensions'
+                         icon: (self iconNamed: #smallBrowser)
+                         provider: [ self newExtensionsTab ]).
 
 	modelsRefreshButton := self newButton
 		                       label: 'Refresh';
@@ -96,6 +126,14 @@ ChatPharoSettingsPresenter >> initializePresenters [
 		                     placeholder: 'System prompt...';
 		                     text: model agent systemPrompt;
 		                     yourself.
+        browserSystemPromptInput := self newTextInput
+                                     placeholder: 'Browser system prompt...';
+                                     text: model agent browserSystemPrompt;
+                                     yourself.
+        browserExtensionCheckBox := self newCheckBox
+                                     label: 'Enable browser tab';
+                                     state: model browserExtensionEnabled;
+                                     yourself.
 	apiDropList selectItem: (model availableApiChoices
 			 detect: [ :assoc | assoc value = model agent class ]
 			 ifNone: [ model availableApiChoices first ]).
@@ -150,6 +188,21 @@ ChatPharoSettingsPresenter >> newConfigurationTab [
 				   add: apiSettingsContainer;
 				   yourself);
 		  yourself
+]
+
+{ #category : 'initialization' }
+ChatPharoSettingsPresenter >> newExtensionsTab [ 
+
+        ^ SpPresenter new
+                  layout: (SpBoxLayout newTopToBottom
+                                   add: browserExtensionCheckBox expand: false;
+                                   add: (SpBoxLayout newHorizontal
+                                                    add: 'Browser Prompt:' expand: false;
+                                                    add: browserSystemPromptInput;
+                                                    yourself)
+                                   expand: false;
+                                   yourself);
+                  yourself
 ]
 
 { #category : 'initialization' }
