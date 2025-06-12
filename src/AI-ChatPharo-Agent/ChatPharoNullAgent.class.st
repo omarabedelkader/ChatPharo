@@ -41,3 +41,9 @@ ChatPharoNullAgent >> modelInformation [
 
     ^ 'No model selected yet'
 ]
+
+{ #category : 'accessing' }
+ChatPharoNullAgent >> testConnection [ 
+
+        ^ true
+]

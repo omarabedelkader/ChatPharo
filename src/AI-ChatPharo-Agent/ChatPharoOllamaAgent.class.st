@@ -235,3 +235,13 @@ ChatPharoOllamaAgent >> temperature: anObject [
 
 	temperature := anObject
 ]
+
+{ #category : 'accessing' }
+ChatPharoOllamaAgent >> testConnection [ 
+
+        [
+                ZnClient new get:
+                        'http://' , host , ':' , port , '/api/version'.
+                true
+        ] on: ZnHttpUnsuccessful, NetworkError do: [ false ]
+]

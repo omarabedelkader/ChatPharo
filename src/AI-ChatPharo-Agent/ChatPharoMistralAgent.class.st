@@ -49,3 +49,9 @@ ChatPharoMistralAgent >> getResponseForPrompt: prompt [
 ChatPharoMistralAgent >> modelInformation [
 	^ self shouldBeImplemented
 ]
+
+{ #category : 'accessing' }
+ChatPharoMistralAgent >> testConnection [
+
+	self shouldBeImplemented 
+]

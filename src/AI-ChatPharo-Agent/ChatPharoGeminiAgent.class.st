@@ -78,19 +78,19 @@ ChatPharoGeminiAgent >> apiKey: anObject [
 
 { #category : 'initialization' }
 ChatPharoGeminiAgent >> getResponseForPrompt: userPrompt [
+
 	| api result |
 	
+	self halt.
 	api := ChatPharoTool
-		geminiWithAPIKey: apiKey
-		system: self systemPrompt
-		tools: self tools.
+		       geminiWithAPIKey: apiKey
+		       system: self systemPrompt
+		       tools: self tools.
 
 	model ifNotEmpty: [ api model: model ].
 
 	result := api getResponseForHistory:
-		(ChatPharoHistorySaver
-			role: 'user'
-			content: userPrompt).
+		          (ChatPharoHistorySaver role: 'user' content: userPrompt).
 
 	^ result content
 ]
@@ -151,6 +151,16 @@ ChatPharoGeminiAgent >> temperature [
 ChatPharoGeminiAgent >> temperature: anObject [
 
 	temperature := anObject
+]
+
+{ #category : 'accessing' }
+ChatPharoGeminiAgent >> testConnection [ 
+
+        [ | url |
+                url := 'https://' , host , '/v1beta/models?key=' , apiKey.
+                ZnClient new head: url.
+                true ]
+                on: ZnHttpUnsuccessful, NetworkError do: [ false ]
 ]
 
 { #category : 'tools support' }

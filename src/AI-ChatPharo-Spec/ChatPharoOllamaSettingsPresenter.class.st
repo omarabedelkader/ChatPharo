@@ -14,7 +14,8 @@ Class {
 		'installInput',
 		'installButton',
 		'pullButton',
-		'deleteButton'
+		'deleteButton',
+		'testButton'
 	],
 	#category : 'AI-ChatPharo-Spec-Agent',
 	#package : 'AI-ChatPharo-Spec',
@@ -54,7 +55,7 @@ ChatPharoOllamaSettingsPresenter >> defaultLayout [
 		              expand: false;
 		              add: installInput expand: true;
 		              add: installButton expand: false;
-						 add: deleteButton expand: false;
+		              add: deleteButton expand: false;
 		              yourself.
 
 	hostRow := SpBoxLayout newHorizontal
@@ -87,6 +88,7 @@ ChatPharoOllamaSettingsPresenter >> defaultLayout [
 		              add: hostRow expand: false;
 		              add: portRow expand: false;
 		              add: tempRow expand: false;
+						add: testButton expand: false;
 		              yourself.
 
 	^ mainLayout
@@ -147,14 +149,18 @@ ChatPharoOllamaSettingsPresenter >> initializePresenters [
 						                 self inform:
 								                 'Model ' , installInput text , ' not found.' ] ];
 		                 yourself.
-	 deleteButton := self newButton
-                                label: 'Delete';
-                                icon: (self iconNamed: #delete);
-                                action: [
-                                        model class deleteModel: installInput text.
-                                        self refreshModels
-                                ];
-yourself
+	deleteButton := self newButton
+		                label: 'Delete';
+		                icon: (self iconNamed: #delete);
+		                action: [
+				                model class deleteModel: installInput text.
+				                self refreshModels ];
+		                yourself.
+	        testButton := self newButton
+                               label: 'Test Connection';
+                               icon: (self iconNamed: #glamorousGo);
+                               action: [ self testConnection ];
+                               yourself
 ]
 
 { #category : 'accessing' }
@@ -223,4 +229,24 @@ ChatPharoOllamaSettingsPresenter >> refreshModels [
 { #category : 'accessing - model' }
 ChatPharoOllamaSettingsPresenter >> setModelBeforeInitialization: anAgent [
 	model := anAgent
+]
+
+{ #category : 'layout' }
+ChatPharoOllamaSettingsPresenter >> testButton [ 
+
+        ^ testButton
+]
+
+{ #category : 'layout' }
+ChatPharoOllamaSettingsPresenter >> testButton: anObject [ 
+
+        testButton := anObject
+]
+
+{ #category : 'initialization' }
+ChatPharoOllamaSettingsPresenter >> testConnection [ 
+
+        (model testConnection)
+                ifTrue: [ self inform: 'Connection successful.' ]
+                ifFalse: [ self inform: 'Connection failed.' ]
 ]

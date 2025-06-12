@@ -28,6 +28,12 @@ Class {
 }
 
 { #category : 'api' }
+ChatPharoAgent class >> defaultSystemPrompt [ 
+
+        ^ 'You are an AI coding assistant inside the user''s Pharo image.'
+]
+
+{ #category : 'api' }
 ChatPharoAgent class >> displayName [
 
 	self subclassResponsibility
@@ -66,11 +72,12 @@ ChatPharoAgent >> history: aHistory [           history := aHistory
 
 { #category : 'initialization' }
 ChatPharoAgent >> initialize [
+
 	super initialize.
-	model        := ''.
-	systemPrompt       := ''.
+	model := ''.
+	systemPrompt := systemPrompt := self class defaultSystemPrompt.
 	promptPrefix := ''.
-	response     := ''.
+	response := ''
 ]
 
 { #category : 'accessing' }
@@ -125,6 +132,12 @@ ChatPharoAgent >> systemPrompt [
 ChatPharoAgent >> systemPrompt: anObject [
 
 	systemPrompt := anObject
+]
+
+{ #category : 'accessing' }
+ChatPharoAgent >> testConnection [ 
+
+        self subclassResponsibility
 ]
 
 { #category : 'accessing' }

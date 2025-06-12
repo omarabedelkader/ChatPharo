@@ -326,9 +326,16 @@ ChatPharoBrowserEnvironment >> methodsWithSubstring: substring cappedAt: maximum
 ]
 
 { #category : 'initialization' }
-ChatPharoBrowserEnvironment >> packageNamed: packageName [
+ChatPharoBrowserEnvironment >> packageNamed: packageName [ 
 
-	^ self browserEnvironment packageAt: packageName ifAbsent: [ nil ]
+        | normalized |
+self halt.
+	^ self browserEnvironment packageAt: packageName ifAbsent: [ nil ].
+
+        normalized := packageName asLowercase.
+        ^ self browserEnvironment packages
+                detect: [ :pkg | pkg name asLowercase = normalized ]
+                ifNone: [ nil ]
 ]
 
 { #category : 'initialization' }

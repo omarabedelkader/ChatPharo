@@ -44,3 +44,10 @@ ChatPharoNullAgentTest >> testSettingsPresenterIsNil [
 
     self assert: (ChatPharoNullAgent settingsPresenterFor: nil) isNil
 ]
+
+{ #category : 'tests' }
+ChatPharoNullAgentTest >> testTestConnectionReturnsTrue [ 
+
+
+    self assert: (ChatPharoNullAgent new testConnection)
+]

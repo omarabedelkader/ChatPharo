@@ -47,6 +47,8 @@ ChatPharo >> initialize [
 
 	super initialize.
 	settings := ChatPharoSettings default.
+	settings agent systemPrompt isEmpty ifTrue: [
+                settings agent systemPrompt: ChatPharoAgent defaultSystemPrompt ].
 	chats := OrderedCollection new
 ]
 

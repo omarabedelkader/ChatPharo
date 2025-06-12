@@ -9,7 +9,8 @@ Class {
 		'apiKeyField',
 		'modelDrop',
 		'model',
-		'temperatureInput'
+		'temperatureInput',
+		'testButton'
 	],
 	#category : 'AI-ChatPharo-Spec-Agent',
 	#package : 'AI-ChatPharo-Spec',
@@ -40,6 +41,7 @@ ChatPharoGeminiSettingsPresenter >> defaultLayout [
 		  add: modelDrop expand: false;
 		  add: 'Temperature:' expand: false;
 		  add: temperatureInput expand: false;
+		add: testButton expand: false;
 		  yourself
 ]
 
@@ -59,14 +61,14 @@ ChatPharoGeminiSettingsPresenter >> hostField: anObject [
 ChatPharoGeminiSettingsPresenter >> initializePresenters [
 
 	super initializePresenters.
-	hostField := self newTextInput 
-							placeholder:'generativelanguage.googleapis.com';
-							text: model host.
+	hostField := self newTextInput
+		             placeholder: 'generativelanguage.googleapis.com';
+		             text: model host.
 
 	apiKeyField := self newTextInput
-							placeholder: 'API-KEY';
-							text: model apiKey.
-									
+		               placeholder: 'API-KEY';
+		               text: model apiKey.
+
 
 	modelDrop := SpDropListPresenter new.
 
@@ -83,7 +85,12 @@ ChatPharoGeminiSettingsPresenter >> initializePresenters [
 	temperatureInput := self newTextInput
 		                    placeholder: '0.0';
 		                    text: model temperature asString;
-		                    yourself
+		                    yourself.
+	testButton := self newButton
+                                label: 'Test Connection';
+                                icon: (self iconNamed: #glamorousGo);
+                                action: [ self testConnection ];
+                                yourself
 ]
 
 { #category : 'accessing' }
@@ -118,4 +125,24 @@ ChatPharoGeminiSettingsPresenter >> refreshModels [
 ChatPharoGeminiSettingsPresenter >> setModelBeforeInitialization: anAgent [
 
 	model := anAgent
+]
+
+{ #category : 'initialization' }
+ChatPharoGeminiSettingsPresenter >> testButton [ 
+
+        ^ testButton
+]
+
+{ #category : 'initialization' }
+ChatPharoGeminiSettingsPresenter >> testButton: anObject [ 
+
+        testButton := anObject
+]
+
+{ #category : 'initialization' }
+ChatPharoGeminiSettingsPresenter >> testConnection [ 
+        (model testConnection)
+                ifTrue: [ self inform: 'Connection successful.' ]
+                ifFalse: [ self inform: 'Connection failed.' ]
+
 ]
