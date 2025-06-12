@@ -4,8 +4,9 @@ This a class that class chatpharo at user request inside a specific env
 Class {
 	#name : 'ChatPharoState',
 	#superclass : 'WorldState',
-	#category : 'AI-ChatPharo-Env',
-	#package : 'AI-ChatPharo-Env'
+	#category : 'AI-ChatPharo-Env-Menu',
+	#package : 'AI-ChatPharo-Env',
+	#tag : 'Menu'
 }
 
 { #category : 'world state' }

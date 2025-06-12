@@ -4,8 +4,9 @@ Extention to suppord Ask ChatPharo when selecting a context
 Class {
 	#name : 'ChatPharoCodeMenu',
 	#superclass : 'RubSmalltalkCodeMode',
-	#category : 'AI-ChatPharo-Env',
-	#package : 'AI-ChatPharo-Env'
+	#category : 'AI-ChatPharo-Env-Menu',
+	#package : 'AI-ChatPharo-Env',
+	#tag : 'Menu'
 }
 
 { #category : 'menu' }

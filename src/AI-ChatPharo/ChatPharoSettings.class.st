@@ -138,10 +138,10 @@ ChatPharoSettings >> disableBrowserTool: toolName [
 ]
 
 { #category : 'initialization' }
-ChatPharoSettings >> enableBrowserTool: toolName [ 
+ChatPharoSettings >> enableBrowserTool: toolName [
 
-        browserToolsEnabled add: toolName ifAbsent: []
-
+	        (browserToolsEnabled includes: toolName)
+                ifFalse: [ browserToolsEnabled add: toolName ]
 ]
 
 { #category : 'initialization' }

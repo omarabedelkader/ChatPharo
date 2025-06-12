@@ -1,8 +1,9 @@
 Class {
 	#name : 'ChatPharoSystemPromptBrowser',
 	#superclass : 'ChatPharoBrowser',
-	#category : 'AI-ChatPharo-Env',
-	#package : 'AI-ChatPharo-Env'
+	#category : 'AI-ChatPharo-Env-System Browser',
+	#package : 'AI-ChatPharo-Env',
+	#tag : 'System Browser'
 }
 
 { #category : 'activation' }
