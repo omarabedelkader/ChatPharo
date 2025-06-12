@@ -14,7 +14,8 @@ Class {
 		'apiDropList',
 		'apiSettingsContainer',
 		'applicationE',
-		'systemPromptInput'
+		'systemPromptInput',
+		'browserSystemPromptInput'
 	],
 	#category : 'AI-ChatPharo-Spec-Core',
 	#package : 'AI-ChatPharo-Spec',

@@ -21,16 +21,23 @@ Class {
 		'promptPrefix',
 		'response',
 		'history',
-		'systemPrompt'
+		'systemPrompt',
+		'browserSystemPrompt'
 	],
 	#category : 'AI-ChatPharo-Agent',
 	#package : 'AI-ChatPharo-Agent'
 }
 
 { #category : 'api' }
+ChatPharoAgent class >> defaultBrowserSystemPrompt [
+
+        ^ 'You are an AI coding assistant inside the Pharo System Browser. The user is exploring the package {packageName}. Focus answers on classes or methods from that package.'
+]
+
+{ #category : 'api' }
 ChatPharoAgent class >> defaultSystemPrompt [
 
-	^ 'You are an AI coding assistant inside the user''s Pharo image. The user is currently browsing the package {packageName}. Assume the user''s question is about classes or methods in that package and proactively explore its code.'
+	^ 'You are an AI coding assistant inside the user''s Pharo image.'
 ]
 
 { #category : 'api' }
@@ -76,6 +83,7 @@ ChatPharoAgent >> initialize [
 	super initialize.
 	model := ''.
 	systemPrompt := systemPrompt := self class defaultSystemPrompt.
+	browserSystemPrompt := self class defaultBrowserSystemPrompt.
 	promptPrefix := ''.
 	response := ''
 ]
