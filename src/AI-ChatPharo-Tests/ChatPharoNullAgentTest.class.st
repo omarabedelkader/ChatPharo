@@ -46,6 +46,15 @@ ChatPharoNullAgentTest >> testSettingsPresenterIsNil [
 ]
 
 { #category : 'tests' }
+ChatPharoNullAgentTest >> testSettingsPresenterShowsMessage [ 
+
+    | presenter |
+    presenter := ChatPharoNullAgent settingsPresenterFor: ChatPharoNullAgent new.
+    self assert: presenter notNil.
+    self assert: presenter infoLabel label = 'Please configure an Agent, by selecting an Agent'
+]
+
+{ #category : 'tests' }
 ChatPharoNullAgentTest >> testTestConnectionReturnsTrue [ 
 
 
