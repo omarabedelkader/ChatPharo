@@ -177,7 +177,6 @@ ChatPharoGeminiAgent >> testConnection [
 { #category : 'tools support' }
 ChatPharoGeminiAgent >> tools [
     | available |
-	    ^ ChatPharoBrowserEnvironment new tools.
     available := ChatPharoBrowserEnvironment new tools.
     ^ available select: [ :tool |
         ChatPharoSettings default browserToolsEnabled includes: tool name ]
