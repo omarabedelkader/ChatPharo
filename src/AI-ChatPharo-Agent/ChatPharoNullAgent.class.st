@@ -31,9 +31,9 @@ ChatPharoNullAgent class >> modelNames [
 ]
 
 { #category : 'api' }
-ChatPharoNullAgent class >> settingsPresenterFor: anAgent [ 
-
-    ^ ChatPharoNullSettingsPresenter on: anAgent
+ChatPharoNullAgent class >> settingsPresenterFor: anAgent [
+ 		anAgent ifNil: [ ^ nil ].
+	^ ChatPharoNullSettingsPresenter on: anAgent
 ]
 
 { #category : 'initialization' }
