@@ -46,10 +46,14 @@ ChatPharoGeminiAgent class >> displayName [
 { #category : 'api' }
 ChatPharoGeminiAgent class >> isReachable [
 
-	[ | url |
-		url := 'https://generativelanguage.googleapis.com/v1beta/models?key=dummy'.
-		ZnClient new head: url.
-		true ] on: NetworkError do: [ false ]
+[ | url |
+  url := 'https://generativelanguage.googleapis.com/v1beta/models?key=dummy'.
+  ZnClient new get: url.
+  true ] on: ZnHttpUnsuccessful, NetworkError do: [ :ex |
+  (ex isKindOf: NetworkError)
+    ifTrue: [ ^ false ].
+  ^ true ]
+
 ]
 
 { #category : 'api' }
@@ -79,20 +83,21 @@ ChatPharoGeminiAgent >> apiKey: anObject [
 { #category : 'initialization' }
 ChatPharoGeminiAgent >> getResponseForPrompt: userPrompt [
 
-	| api result |
-	
-	self halt.
-	api := ChatPharoTool
-		       geminiWithAPIKey: apiKey
-		       system: self systemPrompt
-		       tools: self tools.
 
-	model ifNotEmpty: [ api model: model ].
+    | api assistantMessage |
+    history ifNil: [ history := ChatPharoHistory new ].
+    history addMessage: (ChatPharoHistorySaver
+                            role: 'user'
+                            content: userPrompt).
+    api := ChatPharoTool
+              geminiWithAPIKey: apiKey
+              system: self systemPrompt
+              tools: self tools.
+    model ifNotEmpty: [ api model: model ].
+    assistantMessage := api getResponseForHistory: history.
+    history addMessage: assistantMessage.
 
-	result := api getResponseForHistory:
-		          (ChatPharoHistorySaver role: 'user' content: userPrompt).
-
-	^ result content
+    ^ assistantMessage content
 ]
 
 { #category : 'accessing' }
@@ -137,8 +142,9 @@ ChatPharoGeminiAgent >> modelNames [
 { #category : 'accessing' }
 ChatPharoGeminiAgent >> packageName: aString [
 
-	packageName := aString.
-	self systemPrompt: 'You are an AI coding assistant inside the user''s Pharo image. The user is currently browsing the package ', packageName ,' Assume the user''s question is about classes or methods in that package and proactively explore its code.'
+        packageName := aString.
+        self systemPrompt: (ChatPharoAgent defaultSystemPrompt
+                copyReplaceAll: '{packageName}' with: packageName)
 ]
 
 { #category : 'accessing' }

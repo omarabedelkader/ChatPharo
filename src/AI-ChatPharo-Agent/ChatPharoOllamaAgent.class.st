@@ -12,7 +12,8 @@ Class {
 	#instVars : [
 		'host',
 		'port',
-		'temperature'
+		'temperature',
+		'packageName'
 	],
 	#category : 'AI-ChatPharo-Agent',
 	#package : 'AI-ChatPharo-Agent'
@@ -188,7 +189,8 @@ ChatPharoOllamaAgent >> initialize [
 	temperature := 0.0.
 	self model: nil.
 	self systemPrompt: ''.
-	self promptPrefix: ''
+	self promptPrefix: ''.
+	packageName := ''
 ]
 
 { #category : 'initialization' }
@@ -210,6 +212,14 @@ ChatPharoOllamaAgent >> modelInformation [
 ChatPharoOllamaAgent >> modelNames [
 
 	^ self class modelNames
+]
+
+{ #category : 'accessing' }
+ChatPharoOllamaAgent >> packageName: aString [ 
+
+        packageName := aString.
+        self systemPrompt: (ChatPharoAgent defaultSystemPrompt
+                copyReplaceAll: '{packageName}' with: packageName)
 ]
 
 { #category : 'accessing' }

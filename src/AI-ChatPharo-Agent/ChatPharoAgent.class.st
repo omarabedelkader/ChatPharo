@@ -28,9 +28,9 @@ Class {
 }
 
 { #category : 'api' }
-ChatPharoAgent class >> defaultSystemPrompt [ 
+ChatPharoAgent class >> defaultSystemPrompt [
 
-        ^ 'You are an AI coding assistant inside the user''s Pharo image.'
+	^ 'You are an AI coding assistant inside the user''s Pharo image. The user is currently browsing the package {packageName}. Assume the user''s question is about classes or methods in that package and proactively explore its code.'
 ]
 
 { #category : 'api' }
