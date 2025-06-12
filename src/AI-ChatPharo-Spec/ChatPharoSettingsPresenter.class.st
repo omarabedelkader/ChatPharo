@@ -99,11 +99,11 @@ ChatPharoSettingsPresenter >> initializePresenters [
 			 title: 'Configuration'
 			 icon: (self iconNamed: #smallConfiguration)
 			 provider: [ self newConfigurationTab ]).
-			
+
 	notebook addPage: (SpNotebookPage
-                         title: 'Extensions'
-                         icon: (self iconNamed: #smallBrowser)
-                         provider: [ self newExtensionsTab ]).
+			 title: 'Extensions'
+			 icon: (self iconNamed: #smallCogInitialState)
+			 provider: [ self newExtensionsTab ]).
 
 	modelsRefreshButton := self newButton
 		                       label: 'Refresh';
@@ -126,14 +126,17 @@ ChatPharoSettingsPresenter >> initializePresenters [
 		                     placeholder: 'System prompt...';
 		                     text: model agent systemPrompt;
 		                     yourself.
-        browserSystemPromptInput := self newTextInput
-                                     placeholder: 'Browser system prompt...';
-                                     text: model agent browserSystemPrompt;
-                                     yourself.
-        browserExtensionCheckBox := self newCheckBox
-                                     label: 'Enable browser tab';
-                                     state: model browserExtensionEnabled;
-                                     yourself.
+
+	browserSystemPromptInput := self newTextInput
+		                            placeholder: 'Browser system prompt...';
+		                            text: model agent browserSystemPrompt;
+		                            yourself.
+
+	browserExtensionCheckBox := self newCheckBox
+		                            label: 'Enable browser tab';
+		                            state: model browserExtensionEnabled;
+		                            yourself.
+
 	apiDropList selectItem: (model availableApiChoices
 			 detect: [ :assoc | assoc value = model agent class ]
 			 ifNone: [ model availableApiChoices first ]).
