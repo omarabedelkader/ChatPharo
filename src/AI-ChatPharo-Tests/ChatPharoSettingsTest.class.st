@@ -35,6 +35,23 @@ ChatPharoSettingsTest >> testAvailableApiChoicesReturnsAssociations [
 ]
 
 { #category : 'tests' }
+ChatPharoSettingsTest >> testBrowserToolsEnabledDefault [ 
+        self deny: settings browserToolsEnabled isNil.
+        self assert: settings browserToolsEnabled notEmpty
+]
+
+{ #category : 'tests' }
+ChatPharoSettingsTest >> testEnableDisableBrowserTool [ 
+
+        | name |
+        name := settings browserToolsEnabled anyOne.
+        settings disableBrowserTool: name.
+        self deny: (settings browserToolsEnabled includes: name).
+        settings enableBrowserTool: name.
+        self assert: (settings browserToolsEnabled includes: name)
+]
+
+{ #category : 'tests' }
 ChatPharoSettingsTest >> testModelsDelegation [
 	self
 		assert: settings models

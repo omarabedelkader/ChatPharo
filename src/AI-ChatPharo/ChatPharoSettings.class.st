@@ -20,7 +20,8 @@ Class {
 	#superclass : 'Object',
 	#instVars : [
 		'agent',
-		'browserExtensionEnabled'
+		'browserExtensionEnabled',
+		'browserToolsEnabled'
 	],
 	#classInstVars : [
 		'Default'
@@ -46,12 +47,17 @@ ChatPharoSettings class >> loadOrNew [
 		        ifTrue: [ path readStream ]
 		        ifFalse: [ ^ self new ].
 
-        [
-            | settings |
-            settings := STON fromStream: file.
-            settings browserExtensionEnabled ifNil: [ settings browserExtensionEnabled: false ].
-            ^ settings
-        ] on: Error do: [ ^ self new ].
+	[
+		| settings |
+		settings := STON fromStream: file.
+		settings browserExtensionEnabled ifNil: [
+			settings browserExtensionEnabled: false ].
+	            settings browserToolsEnabled ifNil: [
+                settings browserToolsEnabled: (ChatPharoBrowserEnvironment new tools collect: [ :t | t name ]) asOrderedCollection
+            ].
+		^ settings ]
+		on: Error
+		do: [ ^ self new ]
 ]
 
 { #category : 'accessing' }
@@ -114,11 +120,37 @@ ChatPharoSettings >> browserExtensionEnabled: aBoolean [
 ]
 
 { #category : 'initialization' }
+ChatPharoSettings >> browserToolsEnabled [
+
+        ^ browserToolsEnabled
+]
+
+{ #category : 'initialization' }
+ChatPharoSettings >> browserToolsEnabled: aCollection [ 
+
+        browserToolsEnabled := aCollection
+]
+
+{ #category : 'initialization' }
+ChatPharoSettings >> disableBrowserTool: toolName [ 
+
+        browserToolsEnabled remove: toolName ifAbsent: []
+]
+
+{ #category : 'initialization' }
+ChatPharoSettings >> enableBrowserTool: toolName [ 
+
+        browserToolsEnabled add: toolName ifAbsent: []
+
+]
+
+{ #category : 'initialization' }
 ChatPharoSettings >> initialize [
 
 	super initialize.
 	agent := ChatPharoNullAgent new.
-	 browserExtensionEnabled := false
+	browserExtensionEnabled := false.
+	 browserToolsEnabled := (ChatPharoBrowserEnvironment new tools collect: [ :t | t name ]) asOrderedCollection
 ]
 
 { #category : 'initialization' }

@@ -16,7 +16,8 @@ Class {
 		'applicationE',
 		'systemPromptInput',
 		'browserSystemPromptInput',
-		'browserExtensionCheckBox'
+		'browserExtensionCheckBox',
+		'browserExtensionPage'
 	],
 	#category : 'AI-ChatPharo-Spec-Core',
 	#package : 'AI-ChatPharo-Spec',
@@ -24,49 +25,40 @@ Class {
 }
 
 { #category : 'initialization' }
-ChatPharoSettingsPresenter >> connectPresenters [ 
+ChatPharoSettingsPresenter >> connectPresenters [
+	"Refresh models on button action"
 
-    "Refresh models on button action"
-    modelsRefreshButton action: [
-        ollamaModelDropList items: model models.
-        ollamaModelDropList items ifNotEmpty: [
-            ollamaModelDropList selectFirst
-        ].
-    ].
+	modelsRefreshButton action: [
+			ollamaModelDropList items: model models.
+			ollamaModelDropList items ifNotEmpty: [
+				ollamaModelDropList selectFirst ] ].
 
-    "Handle API dropdown selection"
-    apiDropList whenSelectedItemChangedDo: [ :assoc |
-        | apiClass newPresenter |
-        apiClass := assoc value.
-        model useApi: apiClass.
+	"Handle API dropdown selection"
+	apiDropList whenSelectedItemChangedDo: [ :assoc |
+			| apiClass newPresenter |
+			apiClass := assoc value.
+			model useApi: apiClass.
 
-        "Clear old settings and install new presenter"
-        apiSettingsContainer removeAll.
-        newPresenter := apiClass settingsPresenterFor: model agent.
-        newPresenter ifNotNil: [
-            apiSettingsContainer add: newPresenter
-        ].
+			"Clear old settings and install new presenter"
+			apiSettingsContainer removeAll.
+			newPresenter := apiClass settingsPresenterFor: model agent.
+			newPresenter ifNotNil: [ apiSettingsContainer add: newPresenter ].
 
-        "Update system prompt inputs"
-        systemPromptInput text: model agent systemPrompt.
-        browserSystemPromptInput text: model agent browserSystemPrompt.
-    ].
+			"Update system prompt inputs"
+			systemPromptInput text: model agent systemPrompt.
+			browserSystemPromptInput text: model agent browserSystemPrompt ].
 
-    "Bind text inputs to model"
-    systemPromptInput whenTextChangedDo: [ :text |
-        model agent systemPrompt: text
-    ].
+	"Bind text inputs to model"
+	systemPromptInput whenTextChangedDo: [ :text |
+		model agent systemPrompt: text ].
 
-    browserSystemPromptInput whenTextChangedDo: [ :text |
-        model agent browserSystemPrompt: text
-    ].
+	browserSystemPromptInput whenTextChangedDo: [ :text |
+		model agent browserSystemPrompt: text ].
 
-    "Bind checkbox state to model"
-browserExtensionCheckBox whenChangedDo: [ :presenter |
-    model browserExtensionEnabled: presenter
-].
-
-
+	"Bind checkbox state to model"
+	browserExtensionCheckBox whenChangedDo: [ :presenter |
+		model browserExtensionEnabled: presenter.
+		self updateBrowserExtensionTab ]
 ]
 
 { #category : 'layout' }
@@ -75,6 +67,18 @@ ChatPharoSettingsPresenter >> defaultLayout [
     ^ SpBoxLayout newTopToBottom
         add: notebook;
         yourself
+]
+
+{ #category : 'initialization' }
+ChatPharoSettingsPresenter >> ensureBrowserExtensionTab [
+
+	browserExtensionPage ifNil: [
+			browserExtensionPage := SpNotebookPage
+				                        title: 'System Browser'
+				                        icon: (self iconNamed: #browser)
+				                        provider: [
+				                        self newBrowserExtensionSettingsTab ].
+			notebook addPage: browserExtensionPage ]
 ]
 
 { #category : 'initialization' }
@@ -141,7 +145,8 @@ ChatPharoSettingsPresenter >> initializePresenters [
 			 detect: [ :assoc | assoc value = model agent class ]
 			 ifNone: [ model availableApiChoices first ]).
 
-	self refreshApiSettings
+	self refreshApiSettings.
+	self updateBrowserExtensionTab
 ]
 
 { #category : 'initialization' }
@@ -152,6 +157,35 @@ ChatPharoSettingsPresenter >> initializeWindow: aWindowPresenter [
 	aWindowPresenter
 		title: 'ChatPharo settings';
 		initialExtent: 800@500
+]
+
+{ #category : 'initialization' }
+ChatPharoSettingsPresenter >> newBrowserExtensionSettingsTab [
+
+    | toolsLayout |
+    toolsLayout := SpBoxLayout newTopToBottom.
+    ChatPharoBrowserEnvironment new tools do: [ :tool |
+        | cb |
+        cb := self newCheckBox
+            label: tool name;
+            state: (model browserToolsEnabled includes: tool name);
+            yourself.
+        cb whenChangedDo: [ :checked |
+            checked
+                ifTrue: [ model enableBrowserTool: tool name ]
+                ifFalse: [ model disableBrowserTool: tool name ]
+        ].
+        toolsLayout add: cb expand: false
+    ].
+    ^ SpPresenter new
+        layout: (SpBoxLayout newTopToBottom
+            add: (SpBoxLayout newHorizontal
+                add: 'Browser Prompt:' expand: false;
+                add: browserSystemPromptInput;
+                yourself) expand: false;
+            add: toolsLayout;
+            yourself);
+        yourself
 ]
 
 { #category : 'initialization' }
@@ -194,18 +228,13 @@ ChatPharoSettingsPresenter >> newConfigurationTab [
 ]
 
 { #category : 'initialization' }
-ChatPharoSettingsPresenter >> newExtensionsTab [ 
+ChatPharoSettingsPresenter >> newExtensionsTab [
 
-        ^ SpPresenter new
-                  layout: (SpBoxLayout newTopToBottom
-                                   add: browserExtensionCheckBox expand: false;
-                                   add: (SpBoxLayout newHorizontal
-                                                    add: 'Browser Prompt:' expand: false;
-                                                    add: browserSystemPromptInput;
-                                                    yourself)
-                                   expand: false;
-                                   yourself);
-                  yourself
+	^ SpPresenter new
+		  layout: (SpBoxLayout newTopToBottom
+				   add: browserExtensionCheckBox expand: false;
+				   yourself);
+		  yourself
 ]
 
 { #category : 'initialization' }
@@ -251,8 +280,22 @@ ChatPharoSettingsPresenter >> refreshApiSettings [
 	apiSettingsContainer changed 
 ]
 
+{ #category : 'initialization' }
+ChatPharoSettingsPresenter >> removeBrowserExtensionTab [ 
+    browserExtensionPage ifNotNil: [
+        notebook removePage: browserExtensionPage.
+        browserExtensionPage := nil ]
+]
+
 { #category : 'accessing - model' }
 ChatPharoSettingsPresenter >> setModelBeforeInitialization: anObject [
 
 	model := anObject
+]
+
+{ #category : 'initialization' }
+ChatPharoSettingsPresenter >> updateBrowserExtensionTab [ 
+    browserExtensionCheckBox state
+        ifTrue: [ self ensureBrowserExtensionTab ]
+        ifFalse: [ self removeBrowserExtensionTab ]
 ]
