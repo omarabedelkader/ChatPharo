@@ -147,9 +147,10 @@ ChatPharoGeminiAgent >> modelNames [
 { #category : 'accessing' }
 ChatPharoGeminiAgent >> packageName: aString [
 
-        packageName := aString.
-        self systemPrompt: (ChatPharoAgent defaultSystemPrompt
-                copyReplaceAll: '{packageName}' with: packageName)
+	packageName := aString.
+	self systemPrompt: (ChatPharoAgent defaultBrowserSystemPrompt
+			 copyReplaceAll: '{packageName}'
+			 with: packageName)
 ]
 
 { #category : 'accessing' }
