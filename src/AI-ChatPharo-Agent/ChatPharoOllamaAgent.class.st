@@ -187,7 +187,16 @@ ChatPharoOllamaAgent >> initialize [
 	host := self class defaultHost.
 	port := self class defaultPort.
 	temperature := 0.0.
-	self model: nil.
+	self model isNil ifTrue: [
+		| availableModels preferredModel |
+		availableModels := self class modelNames.
+		availableModels isEmpty ifFalse: [
+			preferredModel := availableModels
+				detect: [ :name | name = 'codellama:7b' ]
+				ifNone: [ availableModels first ].
+			self model: preferredModel
+		].
+	].
 	self systemPrompt: ''.
 	self promptPrefix: ''.
 	packageName := ''
