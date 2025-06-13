@@ -71,3 +71,11 @@ ChatPharo >> settings [
 
 	^ settings
 ]
+
+{ #category : 'accessing' }
+ChatPharo >> activeAgent [
+    
+    ^ chats isEmpty
+        ifTrue: [ nil ]
+        ifFalse: [ chats last agent ]
+]
