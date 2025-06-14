@@ -11,7 +11,8 @@ Class {
 		'cancelButton',
 		'clearButton',
 		'model',
-		'inspectButton'
+		'inspectButton',
+		'scrollPane'
 	],
 	#category : 'AI-ChatPharo-Spec-Core',
 	#package : 'AI-ChatPharo-Spec',
@@ -34,23 +35,27 @@ ChatPharoChatPresenter >> connectPresenters [
 	inspectButton action: [ model inspect ].
 	
 	model whenAnswerReceivedDo: [ :message | 
-		messagesLayout add: message presenter	
+		messagesLayout add: message presenter.
+		scrollPane scrollToEnd.	
 	]
 ]
 
 { #category : 'layout' }
 ChatPharoChatPresenter >> defaultLayout [
+    scrollPane := SpScrollPanePresenter new.
+    scrollPane content: messagesLayout.
+
     ^ SpBoxLayout newVertical
-          add: (SpScrollableLayout with: messagesLayout);
-          add: (SpBoxLayout newHorizontal
-                   spacing: 5;
-                   add: messageTextField;
-                   add: submitButton expand: false;
-                   add: cancelButton expand: false;
-						 add: inspectButton expand: false;
-                   yourself)
-          expand: false;
-          yourself
+        add: scrollPane expand: true;
+        add: (SpBoxLayout newHorizontal
+            spacing: 5;
+            add: messageTextField;
+            add: submitButton expand: false;
+            add: cancelButton expand: false;
+            add: inspectButton expand: false;
+            yourself);
+        expand: false;
+        yourself
 ]
 
 { #category : 'initialization' }
@@ -85,6 +90,7 @@ ChatPharoChatPresenter >> initializePresenters [
 		               yourself.
 
 	messagesLayout := SpBoxLayout newVertical.
+	messagesLayout wrapContents: false.
 ]
 
 { #category : 'initialization' }
