@@ -41,6 +41,7 @@ ChatPharoChatPresenter >> connectPresenters [
 { #category : 'layout' }
 ChatPharoChatPresenter >> defaultLayout [
     ^ SpBoxLayout newVertical
+          spacing: 10;
           add: (SpScrollableLayout with: messagesLayout);
           add: (SpBoxLayout newHorizontal
                    spacing: 5;
