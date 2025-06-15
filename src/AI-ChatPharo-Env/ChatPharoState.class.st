@@ -4,6 +4,7 @@ This a class that class chatpharo at user request inside a specific env
 Class {
 	#name : 'ChatPharoState',
 	#superclass : 'WorldState',
+	#classVars : 'CurrentEnv',
 	#category : 'AI-ChatPharo-Env-Menu',
 	#package : 'AI-ChatPharo-Env',
 	#tag : 'Menu'
@@ -44,4 +45,30 @@ ChatPharoState class >> aiWorldMenuOn: aBuilder [
 
 { #category : 'see class side' }
 ChatPharoState >> seeClassSide [
+]
+
+{ #category : 'env' }
+ChatPharoState class >> setEnvironment: aString [
+	CurrentEnv := aString.
+]
+
+{ #category : 'env' }
+ChatPharoState class >> currentEnvironment [
+	^ CurrentEnv ifNil: [ 'development' ]
+]
+
+{ #category : 'env' }
+ChatPharoState class >> systemPromptFor: agentSymbolOrClass [
+	| env agentSymbol |
+
+	env := self currentEnvironment.
+	agentSymbol := agentSymbolOrClass isBehavior
+		ifTrue: [ agentSymbolOrClass agentSymbol ]
+		ifFalse: [ agentSymbolOrClass ].
+
+	^ ((env = 'production') and: [ agentSymbol = #gemini ]) ifTrue: [
+		'You are an AI assistant for professional Pharo development.'
+	] ifFalse: [
+		'You are a helpful AI assistant working in development mode.'
+	]
 ]

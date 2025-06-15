@@ -17,7 +17,8 @@ Class {
 		'systemPromptInput',
 		'browserSystemPromptInput',
 		'browserExtensionCheckBox',
-		'browserExtensionPage'
+		'browserExtensionPage',
+		'environmentDropList'
 	],
 	#category : 'AI-ChatPharo-Spec-Core',
 	#package : 'AI-ChatPharo-Spec',
@@ -127,6 +128,18 @@ ChatPharoSettingsPresenter >> initializePresenters [
 		                     text: model agent systemPrompt;
 		                     yourself.
 
+	environmentDropList := SpDropListPresenter new
+		help: 'Select environment';
+		items: #( 'development' 'testing' 'production' );
+		display: [ :each | each capitalized ];
+		selectedItem: ChatPharoState currentEnvironment;
+		whenSelectedItemChangedDo: [ :env |
+			ChatPharoState setEnvironment: env.
+			model agent systemPrompt: (ChatPharoState systemPromptFor: model agent class agentSymbol).
+			systemPromptInput text: model agent systemPrompt.
+		];
+		yourself.
+		
 	browserExtensionCheckBox := self newCheckBox
 		                            label: 'Enable browser tab';
 		                            state: model browserExtensionEnabled;
@@ -179,6 +192,11 @@ ChatPharoSettingsPresenter >> newConfigurationTab [
 
 	^ SpPresenter new
 		  layout: (SpBoxLayout newTopToBottom
+				   add: (SpBoxLayout newHorizontal
+							add: 'Environment:' expand: false;
+							add: environmentDropList;
+							yourself)
+				   expand: false;
 				   add: (SpBoxLayout newHorizontal
 						    add: 'Agent:' expand: false;
 						    add: apiDropList;

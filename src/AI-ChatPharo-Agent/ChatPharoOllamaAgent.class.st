@@ -180,6 +180,11 @@ ChatPharoOllamaAgent >> host: anObject [
 	host := anObject
 ]
 
+{ #category : 'api' }
+ChatPharoOllamaAgent class >> agentSymbol [
+    ^ #ollama
+]
+
 { #category : 'initialization' }
 ChatPharoOllamaAgent >> initialize [
 
@@ -188,7 +193,7 @@ ChatPharoOllamaAgent >> initialize [
 	port := self class defaultPort.
 	temperature := 0.0.
 	self model: nil.
-	self systemPrompt: ''.
+	self systemPrompt: (ChatPharoState systemPromptFor: self class agentSymbol).
 	self promptPrefix: ''.
 	packageName := ''
 ]
@@ -218,7 +223,7 @@ ChatPharoOllamaAgent >> modelNames [
 ChatPharoOllamaAgent >> packageName: aString [ 
 
         packageName := aString.
-        self systemPrompt: (ChatPharoAgent defaultSystemPrompt
+        self systemPrompt: (ChatPharoAgent defaultBrowserSystemPrompt
                 copyReplaceAll: '{packageName}' with: packageName)
 ]
 

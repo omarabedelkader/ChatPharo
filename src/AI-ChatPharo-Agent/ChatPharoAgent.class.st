@@ -94,10 +94,15 @@ ChatPharoAgent >> initialize [
 
 	super initialize.
 	model := ''.
-	systemPrompt := systemPrompt := self class defaultSystemPrompt.
+	systemPrompt := ChatPharoState systemPromptFor: self class agentSymbol.
 	browserSystemPrompt := self class defaultBrowserSystemPrompt.
 	promptPrefix := ''.
 	response := ''
+]
+
+{ #category : 'api' }
+ChatPharoAgent class >> agentSymbol [
+	^ self name asSymbol
 ]
 
 { #category : 'accessing' }

@@ -68,6 +68,11 @@ ChatPharoGeminiAgent class >> settingsPresenterFor: anAgent [
 	^ ChatPharoGeminiSettingsPresenter on: anAgent
 ]
 
+{ #category : 'api' }
+ChatPharoGeminiAgent class >> agentSymbol [
+	^ #gemini
+]
+
 { #category : 'accessing' }
 ChatPharoGeminiAgent >> apiKey [
 
@@ -124,7 +129,8 @@ ChatPharoGeminiAgent >> initialize [
 	host := 'generativelanguage.googleapis.com'.
 	apiKey := ''.
 	model := ''.
-	temperature := 0.7
+	temperature := 0.7.
+	systemPrompt := ChatPharoState systemPromptFor: self class agentSymbol.
 ]
 
 { #category : 'initialization' }
