@@ -38,7 +38,7 @@ ChatPharoPresenter >> defaultLayout [
 
 	^ SpBoxLayout newTopToBottom
 		  add: toolbar expand: false;
-		  add: notebook;
+		  add: notebook expand: true;
 		  yourself
 ]
 
