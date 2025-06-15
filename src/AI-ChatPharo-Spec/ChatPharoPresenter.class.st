@@ -29,9 +29,7 @@ ChatPharoPresenter >> addNewChat [
         icon: (self iconNamed: #announcement)
         provider: [ model chats last presenter ].
     notebook addPage: newPage.
-    notebook selectPage: newPage.
-
-	self updateConnectionStatusOnce.
+    notebook selectPage: newPage
 ]
 
 { #category : 'layout' }
@@ -111,7 +109,17 @@ ChatPharoPresenter >> initializePresenters [
              action: [ self updateConnectionStatusOnce ];
              yourself).
 
-	self updateConnectionStatusOnce.
+	self updateConnectionStatus.
+]
+
+{ #category : 'status' }
+ChatPharoPresenter >> updateConnectionStatus [
+    [ 
+        [ 
+            self updateConnectionStatusOnce.
+            (Delay forSeconds: 10) wait.
+        ] repeat 
+    ] forkAt: Processor userBackgroundPriority.
 ]
 
 { #category : 'initialization' }
