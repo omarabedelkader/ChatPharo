@@ -96,8 +96,10 @@ ChatPharoChatPresenter >> initializeWindow: aWindowPresenter [
 { #category : 'initialization' }
 ChatPharoChatPresenter >> sendMessage [
 
-	model sendMessage: messageTextField text.
-	messageTextField text:''
+	| text |
+	text := messageTextField text.
+	messageTextField text: 'Running...'.
+	model sendMessage: text
 ]
 
 { #category : 'accessing - model' }
