@@ -25,6 +25,25 @@ ChatPharoSettingsPersistenceTest >> tearDown [
 ]
 
 { #category : 'running' }
+ChatPharoSettingsPersistenceTest >> testBrowserExtensionEnabledPersisted [ 
+
+    | loaded |
+    settings browserExtensionEnabled: true.
+    loaded := ChatPharoSettings loadOrNew.
+    self assert: loaded browserExtensionEnabled
+]
+
+{ #category : 'running' }
+ChatPharoSettingsPersistenceTest >> testBrowserToolsPersistence [ 
+
+    | first loaded |
+    first := settings browserToolsEnabled anyOne.
+    settings disableBrowserTool: first.
+    loaded := ChatPharoSettings loadOrNew.
+    self deny: (loaded browserToolsEnabled includes: first)
+]
+
+{ #category : 'running' }
 ChatPharoSettingsPersistenceTest >> testLoadOrNewRestoresSavedSettings [ 
     | loaded |
     settings useApi: ChatPharoNullAgent.

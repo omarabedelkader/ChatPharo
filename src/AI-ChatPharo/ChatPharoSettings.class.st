@@ -114,9 +114,11 @@ ChatPharoSettings >> browserExtensionEnabled [
 ]
 
 { #category : 'initialization' }
-ChatPharoSettings >> browserExtensionEnabled: aBoolean [ 
+ChatPharoSettings >> browserExtensionEnabled: aBoolean [
 
-        browserExtensionEnabled := aBoolean
+	browserExtensionEnabled := aBoolean.
+	        self class setDefault: self.
+        self class saveDefault
 ]
 
 { #category : 'initialization' }
@@ -126,22 +128,28 @@ ChatPharoSettings >> browserToolsEnabled [
 ]
 
 { #category : 'initialization' }
-ChatPharoSettings >> browserToolsEnabled: aCollection [ 
+ChatPharoSettings >> browserToolsEnabled: aCollection [
 
-        browserToolsEnabled := aCollection
+	browserToolsEnabled := aCollection.
+        self class setDefault: self.
+        self class saveDefault
 ]
 
 { #category : 'initialization' }
-ChatPharoSettings >> disableBrowserTool: toolName [ 
+ChatPharoSettings >> disableBrowserTool: toolName [
 
-        browserToolsEnabled remove: toolName ifAbsent: []
+	browserToolsEnabled remove: toolName ifAbsent: [ ].
+	self class setDefault: self.
+	self class saveDefault
 ]
 
 { #category : 'initialization' }
 ChatPharoSettings >> enableBrowserTool: toolName [
 
-	        (browserToolsEnabled includes: toolName)
-                ifFalse: [ browserToolsEnabled add: toolName ]
+	(browserToolsEnabled includes: toolName) ifFalse: [
+		browserToolsEnabled add: toolName ].
+	self class setDefault: self.
+        self class saveDefault
 ]
 
 { #category : 'initialization' }
