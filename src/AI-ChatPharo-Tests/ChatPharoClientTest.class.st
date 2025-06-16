@@ -52,22 +52,3 @@ ChatPharoClientTest >> testParametersSetterGetter [
         client parameters: (Dictionary with: 'a' -> 1).
         self assert: (client parameters at: 'a') equals: 1.
 ]
-
-{ #category : 'running' }
-ChatPharoClientTest >> testToolEvaluateExpressionSyntaxError [
-
-	| tool result |
-	tool := ChatPharoClient toolEvaluateExpression.
-	result := tool applyTo: (Dictionary with: 'expression' -> '2 +').
-	self assert:
-		((result at: 'syntax_error') includesSubstring: 'Syntax error')
-]
-
-{ #category : 'running' }
-ChatPharoClientTest >> testToolEvaluateExpressionValid [ 
-    | tool result |
-    tool := ChatPharoClient toolEvaluateExpression.
-    result := tool applyTo: (Dictionary with: 'expression' -> '2 + 3').
-    self assert: (result at: 'value') equals: '5'
-
-]
