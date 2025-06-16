@@ -20,6 +20,12 @@ ChatPharoBrowser class >> packageActivation [
     ^ ClyTabActivationStrategyAnnotation for: Package asCalypsoItemContext
 ]
 
+{ #category : 'testing' }
+ChatPharoBrowser class >> shouldBeActivatedInContext: aBrowserContext [
+
+	^ ChatPharoSettings default browserExtensionEnabled
+]
+
 { #category : 'accessing' }
 ChatPharoBrowser class >> tabOrder [
 
