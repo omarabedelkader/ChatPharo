@@ -2,7 +2,7 @@
 An extension that support the ChatPharo tool calling form the System browser
 "
 Class {
-	#name : 'ChatPharoBrowser',
+	#name : 'ChatPharoPackageBrowser',
 	#superclass : 'ClyBrowserToolMorph',
 	#instVars : [
 		'packageName',
@@ -14,26 +14,26 @@ Class {
 }
 
 { #category : 'activation' }
-ChatPharoBrowser class >> packageActivation [ 
+ChatPharoPackageBrowser class >> packageActivation [ 
 
     <classAnnotation>
     ^ ClyTabActivationStrategyAnnotation for: Package asCalypsoItemContext
 ]
 
 { #category : 'testing' }
-ChatPharoBrowser class >> shouldBeActivatedInContext: aBrowserContext [
+ChatPharoPackageBrowser class >> shouldBeActivatedInContext: aBrowserContext [
 
 	^ ChatPharoSettings default browserExtensionEnabled
 ]
 
 { #category : 'accessing' }
-ChatPharoBrowser class >> tabOrder [
+ChatPharoPackageBrowser class >> tabOrder [
 
 	^ -20
 ]
 
 { #category : 'building' }
-ChatPharoBrowser >> build [
+ChatPharoPackageBrowser >> build [
         | agentCopy |
         agentCopy := ChatPharoSettings default agent.
         agentCopy := (agentCopy isKindOf: ChatPharoAgent)
@@ -43,43 +43,49 @@ ChatPharoBrowser >> build [
                 agent: agentCopy;
                 yourself.
         self addMorph: chat presenter build fullFrame: LayoutFrame identity.
-        self updateAgentPackageName
+        self updateAgent
 ]
 
 { #category : 'initialization' }
-ChatPharoBrowser >> defaultIconName [
+ChatPharoPackageBrowser >> defaultIconName [
 
 	^ #announcement
 ]
 
 { #category : 'initialization' }
-ChatPharoBrowser >> defaultTitle [
+ChatPharoPackageBrowser >> defaultTitle [
 
 	^ packageName
 ]
 
 { #category : 'accessing' }
-ChatPharoBrowser >> packageName [
+ChatPharoPackageBrowser >> packageName [
 
 	^ packageName
 ]
 
 { #category : 'accessing' }
-ChatPharoBrowser >> packageName: anObject [
+ChatPharoPackageBrowser >> packageName: anObject [
 
 	packageName := anObject
 ]
 
 { #category : 'initialization' }
-ChatPharoBrowser >> setUpModelFromContext [
+ChatPharoPackageBrowser >> setUpModelFromContext [
 
 	packageName := context lastSelectedClassGroup name.
 	self updateAgentPackageName
 
 ]
 
+{ #category : 'as yet unclassified' }
+ChatPharoPackageBrowser >> updateAgent [
+
+	self updateAgentPackageName 
+]
+
 { #category : 'initialization' }
-ChatPharoBrowser >> updateAgentPackageName [
+ChatPharoPackageBrowser >> updateAgentPackageName [
 
 	(chat notNil and: [ chat agent respondsTo: #packageName: ]) ifTrue: [
 		chat agent packageName: packageName ].
