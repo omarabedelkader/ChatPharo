@@ -22,20 +22,15 @@ Class {
 ChatPharoChatPresenter >> connectPresenters [
 
 	messageTextField whenSubmitDo: [ :text | self sendMessage ].
-	submitButton action: [ self sendMessage. ].
+	submitButton action: [ self sendMessage ].
 	cancelButton action: [ model cancelMessage ].
-	clearButton action: [ 
-		model messages do: [ :p | 
-			messagesLayout remove: p
-		].
-		model clearChat.
-		
-	].
+	clearButton action: [
+			model messages do: [ :p | messagesLayout remove: p ].
+			model clearChat ].
 	inspectButton action: [ model inspect ].
-	
-	model whenAnswerReceivedDo: [ :message | 
-		messagesLayout add: message presenter	
-	]
+
+	model whenAnswerReceivedDo: [ :message |
+		messagesLayout add: message presenter expand: false  ]
 ]
 
 { #category : 'layout' }

@@ -32,11 +32,11 @@ ChatPharoMessagePresenter >> connectPresenters [
 ChatPharoMessagePresenter >> defaultLayout [
 
 	^ SpBoxLayout newVertical
-		add: 'User' expand: false;
-		add: contentPresenter;
-		add: 'Assistant' expand: false;
-		add: answerPresenter;
-		yourself
+		  add: 'User' expand: false;
+		  add: contentPresenter expand: false;
+		  add: 'Assistant' expand: false;
+		  add: answerPresenter expand: false;
+		  yourself
 ]
 
 { #category : 'layout' }
