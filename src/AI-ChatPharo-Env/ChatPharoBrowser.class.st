@@ -20,6 +20,12 @@ ChatPharoBrowser class >> packageActivation [
     ^ ClyTabActivationStrategyAnnotation for: Package asCalypsoItemContext
 ]
 
+{ #category : 'testing' }
+ChatPharoBrowser class >> shouldBeActivatedInContext: aBrowserContext [
+
+	^ ChatPharoSettings default browserExtensionEnabled
+]
+
 { #category : 'accessing' }
 ChatPharoBrowser class >> tabOrder [
 
@@ -38,6 +44,18 @@ ChatPharoBrowser >> build [
                 yourself.
         self addMorph: chat presenter build fullFrame: LayoutFrame identity.
         self updateAgentPackageName
+]
+
+{ #category : 'initialization' }
+ChatPharoBrowser >> defaultIconName [
+
+	^ #announcement
+]
+
+{ #category : 'initialization' }
+ChatPharoBrowser >> defaultTitle [
+
+	^ packageName
 ]
 
 { #category : 'accessing' }
