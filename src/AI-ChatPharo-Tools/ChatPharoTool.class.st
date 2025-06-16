@@ -126,10 +126,19 @@ ChatPharoTool >> apiKey: anObject [
 { #category : 'initialization' }
 ChatPharoTool >> applyToolFunction: functionName arguments: arguments [ 
 
-	tools do:[:tool|
-		tool name = functionName ifTrue:[
-			^ [ tool applyTo: arguments ] on:Error do:[:e| Dictionary with:'error'->e messageText ] ] ].
-	^ Dictionary with:'error'->('There is no function named "{1}"' format:{ functionName })
+
+        tools ifNil: [
+                ^ Dictionary
+                        with:'error'
+                        -> ('There is no function named "{1}"' format:{ functionName })
+        ].
+        tools do: [:tool |
+                tool name = functionName ifTrue: [
+                        ^ [ tool applyTo: arguments ]
+                                on: Error do: [:e | Dictionary with:'error'-> e messageText ]
+                ]
+        ].
+        ^ Dictionary with:'error'->('There is no function named "{1}"' format:{ functionName })
 ]
 
 { #category : 'accessing' }
