@@ -30,7 +30,8 @@ ChatPharoChatPresenter >> connectPresenters [
 	inspectButton action: [ model inspect ].
 
 	model whenAnswerReceivedDo: [ :message |
-		messagesLayout add: message presenter expand: false  ]
+		messagesLayout add: message presenter expand: false.
+		messageTextField text: '' ]
 ]
 
 { #category : 'layout' }
