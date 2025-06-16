@@ -46,6 +46,18 @@ ChatPharoBrowser >> build [
         self updateAgentPackageName
 ]
 
+{ #category : 'initialization' }
+ChatPharoBrowser >> defaultIconName [
+
+	^ #announcement
+]
+
+{ #category : 'initialization' }
+ChatPharoBrowser >> defaultTitle [
+
+	^ packageName
+]
+
 { #category : 'accessing' }
 ChatPharoBrowser >> packageName [
 
