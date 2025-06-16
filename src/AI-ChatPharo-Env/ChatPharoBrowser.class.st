@@ -28,11 +28,16 @@ ChatPharoBrowser class >> tabOrder [
 
 { #category : 'building' }
 ChatPharoBrowser >> build [
-	chat := ChatPharoChat new
-		agent: ChatPharoSettings default agent;
-		yourself.
-	self addMorph: chat presenter build fullFrame: LayoutFrame identity.
-	self updateAgentPackageName
+        | agentCopy |
+        agentCopy := ChatPharoSettings default agent.
+        agentCopy := (agentCopy isKindOf: ChatPharoAgent)
+                        ifTrue: [ agentCopy copyForChat ]
+                        ifFalse: [ agentCopy ].
+        chat := ChatPharoChat new
+                agent: agentCopy;
+                yourself.
+        self addMorph: chat presenter build fullFrame: LayoutFrame identity.
+        self updateAgentPackageName
 ]
 
 { #category : 'accessing' }

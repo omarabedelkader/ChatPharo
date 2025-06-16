@@ -26,14 +26,19 @@ Class {
 }
 
 { #category : 'context' }
-ChatPharo class >> ask: text [ 
+ChatPharo class >> ask: text [
 
-        | chat |
-        chat := ChatPharoChat new
-                        agent: ChatPharoSettings default agent;
-                        yourself.
-        chat presenter open.
-        text ifNotEmpty: [ chat sendMessage: text ]
+	  | chat agentCopy |
+        agentCopy := ChatPharoSettings default agent.
+        agentCopy := (agentCopy isKindOf: ChatPharoAgent)
+                        ifTrue: [ agentCopy copyForChat ]
+                        ifFalse: [ agentCopy ].
+	chat := ChatPharoChat new
+		        agent: ChatPharoSettings default agent;
+			agent: agentCopy;
+		        yourself.
+	chat presenter open.
+	text ifNotEmpty: [ chat sendMessage: text ]
 ]
 
 { #category : 'initialization' }
@@ -55,9 +60,14 @@ ChatPharo >> initialize [
 { #category : 'initialization' }
 ChatPharo >> newChat [
 
-	chats add: (ChatPharoChat new
-		agent: self settings agent;
-		yourself)
+	        | agentCopy |
+        agentCopy := self settings agent.
+        agentCopy := (agentCopy isKindOf: ChatPharoAgent)
+                        ifTrue: [ agentCopy copyForChat ]
+                        ifFalse: [ agentCopy ].
+        chats add: (ChatPharoChat new
+                agent: agentCopy;
+                yourself)
 ]
 
 { #category : 'initialization' }

@@ -75,6 +75,17 @@ ChatPharoAgent >> browserSystemPrompt: aString [
         browserSystemPrompt := aString
 ]
 
+{ #category : 'accessing' }
+ChatPharoAgent >> copyForChat [ 
+
+    | clone |
+    clone := self copy.
+    clone history: ChatPharoHistory new.
+    clone promptPrefix: ''.
+    clone response: ''.
+    ^ clone
+]
+
 { #category : 'initialization' }
 ChatPharoAgent >> getResponseForPrompt: prompt [
 

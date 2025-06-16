@@ -16,8 +16,16 @@ ChatPharoSystemPromptBrowser class >> packageActivation [
 ]
 
 { #category : 'building' }
-ChatPharoSystemPromptBrowser >> build [ 
+ChatPharoSystemPromptBrowser >> build [
 
-    super build.
-    chat agent systemPrompt: chat agent browserSystemPrompt
+    | agentCopy |
+    agentCopy := ChatPharoSettings default agent.
+    agentCopy := (agentCopy isKindOf: ChatPharoAgent)
+                        ifTrue: [ agentCopy copyForChat ]
+                        ifFalse: [ agentCopy ].
+    chat := ChatPharoChat new
+                agent: agentCopy;
+                yourself.
+    self addMorph: chat presenter build fullFrame: LayoutFrame identity.
+    self updateAgentPackageName.
 ]
