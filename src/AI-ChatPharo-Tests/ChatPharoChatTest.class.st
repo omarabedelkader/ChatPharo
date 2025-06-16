@@ -19,6 +19,16 @@ ChatPharoChatTest >> setUp [
 ]
 
 { #category : 'running' }
+ChatPharoChatTest >> testAgentSetsHistoryOnAccess [ 
+
+    | nullAgent hist |
+    nullAgent := ChatPharoNullAgent new.
+    chat agent: nullAgent.
+    hist := chat instVarNamed: #history.
+    self assert: (chat agent history) == hist
+]
+
+{ #category : 'running' }
 ChatPharoChatTest >> testCancelMessageTerminatesProcess [
 	| procBefore |
 	chat sendMessage: 'long task'.
@@ -35,4 +45,36 @@ ChatPharoChatTest >> testClearChatEmptiesMessagesAndStopsProcess [
 	self assert: chat messages notEmpty.
 	chat clearChat.
 	self assert: chat messages isEmpty.
+]
+
+{ #category : 'running' }
+ChatPharoChatTest >> testSendMessageAddsAssistantResponse [
+    chat sendMessage: 'hi'.
+
+    [
+        (chat instVarNamed: #promptProcess) isTerminated
+    ] whileFalse: [ (Delay forMilliseconds: 10) wait ].
+
+    self assert: chat messages size equals: 1.
+    self assert: (chat messages last answer) equals: '<<MOCK-DEFAULT-REPLY to: hi>>'.
+
+]
+
+{ #category : 'running' }
+ChatPharoChatTest >> testWhenAnswerReceivedBlockCalled [
+    | called |
+    called := false.
+
+    chat whenAnswerReceivedDo: [ :msg | 
+        called := msg answer = '<<MOCK-DEFAULT-REPLY to: hi>>' 
+    ].
+
+    chat sendMessage: 'hi'.
+
+    [
+        (chat instVarNamed: #promptProcess) isTerminated
+    ] whileFalse: [ (Delay forMilliseconds: 10) wait ].
+
+    self assert: called.
+
 ]
