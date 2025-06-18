@@ -52,3 +52,15 @@ ChatPharoSettingsPersistenceTest >> testLoadOrNewRestoresSavedSettings [
     self assert: loaded agent class equals: ChatPharoNullAgent.
     self assert: loaded agent model equals: 'stored-model'.
 ]
+
+{ #category : 'running' }
+ChatPharoSettingsPersistenceTest >> testSystemPromptPersistence [ 
+
+    | loaded |
+    settings useApi: ChatPharoOllamaAgent.
+    settings agent systemPrompt: 'hello-system'.
+    ChatPharoSettings setDefault: settings.
+    ChatPharoSettings saveDefault.
+    loaded := ChatPharoSettings loadOrNew.
+    self assert: loaded agent systemPrompt equals: 'hello-system'
+]

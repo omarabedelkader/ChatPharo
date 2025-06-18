@@ -6,16 +6,12 @@ Class {
 	#superclass : 'SpPresenter',
 	#instVars : [
 		'notebook',
-		'apiKeyInput',
-		'hostInput',
 		'ollamaModelDropList',
 		'model',
 		'modelsRefreshButton',
 		'apiDropList',
 		'apiSettingsContainer',
-		'applicationE',
 		'systemPromptInput',
-		'browserSystemPromptInput',
 		'browserExtensionCheckBox',
 		'browserExtensionPage'
 	],
@@ -28,16 +24,16 @@ Class {
 ChatPharoSettingsPresenter >> connectPresenters [
 	"Refresh models on button action"
 
-        modelsRefreshButton action: [
-                        ollamaModelDropList items: model models.
-                        ollamaModelDropList items ifNotEmpty: [
-                                | selected |
-                                selected := ollamaModelDropList items
-                                        detect: [ :each | each = model agent model ]
-                                        ifNone: [ nil ].
-                                selected
-                                        ifNotNil: [ ollamaModelDropList selectItem: selected ]
-                                        ifNil: [ ollamaModelDropList selectFirst ] ] ].
+	modelsRefreshButton action: [
+			ollamaModelDropList items: model models.
+			ollamaModelDropList items ifNotEmpty: [
+					| selected |
+					selected := ollamaModelDropList items
+						            detect: [ :each | each = model agent model ]
+						            ifNone: [ nil ].
+					selected
+						ifNotNil: [ ollamaModelDropList selectItem: selected ]
+						ifNil: [ ollamaModelDropList selectFirst ] ] ].
 
 	"Handle API dropdown selection"
 	apiDropList whenSelectedItemChangedDo: [ :assoc |
@@ -54,8 +50,10 @@ ChatPharoSettingsPresenter >> connectPresenters [
 			systemPromptInput text: model agent systemPrompt ].
 
 	"Bind text inputs to model"
-	systemPromptInput whenTextChangedDo: [ :text |
-		model agent systemPrompt: text ].
+        systemPromptInput whenTextChangedDo: [ :text |
+                model agent systemPrompt: text.
+                ChatPharoSettings setDefault: model.
+                ChatPharoSettings saveDefault ].
 
 	"Bind checkbox state to model"
 	browserExtensionCheckBox whenChangedDo: [ :presenter |
