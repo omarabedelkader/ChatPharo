@@ -39,25 +39,24 @@ ChatPharoSettings class >> default [
 
 { #category : 'accessing' }
 ChatPharoSettings class >> loadOrNew [
+        | path |
+        path := FileLocator imageDirectory / 'chatpharo-settings.ston'.
 
-	| path file |
-	path := FileLocator imageDirectory / 'chatpharo-settings.ston'.
+        path exists ifFalse: [ ^ self new ].
 
-	file := path exists
-		        ifTrue: [ path readStream ]
-		        ifFalse: [ ^ self new ].
-
-	[
-		| settings |
-		settings := STON fromStream: file.
-		settings browserExtensionEnabled ifNil: [
-			settings browserExtensionEnabled: false ].
-	            settings browserToolsEnabled ifNil: [
-                settings browserToolsEnabled: (ChatPharoBrowserEnvironment new tools collect: [ :t | t name ]) asOrderedCollection
-            ].
-		^ settings ]
-		on: Error
-		do: [ ^ self new ]
+        ^ path readStreamDo: [ :file |
+                [
+                        | settings |
+                        settings := STON fromStream: file.
+                        settings browserExtensionEnabled ifNil: [
+                                settings browserExtensionEnabled: false ].
+                            settings browserToolsEnabled ifNil: [
+                        settings browserToolsEnabled: (ChatPharoBrowserEnvironment new tools collect: [ :t | t name ]) asOrderedCollection
+                    ].
+                        ^ settings ]
+                        on: Error
+                        do: [ ^ self new ]
+        ]
 ]
 
 { #category : 'accessing' }
