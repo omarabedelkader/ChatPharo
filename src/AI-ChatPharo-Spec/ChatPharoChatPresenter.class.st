@@ -23,15 +23,13 @@ ChatPharoChatPresenter >> connectPresenters [
 
 	messageTextField whenSubmitDo: [ :text | self sendMessage ].
 	submitButton action: [ self sendMessage ].
-	cancelButton action: [ model cancelMessage ].
-	clearButton action: [
-			model messages do: [ :p | messagesLayout remove: p ].
-			model clearChat ].
+	cancelButton action: [
+			model cancelMessage.
+			messageTextField text: '' ].
 	inspectButton action: [ model inspect ].
-
 	model whenAnswerReceivedDo: [ :message |
-		messagesLayout add: message presenter expand: false.
-		messageTextField text: '' ]
+			messagesLayout add: message presenter expand: false.
+			messageTextField text: '' ]
 ]
 
 { #category : 'layout' }
@@ -69,19 +67,13 @@ ChatPharoChatPresenter >> initializePresenters [
 		                help: 'Cancel prompt';
 		                yourself.
 
-	clearButton := self newButton
-		               label: 'Clear Chat';
-		               icon: (self iconNamed: #glamorousTrash);
-		               help: 'Clear chat history';
-		               yourself.
-		
 	inspectButton := self newButton
-		               label: 'Inspect';
-		               icon: (self iconNamed: #inspect);
-		               help: 'Inspect the chat object';
-		               yourself.
+		                 label: 'Inspect';
+		                 icon: (self iconNamed: #inspect);
+		                 help: 'Inspect the chat object';
+		                 yourself.
 
-	messagesLayout := SpBoxLayout newVertical.
+	messagesLayout := SpBoxLayout newVertical
 ]
 
 { #category : 'initialization' }

@@ -122,16 +122,6 @@ ChatPharoPresenter >> initializePresenters [
 	self updateConnectionStatus.
 ]
 
-{ #category : 'status' }
-ChatPharoPresenter >> updateConnectionStatus [
-    [ 
-        [ 
-            self updateConnectionStatusOnce.
-            (Delay forSeconds: 10) wait.
-        ] repeat 
-    ] forkAt: Processor userBackgroundPriority.
-]
-
 { #category : 'initialization' }
 ChatPharoPresenter >> initializeWindow: aWindowPresenter [
 	
@@ -196,6 +186,16 @@ ChatPharoPresenter >> sendMessage [
 ChatPharoPresenter >> setModelBeforeInitialization: anObject [
 
 	model := anObject
+]
+
+{ #category : 'status' }
+ChatPharoPresenter >> updateConnectionStatus [
+    [ 
+        [ 
+            self updateConnectionStatusOnce.
+            (Delay forSeconds: 10) wait.
+        ] repeat 
+    ] forkAt: Processor userBackgroundPriority.
 ]
 
 { #category : 'status' }
