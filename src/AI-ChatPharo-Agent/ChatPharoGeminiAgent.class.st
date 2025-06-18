@@ -161,13 +161,15 @@ ChatPharoGeminiAgent >> temperature: anObject [
 ]
 
 { #category : 'accessing' }
-ChatPharoGeminiAgent >> testConnection [ 
+ChatPharoGeminiAgent >> testConnection [
 
-        [ | url |
-                url := 'https://' , host , '/v1beta/models?key=' , apiKey.
-                ZnClient new head: url.
-                true ]
-                on: ZnHttpUnsuccessful, NetworkError do: [ false ]
+	[
+		| url |
+		url := 'https://' , host , '/v1beta/models?key=' , apiKey.
+		ZnClient new get: url.
+		true ]
+		on: ZnHttpUnsuccessful , NetworkError
+		do: [ false ]
 ]
 
 { #category : 'tools support' }

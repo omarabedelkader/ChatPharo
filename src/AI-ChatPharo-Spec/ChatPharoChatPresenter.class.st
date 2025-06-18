@@ -21,19 +21,19 @@ Class {
 { #category : 'initialization' }
 ChatPharoChatPresenter >> connectPresenters [
 
-        messageTextField whenSubmitDo: [ :text | self sendMessage ].
-        submitButton action: [ self sendMessage ].
-        cancelButton action: [
-                        model cancelMessage.
-                        messageTextField text: ''.
-                        submitButton enabled: true.
-                        messageTextField enabled: true ].
-        inspectButton action: [ model inspect ].
-        model whenAnswerReceivedDo: [ :message |
-                        messagesLayout add: message presenter expand: false.
-                        messageTextField text: ''.
-                        submitButton enabled: true.
-                        messageTextField enabled: true ]
+	messageTextField whenSubmitDo: [ :text | self sendMessage ].
+	submitButton action: [ self sendMessage ].
+	cancelButton action: [
+			model cancelMessage.
+			messageTextField text: ''.
+			submitButton enabled: true.
+			messageTextField enabled: true ].
+	inspectButton action: [ model inspect ].
+	model whenAnswerReceivedDo: [ :message |
+			messagesLayout add: message presenter.
+			messageTextField text: ''.
+			submitButton enabled: true.
+			messageTextField enabled: true ]
 ]
 
 { #category : 'layout' }
