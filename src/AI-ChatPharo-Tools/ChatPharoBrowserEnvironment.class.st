@@ -163,11 +163,21 @@ ChatPharoBrowserEnvironment >> browserEnvironment: anObject [
 { #category : 'initialization' }
 ChatPharoBrowserEnvironment >> classNamed: className [
     "Return the class object whose *unqualified* name equals className,
-    or nil if it is absent from the current browserEnvironment."
+    or nil if it is absent from the current browserEnvironment.
+    Lookup is case-insensitive so that tool calls remain robust even when
+    the assistant provides names in a different case."
     
-    ^ self browserEnvironment
+    | direct normalised |
+    direct := self browserEnvironment
         at: className asSymbol
-        ifAbsent: [ nil ]
+        ifAbsent: [ nil ].
+    direct ifNotNil: [ ^ direct ].
+
+    normalised := className asLowercase.
+    ^ self browserEnvironment classes
+        detect: [ :cls | cls name asLowercase = normalised ]
+        ifNone: [ nil ]
+
 ]
 
 { #category : 'initialization' }

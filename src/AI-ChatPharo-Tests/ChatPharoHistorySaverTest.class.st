@@ -25,6 +25,16 @@ ChatPharoHistorySaverTest >> testContentSetterGetter [
 ]
 
 { #category : 'running' }
+ChatPharoHistorySaverTest >> testHistoryStringOnHandlesNilContent [ 
+
+        | strm |
+        saver content: nil.
+        strm := String new writeStream.
+        saver historyStringOn: strm.
+        self assert: strm contents equals: 'user: ' , String cr.
+]
+
+{ #category : 'running' }
 ChatPharoHistorySaverTest >> testHistoryStringOnOutputsCorrectFormat [ 
 
         | s |

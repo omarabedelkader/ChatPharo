@@ -55,13 +55,13 @@ ChatPharoHistoryMessage >> content: anObject [
 ]
 
 { #category : 'accessing' }
-ChatPharoHistoryMessage >> historyStringOn: aStream [ 
+ChatPharoHistoryMessage >> historyStringOn: aStream [
 
-    aStream
-        nextPutAll: role;
-        nextPutAll: ': ';
-        nextPutAll: content;
-        nextPutAll: String cr
+	aStream
+		nextPutAll: role;
+		nextPutAll: ': ';
+		nextPutAll: (content ifNil: [ '' ]);
+		nextPutAll: String cr
 ]
 
 { #category : 'accessing' }
