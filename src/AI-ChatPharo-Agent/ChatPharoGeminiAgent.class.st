@@ -77,7 +77,8 @@ ChatPharoGeminiAgent >> apiKey [
 { #category : 'accessing' }
 ChatPharoGeminiAgent >> apiKey: anObject [
 
-	apiKey := anObject
+	apiKey := anObject.
+	ChatPharoSettings saveDefault
 ]
 
 { #category : 'initialization' }
