@@ -45,7 +45,7 @@ ChatPharoMistralAgent >> getResponseForPrompt: prompt [
 	self shouldBeImplemented 
 ]
 
-{ #category : 'information' }
+{ #category : 'initialization' }
 ChatPharoMistralAgent >> modelInformation [
 	^ self shouldBeImplemented
 ]

@@ -21,15 +21,19 @@ Class {
 { #category : 'initialization' }
 ChatPharoChatPresenter >> connectPresenters [
 
-	messageTextField whenSubmitDo: [ :text | self sendMessage ].
-	submitButton action: [ self sendMessage ].
-	cancelButton action: [
-			model cancelMessage.
-			messageTextField text: '' ].
-	inspectButton action: [ model inspect ].
-	model whenAnswerReceivedDo: [ :message |
-			messagesLayout add: message presenter expand: false.
-			messageTextField text: '' ]
+        messageTextField whenSubmitDo: [ :text | self sendMessage ].
+        submitButton action: [ self sendMessage ].
+        cancelButton action: [
+                        model cancelMessage.
+                        messageTextField text: ''.
+                        submitButton enabled: true.
+                        messageTextField enabled: true ].
+        inspectButton action: [ model inspect ].
+        model whenAnswerReceivedDo: [ :message |
+                        messagesLayout add: message presenter expand: false.
+                        messageTextField text: ''.
+                        submitButton enabled: true.
+                        messageTextField enabled: true ]
 ]
 
 { #category : 'layout' }
@@ -89,10 +93,12 @@ ChatPharoChatPresenter >> initializeWindow: aWindowPresenter [
 { #category : 'initialization' }
 ChatPharoChatPresenter >> sendMessage [
 
-	| text |
-	text := messageTextField text.
-	messageTextField text: 'Running...'.
-	model sendMessage: text
+        | text |
+        text := messageTextField text.
+        submitButton enabled: false.
+        messageTextField enabled: false.
+        messageTextField text: 'Running...'.
+        model sendMessage: text
 ]
 
 { #category : 'accessing - model' }

@@ -74,9 +74,10 @@ ChatPharoSettings class >> saveDefault [
 
 	| path |
 	path := FileLocator imageDirectory / 'chatpharo-settings.ston'.
+	path deleteIfAbsent: [ ].
 	path writeStreamDo: [ :stream |
 		STON put: self default onStream: stream ].
-	^self
+	^ self
 ]
 
 { #category : 'accessing' }

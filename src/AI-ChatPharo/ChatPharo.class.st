@@ -41,6 +41,14 @@ ChatPharo class >> ask: text [
 	text ifNotEmpty: [ chat sendMessage: text ]
 ]
 
+{ #category : 'accessing' }
+ChatPharo >> activeAgent [
+    
+    ^ chats isEmpty
+        ifTrue: [ nil ]
+        ifFalse: [ chats last agent ]
+]
+
 { #category : 'initialization' }
 ChatPharo >> chats [
 
@@ -80,12 +88,4 @@ ChatPharo >> presenter [
 ChatPharo >> settings [
 
 	^ settings
-]
-
-{ #category : 'accessing' }
-ChatPharo >> activeAgent [
-    
-    ^ chats isEmpty
-        ifTrue: [ nil ]
-        ifFalse: [ chats last agent ]
 ]
