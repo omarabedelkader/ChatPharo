@@ -93,12 +93,19 @@ ChatPharoMistralSettingsPresenter >> modelDrop: anObject [
 ]
 
 { #category : 'layout' }
-ChatPharoMistralSettingsPresenter >> refreshModels [ 
+ChatPharoMistralSettingsPresenter >> refreshModels [
 
-    modelDrop
-        items: model modelNames;
-        display: [ :m | m ].
-    modelDrop items ifNotEmpty: [ modelDrop selectFirst ]
+	modelDrop
+		items: model modelNames;
+		display: [ :m | m ].
+	    modelDrop items ifNotEmpty: [
+        | selected |
+        selected := modelDrop items
+            detect: [:each | each = model model] ifNone: [ nil ].
+        selected
+            ifNotNil: [ modelDrop selectItem: selected ]
+            ifNil: [ modelDrop selectFirst ]
+    ]
 ]
 
 { #category : 'layout' }
