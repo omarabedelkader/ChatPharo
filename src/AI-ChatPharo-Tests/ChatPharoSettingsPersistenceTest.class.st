@@ -54,6 +54,18 @@ ChatPharoSettingsPersistenceTest >> testLoadOrNewRestoresSavedSettings [
 ]
 
 { #category : 'running' }
+ChatPharoSettingsPersistenceTest >> testLoadSaveKeepsAgentModel [ 
+    | loaded |
+    settings useApi: ChatPharoMockAgent.
+    settings useModel: 'mock-default'.
+    ChatPharoSettings setDefault: settings.
+    ChatPharoSettings saveDefault.
+    loaded := ChatPharoSettings loadOrNew.
+    self assert: loaded agent class equals: ChatPharoMockAgent.
+    self assert: loaded agent model equals: 'mock-default'.
+]
+
+{ #category : 'running' }
 ChatPharoSettingsPersistenceTest >> testSystemPromptPersistence [ 
 
     | loaded |

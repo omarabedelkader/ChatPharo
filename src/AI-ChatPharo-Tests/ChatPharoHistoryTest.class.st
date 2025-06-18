@@ -24,6 +24,16 @@ ChatPharoHistoryTest >> testAddAssistantAddsMessage [
 ]
 
 { #category : 'running' }
+ChatPharoHistoryTest >> testAddManyMessages [ 
+
+    1 to: 1000 do: [:i |
+        history addUser: 'user message ', i asString.
+        history addAssistant: 'reply ', i asString.
+    ].
+    self assert: history messages size equals: 2000.
+]
+
+{ #category : 'running' }
 ChatPharoHistoryTest >> testAddUserAddsMessage [ 
 
         history addUser: 'hello'.
