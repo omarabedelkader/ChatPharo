@@ -47,13 +47,13 @@ ChatPharoMethodBrowser >> setUpModelFromContext [
 
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'update' }
 ChatPharoMethodBrowser >> updateAgent [ 
 
 	self updateAgentMethodName 
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'update' }
 ChatPharoMethodBrowser >> updateAgentMethodName [
 
 	(chat notNil and: [ chat agent respondsTo: #methodName: ]) ifTrue: [
