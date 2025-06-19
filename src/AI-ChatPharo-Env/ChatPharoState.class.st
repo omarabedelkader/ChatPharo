@@ -15,7 +15,7 @@ ChatPharoState class >> aiWorldMenuOn: aBuilder [
 	<worldMenu>
 	(aBuilder item: #ChatPharo)
 		order: 10;
-		icon: (self iconNamed: #announcement);
+		icon: ChatPharoIcons chatPharoIcon;
 		help: 'An AI Assistant';
 		with: [
 				(aBuilder item: #TempChatPharo)
