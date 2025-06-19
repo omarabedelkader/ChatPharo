@@ -1,3 +1,6 @@
+"
+I'm a class that presents the option when the ChatPharo System Browser is activated
+"
 Class {
 	#name : 'ChatPharoBrowserSystemPromptInputPresenter',
 	#superclass : 'SpPresenter',

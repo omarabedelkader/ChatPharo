@@ -97,7 +97,9 @@ ChatPharoGeminiSettingsPresenter >> initializePresenters [
 
 	apiKeyField := self newTextInput
 		               placeholder: 'API-KEY';
-		               text: model apiKey.
+		               text: (model apiKey isEmpty
+                                       ifTrue: ''
+                                       ifFalse: (String new: model apiKey size withAll: $*)).
 
 
 	modelDrop := SpDropListPresenter new.
