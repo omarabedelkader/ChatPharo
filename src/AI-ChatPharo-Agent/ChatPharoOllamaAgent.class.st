@@ -255,3 +255,12 @@ ChatPharoOllamaAgent >> testConnection [
 		on: ZnHttpUnsuccessful , NetworkError
 		do: [ false ]
 ]
+
+{ #category : 'accessing' }
+ChatPharoOllamaAgent >> tools [ 
+
+    | available |
+    available := ChatPharoBrowserEnvironment new tools.
+    ^ available select: [ :tool |
+        ChatPharoSettings default browserToolsEnabled includes: tool name ]
+]
