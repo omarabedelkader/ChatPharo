@@ -1,3 +1,6 @@
+"
+I'm the class that handle icons of ChatPharo
+"
 Class {
 	#name : 'ChatPharoIcons',
 	#superclass : 'Object',
