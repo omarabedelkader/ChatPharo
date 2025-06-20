@@ -40,78 +40,75 @@ ChatPharoOllamaSettingsPresenter >> connectPresenters [
 { #category : 'layout' }
 ChatPharoOllamaSettingsPresenter >> defaultLayout [
 
-    | modelGroup connectionGroup actionGroup mainLayout |
+    | modelGroup connectionGroup actionGroup mainLayout modelRow installRow hostRow portRow tempRow |
 
     "Model Management Group"
+    modelRow := SpBoxLayout newHorizontal
+        spacing: 8;
+        add: (self newLabel label: 'Available models:') expand: false;
+        add: self modelsDrop expand: true;
+        add: self refreshButton expand: false;
+        yourself.
+
+    installRow := SpBoxLayout newHorizontal
+        spacing: 8;
+        add: (self newLabel label: 'Pull model:') expand: false;
+        add: installInput expand: true;
+        add: installButton expand: false;
+        add: deleteButton expand: false;
+        yourself.
+
     modelGroup := SpBoxLayout newTopToBottom
         spacing: 8;
         add: (self newLabel
-                 label: 'Model Management';
-                 fontWeight: #bold;
-                 yourself) expand: false;
-
-    modelGroup add: (
-        SpBoxLayout newHorizontal
-            spacing: 8;
-            add: (self newLabel label: 'Available models:') expand: false;
-            add: self modelsDrop expand: true;
-            add: self refreshButton expand: false;
-            yourself
-    ) expand: false.
-
-    modelGroup add: (
-        SpBoxLayout newHorizontal
-            spacing: 8;
-            add: (self newLabel label: 'Pull model:') expand: false;
-            add: installInput expand: true;
-            add: installButton expand: false;
-            add: deleteButton expand: false;
-            yourself
-    ) expand: false.
+            label: 'Model Management';
+            fontWeight: #bold;
+            yourself) expand: false;
+        add: modelRow expand: false;
+        add: installRow expand: false;
+        yourself.
 
     "Connection Settings Group"
+    hostRow := SpBoxLayout newHorizontal
+        spacing: 8;
+        add: (self newLabel label: 'Host (e.g. localhost):') expand: false;
+        add: hostInput expand: true;
+        yourself.
+
+    portRow := SpBoxLayout newHorizontal
+        spacing: 8;
+        add: (self newLabel label: 'Port (e.g. 11434):') expand: false;
+        add: portInput expand: true;
+        yourself.
+
+    tempRow := SpBoxLayout newHorizontal
+        spacing: 8;
+        add: (self newLabel label: 'Temperature (0.0 – 1.0):') expand: false;
+        add: temperatureInput expand: true;
+        yourself.
+
     connectionGroup := SpBoxLayout newTopToBottom
         spacing: 8;
         add: (self newLabel
-                 label: 'Connection Settings';
-                 fontWeight: #bold;
-                 yourself) expand: false;
-
-    connectionGroup add: (
-        SpBoxLayout newHorizontal
-            spacing: 8;
-            add: (self newLabel label: 'Host (e.g. localhost):') expand: false;
-            add: hostInput expand: true;
-            yourself
-    ) expand: false.
-
-    connectionGroup add: (
-        SpBoxLayout newHorizontal
-            spacing: 8;
-            add: (self newLabel label: 'Port (e.g. 11434):') expand: false;
-            add: portInput expand: true;
-            yourself
-    ) expand: false.
-
-    connectionGroup add: (
-        SpBoxLayout newHorizontal
-            spacing: 8;
-            add: (self newLabel label: 'Temperature (0.0 – 1.0):') expand: false;
-            add: temperatureInput expand: true;
-            yourself
-    ) expand: false.
+            label: 'Connection Settings';
+            fontWeight: #bold;
+            yourself) expand: false;
+        add: hostRow expand: false;
+        add: portRow expand: false;
+        add: tempRow expand: false;
+        yourself.
 
     "Actions Group"
     actionGroup := SpBoxLayout newTopToBottom
         spacing: 8;
         add: (self newLabel
-                 label: 'Actions';
-                 fontWeight: #bold;
-                 yourself) expand: false;
+            label: 'Actions';
+            fontWeight: #bold;
+            yourself) expand: false;
         add: testButton expand: false;
         yourself.
 
-    "Combine all groups into main layout"
+    "Main Layout"
     mainLayout := SpBoxLayout newTopToBottom
         spacing: 16;
         borderWidth: 10;
