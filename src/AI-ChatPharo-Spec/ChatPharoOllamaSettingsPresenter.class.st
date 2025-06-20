@@ -241,7 +241,7 @@ ChatPharoOllamaSettingsPresenter >> refreshModels [
 
     (availableModels isEmpty)
         ifFalse: [
-            (currentModel isNil or: [ availableModels includes: currentModel not ])
+            (currentModel isNil or: [ (availableModels includes: currentModel) not ])
                 ifTrue: [ modelsDrop selectFirst ].
         ].
 ]
