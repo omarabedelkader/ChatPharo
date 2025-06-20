@@ -206,16 +206,16 @@ ChatPharoPresenter >> updateConnectionStatus [
 { #category : 'status' }
 ChatPharoPresenter >> updateConnectionStatusOnce [
 
-    | agent statusText |
-    agent := model activeAgent.
+	| agent statusText |
+	agent := model activeAgent.
 
-    statusText := (agent notNil and: [ agent class isReachable ])
-        ifTrue: [ 'Connected' ]
-        ifFalse: [ 'Disconnected' ].
+	statusText := (agent notNil and: [ agent class isReachable ])
+		              ifTrue: [ 'Connected' ]
+		              ifFalse: [ 'Disconnected' ].
 
-    connectionStatusLabel
-        label: statusText;
-        help: (statusText = 'Connected'
-            ifTrue: [ 'Connected to backend (e.g., Ollama)' ]
-            ifFalse: [ 'No connection to backend' ]).
+	connectionStatusLabel
+		label: statusText;
+		help: (statusText = 'Connected'
+				 ifTrue: [ 'Connected to backend (e.g., Ollama)' ]
+				 ifFalse: [ 'No connection to backend' ]); enabled: false
 ]
