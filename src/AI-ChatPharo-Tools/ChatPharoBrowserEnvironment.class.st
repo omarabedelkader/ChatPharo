@@ -41,7 +41,7 @@ ChatPharoBrowserEnvironment >> applyFunctionFindMethodsWithSubstring: arguments 
 					   with: 'side' -> (method methodClass hasClassSide
 							    ifTrue: [ 'instance' ]
 							    ifFalse: [ 'class' ])
-					   with: 'protocol' -> method protocolName
+					   with: 'protocol' -> method protocol
 					   with: 'selector' -> method selector
 					   with: 'source' -> method sourceCode ]) asArray
 ]
