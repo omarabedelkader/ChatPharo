@@ -6,16 +6,12 @@ Class {
 	#superclass : 'SpPresenter',
 	#instVars : [
 		'notebook',
-		'apiKeyInput',
-		'hostInput',
 		'ollamaModelDropList',
 		'model',
 		'modelsRefreshButton',
 		'apiDropList',
 		'apiSettingsContainer',
-		'applicationE',
 		'systemPromptInput',
-		'browserSystemPromptInput',
 		'browserExtensionCheckBox',
 		'browserExtensionPage'
 	],
@@ -31,7 +27,13 @@ ChatPharoSettingsPresenter >> connectPresenters [
 	modelsRefreshButton action: [
 			ollamaModelDropList items: model models.
 			ollamaModelDropList items ifNotEmpty: [
-				ollamaModelDropList selectFirst ] ].
+					| selected |
+					selected := ollamaModelDropList items
+						            detect: [ :each | each = model agent model ]
+						            ifNone: [ nil ].
+					selected
+						ifNotNil: [ ollamaModelDropList selectItem: selected ]
+						ifNil: [ ollamaModelDropList selectFirst ] ] ].
 
 	"Handle API dropdown selection"
 	apiDropList whenSelectedItemChangedDo: [ :assoc |
@@ -45,11 +47,13 @@ ChatPharoSettingsPresenter >> connectPresenters [
 			newPresenter ifNotNil: [ apiSettingsContainer add: newPresenter ].
 
 			"Update system prompt inputs"
-			systemPromptInput text: model agent systemPrompt. ].
+			systemPromptInput text: model agent systemPrompt ].
 
 	"Bind text inputs to model"
         systemPromptInput whenTextChangedDo: [ :text |
-                model agent systemPrompt: text ].
+                model agent systemPrompt: text.
+                ChatPharoSettings setDefault: model.
+                ChatPharoSettings saveDefault ].
 
 	"Bind checkbox state to model"
 	browserExtensionCheckBox whenChangedDo: [ :presenter |

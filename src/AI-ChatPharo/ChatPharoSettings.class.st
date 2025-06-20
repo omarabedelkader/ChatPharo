@@ -39,25 +39,24 @@ ChatPharoSettings class >> default [
 
 { #category : 'accessing' }
 ChatPharoSettings class >> loadOrNew [
+        | path |
+        path := FileLocator imageDirectory / 'chatpharo-settings.ston'.
 
-	| path file |
-	path := FileLocator imageDirectory / 'chatpharo-settings.ston'.
+        path exists ifFalse: [ ^ self new ].
 
-	file := path exists
-		        ifTrue: [ path readStream ]
-		        ifFalse: [ ^ self new ].
-
-	[
-		| settings |
-		settings := STON fromStream: file.
-		settings browserExtensionEnabled ifNil: [
-			settings browserExtensionEnabled: false ].
-	            settings browserToolsEnabled ifNil: [
-                settings browserToolsEnabled: (ChatPharoBrowserEnvironment new tools collect: [ :t | t name ]) asOrderedCollection
-            ].
-		^ settings ]
-		on: Error
-		do: [ ^ self new ]
+        ^ path readStreamDo: [ :file |
+                [
+                        | settings |
+                        settings := STON fromStream: file.
+                        settings browserExtensionEnabled ifNil: [
+                                settings browserExtensionEnabled: false ].
+                            settings browserToolsEnabled ifNil: [
+                        settings browserToolsEnabled: (ChatPharoBrowserEnvironment new tools collect: [ :t | t name ]) asOrderedCollection
+                    ].
+                        ^ settings ]
+                        on: Error
+                        do: [ ^ self new ]
+        ]
 ]
 
 { #category : 'accessing' }
@@ -74,9 +73,10 @@ ChatPharoSettings class >> saveDefault [
 
 	| path |
 	path := FileLocator imageDirectory / 'chatpharo-settings.ston'.
+	path deleteIfAbsent: [ ].
 	path writeStreamDo: [ :stream |
 		STON put: self default onStream: stream ].
-	^self
+	^ self
 ]
 
 { #category : 'accessing' }
@@ -104,7 +104,8 @@ ChatPharoSettings >> availableApis [
 	^ {
 		  ChatPharoNullAgent.
 		  ChatPharoOllamaAgent.
-		  ChatPharoGeminiAgent.}
+		ChatPharoMistralAgent.
+		  ChatPharoGeminiAgent }
 ]
 
 { #category : 'initialization' }
@@ -114,9 +115,11 @@ ChatPharoSettings >> browserExtensionEnabled [
 ]
 
 { #category : 'initialization' }
-ChatPharoSettings >> browserExtensionEnabled: aBoolean [ 
+ChatPharoSettings >> browserExtensionEnabled: aBoolean [
 
-        browserExtensionEnabled := aBoolean
+	browserExtensionEnabled := aBoolean.
+	        self class setDefault: self.
+        self class saveDefault
 ]
 
 { #category : 'initialization' }
@@ -126,22 +129,28 @@ ChatPharoSettings >> browserToolsEnabled [
 ]
 
 { #category : 'initialization' }
-ChatPharoSettings >> browserToolsEnabled: aCollection [ 
+ChatPharoSettings >> browserToolsEnabled: aCollection [
 
-        browserToolsEnabled := aCollection
+	browserToolsEnabled := aCollection.
+        self class setDefault: self.
+        self class saveDefault
 ]
 
 { #category : 'initialization' }
-ChatPharoSettings >> disableBrowserTool: toolName [ 
+ChatPharoSettings >> disableBrowserTool: toolName [
 
-        browserToolsEnabled remove: toolName ifAbsent: []
+	browserToolsEnabled remove: toolName ifAbsent: [ ].
+	self class setDefault: self.
+	self class saveDefault
 ]
 
 { #category : 'initialization' }
 ChatPharoSettings >> enableBrowserTool: toolName [
 
-	        (browserToolsEnabled includes: toolName)
-                ifFalse: [ browserToolsEnabled add: toolName ]
+	(browserToolsEnabled includes: toolName) ifFalse: [
+		browserToolsEnabled add: toolName ].
+	self class setDefault: self.
+        self class saveDefault
 ]
 
 { #category : 'initialization' }

@@ -22,7 +22,8 @@ Class {
 		'response',
 		'history',
 		'systemPrompt',
-		'browserSystemPrompt'
+		'browserSystemPrompt',
+		'onToolExecution'
 	],
 	#category : 'AI-ChatPharo-Agent',
 	#package : 'AI-ChatPharo-Agent'
@@ -75,6 +76,17 @@ ChatPharoAgent >> browserSystemPrompt: aString [
         browserSystemPrompt := aString
 ]
 
+{ #category : 'accessing' }
+ChatPharoAgent >> copyForChat [ 
+
+    | clone |
+    clone := self copy.
+    clone history: ChatPharoHistory new.
+    clone promptPrefix: ''.
+    clone response: ''.
+    ^ clone
+]
+
 { #category : 'initialization' }
 ChatPharoAgent >> getResponseForPrompt: prompt [
 
@@ -97,7 +109,8 @@ ChatPharoAgent >> initialize [
 	systemPrompt := systemPrompt := self class defaultSystemPrompt.
 	browserSystemPrompt := self class defaultBrowserSystemPrompt.
 	promptPrefix := ''.
-	response := ''
+	response := ''.
+	onToolExecution := nil
 ]
 
 { #category : 'accessing' }
@@ -116,6 +129,18 @@ ChatPharoAgent >> model: anObject [
 ChatPharoAgent >> modelInformation [ 
 
 	self subclassResponsibility
+]
+
+{ #category : 'accessing' }
+ChatPharoAgent >> onToolExecution [ 
+
+        ^ onToolExecution
+]
+
+{ #category : 'accessing' }
+ChatPharoAgent >> onToolExecution: aBlock [ 
+
+        onToolExecution := aBlock
 ]
 
 { #category : 'accessing' }

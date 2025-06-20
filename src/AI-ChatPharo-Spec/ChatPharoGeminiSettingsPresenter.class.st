@@ -32,17 +32,47 @@ ChatPharoGeminiSettingsPresenter >> apiKeyField: anObject [
 { #category : 'layout' }
 ChatPharoGeminiSettingsPresenter >> defaultLayout [
 
-	^ SpBoxLayout newTopToBottom
-		  add: 'Host:' expand: false;
-		  add: hostField expand: false;
-		  add: 'API-KEY:' expand: false;
-		  add: apiKeyField expand: false;
-		  add: 'Model:' expand: false;
-		  add: modelDrop expand: false;
-		  add: 'Temperature:' expand: false;
-		  add: temperatureInput expand: false;
-		add: testButton expand: false;
-		  yourself
+        | mainLayout hostRow keyRow modelRow tempRow |
+        hostRow := SpBoxLayout newHorizontal
+                             spacing: 8;
+                             add: (self newLabel label: 'Host')
+                             expand: false;
+                             add: hostField expand: true;
+                             yourself.
+
+        keyRow := SpBoxLayout newHorizontal
+                            spacing: 8;
+                            add: (self newLabel label: 'API Key:')
+                            expand: false;
+                            add: apiKeyField expand: true;
+                            yourself.
+
+        modelRow := SpBoxLayout newHorizontal
+                              spacing: 8;
+                              add: (self newLabel label: 'Model:')
+                              expand: false;
+                              add: modelDrop expand: true;
+                              yourself.
+
+        tempRow := SpBoxLayout newHorizontal
+                             spacing: 8;
+                             add: (self newLabel label: 'Temperature (0.0 – 1.0):')
+                             expand: false;
+                             add: temperatureInput expand: true;
+                             yourself.
+
+        mainLayout := SpBoxLayout newTopToBottom
+                              spacing: 8;
+                              borderWidth: 8;
+                              beNotHomogeneous;
+                              add: hostRow expand: false;
+                              add: keyRow expand: false;
+                              add: modelRow expand: false;
+                              add: tempRow expand: false;
+                            add: testButton expand: false;
+                              yourself.
+
+        ^ mainLayout
 ]
 
 { #category : 'accessing' }
@@ -67,7 +97,9 @@ ChatPharoGeminiSettingsPresenter >> initializePresenters [
 
 	apiKeyField := self newTextInput
 		               placeholder: 'API-KEY';
-		               text: model apiKey.
+		               text: (model apiKey isEmpty
+                                       ifTrue: ''
+                                       ifFalse: (String new: model apiKey size withAll: $*)).
 
 
 	modelDrop := SpDropListPresenter new.
@@ -112,13 +144,19 @@ ChatPharoGeminiSettingsPresenter >> modelDrop: anObject [
 ]
 
 { #category : 'initialization' }
-ChatPharoGeminiSettingsPresenter >> refreshModels [ 
+ChatPharoGeminiSettingsPresenter >> refreshModels [
 
-
-        modelDrop
-                items: model modelNames;
-                display: [ :m | m ].
-        modelDrop items ifNotEmpty: [ modelDrop selectFirst ]
+	modelDrop
+		items: model modelNames;
+		display: [ :m | m ].
+	        modelDrop items ifNotEmpty: [
+            | selected |
+            selected := modelDrop items
+                detect: [:each | each = model model] ifNone: [ nil ].
+            selected
+                ifNotNil: [ modelDrop selectItem: selected ]
+                ifNil: [ modelDrop selectFirst ]
+        ]
 ]
 
 { #category : 'accessing - model' }

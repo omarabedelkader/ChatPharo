@@ -18,6 +18,6 @@ ChatPharoCodeMenu class >> menuOn: aBuilder [
 		order: 9;
 		keyText: 'cp';
 		selector: #openChatCharo;
-		help: nil;
-		iconName: #announcement
+		help: 'Get help from ChatPharo to understand the code';
+		icon: ChatPharoIcons chatPharoIcon
 ]

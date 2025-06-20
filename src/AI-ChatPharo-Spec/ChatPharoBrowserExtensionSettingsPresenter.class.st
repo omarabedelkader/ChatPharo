@@ -1,3 +1,6 @@
+"
+I'm a class that activates when the user wants chatpharo to be implemented inside the System Browser
+"
 Class {
 	#name : 'ChatPharoBrowserExtensionSettingsPresenter',
 	#superclass : 'SpPresenter',
