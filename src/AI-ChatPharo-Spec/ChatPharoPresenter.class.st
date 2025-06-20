@@ -45,13 +45,18 @@ ChatPharoPresenter >> defaultLayout [
 { #category : 'initialization' }
 ChatPharoPresenter >> deleteChat: aPageTitle [
 
-	| pageToDelete |
+	| pageToDelete pageIndex |
 	pageToDelete := notebook pages
 		                detect: [ :page | page title = aPageTitle ]
 		                ifNone: [ ^ self ].
 
-	(self confirm: 'Are you sure you want to delete this chat?') ifTrue: [
-		notebook removePage: pageToDelete ]
+	(self confirm: 'Are you sure you want to delete this chat?')
+		ifFalse: [ ^ self ].
+	pageIndex := notebook pages
+		             indexOf: pageToDelete
+		             ifAbsent: [ ^ self ].
+	notebook removePage: pageToDelete.
+	model removeChatAt: pageIndex
 ]
 
 { #category : 'initialization' }
