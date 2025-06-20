@@ -22,7 +22,7 @@ ChatPharoMistralAgent class >> displayName [
 { #category : 'api' }
 ChatPharoMistralAgent class >> isReachable [ 
 
-    [ ZnClient new head: 'https://api.mistral.ai/v1/models'. true ]
+    ^ [ ZnClient new head: 'https://api.mistral.ai/v1/models'. true ]
         on: NetworkError do: [ false ]
 
 ]
