@@ -40,58 +40,88 @@ ChatPharoOllamaSettingsPresenter >> connectPresenters [
 { #category : 'layout' }
 ChatPharoOllamaSettingsPresenter >> defaultLayout [
 
-	| mainLayout rowLayout modelRow hostRow portRow tempRow installRow |
-	modelRow := SpBoxLayout newHorizontal
-		            spacing: 8;
-		            add: (self newLabel label: 'Available models:')
-		            expand: false;
-		            add: self modelsDrop expand: true;
-		            add: self refreshButton expand: false;
-		            yourself.
+    | modelGroup connectionGroup actionGroup mainLayout |
 
-	installRow := SpBoxLayout newHorizontal
-		              spacing: 8;
-		              add: (self newLabel label: 'Pull model:')
-		              expand: false;
-		              add: installInput expand: true;
-		              add: installButton expand: false;
-		              add: deleteButton expand: false;
-		              yourself.
+    "Model Management Group"
+    modelGroup := SpBoxLayout newTopToBottom
+        spacing: 8;
+        add: (self newLabel
+                 label: 'Model Management';
+                 fontWeight: #bold;
+                 yourself) expand: false;
 
-	hostRow := SpBoxLayout newHorizontal
-		           spacing: 8;
-		           add: (self newLabel label: 'Host (e.g. localhost):')
-		           expand: false;
-		           add: hostInput expand: true;
-		           yourself.
+    modelGroup add: (
+        SpBoxLayout newHorizontal
+            spacing: 8;
+            add: (self newLabel label: 'Available models:') expand: false;
+            add: self modelsDrop expand: true;
+            add: self refreshButton expand: false;
+            yourself
+    ) expand: false.
 
-	portRow := SpBoxLayout newHorizontal
-		           spacing: 8;
-		           add: (self newLabel label: 'Port (e.g. 11434):')
-		           expand: false;
-		           add: portInput expand: true;
-		           yourself.
+    modelGroup add: (
+        SpBoxLayout newHorizontal
+            spacing: 8;
+            add: (self newLabel label: 'Pull model:') expand: false;
+            add: installInput expand: true;
+            add: installButton expand: false;
+            add: deleteButton expand: false;
+            yourself
+    ) expand: false.
 
-	tempRow := SpBoxLayout newHorizontal
-		           spacing: 8;
-		           add: (self newLabel label: 'Temperature (0.0 – 1.0):')
-		           expand: false;
-		           add: temperatureInput expand: true;
-		           yourself.
+    "Connection Settings Group"
+    connectionGroup := SpBoxLayout newTopToBottom
+        spacing: 8;
+        add: (self newLabel
+                 label: 'Connection Settings';
+                 fontWeight: #bold;
+                 yourself) expand: false;
 
-	mainLayout := SpBoxLayout newTopToBottom
-		              spacing: 8;
-		              borderWidth: 8;
-		              beNotHomogeneous;
-		              add: modelRow expand: false;
-		              add: installRow expand: false;
-		              add: hostRow expand: false;
-		              add: portRow expand: false;
-		              add: tempRow expand: false;
-						add: testButton expand: false;
-		              yourself.
+    connectionGroup add: (
+        SpBoxLayout newHorizontal
+            spacing: 8;
+            add: (self newLabel label: 'Host (e.g. localhost):') expand: false;
+            add: hostInput expand: true;
+            yourself
+    ) expand: false.
 
-	^ mainLayout
+    connectionGroup add: (
+        SpBoxLayout newHorizontal
+            spacing: 8;
+            add: (self newLabel label: 'Port (e.g. 11434):') expand: false;
+            add: portInput expand: true;
+            yourself
+    ) expand: false.
+
+    connectionGroup add: (
+        SpBoxLayout newHorizontal
+            spacing: 8;
+            add: (self newLabel label: 'Temperature (0.0 – 1.0):') expand: false;
+            add: temperatureInput expand: true;
+            yourself
+    ) expand: false.
+
+    "Actions Group"
+    actionGroup := SpBoxLayout newTopToBottom
+        spacing: 8;
+        add: (self newLabel
+                 label: 'Actions';
+                 fontWeight: #bold;
+                 yourself) expand: false;
+        add: testButton expand: false;
+        yourself.
+
+    "Combine all groups into main layout"
+    mainLayout := SpBoxLayout newTopToBottom
+        spacing: 16;
+        borderWidth: 10;
+        beNotHomogeneous;
+        add: modelGroup;
+        add: connectionGroup;
+        add: actionGroup;
+        yourself.
+
+    ^ mainLayout
 ]
 
 { #category : 'accessing' }
