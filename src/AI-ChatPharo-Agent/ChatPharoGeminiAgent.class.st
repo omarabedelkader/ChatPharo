@@ -46,13 +46,13 @@ ChatPharoGeminiAgent class >> displayName [
 { #category : 'api' }
 ChatPharoGeminiAgent class >> isReachable [
 
-[ | url |
-  url := 'https://generativelanguage.googleapis.com/v1beta/models?key=dummy'.
-  ZnClient new get: url.
-  true ] on: ZnHttpUnsuccessful, NetworkError do: [ :ex |
-  (ex isKindOf: NetworkError)
-    ifTrue: [ ^ false ].
-  ^ true ]
+	^ [
+		| url |
+		url := 'https://generativelanguage.googleapis.com/v1beta/models?key=dummy'.
+		ZnClient new get: url.
+		true ]
+		on: ZnHttpUnsuccessful , NetworkError
+		do: [ ^ false ].
 
 ]
 
@@ -168,7 +168,7 @@ ChatPharoGeminiAgent >> temperature: anObject [
 { #category : 'accessing' }
 ChatPharoGeminiAgent >> testConnection [
 
-	[
+	^ [
 		| url |
 		url := 'https://' , host , '/v1beta/models?key=' , apiKey.
 		ZnClient new get: url.
