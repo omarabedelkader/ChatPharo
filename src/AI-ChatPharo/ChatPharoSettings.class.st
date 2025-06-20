@@ -104,7 +104,8 @@ ChatPharoSettings >> availableApis [
 	^ {
 		  ChatPharoNullAgent.
 		  ChatPharoOllamaAgent.
-		  ChatPharoGeminiAgent.}
+		ChatPharoMistralAgent.
+		  ChatPharoGeminiAgent }
 ]
 
 { #category : 'initialization' }
