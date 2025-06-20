@@ -188,30 +188,13 @@ ChatPharoOllamaAgent >> initialize [
 	port := self class defaultPort.
 	temperature := 0.0.
 	self model isNil ifTrue: [
-		| availableModels preferredModel |
-		availableModels := self class modelNames.
+	    | availableModels |
+	    availableModels := self class modelNames.
 
-		availableModels isEmpty ifTrue: [
-			Transcript show: 'No Ollama models found. Attempting to pull `codellama:7b`...'; cr.
-			[
-				self class pullModel: 'codellama:7b'.
-				(Delay forSeconds: 2) wait.
-				availableModels := self class modelNames.
-			] on: Error do: [ :ex |
-				Transcript show: 'Failed to pull model `codellama:7b`: ', ex messageText; cr.
-			].
-		].
+	    availableModels isEmpty
+		    ifFalse: [ self model: availableModels first ].
+    ].
 
-		availableModels isEmpty ifFalse: [
-			preferredModel := availableModels
-				detect: [ :name | name = 'codellama:7b' ]
-				ifNone: [ availableModels first ].
-			self model: preferredModel.
-			Transcript show: 'Default model set to: ', preferredModel; cr.
-		] ifTrue: [
-			Transcript show: 'No models available after pull. Please verify Ollama installation.'; cr.
-		].
-	].
 	self systemPrompt: ''.
 	self promptPrefix: ''.
 	packageName := ''

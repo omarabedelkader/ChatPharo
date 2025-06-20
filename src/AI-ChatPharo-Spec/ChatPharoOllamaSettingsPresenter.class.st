@@ -41,13 +41,24 @@ ChatPharoOllamaSettingsPresenter >> connectPresenters [
 ChatPharoOllamaSettingsPresenter >> defaultLayout [
 
 	| mainLayout rowLayout modelRow hostRow portRow tempRow installRow |
-	modelRow := SpBoxLayout newHorizontal
-		            spacing: 8;
-		            add: (self newLabel label: 'Available models:')
-		            expand: false;
-		            add: self modelsDrop expand: true;
-		            add: self refreshButton expand: false;
-		            yourself.
+	modelRow := model class modelNames isEmpty
+        ifTrue: [
+            SpBoxLayout newHorizontal
+                spacing: 8;
+                add: (self newLabel
+                    label: 'No models available. Please pull one.'
+                    fontWeight: #bold;
+                    foregroundColor: Color red);
+                yourself
+        ]
+        ifFalse: [
+            SpBoxLayout newHorizontal
+                spacing: 8;
+                add: (self newLabel label: 'Available models:') expand: false;
+                add: self modelsDrop expand: true;
+                add: self refreshButton expand: false;
+                yourself
+        ].
 
 	installRow := SpBoxLayout newHorizontal
 		              spacing: 8;
@@ -220,16 +231,19 @@ ChatPharoOllamaSettingsPresenter >> refreshButton: anObject [
 { #category : 'initialization' }
 ChatPharoOllamaSettingsPresenter >> refreshModels [ 
 
-    | currentModel |
+    | availableModels currentModel |
+    availableModels := model class modelNames.
     currentModel := model model.
 
     modelsDrop
-        items: model class modelNames;
+        items: availableModels;
         display: [:eachModelName | eachModelName ].
 
-    (modelsDrop items includes: currentModel)
-        ifTrue: [ modelsDrop selectItem: currentModel ]
-        ifFalse: [ modelsDrop selectFirst ].
+    (availableModels isEmpty)
+        ifFalse: [
+            (currentModel isNil or: [ availableModels includes: currentModel not ])
+                ifTrue: [ modelsDrop selectFirst ].
+        ].
 ]
 
 { #category : 'accessing - model' }
