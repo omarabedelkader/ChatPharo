@@ -60,6 +60,23 @@ ChatPharoSettingsTest >> testModelsDelegation [
 ]
 
 { #category : 'tests' }
+ChatPharoSettingsTest >> testSwitchModelAfterAgentSwitch [ 
+
+    settings useApi: ChatPharoMockAgent.
+    settings useModel: 'mock-advanced'.
+
+    self assert: settings agent model equals: 'mock-advanced'.
+]
+
+{ #category : 'tests' }
+ChatPharoSettingsTest >> testSwitchingAgentPreservesModel [ 
+
+    settings useApi: ChatPharoMockAgent.
+    settings useModel: 'mock-advanced'.
+    self assert: settings agent model equals: 'mock-advanced'.
+]
+
+{ #category : 'tests' }
 ChatPharoSettingsTest >> testUseApiReplacesAgentSubclass [ 
 
     settings useApi: ChatPharoNullAgent.

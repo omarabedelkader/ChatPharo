@@ -1,3 +1,6 @@
+"
+I'm a class that presents the option when the ChatPharo System Browser is activated
+"
 Class {
 	#name : 'ChatPharoBrowserSystemPromptInputPresenter',
 	#superclass : 'SpPresenter',
@@ -19,13 +22,16 @@ ChatPharoBrowserSystemPromptInputPresenter >> defaultLayout [
 ]
 
 { #category : 'initialization' }
-ChatPharoBrowserSystemPromptInputPresenter >> initializePresenters [ 
+ChatPharoBrowserSystemPromptInputPresenter >> initializePresenters [
 
-    textInput := self newTextInput
-                    placeholder: 'Browser system prompt...';
-                    text: model agent browserSystemPrompt;
-                    yourself.
-    textInput whenTextChangedDo: [ :text | model agent browserSystemPrompt: text ]
+	textInput := self newTextInput
+		             placeholder: 'Browser system prompt...';
+		             text: model agent browserSystemPrompt;
+		             yourself.
+    textInput whenTextChangedDo: [ :text |
+            model agent browserSystemPrompt: text.
+            ChatPharoSettings setDefault: model.
+            ChatPharoSettings saveDefault ]
 ]
 
 { #category : 'initialization' }

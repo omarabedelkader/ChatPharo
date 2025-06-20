@@ -1,3 +1,6 @@
+"
+TO have ChatPharo more stable this Null agent is implemented to return Null, when there is no agent running in the backend
+"
 Class {
 	#name : 'ChatPharoNullSettingsPresenter',
 	#superclass : 'SpPresenter',

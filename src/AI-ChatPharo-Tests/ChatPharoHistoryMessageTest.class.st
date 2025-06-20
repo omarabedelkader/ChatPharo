@@ -51,6 +51,14 @@ ChatPharoHistoryMessageTest >> testRoleContentToolCallsInitialization [
 ]
 
 { #category : 'running' }
+ChatPharoHistoryMessageTest >> testToolCallWithCodeIsSafe [ 
+
+    msg toolCalls: { 'Smalltalk at: #SystemShell put: EvilObject' }.
+    self assert: (msg toolCalls first includesSubstring: 'SystemShell').
+    "But assert no real side effect occurred"
+]
+
+{ #category : 'running' }
 ChatPharoHistoryMessageTest >> testToolCallsSetter [ 
 
         msg toolCalls: { 't' }.

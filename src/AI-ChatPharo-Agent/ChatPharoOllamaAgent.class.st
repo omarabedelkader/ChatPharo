@@ -254,11 +254,20 @@ ChatPharoOllamaAgent >> temperature: anObject [
 ]
 
 { #category : 'accessing' }
-ChatPharoOllamaAgent >> testConnection [ 
+ChatPharoOllamaAgent >> testConnection [
 
-        [
-                ZnClient new get:
-                        'http://' , host , ':' , port , '/api/version'.
-                true
-        ] on: ZnHttpUnsuccessful, NetworkError do: [ false ]
+	^ [
+		ZnClient new get: 'http://' , host , ':' , port , '/api/version'.
+		true ]
+		on: ZnHttpUnsuccessful , NetworkError
+		do: [ false ]
+]
+
+{ #category : 'accessing' }
+ChatPharoOllamaAgent >> tools [ 
+
+    | available |
+    available := ChatPharoBrowserEnvironment new tools.
+    ^ available select: [ :tool |
+        ChatPharoSettings default browserToolsEnabled includes: tool name ]
 ]

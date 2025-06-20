@@ -25,6 +25,25 @@ ChatPharoSettingsPersistenceTest >> tearDown [
 ]
 
 { #category : 'running' }
+ChatPharoSettingsPersistenceTest >> testBrowserExtensionEnabledPersisted [ 
+
+    | loaded |
+    settings browserExtensionEnabled: true.
+    loaded := ChatPharoSettings loadOrNew.
+    self assert: loaded browserExtensionEnabled
+]
+
+{ #category : 'running' }
+ChatPharoSettingsPersistenceTest >> testBrowserToolsPersistence [ 
+
+    | first loaded |
+    first := settings browserToolsEnabled anyOne.
+    settings disableBrowserTool: first.
+    loaded := ChatPharoSettings loadOrNew.
+    self deny: (loaded browserToolsEnabled includes: first)
+]
+
+{ #category : 'running' }
 ChatPharoSettingsPersistenceTest >> testLoadOrNewRestoresSavedSettings [ 
     | loaded |
     settings useApi: ChatPharoNullAgent.
@@ -32,4 +51,28 @@ ChatPharoSettingsPersistenceTest >> testLoadOrNewRestoresSavedSettings [
     loaded := ChatPharoSettings loadOrNew.
     self assert: loaded agent class equals: ChatPharoNullAgent.
     self assert: loaded agent model equals: 'stored-model'.
+]
+
+{ #category : 'running' }
+ChatPharoSettingsPersistenceTest >> testLoadSaveKeepsAgentModel [ 
+    | loaded |
+    settings useApi: ChatPharoMockAgent.
+    settings useModel: 'mock-default'.
+    ChatPharoSettings setDefault: settings.
+    ChatPharoSettings saveDefault.
+    loaded := ChatPharoSettings loadOrNew.
+    self assert: loaded agent class equals: ChatPharoMockAgent.
+    self assert: loaded agent model equals: 'mock-default'.
+]
+
+{ #category : 'running' }
+ChatPharoSettingsPersistenceTest >> testSystemPromptPersistence [ 
+
+    | loaded |
+    settings useApi: ChatPharoOllamaAgent.
+    settings agent systemPrompt: 'hello-system'.
+    ChatPharoSettings setDefault: settings.
+    ChatPharoSettings saveDefault.
+    loaded := ChatPharoSettings loadOrNew.
+    self assert: loaded agent systemPrompt equals: 'hello-system'
 ]

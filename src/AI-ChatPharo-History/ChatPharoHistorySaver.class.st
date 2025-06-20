@@ -39,9 +39,13 @@ ChatPharoHistorySaver >> content: anObject [
 ]
 
 { #category : 'history' }
-ChatPharoHistorySaver >> historyStringOn: strm [ 
+ChatPharoHistorySaver >> historyStringOn: strm [
 
-	strm nextPutAll: role; nextPutAll: ': '; nextPutAll: content; cr
+	        strm
+                nextPutAll: role;
+                nextPutAll: ': ';
+                nextPutAll: (content ifNil: [ '' ]);
+                cr
 ]
 
 { #category : 'history' }

@@ -5,6 +5,12 @@ A **general OpenAI-style REST client**.
 * Accepts a list of **tools** (see `ChatPharoClient`) so that function-calling requests can be routed automatically.
 * Central routine `getResponseForHistory:` posts *one composite JSON* (`model`, `messages`, optional `tools/tool_choice`) to `/chat/completions`, then converts the reply back into `ChatPharoHistorySaver` plus `ChatPharoHistorySaverToolCall` objects.
 * **Why** – unifies all “talk to an LLM” code in one tested component, eliminating duplication in the agent subclasses.
+
+
+```smalltalk
+(ChatPharoBrowserEnvironment new functionGetClassesInPackages
+    applyTo: (Dictionary with: 'packages' -> #('AI-ChatPharo-Agent')))
+```
 "
 Class {
 	#name : 'ChatPharoTool',
@@ -14,7 +20,8 @@ Class {
 		'apiKey',
 		'model',
 		'tools',
-		'systemPrompt'
+		'systemPrompt',
+		'onToolExecution'
 	],
 	#category : 'AI-ChatPharo-Tools-Core',
 	#package : 'AI-ChatPharo-Tools',
@@ -124,12 +131,19 @@ ChatPharoTool >> apiKey: anObject [
 ]
 
 { #category : 'initialization' }
-ChatPharoTool >> applyToolFunction: functionName arguments: arguments [ 
+ChatPharoTool >> applyToolFunction: functionName arguments: arguments [
 
-	tools do:[:tool|
-		tool name = functionName ifTrue:[
-			^ [ tool applyTo: arguments ] on:Error do:[:e| Dictionary with:'error'->e messageText ] ] ].
-	^ Dictionary with:'error'->('There is no function named "{1}"' format:{ functionName })
+onToolExecution ifNotNil: [ :blk | blk value ].
+	tools ifNil: [
+			^ Dictionary with: 'error'
+				  -> ('There is no function named "{1}"' format: { functionName }) ].
+	tools do: [ :tool |
+			tool name = functionName ifTrue: [
+					^ [ tool applyTo: arguments ]
+						  on: Error
+						  do: [ :e | Dictionary with: 'error' -> e messageText ] ] ].
+	^ Dictionary with: 'error'
+		  -> ('There is no function named "{1}"' format: { functionName })
 ]
 
 { #category : 'accessing' }
@@ -184,13 +198,14 @@ ChatPharoTool >> getResponseForHistory: history [
 ]
 
 { #category : 'initialization' }
-ChatPharoTool >> initializeWithBaseURL: initialBaseURL apiKey: initialAPIKey system: initialSystem tools: initialTools [ 
+ChatPharoTool >> initializeWithBaseURL: initialBaseURL apiKey: initialAPIKey system: initialSystem tools: initialTools [
 
 	super initialize.
 	baseURL := initialBaseURL.
-	apiKey  := initialAPIKey.
-	systemPrompt  := initialSystem.
-	tools   := initialTools.
+	apiKey := initialAPIKey.
+	systemPrompt := initialSystem.
+	tools := initialTools.
+	onToolExecution := nil.
 	self model: self modelNames first
 ]
 
@@ -213,6 +228,18 @@ ChatPharoTool >> modelNames [
 	response := self client addPathSegment:'models'; get; response.
 	response isSuccess ifFalse:[ Error signal:'Could not retrieve models' ].
 	^ ((STONJSON fromString: response contents) at:'data') collect:[:m| m at:'id' ]
+]
+
+{ #category : 'accessing' }
+ChatPharoTool >> onToolExecution [ 
+
+        ^ onToolExecution
+]
+
+{ #category : 'accessing' }
+ChatPharoTool >> onToolExecution: aBlock [ 
+
+        onToolExecution := aBlock
 ]
 
 { #category : 'accessing' }

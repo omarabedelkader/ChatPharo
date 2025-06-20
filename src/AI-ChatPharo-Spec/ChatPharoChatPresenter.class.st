@@ -22,25 +22,26 @@ Class {
 ChatPharoChatPresenter >> connectPresenters [
 
 	messageTextField whenSubmitDo: [ :text | self sendMessage ].
-	submitButton action: [ self sendMessage. ].
-	cancelButton action: [ model cancelMessage ].
-	clearButton action: [ 
-		model messages do: [ :p | 
-			messagesLayout remove: p
-		].
-		model clearChat.
-		
-	].
+	submitButton action: [ self sendMessage ].
+	cancelButton action: [
+			model cancelMessage.
+			messageTextField text: ''.
+			submitButton enabled: true.
+			messageTextField enabled: true ].
 	inspectButton action: [ model inspect ].
-	
-	model whenAnswerReceivedDo: [ :message | 
-		messagesLayout add: message presenter	
-	]
+	model whenAnswerReceivedDo: [ :message |
+			messagesLayout add: message presenter.
+			messageTextField text: ''.
+			submitButton enabled: true.
+			messageTextField enabled: true ].
+	 model whenToolExecutionDo: [
+                        messageTextField text: 'Running, searching code and executing tools...' ]
 ]
 
 { #category : 'layout' }
 ChatPharoChatPresenter >> defaultLayout [
     ^ SpBoxLayout newVertical
+          spacing: 10;
           add: (SpScrollableLayout with: messagesLayout);
           add: (SpBoxLayout newHorizontal
                    spacing: 5;
@@ -72,19 +73,13 @@ ChatPharoChatPresenter >> initializePresenters [
 		                help: 'Cancel prompt';
 		                yourself.
 
-	clearButton := self newButton
-		               label: 'Clear Chat';
-		               icon: (self iconNamed: #glamorousTrash);
-		               help: 'Clear chat history';
-		               yourself.
-		
 	inspectButton := self newButton
-		               label: 'Inspect';
-		               icon: (self iconNamed: #inspect);
-		               help: 'Inspect the chat object';
-		               yourself.
+		                 label: 'Inspect';
+		                 icon: (self iconNamed: #inspect);
+		                 help: 'Inspect the chat object';
+		                 yourself.
 
-	messagesLayout := SpBoxLayout newVertical.
+	messagesLayout := SpBoxLayout newVertical
 ]
 
 { #category : 'initialization' }
@@ -100,8 +95,12 @@ ChatPharoChatPresenter >> initializeWindow: aWindowPresenter [
 { #category : 'initialization' }
 ChatPharoChatPresenter >> sendMessage [
 
-	model sendMessage: messageTextField text.
-	messageTextField text:''
+        | text |
+        text := messageTextField text.
+        submitButton enabled: false.
+        messageTextField enabled: false.
+        messageTextField text: 'Running...'.
+        model sendMessage: text
 ]
 
 { #category : 'accessing - model' }
