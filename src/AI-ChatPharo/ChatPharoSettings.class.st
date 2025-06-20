@@ -178,7 +178,6 @@ ChatPharoSettings >> presenter [
 ChatPharoSettings >> useApi: anAgentClass [
 
 	agent := anAgentClass new.
-	agent initialize.
 	self class setDefault: self.
 	self class saveDefault
 ]
