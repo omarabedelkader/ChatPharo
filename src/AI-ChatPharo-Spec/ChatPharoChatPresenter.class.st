@@ -33,7 +33,9 @@ ChatPharoChatPresenter >> connectPresenters [
 			messagesLayout add: message presenter.
 			messageTextField text: ''.
 			submitButton enabled: true.
-			messageTextField enabled: true ]
+			messageTextField enabled: true ].
+	 model whenToolExecutionDo: [
+                        messageTextField text: 'Running, searching code and executing tools...' ]
 ]
 
 { #category : 'layout' }
