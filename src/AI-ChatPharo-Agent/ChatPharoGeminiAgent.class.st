@@ -168,7 +168,7 @@ ChatPharoGeminiAgent >> temperature: anObject [
 { #category : 'accessing' }
 ChatPharoGeminiAgent >> testConnection [
 
-	[
+	^ [
 		| url |
 		url := 'https://' , host , '/v1beta/models?key=' , apiKey.
 		ZnClient new get: url.
