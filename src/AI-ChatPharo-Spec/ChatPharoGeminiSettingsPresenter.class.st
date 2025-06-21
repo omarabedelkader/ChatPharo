@@ -39,7 +39,6 @@ ChatPharoGeminiSettingsPresenter >> defaultLayout [
             spacing: 8;
             add: (self newLabel
                     label: 'API Configuration';
-                    fontWeight: #bold;
                     yourself) expand: false;
             add: (SpBoxLayout newHorizontal
                     spacing: 8;
@@ -58,7 +57,6 @@ ChatPharoGeminiSettingsPresenter >> defaultLayout [
             spacing: 8;
             add: (self newLabel
                     label: 'Model Selection';
-                    fontWeight: #bold;
                     yourself) expand: false;
             add: (SpBoxLayout newHorizontal
                     spacing: 8;
@@ -77,7 +75,6 @@ ChatPharoGeminiSettingsPresenter >> defaultLayout [
             spacing: 8;
             add: (self newLabel
                     label: 'Actions';
-                    fontWeight: #bold;
                     yourself) expand: false;
             add: testButton expand: false;
             yourself.

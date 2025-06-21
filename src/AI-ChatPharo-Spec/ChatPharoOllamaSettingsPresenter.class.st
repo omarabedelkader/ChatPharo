@@ -62,7 +62,6 @@ ChatPharoOllamaSettingsPresenter >> defaultLayout [
         spacing: 8;
         add: (self newLabel
             label: 'Model Management';
-            fontWeight: #bold;
             yourself) expand: false;
         add: modelRow expand: false;
         add: installRow expand: false;
@@ -91,7 +90,6 @@ ChatPharoOllamaSettingsPresenter >> defaultLayout [
         spacing: 8;
         add: (self newLabel
             label: 'Connection Settings';
-            fontWeight: #bold;
             yourself) expand: false;
         add: hostRow expand: false;
         add: portRow expand: false;
@@ -103,7 +101,6 @@ ChatPharoOllamaSettingsPresenter >> defaultLayout [
         spacing: 8;
         add: (self newLabel
             label: 'Actions';
-            fontWeight: #bold;
             yourself) expand: false;
         add: testButton expand: false;
         yourself.
