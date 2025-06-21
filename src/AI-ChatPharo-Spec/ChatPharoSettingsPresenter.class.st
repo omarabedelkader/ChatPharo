@@ -183,13 +183,13 @@ ChatPharoSettingsPresenter >> newConfigurationTab [
 
 	^ SpPresenter new
 		  layout: (SpBoxLayout newTopToBottom
-                    add: (SpLabelPresenter text: 'API Configuration') expand: false;
-                    add: (SpBoxLayout newHorizontal
-                        add: 'Agent:' expand: false;
-                        add: apiDropList;
-                        yourself) expand: false;
-                    add: apiSettingsContainer;
-                    yourself);
+				   add: (SpBoxLayout newHorizontal
+						    add: 'Agent:' expand: false;
+						    add: apiDropList;
+						    yourself)
+				   expand: false;
+				   add: apiSettingsContainer;
+				   yourself);
 		  yourself
 ]
 
