@@ -245,19 +245,21 @@ ChatPharoOllamaSettingsPresenter >> refreshButton: anObject [
 ]
 
 { #category : 'initialization' }
-ChatPharoOllamaSettingsPresenter >> refreshModels [
+ChatPharoOllamaSettingsPresenter >> refreshModels [ 
 
-	modelsDrop
-		items: model class modelNames;
-		display: [ :eachModelName | eachModelName ].
-	    modelsDrop items ifNotEmpty: [
-        | selected |
-        selected := modelsDrop items
-            detect: [:each | each = model model] ifNone: [ nil ].
-        selected
-            ifNotNil: [ modelsDrop selectItem: selected ]
-            ifNil: [ modelsDrop selectFirst ]
-    ].
+    | availableModels currentModel |
+    availableModels := model class modelNames.
+    currentModel := model model.
+
+    modelsDrop
+        items: availableModels;
+        display: [:eachModelName | eachModelName ].
+
+    (availableModels isEmpty)
+        ifFalse: [
+            (currentModel isNil or: [ (availableModels includes: currentModel) not ])
+                ifTrue: [ modelsDrop selectFirst ].
+        ].
 ]
 
 { #category : 'accessing - model' }
