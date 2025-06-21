@@ -45,13 +45,18 @@ ChatPharoPresenter >> defaultLayout [
 { #category : 'initialization' }
 ChatPharoPresenter >> deleteChat: aPageTitle [
 
-	| pageToDelete |
+	| pageToDelete pageIndex |
 	pageToDelete := notebook pages
 		                detect: [ :page | page title = aPageTitle ]
 		                ifNone: [ ^ self ].
 
-	(self confirm: 'Are you sure you want to delete this chat?') ifTrue: [
-		notebook removePage: pageToDelete ]
+	(self confirm: 'Are you sure you want to delete this chat?')
+		ifFalse: [ ^ self ].
+	pageIndex := notebook pages
+		             indexOf: pageToDelete
+		             ifAbsent: [ ^ self ].
+	notebook removePage: pageToDelete.
+	model removeChatAt: pageIndex
 ]
 
 { #category : 'initialization' }
@@ -201,16 +206,16 @@ ChatPharoPresenter >> updateConnectionStatus [
 { #category : 'status' }
 ChatPharoPresenter >> updateConnectionStatusOnce [
 
-    | agent statusText |
-    agent := model activeAgent.
+	| agent statusText |
+	agent := model activeAgent.
 
-    statusText := (agent notNil and: [ agent class isReachable ])
-        ifTrue: [ 'Connected' ]
-        ifFalse: [ 'Disconnected' ].
+	statusText := (agent notNil and: [ agent class isReachable ])
+		              ifTrue: [ 'Connected' ]
+		              ifFalse: [ 'Disconnected' ].
 
-    connectionStatusLabel
-        label: statusText;
-        help: (statusText = 'Connected'
-            ifTrue: [ 'Connected to backend (e.g., Ollama)' ]
-            ifFalse: [ 'No connection to backend' ]).
+	connectionStatusLabel
+		label: statusText;
+		help: (statusText = 'Connected'
+				 ifTrue: [ 'Connected to backend (e.g., Ollama)' ]
+				 ifFalse: [ 'No connection to backend' ]); enabled: false
 ]
