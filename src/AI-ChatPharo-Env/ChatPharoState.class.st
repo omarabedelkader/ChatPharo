@@ -19,9 +19,10 @@ ChatPharoState class >> aiWorldMenuOn: aBuilder [
 		help: 'An AI Assistant';
 		with: [
 				(aBuilder item: #TempChatPharo)
+					parent: #ChatPharo;
 					action: [ ChatPharo new presenter open ];
-					order:0;
-					keyText: 'o,c';
+					order: -2;
+					keyText: 'o, b';
 					label: 'Temp ChatPharo';
 					icon: (self iconNamed: #announcement);
 					help: 'Open Temp Chat'.

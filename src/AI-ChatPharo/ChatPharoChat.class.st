@@ -24,7 +24,8 @@ Class {
 		'agent',
 		'promptProcess',
 		'onAnswerReceived',
-		'history'
+		'history',
+		'onToolExecution'
 	],
 	#category : 'AI-ChatPharo',
 	#package : 'AI-ChatPharo'
@@ -84,7 +85,8 @@ ChatPharoChat >> initialize [
 
 	super initialize.
 	history := ChatPharoHistory new.
-	messages := OrderedCollection new
+	messages := OrderedCollection new.
+	onToolExecution := nil
 ]
 
 { #category : 'accessing' }
@@ -107,18 +109,25 @@ ChatPharoChat >> presenter [
 
 { #category : 'running' }
 ChatPharoChat >> sendMessage: aText [
-	
+
 	self addUserMessage: aText.
 	promptProcess := [
-		| backend answer |
-		backend := self agent.
-		
-		backend promptPrefix: history asPromptPrefix.
-		answer := backend getResponseForPrompt: aText.
-		
-		self addAssistantMessage: answer.
-		onAnswerReceived ifNotNil: [ :blk | blk value: messages last ]
-	] fork
+		                 | backend answer |
+		                 backend := self agent.
+							backend onToolExecution: [ self triggerToolExecution ].
+
+		                 backend promptPrefix: history asPromptPrefix.
+		                 answer := backend getResponseForPrompt: aText.
+
+		                 self addAssistantMessage: answer.
+		                 onAnswerReceived ifNotNil: [ :blk |
+			                 blk value: messages last ] ] fork
+]
+
+{ #category : 'running' }
+ChatPharoChat >> triggerToolExecution [ 
+
+        onToolExecution ifNotNil: [ :blk | blk value ]
 ]
 
 { #category : 'running' }
@@ -132,4 +141,10 @@ promptProcess ifNotNil: [ promptProcess waitUntil: [ promptProcess isTerminated 
 ChatPharoChat >> whenAnswerReceivedDo: aBlock [
 
 	onAnswerReceived := aBlock
+]
+
+{ #category : 'running' }
+ChatPharoChat >> whenToolExecutionDo: aBlock [ 
+
+        onToolExecution := aBlock
 ]

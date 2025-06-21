@@ -85,6 +85,12 @@ ChatPharo >> presenter [
 ]
 
 { #category : 'accessing' }
+ChatPharo >> removeChatAt: anIndex [
+
+        chats removeAt: anIndex
+]
+
+{ #category : 'accessing' }
 ChatPharo >> settings [
 
 	^ settings

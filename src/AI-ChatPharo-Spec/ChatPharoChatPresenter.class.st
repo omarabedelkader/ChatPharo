@@ -11,7 +11,8 @@ Class {
 		'cancelButton',
 		'clearButton',
 		'model',
-		'inspectButton'
+		'inspectButton',
+		'scrollableMessages'
 	],
 	#category : 'AI-ChatPharo-Spec-Core',
 	#package : 'AI-ChatPharo-Spec',
@@ -30,17 +31,19 @@ ChatPharoChatPresenter >> connectPresenters [
 			messageTextField enabled: true ].
 	inspectButton action: [ model inspect ].
 	model whenAnswerReceivedDo: [ :message |
-			messagesLayout add: message presenter.
+			messagesLayout add: message presenter withConstraints: [ :constraints | constraints height: (message height) * 2].
 			messageTextField text: ''.
 			submitButton enabled: true.
-			messageTextField enabled: true ]
+			messageTextField enabled: true ].
+	 model whenToolExecutionDo: [
+                        messageTextField text: 'Running, searching code and executing tools...' ]
 ]
 
 { #category : 'layout' }
 ChatPharoChatPresenter >> defaultLayout [
     ^ SpBoxLayout newVertical
           spacing: 10;
-          add: (SpScrollableLayout with: messagesLayout);
+          add: (SpScrollableLayout with: scrollableMessages);
           add: (SpBoxLayout newHorizontal
                    spacing: 5;
                    add: messageTextField;
@@ -77,7 +80,9 @@ ChatPharoChatPresenter >> initializePresenters [
 		                 help: 'Inspect the chat object';
 		                 yourself.
 
-	messagesLayout := SpBoxLayout newVertical
+	messagesLayout := SpBoxLayout newVertical.
+	scrollableMessages := SpPresenter new.
+	scrollableMessages layout: messagesLayout
 ]
 
 { #category : 'initialization' }
