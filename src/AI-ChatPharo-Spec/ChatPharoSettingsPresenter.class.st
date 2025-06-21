@@ -163,16 +163,16 @@ ChatPharoSettingsPresenter >> newChatTab [
 	titleLabel fontWeight: #bold.
 
 	^ SpPresenter new
-        layout: (SpBoxLayout newTopToBottom
-          spacing: 12;
-          add: titleLabel expand: false;
-          add: (SpBoxLayout newHorizontal
-            spacing: 8;
-            add: (self newLabel label: 'System:') expand: false;
-            add: systemPromptInput expand: true;
-            yourself) expand: false;
-          yourself);
-        yourself
+		layout: (SpBoxLayout newTopToBottom
+		  spacing: 12;
+		  add: titleLabel expand: false;
+		  add: (SpBoxLayout newHorizontal
+		    spacing: 8;
+		    add: (self newLabel label: 'System:') expand: false;
+		    add: systemPromptInput expand: true;
+		    yourself) expand: false;
+		  yourself);
+		yourself
 		"
 
 				   add: (SpButtonPresenter new
