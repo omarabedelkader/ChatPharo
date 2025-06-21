@@ -32,45 +32,62 @@ ChatPharoGeminiSettingsPresenter >> apiKeyField: anObject [
 { #category : 'layout' }
 ChatPharoGeminiSettingsPresenter >> defaultLayout [
 
-    	| mainLayout hostRow keyRow modelRow tempRow |
-        hostRow := SpBoxLayout newHorizontal
-                             spacing: 8;
-                             add: (self newLabel label: 'Host')
-                             expand: false;
-                             add: hostField expand: true;
-                             yourself.
+        | apiGroup modelGroup actionGroup mainLayout |
 
-        keyRow := SpBoxLayout newHorizontal
-                            spacing: 8;
-                            add: (self newLabel label: 'API Key:')
-                            expand: false;
-                            add: apiKeyField expand: true;
-                            yourself.
+        "API Configuration Group"
+        apiGroup := SpBoxLayout newTopToBottom
+            spacing: 8;
+            add: (self newLabel
+                    label: 'API Configuration';
+                    yourself) expand: false;
+            add: (SpBoxLayout newHorizontal
+                    spacing: 8;
+                    add: (self newLabel label: 'Host') expand: false;
+                    add: hostField expand: true;
+                    yourself) expand: false;
+            add: (SpBoxLayout newHorizontal
+                    spacing: 8;
+                    add: (self newLabel label: 'API Key:') expand: false;
+                    add: apiKeyField expand: true;
+                    yourself) expand: false;
+            yourself.
 
-        modelRow := SpBoxLayout newHorizontal
-                              spacing: 8;
-                              add: (self newLabel label: 'Model:')
-                              expand: false;
-                              add: modelDrop expand: true;
-                              yourself.
+        "Model Selection Group"
+        modelGroup := SpBoxLayout newTopToBottom
+            spacing: 8;
+            add: (self newLabel
+                    label: 'Model Selection';
+                    yourself) expand: false;
+            add: (SpBoxLayout newHorizontal
+                    spacing: 8;
+                    add: (self newLabel label: 'Model:') expand: false;
+                    add: modelDrop expand: true;
+                    yourself) expand: false;
+            add: (SpBoxLayout newHorizontal
+                    spacing: 8;
+                    add: (self newLabel label: 'Temperature (0.0 – 1.0):') expand: false;
+                    add: temperatureInput expand: true;
+                    yourself) expand: false;
+            yourself.
 
-        tempRow := SpBoxLayout newHorizontal
-                             spacing: 8;
-                             add: (self newLabel label: 'Temperature (0.0 – 1.0):')
-                             expand: false;
-                             add: temperatureInput expand: true;
-                             yourself.
+        "Action Group"
+        actionGroup := SpBoxLayout newTopToBottom
+            spacing: 8;
+            add: (self newLabel
+                    label: 'Actions';
+                    yourself) expand: false;
+            add: testButton expand: false;
+            yourself.
 
+        "Combine all groups into main layout"
         mainLayout := SpBoxLayout newTopToBottom
-                              spacing: 8;
-                              borderWidth: 8;
-                              beNotHomogeneous;
-                              add: hostRow expand: false;
-                              add: keyRow expand: false;
-                              add: modelRow expand: false;
-                              add: tempRow expand: false;
-                            add: testButton expand: false;
-                              yourself.
+            spacing: 16;
+            borderWidth: 10;
+            beNotHomogeneous;
+            add: apiGroup;
+            add: modelGroup;
+            add: actionGroup;
+            yourself.
 
         ^ mainLayout
 ]
