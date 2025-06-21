@@ -158,16 +158,16 @@ ChatPharoSettingsPresenter >> initializeWindow: aWindowPresenter [
 ChatPharoSettingsPresenter >> newChatTab [
 
 	^ SpPresenter new
-		  layout: (SpBoxLayout newTopToBottom
-				   add: (SpBoxLayout newHorizontal
-						    spacing: 8;
-						    add: 'System:' expand: false;
-						    add: systemPromptInput;
-						    yourself)
-				   expand: false;
-				   yourself);
-		  yourself;
-		  yourself
+			layout: (SpBoxLayout newTopToBottom
+				spacing: 12;
+				add: (SpLabelPresenter text: 'Chat Prompt Settings' fontWeight: #bold) expand: false;
+				add: (SpBoxLayout newHorizontal
+					spacing: 8;
+					add: (self newLabel label: 'System:') expand: false;
+					add: systemPromptInput expand: true;
+					yourself) expand: false;
+				yourself);
+        yourself
 	"
 				   add: (SpButtonPresenter new
 						    label: 'Delete All Chats';
@@ -183,13 +183,13 @@ ChatPharoSettingsPresenter >> newConfigurationTab [
 
 	^ SpPresenter new
 		  layout: (SpBoxLayout newTopToBottom
-				   add: (SpBoxLayout newHorizontal
-						    add: 'Agent:' expand: false;
-						    add: apiDropList;
-						    yourself)
-				   expand: false;
-				   add: apiSettingsContainer;
-				   yourself);
+				    add: (SpLabelPresenter text: 'API Configuration') expand: false;
+                    add: (SpBoxLayout newHorizontal
+                        add: 'Agent:' expand: false;
+                        add: apiDropList;
+                        yourself) expand: false;
+                    add: apiSettingsContainer;
+                    yourself);
 		  yourself
 ]
 
