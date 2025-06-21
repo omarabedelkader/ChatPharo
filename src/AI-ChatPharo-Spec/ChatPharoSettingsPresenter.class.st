@@ -158,7 +158,7 @@ ChatPharoSettingsPresenter >> initializeWindow: aWindowPresenter [
 ChatPharoSettingsPresenter >> newChatTab [
 
 	^ SpPresenter new
-		  layout: (SpBoxLayout newTopToBottom
+                  layout: (SpBoxLayout newTopToBottom
 				   add: (SpBoxLayout newHorizontal
 						    spacing: 8;
 						    add: 'System:' expand: false;

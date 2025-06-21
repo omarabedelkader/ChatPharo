@@ -32,7 +32,7 @@ ChatPharoGeminiSettingsPresenter >> apiKeyField: anObject [
 { #category : 'layout' }
 ChatPharoGeminiSettingsPresenter >> defaultLayout [
 
-        | mainLayout hostRow keyRow modelRow tempRow |
+    	| mainLayout hostRow keyRow modelRow tempRow |
         hostRow := SpBoxLayout newHorizontal
                              spacing: 8;
                              add: (self newLabel label: 'Host')
