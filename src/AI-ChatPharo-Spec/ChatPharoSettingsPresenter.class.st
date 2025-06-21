@@ -158,16 +158,16 @@ ChatPharoSettingsPresenter >> initializeWindow: aWindowPresenter [
 ChatPharoSettingsPresenter >> newChatTab [
 
 	^ SpPresenter new
-        layout: (SpBoxLayout newTopToBottom
-            spacing: 12;
-            add: (SpLabelPresenter text: 'Chat Prompt Settings' fontWeight: #bold) expand: false;
-            add: (SpBoxLayout newHorizontal
-                spacing: 8;
-                add: (self newLabel label: 'System:') expand: false;
-                add: systemPromptInput expand: true;
-                yourself) expand: false;
-            yourself);
-        yourself
+                  layout: (SpBoxLayout newTopToBottom
+				   add: (SpBoxLayout newHorizontal
+						    spacing: 8;
+						    add: 'System:' expand: false;
+						    add: systemPromptInput;
+						    yourself)
+				   expand: false;
+				   yourself);
+		  yourself;
+		  yourself
 	"
 				   add: (SpButtonPresenter new
 						    label: 'Delete All Chats';
