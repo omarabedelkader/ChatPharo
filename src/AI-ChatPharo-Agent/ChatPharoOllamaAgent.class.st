@@ -32,14 +32,19 @@ ChatPharoOllamaAgent class >> defaultPort [
 ]
 
 { #category : 'api' }
-ChatPharoOllamaAgent class >> deleteModel: aModelName [ 
+ChatPharoOllamaAgent class >> validateModel: aModelName [
 
+    (self isValidModel: aModelName) ifFalse: [
+        ^ self error: 'Invalid model name or model does not exist on Ollama server' ].
+]
+
+{ #category : 'api' }
+ChatPharoOllamaAgent class >> deleteModel: aModelName [ 
 
         self isReachable ifFalse: [
                 ^ self error: 'Ollama server not reachable' ].
         
-		(self isValidModel: aModelName) ifFalse: [
-		        ^ self error: 'Invalid model name or model does not exist on Ollama server' ].
+		self validateModel: aModelName.
 		
 		ZnClient new
                 url:
@@ -124,8 +129,7 @@ ChatPharoOllamaAgent class >> pullModel: aModelName [
 	self isReachable ifFalse: [
 		^ self error: 'Ollama server not reachable' ].
 	
-	(self isValidModel: aModelName) ifFalse: [
-		^ self error: 'Invalid model name or model does not exist on Ollama server' ].
+	self validateModel: aModelName.
 	
 	ZnClient new
 		url:
