@@ -134,6 +134,12 @@ ChatPharoOllamaAgent class >> settingsPresenterFor: anAgent [
 	^ ChatPharoOllamaSettingsPresenter on: anAgent
 ]
 
+{ #category : 'accessing' }
+ChatPharoOllamaAgent >> configurationErrorMessage [
+
+	^ 'Please complete all required fields.'
+]
+
 { #category : 'initialization' }
 ChatPharoOllamaAgent >> getResponseForPrompt: prompt [
 
@@ -185,6 +191,12 @@ ChatPharoOllamaAgent >> initialize [
 	self systemPrompt: self class defaultSystemPrompt.
 	self promptPrefix: ''.
 	packageName := ''
+]
+
+{ #category : 'accessing' }
+ChatPharoOllamaAgent >> isConfigured [ 
+
+        ^ host notEmpty and: [ port notEmpty and: [ model notEmpty ] ]
 ]
 
 { #category : 'initialization' }
