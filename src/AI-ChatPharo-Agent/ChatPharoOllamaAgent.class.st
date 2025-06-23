@@ -32,12 +32,21 @@ ChatPharoOllamaAgent class >> defaultPort [
 ]
 
 { #category : 'api' }
-ChatPharoOllamaAgent class >> deleteModel: aModelName [ 
+ChatPharoOllamaAgent class >> validateModel: aModelName [
 
+    (self isValidModel: aModelName) ifFalse: [
+        ^ self error: 'Invalid model name or model does not exist on Ollama server' ].
+]
+
+{ #category : 'api' }
+ChatPharoOllamaAgent class >> deleteModel: aModelName [ 
 
         self isReachable ifFalse: [
                 ^ self error: 'Ollama server not reachable' ].
-        ZnClient new
+        
+		self validateModel: aModelName.
+		
+		ZnClient new
                 url:
                         'http://' , self defaultHost , ':' , self defaultPort , '/api/delete';
                 entity: (ZnEntity with:
@@ -119,6 +128,9 @@ ChatPharoOllamaAgent class >> pullModel: aModelName [
 
 	self isReachable ifFalse: [
 		^ self error: 'Ollama server not reachable' ].
+	
+	self validateModel: aModelName.
+	
 	ZnClient new
 		url:
 			'http://' , self defaultHost , ':' , self defaultPort , '/api/pull';
