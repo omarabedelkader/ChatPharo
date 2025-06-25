@@ -1,9 +1,8 @@
 Class {
 	#name : 'ChatPharoSafetyAdvisor',
 	#superclass : 'Object',
-	#category : 'AI-ChatPharo-Env-Safety',
-	#package : 'AI-ChatPharo-Env',
-	#tag : 'Safety'
+	#category : 'AI-ChatPharo-Safety',
+	#package : 'AI-ChatPharo-Safety'
 }
 
 { #category : 'as yet unclassified' }

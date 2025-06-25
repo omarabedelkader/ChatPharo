@@ -98,6 +98,9 @@ BaselineOfAIChatPharo >> baseline: spec [
 			spec
 				package: 'AI-ChatPharo-Env'
 				with: [ spec requires: #( 'AI-ChatPharo' ) ].
+			spec
+				package: 'AI-ChatPharo-Safety'
+				with: [ spec requires: #( 'AI-ChatPharo' ) ].
 			spec package: 'AI-ChatPharo-Tests' with: [
 					spec requires:
 						#( 'AI-ChatPharo' 'AI-ChatPharo-Agent' 'AI-ChatPharo-Spec'
