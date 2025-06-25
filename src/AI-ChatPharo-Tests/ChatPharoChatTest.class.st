@@ -119,6 +119,22 @@ ChatPharoChatTest >> testMultipleConcurrentMessagesHandledSafely [
 ]
 
 { #category : 'running' }
+ChatPharoChatTest >> testSameQuestionReturnsCachedAnswer [ 
+
+    | firstSize firstAnswer |
+    chat sendMessage: 'repeat'.
+    [ (chat instVarNamed: #promptProcess) isTerminated ] whileFalse: [ (Delay forMilliseconds: 10) wait ].
+    firstSize := mockApi history size.
+    firstAnswer := chat messages last answer.
+
+    chat sendMessage: 'repeat'.
+
+    self assert: chat messages size equals: 2.
+    self assert: (chat messages last answer) equals: firstAnswer.
+    self assert: mockApi history size equals: firstSize.
+]
+
+{ #category : 'running' }
 ChatPharoChatTest >> testSendMessageAddsAssistantResponse [
     chat sendMessage: 'hi'.
 

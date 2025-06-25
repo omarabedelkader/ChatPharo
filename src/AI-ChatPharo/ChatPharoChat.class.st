@@ -25,7 +25,8 @@ Class {
 		'promptProcess',
 		'onAnswerReceived',
 		'history',
-		'onToolExecution'
+		'onToolExecution',
+		'cache'
 	],
 	#category : 'AI-ChatPharo',
 	#package : 'AI-ChatPharo'
@@ -86,7 +87,8 @@ ChatPharoChat >> initialize [
 	super initialize.
 	history := ChatPharoHistory new.
 	messages := OrderedCollection new.
-	onToolExecution := nil
+	onToolExecution := nil.
+	cache := Dictionary new
 ]
 
 { #category : 'accessing' }
@@ -110,18 +112,25 @@ ChatPharoChat >> presenter [
 { #category : 'running' }
 ChatPharoChat >> sendMessage: aText [
 
-	self addUserMessage: aText.
-	promptProcess := [
-		                 | backend answer |
-		                 backend := self agent.
-							backend onToolExecution: [ self triggerToolExecution ].
-
-		                 backend promptPrefix: history asPromptPrefix.
-		                 answer := backend getResponseForPrompt: aText.
-
-		                 self addAssistantMessage: answer.
-		                 onAnswerReceived ifNotNil: [ :blk |
-			                 blk value: messages last ] ] fork
+        | answer |
+        self addUserMessage: aText.
+        (cache includesKey: aText)
+                ifTrue: [
+                        answer := cache at: aText.
+                        self addAssistantMessage: answer.
+                        onAnswerReceived ifNotNil: [ :blk | blk value: messages last ]
+                ]
+                ifFalse: [
+                        promptProcess := [
+                                 | backend |
+                                 backend := self agent.
+                                 backend onToolExecution: [ self triggerToolExecution ].
+                                 backend promptPrefix: history asPromptPrefix.
+                                 answer := backend getResponseForPrompt: aText.
+                                 cache at: aText put: answer.
+                                 self addAssistantMessage: answer.
+                                 onAnswerReceived ifNotNil: [ :blk | blk value: messages last ] ] fork
+                ]
 ]
 
 { #category : 'running' }
