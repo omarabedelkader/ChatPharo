@@ -64,6 +64,19 @@ ChatPharoChatTest >> testCancelTwiceIsSafe [
 ]
 
 { #category : 'running' }
+ChatPharoChatTest >> testClearChatClearsCache [ 
+
+        | firstSize |
+        chat sendMessage: 'hello'.
+        [ (chat instVarNamed: #promptProcess) isTerminated ] whileFalse: [ (Delay forMilliseconds: 10) wait ].
+        firstSize := mockApi history size.
+
+        chat clearChat.
+
+        self assert: mockApi history size equals: firstSize .
+]
+
+{ #category : 'running' }
 ChatPharoChatTest >> testClearChatEmptiesMessagesAndStopsProcess [ 
 
 	chat sendMessage: 'Hello'.

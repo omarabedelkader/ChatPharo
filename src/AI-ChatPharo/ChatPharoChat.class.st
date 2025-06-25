@@ -65,10 +65,18 @@ ChatPharoChat >> cancelMessage [
 ]
 
 { #category : 'running' }
+ChatPharoChat >> clearCache [
+
+	cache removeAll
+]
+
+{ #category : 'running' }
 ChatPharoChat >> clearChat [
-    self cancelMessage.
-    history clear.
-    messages removeAll
+
+	self cancelMessage.
+	history clear.
+	messages removeAll.
+	self clearCache
 ]
 
 { #category : 'running' }
