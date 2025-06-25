@@ -28,21 +28,24 @@ ChatPharoBrowserExtensionSettingsPresenter >> defaultLayout [
 ]
 
 { #category : 'initialization' }
-ChatPharoBrowserExtensionSettingsPresenter >> initializePresenters [ 
+ChatPharoBrowserExtensionSettingsPresenter >> initializePresenters [
 
-    promptInput := ChatPharoBrowserSystemPromptInputPresenter on: model.
-    toolsLayout := SpBoxLayout newTopToBottom.
-    ChatPharoBrowserEnvironment new tools do: [ :tool |
-        | cb |
-        cb := self newCheckBox
-                  label: tool name;
-                  state: (model browserToolsEnabled includes: tool name);
-                  yourself.
-        cb whenChangedDo: [ :checked |
-            checked
-                ifTrue: [ model enableBrowserTool: tool name ]
-                ifFalse: [ model disableBrowserTool: tool name ] ].
-        toolsLayout add: cb expand: false ]
+	promptInput := ChatPharoBrowserSystemPromptInputPresenter on: model.
+	toolsLayout := SpBoxLayout newTopToBottom.
+	ChatPharoBrowserEnvironment new tools do: [ :tool |
+			| cb |
+			cb := self newCheckBox
+				      label: tool name;
+				      state: (model browserToolsEnabled includes: tool name);
+				      yourself.
+			cb whenChangedDo: [ :checked |
+					checked
+						ifTrue: [ model enableBrowserTool: tool name ]
+						                ifFalse: [
+                        (ChatPharoSafetyAdvisor confirmToolDisableOn: self)
+                                ifTrue: [ model disableBrowserTool: tool name ]
+                                ifFalse: [ cb state: true ] ] ].
+			toolsLayout add: cb expand: false ]
 ]
 
 { #category : 'layout' }

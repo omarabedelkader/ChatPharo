@@ -50,10 +50,13 @@ ChatPharoSettingsPresenter >> connectPresenters [
 			systemPromptInput text: model agent systemPrompt ].
 
 	"Bind text inputs to model"
-        systemPromptInput whenTextChangedDo: [ :text |
-                model agent systemPrompt: text.
-                ChatPharoSettings setDefault: model.
-                ChatPharoSettings saveDefault ].
+        systemPromptInput whenSubmitDo: [ :text |
+                (ChatPharoSafetyAdvisor confirmPromptModificationOn: self)
+                        ifTrue: [
+                                model agent systemPrompt: text.
+                                ChatPharoSettings setDefault: model.
+                                ChatPharoSettings saveDefault ]
+                        ifFalse: [ systemPromptInput text: model agent systemPrompt ] ].
 
 	"Bind checkbox state to model"
 	browserExtensionCheckBox whenChangedDo: [ :presenter |
