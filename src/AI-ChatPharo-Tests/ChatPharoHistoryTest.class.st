@@ -50,6 +50,19 @@ ChatPharoHistoryTest >> testAsPromptPrefixIncludesBothMessages [
 ]
 
 { #category : 'running' }
+ChatPharoHistoryTest >> testChatMessagesOnOutputsRoleDictionaries [
+
+        | stream |
+        history addUser: 'hello'.
+        history addAssistant: 'hi'.
+        stream := Array new writeStream.
+        history chatMessagesOn: stream.
+        self assert: stream contents size equals: 2.
+        self assert: (stream contents first at: 'role') equals: 'user'.
+        self assert: (stream contents last at: 'role') equals: 'assistant'.
+]
+
+{ #category : 'running' }
 ChatPharoHistoryTest >> testClearRemovesAllMessages [ 
 
         history addUser: 'a'.
