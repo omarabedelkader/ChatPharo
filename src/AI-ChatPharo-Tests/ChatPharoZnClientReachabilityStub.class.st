@@ -1,6 +1,9 @@
 Class {
 	#name : 'ChatPharoZnClientReachabilityStub',
 	#superclass : 'Object',
+	#instVars : [
+		'url'
+	],
 	#classVars : [
 		'ShouldFail'
 	],
@@ -11,12 +14,6 @@ Class {
 	#package : 'AI-ChatPharo-Tests',
 	#tag : 'Mock'
 }
-
-{ #category : 'instance creation' }
-ChatPharoZnClientReachabilityStub class >> new [ 
-
-	^ super new 
-]
 
 { #category : 'instance creation' }
 ChatPharoZnClientReachabilityStub class >> shouldFail [ 
@@ -35,9 +32,28 @@ ChatPharoZnClientReachabilityStub >> get: url [
     ^ self
 ]
 
+{ #category : 'accessing' }
+ChatPharoZnClientReachabilityStub >> head [
+
+    ^ ChatPharoZnClientReachabilityStub shouldFail
+        ifTrue: [ ZnHttpUnsuccessful new ]
+        ifFalse: [ true ].
+]
+
 { #category : 'instance creation' }
 ChatPharoZnClientReachabilityStub >> head: url [ 
 
     self class shouldFail ifTrue: [ NetworkError signal: 'fail' ].
     ^ self
+]
+
+{ #category : 'instance creation' }
+ChatPharoZnClientReachabilityStub >> setBearerAuthentication: anApiKey [
+    "Do nothing for now or log if needed."
+    ^ self
+]
+
+{ #category : 'instance creation' }
+ChatPharoZnClientReachabilityStub >> url: aUrl [
+    ^ self.
 ]

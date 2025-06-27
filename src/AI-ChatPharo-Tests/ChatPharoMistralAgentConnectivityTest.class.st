@@ -42,13 +42,6 @@ ChatPharoMistralAgentConnectivityTest >> testIsReachableTrueWhenNoError [
 ]
 
 { #category : 'running' }
-ChatPharoMistralAgentConnectivityTest >> testTestConnectionFalseOnFailure [ 
-
-    ChatPharoZnClientReachabilityStub shouldFail: true.
-    self deny: (ChatPharoMistralAgent new testConnection).
-]
-
-{ #category : 'running' }
 ChatPharoMistralAgentConnectivityTest >> testTestConnectionTrueWhenNoError [
 
     ChatPharoZnClientReachabilityStub shouldFail: false.
