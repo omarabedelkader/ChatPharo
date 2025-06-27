@@ -85,6 +85,13 @@ ChatPharo >> presenter [
 ]
 
 { #category : 'accessing' }
+ChatPharo >> removeAllChats [ 
+
+        chats do: [ :each | each clearChat ].
+        chats removeAll
+]
+
+{ #category : 'accessing' }
 ChatPharo >> removeChatAt: anIndex [
 
         chats removeAt: anIndex

@@ -42,6 +42,14 @@ ChatPharoPresenter >> defaultLayout [
 		  yourself
 ]
 
+{ #category : 'adding' }
+ChatPharoPresenter >> deleteAllChats [
+
+    (self confirm: 'Are you sure you want to delete all chats?') ifFalse: [ ^ self ].
+    notebook pages copy do: [ :page | notebook removePage: page ].
+    model removeAllChats
+]
+
 { #category : 'initialization' }
 ChatPharoPresenter >> deleteChat: aPageTitle [
 
@@ -87,6 +95,13 @@ ChatPharoPresenter >> initializePresenters [
 			 help: 'Delete the selected chat';
 			 action: [ self deleteSelectedChat ];
 			 yourself).
+toolbar add: (SpToolbarButtonPresenter new
+                         label: 'Delete All';
+                         icon: (self iconNamed: #delete);
+                         help: 'Delete all chats';
+                         action: [ self deleteAllChats ];
+                         yourself).
+
 
 	"toolbar add: (SpToolbarButtonPresenter new
 			 label: 'Save Chat';
