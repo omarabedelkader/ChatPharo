@@ -46,13 +46,13 @@ ChatPharoGeminiAgent class >> displayName [
 { #category : 'api' }
 ChatPharoGeminiAgent class >> isReachable [
 
-[ | url |
-  url := 'https://generativelanguage.googleapis.com/v1beta/models?key=dummy'.
-  ZnClient new get: url.
-  true ] on: ZnHttpUnsuccessful, NetworkError do: [ :ex |
-  (ex isKindOf: NetworkError)
-    ifTrue: [ ^ false ].
-  ^ true ]
+	^ [
+		| url |
+		url := 'https://generativelanguage.googleapis.com/v1beta/models?key=dummy'.
+		ZnClient new get: url.
+		true ]
+		on: ZnHttpUnsuccessful , NetworkError
+		do: [ ^ false ].
 
 ]
 
@@ -77,30 +77,36 @@ ChatPharoGeminiAgent >> apiKey [
 { #category : 'accessing' }
 ChatPharoGeminiAgent >> apiKey: anObject [
 
-	apiKey := anObject
+	apiKey := anObject.
+	ChatPharoSettings saveDefault
+]
+
+{ #category : 'accessing' }
+ChatPharoGeminiAgent >> configurationErrorMessage [
+
+	^ 'Please complete all required fields.'
 ]
 
 { #category : 'initialization' }
 ChatPharoGeminiAgent >> getResponseForPrompt: userPrompt [
 
 	| api result |
-	"Build a ChatPharoTool on-the-fly, reuse *our* history so the
-     conversation and tool calls stay in sync."
 	api := ChatPharoTool
 		       geminiWithAPIKey: apiKey
 		       system: self systemPrompt
 		       tools: self tools.
-
+	self onToolExecution ifNotNil: [ api onToolExecution: self onToolExecution ].
 	model ifNotEmpty: [ api model: model ].
-
-	"Append the new user message to the rolling history that the
-     ChatPharoChat presenter maintains for this agent."
 	self history ifNil: [ self history: ChatPharoHistory new ].
 	self history addMessage:
 		(ChatPharoHistorySaver role: 'user' content: userPrompt).
 
 	result := api getResponseForHistory: self history.
 	self history addMessage: result.
+
+	[ result toolCalls notNil ] whileTrue: [
+			result := api getResponseForHistory: self history.
+			self history addMessage: result ].
 
 	^ result content
 ]
@@ -125,6 +131,12 @@ ChatPharoGeminiAgent >> initialize [
 	apiKey := ''.
 	model := ''.
 	temperature := 0.7
+]
+
+{ #category : 'accessing' }
+ChatPharoGeminiAgent >> isConfigured [
+
+	^ host notEmpty and: [ apiKey notEmpty and: [ model notEmpty ] ]
 ]
 
 { #category : 'initialization' }
@@ -166,13 +178,15 @@ ChatPharoGeminiAgent >> temperature: anObject [
 ]
 
 { #category : 'accessing' }
-ChatPharoGeminiAgent >> testConnection [ 
+ChatPharoGeminiAgent >> testConnection [
 
-        [ | url |
-                url := 'https://' , host , '/v1beta/models?key=' , apiKey.
-                ZnClient new head: url.
-                true ]
-                on: ZnHttpUnsuccessful, NetworkError do: [ false ]
+	^ [
+		| url |
+		url := 'https://' , host , '/v1beta/models?key=' , apiKey.
+		ZnClient new get: url.
+		true ]
+		on: ZnHttpUnsuccessful , NetworkError
+		do: [ false ]
 ]
 
 { #category : 'tools support' }

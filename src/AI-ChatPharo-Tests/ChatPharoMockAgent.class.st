@@ -56,6 +56,18 @@ ChatPharoMockAgent >> model: aString [
 	currentModel := aString.
 ]
 
+{ #category : 'private - ffi' }
+ChatPharoMockAgent >> onToolExecution [ 
+
+        ^ nil
+]
+
+{ #category : 'private - ffi' }
+ChatPharoMockAgent >> onToolExecution: aBlock [ 
+
+        "ignore tool execution callbacks"
+]
+
 { #category : 'private - uffi' }
 ChatPharoMockAgent >> promptPrefix [ 
 

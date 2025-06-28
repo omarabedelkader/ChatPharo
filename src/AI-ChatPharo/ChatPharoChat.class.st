@@ -24,7 +24,9 @@ Class {
 		'agent',
 		'promptProcess',
 		'onAnswerReceived',
-		'history'
+		'history',
+		'onToolExecution',
+		'cache'
 	],
 	#category : 'AI-ChatPharo',
 	#package : 'AI-ChatPharo'
@@ -63,10 +65,18 @@ ChatPharoChat >> cancelMessage [
 ]
 
 { #category : 'running' }
+ChatPharoChat >> clearCache [
+
+	cache removeAll
+]
+
+{ #category : 'running' }
 ChatPharoChat >> clearChat [
-    self cancelMessage.
-    history clear.
-    messages removeAll
+
+	self cancelMessage.
+	history clear.
+	messages removeAll.
+	self clearCache
 ]
 
 { #category : 'running' }
@@ -84,7 +94,9 @@ ChatPharoChat >> initialize [
 
 	super initialize.
 	history := ChatPharoHistory new.
-	messages := OrderedCollection new
+	messages := OrderedCollection new.
+	onToolExecution := nil.
+	cache := Dictionary new
 ]
 
 { #category : 'accessing' }
@@ -107,18 +119,32 @@ ChatPharoChat >> presenter [
 
 { #category : 'running' }
 ChatPharoChat >> sendMessage: aText [
-	
-	self addUserMessage: aText.
-	promptProcess := [
-		| backend answer |
-		backend := self agent.
-		
-		backend promptPrefix: history asPromptPrefix.
-		answer := backend getResponseForPrompt: aText.
-		
-		self addAssistantMessage: answer.
-		onAnswerReceived ifNotNil: [ :blk | blk value: messages last ]
-	] fork
+
+        | answer |
+        self addUserMessage: aText.
+        (cache includesKey: aText)
+                ifTrue: [
+                        answer := cache at: aText.
+                        self addAssistantMessage: answer.
+                        onAnswerReceived ifNotNil: [ :blk | blk value: messages last ]
+                ]
+                ifFalse: [
+                        promptProcess := [
+                                 | backend |
+                                 backend := self agent.
+                                 backend onToolExecution: [ self triggerToolExecution ].
+                                 backend promptPrefix: history asPromptPrefix.
+                                 answer := backend getResponseForPrompt: aText.
+                                 cache at: aText put: answer.
+                                 self addAssistantMessage: answer.
+                                 onAnswerReceived ifNotNil: [ :blk | blk value: messages last ] ] fork
+                ]
+]
+
+{ #category : 'running' }
+ChatPharoChat >> triggerToolExecution [ 
+
+        onToolExecution ifNotNil: [ :blk | blk value ]
 ]
 
 { #category : 'running' }
@@ -132,4 +158,10 @@ promptProcess ifNotNil: [ promptProcess waitUntil: [ promptProcess isTerminated 
 ChatPharoChat >> whenAnswerReceivedDo: aBlock [
 
 	onAnswerReceived := aBlock
+]
+
+{ #category : 'running' }
+ChatPharoChat >> whenToolExecutionDo: aBlock [ 
+
+        onToolExecution := aBlock
 ]

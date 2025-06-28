@@ -11,7 +11,8 @@ Class {
 		'cancelButton',
 		'clearButton',
 		'model',
-		'inspectButton'
+		'inspectButton',
+		'scrollableMessages'
 	],
 	#category : 'AI-ChatPharo-Spec-Core',
 	#package : 'AI-ChatPharo-Spec',
@@ -23,22 +24,26 @@ ChatPharoChatPresenter >> connectPresenters [
 
 	messageTextField whenSubmitDo: [ :text | self sendMessage ].
 	submitButton action: [ self sendMessage ].
-	cancelButton action: [ model cancelMessage ].
-	clearButton action: [
-			model messages do: [ :p | messagesLayout remove: p ].
-			model clearChat ].
+	cancelButton action: [
+			model cancelMessage.
+			messageTextField text: ''.
+			submitButton enabled: true.
+			messageTextField enabled: true ].
 	inspectButton action: [ model inspect ].
-
 	model whenAnswerReceivedDo: [ :message |
-		messagesLayout add: message presenter expand: false.
-		messageTextField text: '' ]
+			messagesLayout add: message presenter withConstraints: [ :constraints | constraints height: (message height) * 2].
+			messageTextField text: ''.
+			submitButton enabled: true.
+			messageTextField enabled: true ].
+	 model whenToolExecutionDo: [
+                        messageTextField text: 'Running, searching code and executing tools...' ]
 ]
 
 { #category : 'layout' }
 ChatPharoChatPresenter >> defaultLayout [
     ^ SpBoxLayout newVertical
           spacing: 10;
-          add: (SpScrollableLayout with: messagesLayout);
+          add: (SpScrollableLayout with: scrollableMessages);
           add: (SpBoxLayout newHorizontal
                    spacing: 5;
                    add: messageTextField;
@@ -69,19 +74,15 @@ ChatPharoChatPresenter >> initializePresenters [
 		                help: 'Cancel prompt';
 		                yourself.
 
-	clearButton := self newButton
-		               label: 'Clear Chat';
-		               icon: (self iconNamed: #glamorousTrash);
-		               help: 'Clear chat history';
-		               yourself.
-		
 	inspectButton := self newButton
-		               label: 'Inspect';
-		               icon: (self iconNamed: #inspect);
-		               help: 'Inspect the chat object';
-		               yourself.
+		                 label: 'Inspect';
+		                 icon: (self iconNamed: #inspect);
+		                 help: 'Inspect the chat object';
+		                 yourself.
 
 	messagesLayout := SpBoxLayout newVertical.
+	scrollableMessages := SpPresenter new.
+	scrollableMessages layout: messagesLayout
 ]
 
 { #category : 'initialization' }
@@ -99,6 +100,12 @@ ChatPharoChatPresenter >> sendMessage [
 
 	| text |
 	text := messageTextField text.
+	        (model agent isConfigured)
+                ifFalse: [
+                        self inform: model agent configurationErrorMessage.
+                        ^ self ].
+	submitButton enabled: false.
+	messageTextField enabled: false.
 	messageTextField text: 'Running...'.
 	model sendMessage: text
 ]

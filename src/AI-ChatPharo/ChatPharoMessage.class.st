@@ -50,6 +50,11 @@ ChatPharoMessage >> content: anObject [
 	content := anObject
 ]
 
+{ #category : 'accessing' }
+ChatPharoMessage >> height [
+	^ 140.
+]
+
 { #category : 'initialization' }
 ChatPharoMessage >> initialize [
 

@@ -42,16 +42,29 @@ ChatPharoPresenter >> defaultLayout [
 		  yourself
 ]
 
+{ #category : 'adding' }
+ChatPharoPresenter >> deleteAllChats [
+
+    (self confirm: 'Are you sure you want to delete all chats?') ifFalse: [ ^ self ].
+    notebook pages copy do: [ :page | notebook removePage: page ].
+    model removeAllChats
+]
+
 { #category : 'initialization' }
 ChatPharoPresenter >> deleteChat: aPageTitle [
 
-	| pageToDelete |
+	| pageToDelete pageIndex |
 	pageToDelete := notebook pages
 		                detect: [ :page | page title = aPageTitle ]
 		                ifNone: [ ^ self ].
 
-	(self confirm: 'Are you sure you want to delete this chat?') ifTrue: [
-		notebook removePage: pageToDelete ]
+	(self confirm: 'Are you sure you want to delete this chat?')
+		ifFalse: [ ^ self ].
+	pageIndex := notebook pages
+		             indexOf: pageToDelete
+		             ifAbsent: [ ^ self ].
+	notebook removePage: pageToDelete.
+	model removeChatAt: pageIndex
 ]
 
 { #category : 'initialization' }
@@ -82,6 +95,13 @@ ChatPharoPresenter >> initializePresenters [
 			 help: 'Delete the selected chat';
 			 action: [ self deleteSelectedChat ];
 			 yourself).
+toolbar add: (SpToolbarButtonPresenter new
+                         label: 'Delete All';
+                         icon: (self iconNamed: #delete);
+                         help: 'Delete all chats';
+                         action: [ self deleteAllChats ];
+                         yourself).
+
 
 	"toolbar add: (SpToolbarButtonPresenter new
 			 label: 'Save Chat';
@@ -102,7 +122,24 @@ ChatPharoPresenter >> initializePresenters [
 			 icon: (self iconNamed: #smallConfiguration);
 			 help: 'Open settings';
 			 action: [ self openSettings ];
-			 yourself)
+			 yourself).
+
+	connectionStatusLabel := SpToolbarButtonPresenter new
+        label: 'Checking connection...';
+        enabled: false;
+        action: [ ];
+        yourself.
+
+    toolbar add: connectionStatusLabel.
+
+	toolbar add: (SpToolbarButtonPresenter new
+             label: 'Refresh Connection';
+             icon: (self iconNamed: #refresh);
+             help: 'Manually check LLM connection status';
+             action: [ self updateConnectionStatusOnce ];
+             yourself).
+
+	self updateConnectionStatus.
 ]
 
 { #category : 'initialization' }
@@ -169,4 +206,31 @@ ChatPharoPresenter >> sendMessage [
 ChatPharoPresenter >> setModelBeforeInitialization: anObject [
 
 	model := anObject
+]
+
+{ #category : 'status' }
+ChatPharoPresenter >> updateConnectionStatus [
+    [ 
+        [ 
+            self updateConnectionStatusOnce.
+            (Delay forSeconds: 10) wait.
+        ] repeat 
+    ] forkAt: Processor userBackgroundPriority.
+]
+
+{ #category : 'status' }
+ChatPharoPresenter >> updateConnectionStatusOnce [
+
+	| agent statusText |
+	agent := model activeAgent.
+
+	statusText := (agent notNil and: [ agent class isReachable ])
+		              ifTrue: [ 'Connected' ]
+		              ifFalse: [ 'Disconnected' ].
+
+	connectionStatusLabel
+		label: statusText;
+		help: (statusText = 'Connected'
+				 ifTrue: [ 'Connected to backend (e.g., Ollama)' ]
+				 ifFalse: [ 'No connection to backend' ]); enabled: false
 ]

@@ -17,6 +17,17 @@ ChatPharoAgentTest >> setUp [
 ]
 
 { #category : 'running' }
+ChatPharoAgentTest >> testAgentConformsToAPI [ 
+
+	| agent |
+	agent := ChatPharoMockAgent new.
+	self assert: (agent respondsTo: #getResponseForPrompt:).
+	self assert: (agent respondsTo: #model).
+	self assert: (agent respondsTo: #history).
+	self assert: (agent respondsTo: #promptPrefix).
+]
+
+{ #category : 'running' }
 ChatPharoAgentTest >> testModelSetterGetter [ 
 
         agent model: 'm'.

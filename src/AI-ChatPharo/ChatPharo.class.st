@@ -41,6 +41,14 @@ ChatPharo class >> ask: text [
 	text ifNotEmpty: [ chat sendMessage: text ]
 ]
 
+{ #category : 'accessing' }
+ChatPharo >> activeAgent [
+    
+    ^ chats isEmpty
+        ifTrue: [ nil ]
+        ifFalse: [ chats last agent ]
+]
+
 { #category : 'initialization' }
 ChatPharo >> chats [
 
@@ -74,6 +82,19 @@ ChatPharo >> newChat [
 ChatPharo >> presenter [
 
 	^ ChatPharoPresenter on: self 
+]
+
+{ #category : 'accessing' }
+ChatPharo >> removeAllChats [ 
+
+        chats do: [ :each | each clearChat ].
+        chats removeAll
+]
+
+{ #category : 'accessing' }
+ChatPharo >> removeChatAt: anIndex [
+
+        chats removeAt: anIndex
 ]
 
 { #category : 'accessing' }

@@ -40,7 +40,7 @@ ChatPharoOllamaSettingsPresenter >> connectPresenters [
 { #category : 'layout' }
 ChatPharoOllamaSettingsPresenter >> defaultLayout [
 
-	| mainLayout rowLayout modelRow hostRow portRow tempRow installRow |
+    	| mainLayout rowLayout modelRow hostRow portRow tempRow installRow |
 	modelRow := SpBoxLayout newHorizontal
 		            spacing: 8;
 		            add: (self newLabel label: 'Available models:')
@@ -139,8 +139,6 @@ ChatPharoOllamaSettingsPresenter >> initializePresenters [
 		                 label: 'Install';
 		                 icon: (self iconNamed: #add);
 		                 action: [
-				                 model class pullModel: installInput text.
-				                 self refreshModels.
 				                 (model class isValidModel: installInput text)
 					                 ifTrue: [
 							                 model class pullModel: installInput text.
@@ -153,8 +151,12 @@ ChatPharoOllamaSettingsPresenter >> initializePresenters [
 		                label: 'Delete';
 		                icon: (self iconNamed: #delete);
 		                action: [
-				                model class deleteModel: installInput text.
-				                self refreshModels ];
+						(model class isValidModel: installInput text)
+							ifTrue: [
+								model class deleteModel: installInput text.
+								self refreshModels ]
+							ifFalse: [
+								self inform: 'Model ' , installInput text , ' not found.' ] ];
 		                yourself.
 	        testButton := self newButton
                                label: 'Test Connection';
@@ -220,10 +222,19 @@ ChatPharoOllamaSettingsPresenter >> refreshButton: anObject [
 { #category : 'initialization' }
 ChatPharoOllamaSettingsPresenter >> refreshModels [ 
 
+    | availableModels currentModel |
+    availableModels := model class modelNames.
+    currentModel := model model.
+
     modelsDrop
-        items: model class modelNames;
+        items: availableModels;
         display: [:eachModelName | eachModelName ].
-    modelsDrop items ifNotEmpty: [ modelsDrop selectFirst ].
+
+    (availableModels isEmpty)
+        ifFalse: [
+            (currentModel isNil or: [ (availableModels includes: currentModel) not ])
+                ifTrue: [ modelsDrop selectFirst ].
+        ].
 ]
 
 { #category : 'accessing - model' }

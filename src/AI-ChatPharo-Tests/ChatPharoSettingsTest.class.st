@@ -5,9 +5,9 @@ Class {
 		'settings',
 		'mockApi'
 	],
-	#category : 'AI-ChatPharo-Tests-Core',
+	#category : 'AI-ChatPharo-Tests-Settings',
 	#package : 'AI-ChatPharo-Tests',
-	#tag : 'Core'
+	#tag : 'Settings'
 }
 
 { #category : 'running' }
@@ -57,6 +57,23 @@ ChatPharoSettingsTest >> testModelsDelegation [
 		assert: settings models
 		equals: (ChatPharoMockAgent modelNames).
 
+]
+
+{ #category : 'tests' }
+ChatPharoSettingsTest >> testSwitchModelAfterAgentSwitch [ 
+
+    settings useApi: ChatPharoMockAgent.
+    settings useModel: 'mock-advanced'.
+
+    self assert: settings agent model equals: 'mock-advanced'.
+]
+
+{ #category : 'tests' }
+ChatPharoSettingsTest >> testSwitchingAgentPreservesModel [ 
+
+    settings useApi: ChatPharoMockAgent.
+    settings useModel: 'mock-advanced'.
+    self assert: settings agent model equals: 'mock-advanced'.
 ]
 
 { #category : 'tests' }

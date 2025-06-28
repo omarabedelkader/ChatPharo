@@ -22,7 +22,8 @@ Class {
 		'response',
 		'history',
 		'systemPrompt',
-		'browserSystemPrompt'
+		'browserSystemPrompt',
+		'onToolExecution'
 	],
 	#category : 'AI-ChatPharo-Agent',
 	#package : 'AI-ChatPharo-Agent'
@@ -76,6 +77,12 @@ ChatPharoAgent >> browserSystemPrompt: aString [
 ]
 
 { #category : 'accessing' }
+ChatPharoAgent >> configurationErrorMessage [
+
+    ^ 'Agent is missing required settings.'
+]
+
+{ #category : 'accessing' }
 ChatPharoAgent >> copyForChat [ 
 
     | clone |
@@ -108,7 +115,14 @@ ChatPharoAgent >> initialize [
 	systemPrompt := systemPrompt := self class defaultSystemPrompt.
 	browserSystemPrompt := self class defaultBrowserSystemPrompt.
 	promptPrefix := ''.
-	response := ''
+	response := ''.
+	onToolExecution := nil
+]
+
+{ #category : 'accessing' }
+ChatPharoAgent >> isConfigured [ 
+
+    ^ true
 ]
 
 { #category : 'accessing' }
@@ -127,6 +141,18 @@ ChatPharoAgent >> model: anObject [
 ChatPharoAgent >> modelInformation [ 
 
 	self subclassResponsibility
+]
+
+{ #category : 'accessing' }
+ChatPharoAgent >> onToolExecution [ 
+
+        ^ onToolExecution
+]
+
+{ #category : 'accessing' }
+ChatPharoAgent >> onToolExecution: aBlock [ 
+
+        onToolExecution := aBlock
 ]
 
 { #category : 'accessing' }

@@ -45,6 +45,13 @@ ChatPharoHistorySaverToolCallTest >> testIdSetterGetter [
 ]
 
 { #category : 'running' }
+ChatPharoHistorySaverToolCallTest >> testInvalidArgumentsHandled [ 
+
+    call arguments: '{invalid-json'.
+    self assert: (call arguments includesSubstring: '{invalid-json').
+]
+
+{ #category : 'running' }
 ChatPharoHistorySaverToolCallTest >> testOpenAIChatToolCall [ 
 
         | dict |
