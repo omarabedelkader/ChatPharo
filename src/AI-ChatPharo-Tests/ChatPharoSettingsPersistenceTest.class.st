@@ -25,6 +25,15 @@ ChatPharoSettingsPersistenceTest >> tearDown [
 ]
 
 { #category : 'running' }
+ChatPharoSettingsPersistenceTest >> testBrowserAutoTabPersisted [
+
+    | loaded |
+    settings browserAutoTabEnabled: false.
+    loaded := ChatPharoSettings loadOrNew.
+    self deny: loaded browserAutoTabEnabled
+]
+
+{ #category : 'running' }
 ChatPharoSettingsPersistenceTest >> testBrowserExtensionEnabledPersisted [ 
 
     | loaded |

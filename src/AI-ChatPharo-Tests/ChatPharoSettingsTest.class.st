@@ -35,6 +35,15 @@ ChatPharoSettingsTest >> testAvailableApiChoicesReturnsAssociations [
 ]
 
 { #category : 'tests' }
+ChatPharoSettingsTest >> testBrowserAutoTabAccessor [
+
+    self assert: settings browserAutoTabEnabled.
+    settings browserAutoTabEnabled: false.
+    self deny: settings browserAutoTabEnabled
+
+]
+
+{ #category : 'tests' }
 ChatPharoSettingsTest >> testBrowserToolsEnabledDefault [ 
         self deny: settings browserToolsEnabled isNil.
         self assert: settings browserToolsEnabled notEmpty

@@ -15,7 +15,8 @@ Class {
 		'browserExtensionCheckBox',
 		'browserExtensionPage',
 		'maxIterationsInput',
-		'playgroundToolCheckBox'
+		'playgroundToolCheckBox',
+		'browserAutoTabCheckBox'
 	],
 	#category : 'AI-ChatPharo-Spec-Core',
 	#package : 'AI-ChatPharo-Spec',
@@ -79,6 +80,9 @@ ChatPharoSettingsPresenter >> connectPresenters [
 			model browserExtensionEnabled: presenter.
 			self updateBrowserExtensionTab ].
 		
+        browserAutoTabCheckBox whenChangedDo: [ :presenter |
+                        model browserAutoTabEnabled: presenter ].
+
 	playgroundToolCheckBox whenChangedDo: [ :checked |
 			checked
 				ifTrue: [ model enableBrowserTool: 'open_playground' ]
@@ -169,6 +173,12 @@ ChatPharoSettingsPresenter >> initializePresenters [
 		                            label: 'Enable browser tab';
 		                            state: model browserExtensionEnabled;
 		                            yourself.
+		
+	browserAutoTabCheckBox := self newCheckBox
+		                          label: 'Open tab on selection';
+		                          state: model browserAutoTabEnabled;
+		                          yourself.
+		
 	playgroundToolCheckBox := self newCheckBox
 		                          label: 'Enable open playground tool';
 		                          state:
@@ -238,6 +248,7 @@ ChatPharoSettingsPresenter >> newExtensionsTab [
 	^ SpPresenter new
 		  layout: (SpBoxLayout newTopToBottom
 				   add: browserExtensionCheckBox expand: false;
+				add: browserAutoTabCheckBox expand: false;
 				   yourself);
 		  yourself
 ]

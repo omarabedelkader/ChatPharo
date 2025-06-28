@@ -22,7 +22,8 @@ Class {
 		'agent',
 		'browserExtensionEnabled',
 		'browserToolsEnabled',
-		'maximumIterations'
+		'maximumIterations',
+		'browserAutoTabEnabled'
 	],
 	#classInstVars : [
 		'Default'
@@ -42,7 +43,6 @@ ChatPharoSettings class >> default [
 ChatPharoSettings class >> loadOrNew [
 
 	| path |
-	
 	path := FileLocator imageDirectory / 'chatpharo-settings.ston'.
 
 	path exists ifFalse: [ ^ self new ].
@@ -53,11 +53,13 @@ ChatPharoSettings class >> loadOrNew [
 				  settings := STON fromStream: file.
 				  settings browserExtensionEnabled ifNil: [
 					  settings browserExtensionEnabled: false ].
+			settings browserAutoTabEnabled ifNil: [
+                                          settings browserAutoTabEnabled: true ].
 				  settings browserToolsEnabled ifNil: [
 						  settings browserToolsEnabled:
 							  (ChatPharoBrowserEnvironment new tools collect: [ :t |
 								   t name ]) asOrderedCollection ].
-						settings maximumIterations.
+				  settings maximumIterations.
 				  ^ settings ]
 				  on: Error
 				  do: [ ^ self new ] ]
@@ -112,6 +114,20 @@ ChatPharoSettings >> availableApis [
 ]
 
 { #category : 'initialization' }
+ChatPharoSettings >> browserAutoTabEnabled [ 
+
+        ^ browserAutoTabEnabled
+]
+
+{ #category : 'initialization' }
+ChatPharoSettings >> browserAutoTabEnabled: aBoolean [
+
+        browserAutoTabEnabled := aBoolean.
+        self class setDefault: self.
+        self class saveDefault
+]
+
+{ #category : 'initialization' }
 ChatPharoSettings >> browserExtensionEnabled [ 
 
         ^ browserExtensionEnabled
@@ -163,9 +179,11 @@ ChatPharoSettings >> initialize [
 	super initialize.
 	agent := ChatPharoNullAgent new.
 	browserExtensionEnabled := false.
-	 browserToolsEnabled := (ChatPharoBrowserEnvironment new tools collect: [ :t | t name ]) asOrderedCollection.
-	maximumIterations := 3.
-
+	browserAutoTabEnabled := true.
+	browserToolsEnabled := (ChatPharoBrowserEnvironment new tools
+		                        collect: [ :t | t name ])
+		                       asOrderedCollection.
+	maximumIterations := 3
 ]
 
 { #category : 'initialization' }
