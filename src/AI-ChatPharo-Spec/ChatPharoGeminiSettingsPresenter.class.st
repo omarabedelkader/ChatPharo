@@ -95,11 +95,12 @@ ChatPharoGeminiSettingsPresenter >> initializePresenters [
 		             placeholder: 'generativelanguage.googleapis.com';
 		             text: model host.
 
-	apiKeyField := self newTextInput
+	apiKeyField := self newTextInput bePassword 
 		               placeholder: 'API-KEY';
 		               text: (model apiKey isEmpty
-                                       ifTrue: ''
-                                       ifFalse: (String new: model apiKey size withAll: $*)).
+				                ifTrue: ''
+				                ifFalse:
+					                (String new: model apiKey size withAll: $*)).
 
 
 	modelDrop := SpDropListPresenter new.
@@ -119,10 +120,10 @@ ChatPharoGeminiSettingsPresenter >> initializePresenters [
 		                    text: model temperature asString;
 		                    yourself.
 	testButton := self newButton
-                                label: 'Test Connection';
-                                icon: (self iconNamed: #glamorousGo);
-                                action: [ self testConnection ];
-                                yourself
+		              label: 'Test Connection';
+		              icon: (self iconNamed: #glamorousGo);
+		              action: [ self testConnection ];
+		              yourself
 ]
 
 { #category : 'accessing' }

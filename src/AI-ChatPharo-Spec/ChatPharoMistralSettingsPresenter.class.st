@@ -87,20 +87,32 @@ ChatPharoMistralSettingsPresenter >> hostField: anObject [
 ChatPharoMistralSettingsPresenter >> initializePresenters [
 
 	super initializePresenters.
-	hostField := self newTextInput placeholder: 'api.mistral.ai';
-	text: model host.
-	apiKeyField := self newTextInput placeholder: 'API-KEY'.
+	hostField := self newTextInput
+		             placeholder: 'api.mistral.ai';
+		             text: model host.
+		
+		apiKeyField := self newTextInput 
+							bePassword 
+		               placeholder: 'API-KEY';
+		               text: (model apiKey isEmpty
+				                ifTrue: ''
+				                ifFalse:
+					                (String new: model apiKey size withAll: $*)).
+	
 	modelDrop := SpDropListPresenter new.
 	self refreshModels.
 	hostField whenTextChangedDo: [ :t | model host: t ].
 	apiKeyField whenTextChangedDo: [ :t |
 			model apiKey: t.
 			self refreshModels ].
+		
 	modelDrop whenSelectedItemChangedDo: [ :m | model model: m ].
+	
 	temperatureInput := self newTextInput
 		                    placeholder: '0.0';
 		                    text: model temperature asString;
 		                    yourself.
+		
 	testButton := self newButton
 		              label: 'Test Connection';
 		              icon: (self iconNamed: #glamorousGo);
