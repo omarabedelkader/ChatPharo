@@ -52,7 +52,7 @@ ChatPharoSettingsPresenter >> connectPresenters [
 			systemPromptInput text: model agent systemPrompt ].
 
 	"Bind text inputs to model"
-	systemPromptInput whenSubmitDo: [ :text |
+	systemPromptInput whenTextChangedDo: [ :text |
 			(ChatPharoSafetyAdvisor confirmPromptModificationOn: self)
 				ifTrue: [
 						model agent systemPrompt: text.
@@ -78,13 +78,14 @@ ChatPharoSettingsPresenter >> connectPresenters [
 	browserExtensionCheckBox whenChangedDo: [ :presenter |
 			model browserExtensionEnabled: presenter.
 			self updateBrowserExtensionTab ].
-	        playgroundToolCheckBox whenChangedDo: [ :checked |
-                        checked
-                                ifTrue: [ model enableBrowserTool: 'open_playground' ]
-                                ifFalse: [
-                                        (ChatPharoSafetyAdvisor confirmToolDisableOn: self)
-                                                ifTrue: [ model disableBrowserTool: 'open_playground' ]
-                                                ifFalse: [ playgroundToolCheckBox state: true ] ] ]
+		
+	playgroundToolCheckBox whenChangedDo: [ :checked |
+			checked
+				ifTrue: [ model enableBrowserTool: 'open_playground' ]
+				ifFalse: [
+						(ChatPharoSafetyAdvisor confirmToolDisableOn: self)
+							ifTrue: [ model disableBrowserTool: 'open_playground' ]
+							ifFalse: [ playgroundToolCheckBox state: true ] ] ]
 ]
 
 { #category : 'layout' }
