@@ -58,8 +58,9 @@ ChatPharoSettingsPresenter >> connectPresenters [
 						ChatPharoSettings setDefault: model.
 						ChatPharoSettings saveDefault ]
 				ifFalse: [ systemPromptInput text: model agent systemPrompt ] ].
+			
         maxIterationsInput whenTextChangedDo: [ :t |
-                model maximumIterations: t asNumber ].
+					t ifNotEmpty: [  model maximumIterations: t asNumber ] ].
 
 	"Bind checkbox state to model"
 	browserExtensionCheckBox whenChangedDo: [ :presenter |
@@ -139,7 +140,7 @@ ChatPharoSettingsPresenter >> initializePresenters [
 		                     yourself.
 
 
-	maxIterationsInput := self newTextInput
+	maxIterationsInput := self newNumberInput
 		                      placeholder: 'e.g. 5';
 		                      text: model maximumIterations asString;
 		                      yourself.
