@@ -177,9 +177,9 @@ ChatPharoSettings >> maximumIterations [
 { #category : 'initialization' }
 ChatPharoSettings >> maximumIterations: aNumber [
 
-        maximumIterations := aNumber.
-        self class setDefault: self.
-        self class saveDefault
+	maximumIterations := aNumber max: 1.
+	self class setDefault: self.
+	self class saveDefault
 ]
 
 { #category : 'initialization' }

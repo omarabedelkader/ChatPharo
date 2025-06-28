@@ -59,6 +59,16 @@ ChatPharoSettingsTest >> testMaximumIterationsAccessor [
 ]
 
 { #category : 'tests' }
+ChatPharoSettingsTest >> testMaximumIterationsLowerBound [ 
+
+    settings maximumIterations: 0.
+    self assert: settings maximumIterations equals: 1.
+
+    settings maximumIterations: -3.
+    self assert: settings maximumIterations equals: 1
+]
+
+{ #category : 'tests' }
 ChatPharoSettingsTest >> testModelsDelegation [
 	self
 		assert: settings models
