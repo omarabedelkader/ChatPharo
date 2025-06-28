@@ -107,7 +107,6 @@ ChatPharoSettings >> availableApis [
 	^ {
 		  ChatPharoNullAgent.
 		  ChatPharoOllamaAgent.
-		ChatPharoMistralAgent.
 		  ChatPharoGeminiAgent }
 ]
 
