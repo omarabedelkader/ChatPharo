@@ -23,6 +23,20 @@ ChatPharoBrowserEnvironmentTest >> testClassLookupIsCaseInsensitive [
 ]
 
 { #category : 'running' }
+ChatPharoBrowserEnvironmentTest >> testClassLookupReturnsNilForUnknown [ 
+
+    self assert: (env classNamed: 'NoSuchClass') isNil.
+]
+
+{ #category : 'running' }
+ChatPharoBrowserEnvironmentTest >> testClassesInPackageNamedReturnsClasses [ 
+
+    | classes |
+    classes := env classesInPackageNamed: 'AI-ChatPharo'.
+    self assert: classes notEmpty.
+]
+
+{ #category : 'running' }
 ChatPharoBrowserEnvironmentTest >> testFindMethodsWithSubstringCapsAt50 [ 
 
    | reply |
@@ -32,9 +46,30 @@ ChatPharoBrowserEnvironmentTest >> testFindMethodsWithSubstringCapsAt50 [
 ]
 
 { #category : 'running' }
+ChatPharoBrowserEnvironmentTest >> testGetClassCommentsIncludesKey [ 
+
+    | reply |
+    reply := env applyFunctionGetClassComments:
+        (Dictionary with: 'classes' -> (Array with: 'String')).
+    self assert: ((reply at: 'comment_per_class') includesKey: 'String').
+]
+
+{ #category : 'running' }
 ChatPharoBrowserEnvironmentTest >> testGetPackagesIncludesSelfPackage [ 
 
    | reply |
    reply := env applyFunctionGetPackages: Dictionary new.
    self assert: ((reply at:'packages') includes: 'AI-ChatPharo').
+]
+
+{ #category : 'running' }
+ChatPharoBrowserEnvironmentTest >> testPackageNamedCaseInsensitive [ 
+
+    self assert: (env packageNamed: 'ai-chatpharo') notNil.
+]
+
+{ #category : 'running' }
+ChatPharoBrowserEnvironmentTest >> testPackageNamedReturnsNilForUnknown [ 
+
+    self assert: (env packageNamed: 'UnknownPackage') isNil.
 ]
