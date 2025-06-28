@@ -32,13 +32,6 @@ ChatPharoOllamaAgent class >> defaultPort [
 ]
 
 { #category : 'api' }
-ChatPharoOllamaAgent class >> validateModel: aModelName [
-
-    (self isValidModel: aModelName) ifFalse: [
-        ^ self error: 'Invalid model name or model does not exist on Ollama server' ].
-]
-
-{ #category : 'api' }
 ChatPharoOllamaAgent class >> deleteModel: aModelName [ 
 
         self isReachable ifFalse: [
@@ -144,6 +137,13 @@ ChatPharoOllamaAgent class >> pullModel: aModelName [
 ChatPharoOllamaAgent class >> settingsPresenterFor: anAgent [
 
 	^ ChatPharoOllamaSettingsPresenter on: anAgent
+]
+
+{ #category : 'api' }
+ChatPharoOllamaAgent class >> validateModel: aModelName [
+
+    (self isValidModel: aModelName) ifFalse: [
+        ^ self error: 'Invalid model name or model does not exist on Ollama server' ].
 ]
 
 { #category : 'accessing' }

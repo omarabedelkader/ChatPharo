@@ -77,6 +77,15 @@ ChatPharoSettingsPersistenceTest >> testLoadSaveKeepsAgentModel [
 ]
 
 { #category : 'running' }
+ChatPharoSettingsPersistenceTest >> testMaximumIterationsPersistence [
+
+    | loaded |
+    settings maximumIterations: 5.
+    loaded := ChatPharoSettings loadOrNew.
+    self assert: loaded maximumIterations equals: 5
+]
+
+{ #category : 'running' }
 ChatPharoSettingsPersistenceTest >> testSystemPromptPersistence [ 
 
     | loaded |

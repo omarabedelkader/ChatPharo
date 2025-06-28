@@ -13,7 +13,8 @@ Class {
 		'apiSettingsContainer',
 		'systemPromptInput',
 		'browserExtensionCheckBox',
-		'browserExtensionPage'
+		'browserExtensionPage',
+		'maxIterationsInput'
 	],
 	#category : 'AI-ChatPharo-Spec-Core',
 	#package : 'AI-ChatPharo-Spec',
@@ -50,13 +51,15 @@ ChatPharoSettingsPresenter >> connectPresenters [
 			systemPromptInput text: model agent systemPrompt ].
 
 	"Bind text inputs to model"
-        systemPromptInput whenSubmitDo: [ :text |
-                (ChatPharoSafetyAdvisor confirmPromptModificationOn: self)
-                        ifTrue: [
-                                model agent systemPrompt: text.
-                                ChatPharoSettings setDefault: model.
-                                ChatPharoSettings saveDefault ]
-                        ifFalse: [ systemPromptInput text: model agent systemPrompt ] ].
+	systemPromptInput whenSubmitDo: [ :text |
+			(ChatPharoSafetyAdvisor confirmPromptModificationOn: self)
+				ifTrue: [
+						model agent systemPrompt: text.
+						ChatPharoSettings setDefault: model.
+						ChatPharoSettings saveDefault ]
+				ifFalse: [ systemPromptInput text: model agent systemPrompt ] ].
+        maxIterationsInput whenTextChangedDo: [ :t |
+                model maximumIterations: t asNumber ].
 
 	"Bind checkbox state to model"
 	browserExtensionCheckBox whenChangedDo: [ :presenter |
@@ -129,10 +132,17 @@ ChatPharoSettingsPresenter >> initializePresenters [
 		                       items: model models;
 		                       display: [ :e | e ];
 		                       yourself.
+		
 	systemPromptInput := self newTextInput
 		                     placeholder: 'System prompt...';
 		                     text: model agent systemPrompt;
 		                     yourself.
+
+
+	maxIterationsInput := self newTextInput
+		                      placeholder: 'e.g. 5';
+		                      text: model maximumIterations asString;
+		                      yourself.
 
 	browserExtensionCheckBox := self newCheckBox
 		                            label: 'Enable browser tab';
@@ -161,24 +171,22 @@ ChatPharoSettingsPresenter >> initializeWindow: aWindowPresenter [
 ChatPharoSettingsPresenter >> newChatTab [
 
 	^ SpPresenter new
-                  layout: (SpBoxLayout newTopToBottom
+		  layout: (SpBoxLayout newTopToBottom
 				   add: (SpBoxLayout newHorizontal
 						    spacing: 8;
 						    add: 'System:' expand: false;
 						    add: systemPromptInput;
 						    yourself)
 				   expand: false;
+				   add: (SpBoxLayout newHorizontal
+						    spacing: 8;
+						    add: 'Max iterations:' expand: false;
+						    add: maxIterationsInput;
+						    yourself)
+				   expand: false;
 				   yourself);
 		  yourself;
-		  yourself
-	"
-				   add: (SpButtonPresenter new
-						    label: 'Delete All Chats';
-						    icon: (self iconNamed: #delete);
-						    help: 'Delete all chats';
-						    action: [ self deleteAllChats ];
-						    yourself)
-				   expand: false;"
+			  yourself
 ]
 
 { #category : 'initialization' }

@@ -90,25 +90,30 @@ ChatPharoGeminiAgent >> configurationErrorMessage [
 { #category : 'initialization' }
 ChatPharoGeminiAgent >> getResponseForPrompt: userPrompt [
 
-	| api result |
+	| api result max count |
 	api := ChatPharoTool
 		       geminiWithAPIKey: apiKey
 		       system: self systemPrompt
 		       tools: self tools.
-	self onToolExecution ifNotNil: [ api onToolExecution: self onToolExecution ].
+	self onToolExecution ifNotNil: [
+		api onToolExecution: self onToolExecution ].
 	model ifNotEmpty: [ api model: model ].
 	self history ifNil: [ self history: ChatPharoHistory new ].
 	self history addMessage:
 		(ChatPharoHistorySaver role: 'user' content: userPrompt).
 
-	result := api getResponseForHistory: self history.
-	self history addMessage: result.
+        result := api getResponseForHistory: self history.
+        self history addMessage: result.
 
-	[ result toolCalls notNil ] whileTrue: [
-			result := api getResponseForHistory: self history.
-			self history addMessage: result ].
 
-	^ result content
+        max := ChatPharoSettings default maximumIterations ifNil: [ 1 ].
+        count := 0.
+        [ result toolCalls notNil and: [ count < max ] ] whileTrue: [
+                        result := api getResponseForHistory: self history.
+                        self history addMessage: result.
+                        count := count + 1 ].
+
+        ^ result content
 ]
 
 { #category : 'accessing' }

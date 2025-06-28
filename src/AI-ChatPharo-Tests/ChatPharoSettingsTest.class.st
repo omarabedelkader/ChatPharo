@@ -52,6 +52,13 @@ ChatPharoSettingsTest >> testEnableDisableBrowserTool [
 ]
 
 { #category : 'tests' }
+ChatPharoSettingsTest >> testMaximumIterationsAccessor [ 
+
+    settings maximumIterations: 8.
+    self assert: settings maximumIterations equals: 8
+]
+
+{ #category : 'tests' }
 ChatPharoSettingsTest >> testModelsDelegation [
 	self
 		assert: settings models
