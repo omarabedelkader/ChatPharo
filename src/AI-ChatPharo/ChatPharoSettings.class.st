@@ -21,7 +21,8 @@ Class {
 	#instVars : [
 		'agent',
 		'browserExtensionEnabled',
-		'browserToolsEnabled'
+		'browserToolsEnabled',
+		'hasSeenWelcome'
 	],
 	#classInstVars : [
 		'Default'
@@ -53,6 +54,7 @@ ChatPharoSettings class >> loadOrNew [
                             settings browserToolsEnabled ifNil: [
                         settings browserToolsEnabled: (ChatPharoBrowserEnvironment new tools collect: [ :t | t name ]) asOrderedCollection
                     ].
+					settings hasSeenWelcome ifNil: [ settings hasSeenWelcome: false ].
                         ^ settings ]
                         on: Error
                         do: [ ^ self new ]
@@ -83,6 +85,20 @@ ChatPharoSettings class >> saveDefault [
 ChatPharoSettings class >> setDefault: aSettings [ 
 
 	Default := aSettings
+]
+
+{ #category : 'accessing' }
+ChatPharoSettings >> hasSeenWelcome [
+
+    ^ hasSeenWelcome ifNil: [ false ]  
+]
+
+{ #category : 'accessing' }
+ChatPharoSettings >> hasSeenWelcome: aBoolean [
+	
+    hasSeenWelcome := aBoolean.
+    self class setDefault: self.
+    self class saveDefault.
 ]
 
 { #category : 'initialization' }
