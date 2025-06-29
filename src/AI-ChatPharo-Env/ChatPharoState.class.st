@@ -32,7 +32,7 @@ ChatPharoState class >> chatPharoSettingsWorldMenuOn: aBuilder [
 ]
 
 { #category : 'world state' }
-ChatPharoState class >> chatPharoShortcut: aBuilder [
+ChatPharoState class >> chatPharoShortcut [
 
 	<shortcut>
 	^ KMKeymap
