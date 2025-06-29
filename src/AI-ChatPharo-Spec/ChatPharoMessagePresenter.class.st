@@ -33,9 +33,9 @@ ChatPharoMessagePresenter >> defaultLayout [
 
 	^ SpBoxLayout newVertical
 		  add: 'User' expand: false;
-		  add: contentPresenter withConstraints: [ :const | const height: (model content lines size) * 42 ];
+		  add: contentPresenter expand: true;
 		  add: 'Assistant' expand: false;
-		  add: answerPresenter withConstraints: [ :const | const height: (model answer lines size) * 42 ];
+		  add: answerPresenter expand: true;
 		  yourself
 ]
 
