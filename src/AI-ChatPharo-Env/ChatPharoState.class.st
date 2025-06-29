@@ -32,6 +32,15 @@ ChatPharoState class >> chatPharoSettingsWorldMenuOn: aBuilder [
 ]
 
 { #category : 'world state' }
+ChatPharoState class >> chatPharoShortcut: aBuilder [
+
+	<shortcut>
+	^ KMKeymap
+		  shortcut: $o meta , $c meta
+		  action: [ self openTempChatPresenter ]
+]
+
+{ #category : 'world state' }
 ChatPharoState class >> chatPharoWikiWorldMenuOn: aBuilder [
 
 	<worldMenu>
@@ -47,6 +56,12 @@ ChatPharoState class >> chatPharoWikiWorldMenuOn: aBuilder [
 ]
 
 { #category : 'world state' }
+ChatPharoState class >> openTempChatPresenter [
+
+	ChatPharo new presenter open
+]
+
+{ #category : 'world state' }
 ChatPharoState class >> tempChatPharoWorldMenuOn: aBuilder [
 
 	<worldMenu>
@@ -58,7 +73,7 @@ ChatPharoState class >> tempChatPharoWorldMenuOn: aBuilder [
 		label: 'Temp ChatPharo';
 		icon: (self iconNamed: #announcement);
 		help: 'Open Temp Chat';
-		action: [ ChatPharo new presenter open ]
+		action: [ self openTempChatPresenter ]
 ]
 
 { #category : 'see class side' }
