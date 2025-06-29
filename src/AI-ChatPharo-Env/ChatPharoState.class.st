@@ -14,7 +14,7 @@ ChatPharoState class >> aiWorldMenuOn: aBuilder [
 
 	<worldMenu>
 	(aBuilder item: #ChatPharo)
-		order: 10;
+		order: 1;
 		icon: ChatPharoIcons chatPharoIcon;
 		help: 'An AI Assistant';
 		with: [
@@ -36,7 +36,7 @@ ChatPharoState class >> aiWorldMenuOn: aBuilder [
 				(aBuilder item: #ChatPharoDocumentation)
 					action: [
 						WebBrowser openOn:
-								'https://github.com/omarabedelkader/ChatPharo/wiki' ];
+								'https://github.com/omarabedelkader/ChatPharo/blob/main/doc/ChatPharo-Wiki.md' ];
 					label: 'ChatPharo Wiki';
 					icon: (self iconNamed: #smallHelp);
 					help:
