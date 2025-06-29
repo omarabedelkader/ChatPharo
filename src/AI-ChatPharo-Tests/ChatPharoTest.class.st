@@ -3,7 +3,8 @@ Class {
 	#superclass : 'TestCase',
 	#instVars : [
 		'app',
-		'mockApi'
+		'mockApi',
+		'settings'
 	],
 	#category : 'AI-ChatPharo-Tests-Core',
 	#package : 'AI-ChatPharo-Tests',
@@ -14,6 +15,9 @@ Class {
 ChatPharoTest >> setUp [
 
 	super setUp.
+	settings := ChatPharoSettings new.
+	settings hasSeenWelcome: true.
+	ChatPharoSettings setDefault: settings.
 	app := ChatPharo new.
 	mockApi := ChatPharoMockAgent new.
 	app settings instVarNamed: #agent put: mockApi

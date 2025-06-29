@@ -67,17 +67,17 @@ ChatPharoOllamaAgent class >> isReachable [
 
 { #category : 'api' }
 ChatPharoOllamaAgent class >> isValidModel: aModelName [ 
-
     self isReachable ifFalse: [ ^ false ].
-    [
+    
+    ^ [ 
         ZnClient new
             url: 'http://' , self defaultHost , ':' , self defaultPort , '/api/show';
-            entity: (ZnEntity with:
-                                 (STONJSON toString: { (#model -> aModelName) } asDictionary));
+            entity: (ZnEntity with: 
+                (STONJSON toString: { (#model -> aModelName) } asDictionary));
             post;
             yourself.
-        true
-    ] on: ZnHttpUnsuccessful, NetworkError do: [ false ]
+        true 
+    ] on: ZnHttpUnsuccessful, NetworkError do: [ false ].
 ]
 
 { #category : 'api' }
