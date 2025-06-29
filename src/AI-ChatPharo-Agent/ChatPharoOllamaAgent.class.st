@@ -69,7 +69,7 @@ ChatPharoOllamaAgent class >> isReachable [
 ChatPharoOllamaAgent class >> isValidModel: aModelName [ 
 
     self isReachable ifFalse: [ ^ false ].
-    [
+    ^ [
         ZnClient new
             url: 'http://' , self defaultHost , ':' , self defaultPort , '/api/show';
             entity: (ZnEntity with:
@@ -121,16 +121,17 @@ ChatPharoOllamaAgent class >> pullModel: aModelName [
 
 	self isReachable ifFalse: [
 		^ self error: 'Ollama server not reachable' ].
-	
-	self validateModel: aModelName.
-	
-	ZnClient new
-		url:
-			'http://' , self defaultHost , ':' , self defaultPort , '/api/pull';
-		entity: (ZnEntity with:
-					 (STONJSON toString: { (#name -> aModelName) } asDictionary));
+
+	^ [ ZnClient new
+		url: 'http://' , self defaultHost , ':' , self defaultPort , '/api/pull';
+		entity: (ZnEntity with: (STONJSON toString: { (#name -> aModelName) } asDictionary));
 		post;
-		yourself
+		yourself.
+	] on: ZnHttpUnsuccessful, NetworkError do: [ :ex |
+		^ self error: 'Error pulling model: ' , ex messageText , '. Please verify the model name.' 
+	].
+
+
 ]
 
 { #category : 'api' }
