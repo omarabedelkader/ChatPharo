@@ -73,3 +73,9 @@ ChatPharoBrowserEnvironmentTest >> testPackageNamedReturnsNilForUnknown [
 
     self assert: (env packageNamed: 'UnknownPackage') isNil.
 ]
+
+{ #category : 'running' }
+ChatPharoBrowserEnvironmentTest >> testToolsIncludeCheckSyntax [ 
+
+    self assert: (env tools anySatisfy: [ :tool | tool name = 'check_syntax' ]).
+]

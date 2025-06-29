@@ -28,6 +28,36 @@ ChatPharoClient class >> name: n description: d parameters: p block: b [
 ]
 
 { #category : 'examples' }
+ChatPharoClient class >> toolCheckSyntax [ 
+
+        <sampleInstance>
+        ^ self
+                  name: 'check_syntax'
+                  description: 'Checks if the given Smalltalk code has valid syntax.'
+                  parameters: (Dictionary
+                                   with: 'type' -> 'object'
+                                   with: 'properties' -> (Dictionary with: 'code' -> (Dictionary
+                                                             with: 'type' -> 'string'
+                                                             with:
+                                                             'description' -> 'The Smalltalk code to validate'))
+                                   with: 'required' -> #( 'code' ))
+                  block: [ :arguments |
+                                  | code result |
+                                  code := arguments at: 'code'.
+                                  [ :exitBlock |
+                                          [ OCParser parseExpression: code ]
+                                                  on: OCCodeError
+                                                  do: [ :error |
+                                                                  result := Dictionary with: 'syntax_error'
+                                                                          -> ('Syntax error in given code at position {1}: {2}'
+                                                                                  format: { error position. error messageText }).
+                                                                  exitBlock value ].
+                                          result := Dictionary with: 'syntax_ok' -> true ]
+                                          valueWithExit.
+                                  result ]
+]
+
+{ #category : 'examples' }
 ChatPharoClient class >> toolEvaluateExpression [
 
 	<sampleInstance>

@@ -52,3 +52,21 @@ ChatPharoClientTest >> testParametersSetterGetter [
         client parameters: (Dictionary with: 'a' -> 1).
         self assert: (client parameters at: 'a') equals: 1.
 ]
+
+{ #category : 'running' }
+ChatPharoClientTest >> testToolCheckSyntaxReportsError [ 
+
+        | tool result |
+        tool := ChatPharoClient toolCheckSyntax.
+        result := tool applyTo: (Dictionary with: 'code' -> '1 +').
+        self assert: (result includesKey: 'syntax_error').
+]
+
+{ #category : 'running' }
+ChatPharoClientTest >> testToolCheckSyntaxValid [ 
+
+        | tool result |
+        tool := ChatPharoClient toolCheckSyntax.
+        result := tool applyTo: (Dictionary with: 'code' -> '1 + 2').
+        self assert: (result at: 'syntax_ok') equals: true.
+]
