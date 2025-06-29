@@ -29,6 +29,40 @@ ChatPharoBrowserEnvironment class >> new [
 ]
 
 { #category : 'initialization' }
+ChatPharoBrowserEnvironment >> applyFunctionDescribePackage: arguments [
+
+        | packageName classes |
+        packageName := arguments at: 'package'.
+        classes := self classesInPackageNamed: packageName.
+
+        classes ifNil: [
+                ^ Dictionary
+                          with: 'summary_per_class' -> Dictionary new
+                          with:
+                          'nonexistent_or_outside_scope_packages'
+                          -> (Array with: packageName) ].
+
+        ^ Dictionary
+                  with: 'summary_per_class'
+                  -> (Dictionary newFrom:
+                                (classes collect: [ :class |
+                                        class name
+                                                ->
+                                                        (Dictionary
+                                                                with:
+                                                                'comment'
+                                                                        -> class comment
+                                                                with:
+                                                                'instance_methods'
+                                                                        -> (class selectors sorted)
+                                                                with:
+                                                                'class_methods'
+                                                                        -> (class class selectors sorted) ) ]))
+                  with:
+                  'nonexistent_or_outside_scope_packages' -> #()
+]
+
+{ #category : 'initialization' }
 ChatPharoBrowserEnvironment >> applyFunctionFindMethodsWithSubstring: arguments [
 
 	| substring methods |
@@ -188,6 +222,24 @@ ChatPharoBrowserEnvironment >> classesInPackageNamed: packageName [
 				  self browserEnvironment includesClass: class ] ]
 ]
 
+{ #category : 'accessing' }
+ChatPharoBrowserEnvironment >> functionDescribePackage [
+
+        ^ ChatPharoClient
+                  name: 'describe_package'
+                  description:
+                  'Returns each class in the given package with its comment and list of methods.'
+                  parameters: (Dictionary
+                                   with: 'type' -> 'object'
+                                   with:
+                                           'properties' -> (Dictionary with: 'package' -> (Dictionary
+                                                             with: 'type' -> 'string'
+                                                             with: 'description' -> 'Name of the package'))
+                                   with: 'required' -> #( 'package' ))
+                  block: [ :arguments |
+                  self applyFunctionDescribePackage: arguments ]
+]
+
 { #category : 'initialization' }
 ChatPharoBrowserEnvironment >> functionFindMethodsWithSubstring [
 
@@ -330,6 +382,7 @@ ChatPharoBrowserEnvironment >> initializeWithEnvironment: env [
 		         self functionGetClassMethods.
 		         self functionGetClassSubclasses.
 		         self functionFindMethodsWithSubstring.
+		self functionDescribePackage.
 		ChatPharoClient toolCheckSyntax.
 		         ChatPharoClient toolOpenPlayground }
 ]

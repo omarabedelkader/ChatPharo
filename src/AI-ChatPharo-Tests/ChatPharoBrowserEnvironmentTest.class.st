@@ -37,6 +37,15 @@ ChatPharoBrowserEnvironmentTest >> testClassesInPackageNamedReturnsClasses [
 ]
 
 { #category : 'running' }
+ChatPharoBrowserEnvironmentTest >> testDescribePackageReturnsSummary [
+
+    | reply |
+    reply := env applyFunctionDescribePackage:
+                (Dictionary with: 'package' -> 'AI-ChatPharo').
+    self assert: ((reply at: 'summary_per_class') keys notEmpty).
+]
+
+{ #category : 'running' }
 ChatPharoBrowserEnvironmentTest >> testFindMethodsWithSubstringCapsAt50 [ 
 
    | reply |
