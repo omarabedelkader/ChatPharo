@@ -25,7 +25,7 @@ ChatPharoState class >> chatPharoSettingsWorldMenuOn: aBuilder [
 	<worldMenu>
 	(aBuilder item: #ChatPharoSettings)
 		parent: #ChatPharo;
-		order: 3;
+		order: 2;
 		action: [ ChatPharoSettings default presenter open ];
 		label: 'ChatPharo Settings';
 		icon: (self iconNamed: #smallConfiguration);
@@ -38,7 +38,7 @@ ChatPharoState class >> chatPharoWikiWorldMenuOn: aBuilder [
 	<worldMenu>
 	(aBuilder item: #ChatPharoDocumentation)
 		parent: #ChatPharo;
-		order: 3;
+		order: 2;
 		action: [
 			WebBrowser openOn:
 					'https://github.com/omarabedelkader/ChatPharo/wiki' ];
