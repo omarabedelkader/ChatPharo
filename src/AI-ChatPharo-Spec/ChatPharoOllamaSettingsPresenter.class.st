@@ -40,7 +40,7 @@ ChatPharoOllamaSettingsPresenter >> connectPresenters [
 { #category : 'layout' }
 ChatPharoOllamaSettingsPresenter >> defaultLayout [
 
-    	| mainLayout rowLayout modelRow hostRow portRow tempRow installRow |
+	| mainLayout rowLayout modelRow hostRow portRow tempRow installRow |
 	modelRow := SpBoxLayout newHorizontal
 		            spacing: 8;
 		            add: (self newLabel label: 'Available models:')
@@ -55,7 +55,7 @@ ChatPharoOllamaSettingsPresenter >> defaultLayout [
 		              expand: false;
 		              add: installInput expand: true;
 		              add: installButton expand: false;
-		              add: deleteButton expand: false;
+		              "add: deleteButton expand: false;"
 		              yourself.
 
 	hostRow := SpBoxLayout newHorizontal
@@ -88,7 +88,7 @@ ChatPharoOllamaSettingsPresenter >> defaultLayout [
 		              add: hostRow expand: false;
 		              add: portRow expand: false;
 		              add: tempRow expand: false;
-						add: testButton expand: false;
+		              add: testButton expand: false;
 		              yourself.
 
 	^ mainLayout
