@@ -28,13 +28,6 @@ ChatPharoBrowserSystemPromptInputPresenter >> initializePresenters [
 		             placeholder: 'Browser system prompt...';
 		             text: model agent browserSystemPrompt;
 		             yourself.
-	textInput whenTextChangedDo: [ :text |
-			            (ChatPharoSafetyAdvisor confirmPromptModificationOn: self)
-                    ifTrue: [
-                            model agent browserSystemPrompt: text.
-                            ChatPharoSettings setDefault: model.
-                            ChatPharoSettings saveDefault ]
-                    ifFalse: [ textInput text: model agent browserSystemPrompt ] ]
 ]
 
 { #category : 'initialization' }
