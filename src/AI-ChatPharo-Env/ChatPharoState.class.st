@@ -24,11 +24,12 @@ ChatPharoState class >> chatPharoSettingsWorldMenuOn: aBuilder [
 
 	<worldMenu>
 	(aBuilder item: #ChatPharoSettings)
+		parent: #ChatPharo;
+		order: 3;
 		action: [ ChatPharoSettings default presenter open ];
 		label: 'ChatPharo Settings';
 		icon: (self iconNamed: #smallConfiguration);
-		help: 'Open ChatPharo settings';
-		parent: #ChatPharo
+		help: 'Open ChatPharo settings'
 ]
 
 { #category : 'world state' }
@@ -36,14 +37,15 @@ ChatPharoState class >> chatPharoWikiWorldMenuOn: aBuilder [
 
 	<worldMenu>
 	(aBuilder item: #ChatPharoDocumentation)
+		parent: #ChatPharo;
+		order: 3;
 		action: [
 			WebBrowser openOn:
 					'https://github.com/omarabedelkader/ChatPharo/wiki' ];
 		label: 'ChatPharo Wiki';
 		icon: (self iconNamed: #smallHelp);
 		help:
-			'Will open the webpage https://github.com/omarabedelkader/ChatPharo/wiki';
-			parent: #ChatPharo
+			'Will open the webpage https://github.com/omarabedelkader/ChatPharo/wiki'
 ]
 
 { #category : 'world state' }
