@@ -20,7 +20,8 @@ Class {
 	#instVars : [
 		'content',
 		'answer',
-		'presenter'
+		'presenter',
+		'assistantLabel'
 	],
 	#category : 'AI-ChatPharo',
 	#package : 'AI-ChatPharo'
@@ -36,6 +37,18 @@ ChatPharoMessage >> answer [
 ChatPharoMessage >> answer: anObject [
 
 	answer := anObject
+]
+
+{ #category : 'accessing' }
+ChatPharoMessage >> assistantLabel [
+
+        ^ assistantLabel
+]
+
+{ #category : 'accessing' }
+ChatPharoMessage >> assistantLabel: aString [
+
+        assistantLabel := aString
 ]
 
 { #category : 'accessing' }
@@ -60,7 +73,8 @@ ChatPharoMessage >> initialize [
 
 	super initialize.
 	content := String empty.
-	answer := String empty
+	answer := String empty.
+assistantLabel := 'Assistant'
 ]
 
 { #category : 'accessing' }

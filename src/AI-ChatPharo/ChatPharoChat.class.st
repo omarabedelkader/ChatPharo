@@ -34,8 +34,14 @@ Class {
 
 { #category : 'running' }
 ChatPharoChat >> addAssistantMessage: answerText [
+    | label |
     history addAssistant: answerText.
-    messages last answer: answerText
+    label := (self agent isKindOf: ChatPharoNullAgent)
+                ifTrue: [ 'Assistant bot' ]
+                ifFalse: [ 'Assistant' ].
+    messages last
+        answer: answerText;
+        assistantLabel: label
 ]
 
 { #category : 'running' }

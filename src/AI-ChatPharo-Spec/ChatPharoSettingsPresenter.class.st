@@ -207,25 +207,29 @@ ChatPharoSettingsPresenter >> initializeWindow: aWindowPresenter [
 
 { #category : 'initialization' }
 ChatPharoSettingsPresenter >> newChatTab [
+    ^ SpPresenter new
+        layout: (
+            SpBoxLayout newTopToBottom
+                spacing: 12; "Add some vertical spacing between rows for better separation"
+                add: (
+                    SpBoxLayout newHorizontal
+                        spacing: 8;
+                        add: 'System:' expand: false;
+                        add: systemPromptInput;
+                        yourself
+                ) expand: false;
+                add: (
+                    SpBoxLayout newHorizontal
+                        spacing: 8;
+                        add: 'Max iterations:' expand: false;
+                        add: maxIterationsInput;
+                        yourself
+                ) expand: false;
+                add: playgroundToolCheckBox expand: false;
+                yourself
+        );
+        yourself
 
-	^ SpPresenter new
-		  layout: (SpBoxLayout newTopToBottom
-				   add: (SpBoxLayout newHorizontal
-						    spacing: 8;
-						    add: 'System:' expand: false;
-						    add: systemPromptInput;
-						    yourself)
-				   expand: false;
-				   add: (SpBoxLayout newHorizontal
-						    spacing: 8;
-						    add: 'Max iterations:' expand: false;
-						    add: maxIterationsInput;
-						    yourself)
-				   expand: false;
-								add: playgroundToolCheckBox expand: false;
-				   yourself);
-		  yourself;
-		  yourself
 ]
 
 { #category : 'initialization' }
@@ -249,7 +253,7 @@ ChatPharoSettingsPresenter >> newExtensionsTab [
 	^ SpPresenter new
 		  layout: (SpBoxLayout newTopToBottom
 				   add: browserExtensionCheckBox expand: false;
-				add: browserAutoTabCheckBox expand: false;
+					"add: browserAutoTabCheckBox expand: false;"
 				   yourself);
 		  yourself
 ]
