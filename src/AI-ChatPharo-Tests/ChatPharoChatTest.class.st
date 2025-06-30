@@ -118,6 +118,22 @@ ChatPharoChatTest >> testEmptyMessageDoesNotCrash [
 ]
 
 { #category : 'running' }
+ChatPharoChatTest >> testManyChatsRemainIsolated [
+
+    | chats |
+    chats := (1 to: 5) collect: [:i | ChatPharoChat new agent: ChatPharoMockAgent new].
+
+    1 to: 5 do: [:i |
+        (chats at: i) sendMessage: 'msg', i asString
+    ].
+
+    [ chats allSatisfy: [:c | (c instVarNamed: #promptProcess) isTerminated ] ] whileFalse: [ (Delay forMilliseconds: 10) wait ].
+
+    self assert: (chats allSatisfy: [:c | c messages size = 1]).
+    self assert: ((chats collect: [:c | c messages last answer]) asSet size) = 5.
+]
+
+{ #category : 'running' }
 ChatPharoChatTest >> testMultipleChatsDoNotShareState [ 
 
     | chat1 chat2 |
@@ -177,6 +193,22 @@ ChatPharoChatTest >> testSendMessageAddsAssistantResponse [
     self assert: chat messages size equals: 1.
     self assert: (chat messages last answer) equals: '<<MOCK-DEFAULT-REPLY to: hi>>'.
 
+]
+
+{ #category : 'running' }
+ChatPharoChatTest >> testToolExecutionCallbackTriggered [ 
+
+    | count toolAgent |
+    count := 0.
+    toolAgent := ChatPharoToolMockAgent new.
+    chat agent: toolAgent.
+    chat whenToolExecutionDo: [ count := count + 1 ].
+
+    chat sendMessage: 'hi'.
+
+    [ (chat instVarNamed: #promptProcess) isTerminated ] whileFalse: [ (Delay forMilliseconds: 10) wait ].
+
+    self assert: count equals: 1.
 ]
 
 { #category : 'running' }
