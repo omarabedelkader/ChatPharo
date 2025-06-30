@@ -16,12 +16,25 @@ Class {
 		'browserExtensionPage',
 		'maxIterationsInput',
 		'playgroundToolCheckBox',
-		'browserAutoTabCheckBox'
+		'browserAutoTabCheckBox',
+		'chatPharo'
 	],
 	#category : 'AI-ChatPharo-Spec-Core',
 	#package : 'AI-ChatPharo-Spec',
 	#tag : 'Core'
 }
+
+{ #category : 'initialization' }
+ChatPharoSettingsPresenter >> chatPharo [
+
+        ^ chatPharo
+]
+
+{ #category : 'initialization' }
+ChatPharoSettingsPresenter >> chatPharo: anObject [
+
+        chatPharo := anObject
+]
 
 { #category : 'initialization' }
 ChatPharoSettingsPresenter >> connectPresenters [
@@ -261,22 +274,27 @@ ChatPharoSettingsPresenter >> newExtensionsTab [
 { #category : 'initialization' }
 ChatPharoSettingsPresenter >> newHistoryTab [
 
-	| historyText historyView |
-	historyText := model agent
-		               ifNotNil: [
-				               model agent history
-					               ifNotNil: [ model agent history asPromptPrefix ]
-					               ifNil: [ 'No history available.' ] ]
-		               ifNil: [ 'No agent configured.' ].
+        | history historyText historyView |
+        history := chatPharo
+                               ifNotNil: [
+                                               chatPharo activeAgent
+                                                       ifNotNil: [ chatPharo activeAgent history ]
+                                                       ifNil: [ nil ] ]
+                               ifNil: [ nil ].
 
-	historyView := self newText.
-	historyView text: historyText asText.
+history := history ifNil: [ model agent history ].
+        historyText := history
+                               ifNotNil: [ history asPromptPrefix ]
+                               ifNil: [ 'No history available.' ].
 
-	^ SpPresenter new
-		  layout: (SpBoxLayout newTopToBottom
-				   add: historyView;
-				   yourself);
-		  yourself
+        historyView := self newText.
+        historyView text: historyText asText.
+
+        ^ SpPresenter new
+                  layout: (SpBoxLayout newTopToBottom
+                                   add: historyView;
+                                   yourself);
+                  yourself
 ]
 
 { #category : 'initialization' }

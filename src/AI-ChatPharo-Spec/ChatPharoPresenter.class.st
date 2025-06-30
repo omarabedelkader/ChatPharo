@@ -169,6 +169,7 @@ ChatPharoPresenter >> openSettings [
 
 	| settingsWindow |
 	settingsWindow := model settings presenter.
+	settingsWindow chatPharo: model.
 	settingsWindow open
 ]
 
