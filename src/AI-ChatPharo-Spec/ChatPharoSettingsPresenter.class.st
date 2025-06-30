@@ -54,12 +54,13 @@ ChatPharoSettingsPresenter >> connectPresenters [
 
 	"Bind text inputs to model"
 	systemPromptInput whenTextChangedDo: [ :text |
+		text ~= ChatPharoAgent defaultSystemPrompt ifTrue: [
 			(ChatPharoSafetyAdvisor confirmPromptModificationOn: self)
 				ifTrue: [
 						model agent systemPrompt: text.
 						ChatPharoSettings setDefault: model.
 						ChatPharoSettings saveDefault ]
-				ifFalse: [ systemPromptInput text: model agent systemPrompt ] ].
+				ifFalse: [ systemPromptInput text: model agent systemPrompt ] ] ].
 
 	maxIterationsInput whenTextChangedDo: [ :t |
 			t ifNotEmpty: [
