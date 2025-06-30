@@ -38,7 +38,7 @@ ChatPharoState class >> chatPharoWikiWorldMenuOn: aBuilder [
 	<worldMenu>
 	(aBuilder item: #ChatPharoDocumentation)
 		parent: #ChatPharo;
-		order: 2;
+		order: 3;
 		action: [
 			WebBrowser openOn:
 					'https://github.com/omarabedelkader/ChatPharo/wiki' ];
