@@ -32,15 +32,6 @@ ChatPharoState class >> chatPharoSettingsWorldMenuOn: aBuilder [
 ]
 
 { #category : 'world state' }
-ChatPharoState class >> chatPharoShortcut [
-
-	<shortcut>
-	^ KMKeymap
-		  shortcut: $o meta , $c meta
-		  action: [ self openTempChatPresenter ]
-]
-
-{ #category : 'world state' }
 ChatPharoState class >> chatPharoWikiWorldMenuOn: aBuilder [
 
 	<worldMenu>

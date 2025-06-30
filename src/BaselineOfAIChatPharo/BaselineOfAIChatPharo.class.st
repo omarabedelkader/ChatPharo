@@ -114,7 +114,8 @@ BaselineOfAIChatPharo >> postLoad [
 		'ChatPharo is currently in beta. You might encounter bugs or memory issues that could halt your image.'"
 
 	self class loadBackgroundImage.
-
+	ChatPharoShortcuts installAsGlobalCategory.
+	KMRepository reset.
 	SystemAnnouncer uniqueInstance
 		when: UIThemeChanged
 		send: #loadBackgroundImage
