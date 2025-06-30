@@ -35,6 +35,14 @@ ChatPharoPresenterTest >> testAddNewChatAddsNotebookPage [
 ]
 
 { #category : 'running' }
+ChatPharoPresenterTest >> testConnectionStatusUsesSettingsAgentWhenNoChat [
+
+    presenter updateConnectionStatusOnce.
+    self assert: (presenter instVarNamed: #connectionStatusLabel) label
+        equals: 'Connected'.
+]
+
+{ #category : 'running' }
 ChatPharoPresenterTest >> testInitializeWithoutAppIsSafe [ 
 
     | p |
