@@ -14,7 +14,9 @@ Class {
 	#instVars : [
 		'model',
 		'contentPresenter',
-		'answerPresenter'
+		'answerPresenter',
+		'goodFeedbackButton',
+		'badFeedbackButton'
 	],
 	#category : 'AI-ChatPharo-Spec-Core',
 	#package : 'AI-ChatPharo-Spec',
@@ -25,7 +27,9 @@ Class {
 ChatPharoMessagePresenter >> connectPresenters [
 
 	contentPresenter document: (Microdown parse: model content).
-	answerPresenter document: (Microdown parse: model answer)
+	answerPresenter document: (Microdown parse: model answer).
+		goodFeedbackButton action: [ model feedback: true ].
+	badFeedbackButton action: [ model feedback: false ]
 ]
 
 { #category : 'layout' }
@@ -36,6 +40,11 @@ ChatPharoMessagePresenter >> defaultLayout [
 		  add: contentPresenter expand: true;
 		  add: model assistantLabel expand: false;
 		  add: answerPresenter expand: true;
+	                  add: (SpBoxLayout newHorizontal
+                               spacing: 5;
+                               add: goodFeedbackButton;
+                               add: badFeedbackButton;
+                               yourself) expand: false;
 		  yourself
 ]
 
@@ -45,11 +54,19 @@ ChatPharoMessagePresenter >> height [
 	^ 64 + ((model content lines size) * 42 ) + ((model answer lines size) * 42)
 ]
 
-{ #category : 'layout' }
-ChatPharoMessagePresenter >> initializePresenters [ 
+{ #category : 'initialization' }
+ChatPharoMessagePresenter >> initializePresenters [
 
 	contentPresenter := MicrodownPresenter new.
 	answerPresenter := MicrodownPresenter new.
+	goodFeedbackButton := self newButton
+		                      label: 'Good';
+		                      help: 'Mark code as valid';
+		                      yourself.
+	badFeedbackButton := self newButton
+		                     label: 'Bad';
+		                     help: 'Mark code as invalid';
+		                     yourself
 ]
 
 { #category : 'layout' }

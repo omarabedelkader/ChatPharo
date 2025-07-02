@@ -21,7 +21,8 @@ Class {
 		'content',
 		'answer',
 		'presenter',
-		'assistantLabel'
+		'assistantLabel',
+		'feedback'
 	],
 	#category : 'AI-ChatPharo',
 	#package : 'AI-ChatPharo'
@@ -63,6 +64,18 @@ ChatPharoMessage >> content: anObject [
 	content := anObject
 ]
 
+{ #category : 'initialization' }
+ChatPharoMessage >> feedback [ 
+
+        ^ feedback
+]
+
+{ #category : 'initialization' }
+ChatPharoMessage >> feedback: aBoolean [
+
+        feedback := aBoolean
+]
+
 { #category : 'accessing' }
 ChatPharoMessage >> height [
 	^ 140.
@@ -74,7 +87,8 @@ ChatPharoMessage >> initialize [
 	super initialize.
 	content := String empty.
 	answer := String empty.
-assistantLabel := 'Assistant'
+	assistantLabel := 'Assistant'.
+feedback := nil
 ]
 
 { #category : 'accessing' }
