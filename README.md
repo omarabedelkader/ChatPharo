@@ -11,4 +11,12 @@ Metacello new
   load
 ```
 
+For development version install it with this:
+
+```smalltalk
+Metacello new
+  githubUser: 'omarabedelkader' project: 'ChatPharo' commitish: 'v0.1.0' path: 'src';
+  baseline: 'AIChatPharo';
+  load.
+```
 
