@@ -22,6 +22,10 @@ Metacello new
 ```
 
 
-# UI
+# UI - Temporary ChatPharo
 
 <img width="947" alt="ex-github" src="https://github.com/user-attachments/assets/f47a741a-ca46-4cee-b9f3-ec2f0cfdb5c0" />
+
+# UI - ChatPharo \& inside System Browser
+
+<img width="1398" alt="ex2-github" src="https://github.com/user-attachments/assets/c0003ac8-3f10-426b-b2db-eefa4d2d44da" />
