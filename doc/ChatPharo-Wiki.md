@@ -59,7 +59,7 @@ Key concepts in one glance:
 
 ### Prerequisites
 
-* **Pharo 12** or newer (64‑bit).<br>
+* **Pharo 13** or newer (64‑bit).<br>
   The framework is known to work on Linux, macOS (Apple Silicon & Intel) and Windows 11.
 * A working **Git** client (Iceberg) and **Metacello** (bundled with recent images).
 * For cloud agents: outbound HTTPS connectivity.
@@ -288,13 +288,13 @@ The following table summarizes major ChatPharo functionality
 
 1. Fork [https://github.com/omarabedelkader/ChatPharo](https://github.com/omarabedelkader/ChatPharo) (MIT licensed).
 2. Make sure unit tests stay green.
-3. Use *pull requests*; CI runs headless Pharo 12 tests.
+3. Use *pull requests*; CI runs headless Pharo 13 tests.
 4. For major features open an issue first to discuss design.
 
 ---
 
 ## License & Credits
 
-* © 2025 **Omar ABEDELKADER* and contributors – MIT.
+* © 2025 **Omar ABEDELKADER** and contributors – MIT.
 * Built on *Pharo [https://pharo.org](https://pharo.org)*.
 * Thanks to the **ESUG & Pharo Consortium** community for feedback.
