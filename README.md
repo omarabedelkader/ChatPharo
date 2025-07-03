@@ -21,3 +21,7 @@ Metacello new
   load.
 ```
 
+
+# UI
+
+<img width="947" alt="ex-github" src="https://github.com/user-attachments/assets/f47a741a-ca46-4cee-b9f3-ec2f0cfdb5c0" />
