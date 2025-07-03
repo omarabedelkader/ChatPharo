@@ -22,15 +22,20 @@ Class {
 { #category : 'adding' }
 ChatPharoPresenter >> addNewChat [
 
-    | newPage chatName|
-	 chatName := 'Chat ', notebook pages size asString.
-	 model newChat.
+    | newPage chatName newChat |
+    chatName := 'Chat ', notebook pages size asString.
+    model newChat.
+    newChat := model chats last.
+    
     newPage := SpNotebookPage
         title: chatName
         icon: (self iconNamed: #announcement)
-        provider: [ model chats last presenter ].
+        provider: [ newChat presenter ].
+    
+    newPage propertyAt: #chat put: newChat.
+
     notebook addPage: newPage.
-    notebook selectPage: newPage
+    notebook selectPage: newPage.
 ]
 
 { #category : 'layout' }
@@ -80,6 +85,22 @@ ChatPharoPresenter >> deleteSelectedChat [
 ChatPharoPresenter >> initializePresenters [
 
 	notebook := self newNotebook.
+
+	notebook pageMenuProvider: [ :page | 
+		(SpMenuPresenter new)
+			add: 'Rename Chat' action: [
+				| chat newTitle |
+				chat := page propertyAt: #chat ifAbsent: [ ^ self ].
+				newTitle := UIManager default
+					request: 'Rename chat title:' initialAnswer: chat title.
+				newTitle ifNotEmpty: [
+					chat title: newTitle.
+					page title: newTitle
+				].
+			];
+			yourself
+	].
+
 	toolbar := self newToolbar.
 
 	toolbar add: (SpToolbarButtonPresenter new

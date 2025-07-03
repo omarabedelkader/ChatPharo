@@ -26,7 +26,8 @@ Class {
 		'onAnswerReceived',
 		'history',
 		'onToolExecution',
-		'cache'
+		'cache',
+		'title'
 	],
 	#category : 'AI-ChatPharo',
 	#package : 'AI-ChatPharo'
@@ -115,6 +116,18 @@ ChatPharoChat >> messages [
 ChatPharoChat >> messages: anObject [
 
 	messages := anObject
+]
+
+{ #category : 'accessing' }
+ChatPharoChat >> title [
+
+    ^ title ifNil: [ 'Chat ', self objectID asString ]
+]
+
+{ #category : 'accessing' }
+ChatPharoChat >> title: aString [
+
+    title := aString
 ]
 
 { #category : 'presenters' }
