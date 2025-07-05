@@ -90,5 +90,8 @@ ChatPharoHistorySaverToolCall >> openAIChatToolCall [
 { #category : 'initialization' }
 ChatPharoHistorySaverToolCall >> openAIChatToolMessage [ 
 
-	^ Dictionary with:'role'->'tool' with:'tool_call_id'->id with:'content'->content
+	^ Dictionary
+	with: 'role' -> 'tool'
+	with: 'tool_call_id' -> id
+	with: 'content' -> (content ifNil: [ '[No tool result]' ])
 ]
