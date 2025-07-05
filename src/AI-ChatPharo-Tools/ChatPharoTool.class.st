@@ -257,18 +257,24 @@ ChatPharoTool >> systemPrompt: aString [
 { #category : 'initialization' }
 ChatPharoTool >> toolCallsFromMessage: message [ 
 
-	^ message at:'tool_calls'
-		ifPresent:[:calls|
-			calls collect:[:c|
-				| fn args content |
-				fn   := (c at:'function') at:'name'.
-				args := (c at:'function') at:'arguments'.
-				content := STONJSON toString:
-					(self applyToolFunction: fn
-						arguments:([ STONJSON fromString: args ] on:STONReaderError do:[ Dictionary with:'error'->'Invalid arguments' ])).
-				ChatPharoHistorySaverToolCall
-					id:(c at:'id') functionName:fn arguments:args content:content ] ]
-		ifAbsent:[ nil ]
+	| calls |
+	calls := message at: 'tool_calls' ifAbsent: [ nil ].
+	calls isNil ifTrue: [ ^ nil ].
+
+	^ calls collect: [:c |
+		| fn args content |
+		fn := (c at: 'function') at: 'name'.
+		args := (c at: 'function') at: 'arguments'.
+		content := STONJSON toString:
+			(self applyToolFunction: fn
+				arguments: ([ STONJSON fromString: args ]
+					on: STONReaderError do: [ Dictionary with: 'error' -> 'Invalid arguments' ])).
+		ChatPharoHistorySaverToolCall
+			id: (c at: 'id')
+			functionName: fn
+			arguments: args
+			content: content
+	]
 ]
 
 { #category : 'accessing' }
