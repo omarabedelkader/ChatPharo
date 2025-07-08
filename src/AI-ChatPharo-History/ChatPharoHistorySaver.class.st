@@ -52,7 +52,7 @@ ChatPharoHistorySaver >> historyStringOn: strm [
 ChatPharoHistorySaver >> putOpenAIChatMessagesOn: stream [
 		| msg |
 		msg := Dictionary with: 'role' -> role.
-		content ifNotNil: [ msg add: 'content' -> content ].
+		msg add: 'content' -> (content ifNil: [ '[No assistant response]' ]).
 		toolCalls ifNotNil: [
 				msg add: 'tool_calls'
 					-> (toolCalls collect: [ :tc | tc openAIChatToolCall ] as: Array) ].
