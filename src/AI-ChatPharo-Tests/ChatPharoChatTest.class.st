@@ -30,7 +30,7 @@ ChatPharoChatTest >> testAgentFailureReturnsErrorMessage [
         (Delay forMilliseconds: 10) wait
     ].
 
-    self assert: (chat messages last answer includesSubstring: 'No backend is configured').
+    self assert: (chat messages last content includesSubstring: 'No backend is configured').
 ]
 
 { #category : 'running' }
@@ -114,7 +114,7 @@ ChatPharoChatTest >> testEmptyMessageDoesNotCrash [
         (chat instVarNamed: #promptProcess) isTerminated
     ] whileFalse: [ (Delay forMilliseconds: 10) wait ].
 
-    self assert: (chat messages select: [:msg | msg content notEmpty]) isEmpty.
+    self assert: ((chat messages select: [:msg | msg content notEmpty]) isEmpty).
 ]
 
 { #category : 'running' }
@@ -129,8 +129,8 @@ ChatPharoChatTest >> testManyChatsRemainIsolated [
 
     [ chats allSatisfy: [:c | (c instVarNamed: #promptProcess) isTerminated ] ] whileFalse: [ (Delay forMilliseconds: 10) wait ].
 
-    self assert: (chats allSatisfy: [:c | c messages size = 1]).
-    self assert: ((chats collect: [:c | c messages last answer]) asSet size) = 5.
+    self assert: (chats allSatisfy: [:c | c messages size = 2]).
+    self assert: ((chats collect: [:c | c messages last content]) asSet size) = 5.
 ]
 
 { #category : 'running' }
@@ -149,8 +149,8 @@ ChatPharoChatTest >> testMultipleChatsDoNotShareState [
         ]
     ] whileFalse: [ (Delay forMilliseconds: 10) wait ].
 
-    self assert: chat1 messages size = 1.
-    self assert: chat2 messages size = 1.
+    self assert: chat1 messages size = 2.
+    self assert: chat2 messages size = 2.
 ]
 
 { #category : 'running' }
@@ -173,12 +173,12 @@ ChatPharoChatTest >> testSameQuestionReturnsCachedAnswer [
     chat sendMessage: 'repeat'.
     [ (chat instVarNamed: #promptProcess) isTerminated ] whileFalse: [ (Delay forMilliseconds: 10) wait ].
     firstSize := mockApi history size.
-    firstAnswer := chat messages last answer.
+    firstAnswer := chat messages last content.
 
     chat sendMessage: 'repeat'.
 
-    self assert: chat messages size equals: 2.
-    self assert: (chat messages last answer) equals: firstAnswer.
+    self assert: chat messages size equals: 4.
+    self assert: (chat messages last content) equals: firstAnswer.
     self assert: mockApi history size equals: firstSize.
 ]
 
@@ -190,9 +190,9 @@ ChatPharoChatTest >> testSendMessageAddsAssistantResponse [
         (chat instVarNamed: #promptProcess) isTerminated
     ] whileFalse: [ (Delay forMilliseconds: 10) wait ].
 
-    self assert: chat messages size equals: 1.
-    self assert: (chat messages last answer) equals: '<<MOCK-DEFAULT-REPLY to: hi>>'.
-
+    self assert: chat messages size equals: 2.
+    self assert: (chat messages first content) equals: 'hi'.
+    self assert: (chat messages last content) equals: '<<MOCK-DEFAULT-REPLY to: hi>>'.
 ]
 
 { #category : 'running' }
@@ -217,7 +217,7 @@ ChatPharoChatTest >> testWhenAnswerReceivedBlockCalled [
     called := false.
 
     chat whenAnswerReceivedDo: [ :msg | 
-        called := msg answer = '<<MOCK-DEFAULT-REPLY to: hi>>' 
+        called := msg content = '<<MOCK-DEFAULT-REPLY to: hi>>' 
     ].
 
     chat sendMessage: 'hi'.

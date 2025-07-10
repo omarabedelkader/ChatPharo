@@ -23,7 +23,8 @@ Class {
 		'browserExtensionEnabled',
 		'browserToolsEnabled',
 		'maximumIterations',
-		'browserAutoTabEnabled'
+		'browserAutoTabEnabled',
+		'hasSeenWelcome'
 	],
 	#classInstVars : [
 		'Default'
@@ -60,6 +61,7 @@ ChatPharoSettings class >> loadOrNew [
 							  (ChatPharoBrowserEnvironment new tools collect: [ :t |
 								   t name ]) asOrderedCollection ].
 				  settings maximumIterations.
+				  settings hasSeenWelcome ifNil: [ settings hasSeenWelcome: false ].
 				  ^ settings ]
 				  on: Error
 				  do: [ ^ self new ] ]
@@ -95,6 +97,20 @@ ChatPharoSettings class >> setDefault: aSettings [
 ChatPharoSettings >> agent [
 
 	^ agent
+]
+
+{ #category : 'accessing' }
+ChatPharoSettings >> hasSeenWelcome [
+
+    ^ hasSeenWelcome ifNil: [ false ]  
+]
+
+{ #category : 'accessing' }
+ChatPharoSettings >> hasSeenWelcome: aBoolean [
+
+    hasSeenWelcome := aBoolean.
+    self class setDefault: self.
+    self class saveDefault.
 ]
 
 { #category : 'initialization' }
