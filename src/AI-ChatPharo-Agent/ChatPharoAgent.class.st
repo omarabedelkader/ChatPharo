@@ -23,7 +23,8 @@ Class {
 		'history',
 		'systemPrompt',
 		'browserSystemPrompt',
-		'onToolExecution'
+		'onToolExecution',
+		'method'
 	],
 	#category : 'AI-ChatPharo-Agent',
 	#package : 'AI-ChatPharo-Agent'
@@ -105,6 +106,18 @@ ChatPharoAgent >> history [                     ^ history
 
 { #category : 'accessing' }
 ChatPharoAgent >> history: aHistory [           history := aHistory
+]
+
+{ #category : 'accessing' }
+ChatPharoAgent >> method [
+
+	^ method
+]
+
+{ #category : 'accessing' }
+ChatPharoAgent >> method: aCompiledMethod [
+
+	method := aCompiledMethod
 ]
 
 { #category : 'initialization' }
