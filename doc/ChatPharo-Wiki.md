@@ -135,10 +135,9 @@ ChatPharoPresenter  ─┬─> ChatPharoChat ─┬─> ChatPharoAgent ─┬─
                      └── Settings UI  <──────── ChatPharoSettings
 ```
 
-
-
 Another diagram to sow the structure:
 
+```
 ┌────────────────────┐      ┌───────────────────────────┐
 │      UI layer      │◄────►│   Chat / History models    │
 │  (Spec presenters) │      │ (ChatPharoChat, History…) │
@@ -157,7 +156,7 @@ Another diagram to sow the structure:
 │  – sends /chat/completions                            │
 │  – decodes tool‑calls and loops until done            │
 └────────────────────────────────────────────────────────┘
-
+```
 
 ### High‑level Class Responsibilities
 
