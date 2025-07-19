@@ -135,6 +135,30 @@ ChatPharoPresenter  ─┬─> ChatPharoChat ─┬─> ChatPharoAgent ─┬─
                      └── Settings UI  <──────── ChatPharoSettings
 ```
 
+
+
+Another diagram to sow the structure:
+
+┌────────────────────┐      ┌───────────────────────────┐
+│      UI layer      │◄────►│   Chat / History models    │
+│  (Spec presenters) │      │ (ChatPharoChat, History…) │
+└────────┬───────────┘      └───────────┬───────────────┘
+         │                               │
+         ▼                               ▼
+┌────────────────────┐      ┌───────────────────────────┐
+│     Agent layer    │◄────►│  Browser‑tools  facade     │
+│  (ChatPharoAgent*) │      │ (ChatPharoBrowserEnv)      │
+└────────┬───────────┘      └───────────┬───────────────┘
+         │                               │  executes
+         ▼                               ▼
+┌────────────────────────────────────────────────────────┐
+│                ChatPharoTool (REST client)            │
+│  – builds OpenAI/Mistral/Ollama/Gemini JSON payloads  │
+│  – sends /chat/completions                            │
+│  – decodes tool‑calls and loops until done            │
+└────────────────────────────────────────────────────────┘
+
+
 ### High‑level Class Responsibilities
 
 * **`ChatPharoAgent`** – abstract base; holds `model`, `systemPrompt`, `history`, exposes `getResponseForPrompt:`.
