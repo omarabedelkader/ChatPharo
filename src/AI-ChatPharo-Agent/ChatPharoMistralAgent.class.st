@@ -177,3 +177,8 @@ ChatPharoMistralAgent >> tools [
     ^ available select: [ :tool |
         ChatPharoSettings default browserToolsEnabled includes: tool name ]
 ]
+
+{ #category : 'api' }
+ChatPharoMistralAgent >> prompt: aString [
+	^ self getResponseForPrompt: aString
+]
