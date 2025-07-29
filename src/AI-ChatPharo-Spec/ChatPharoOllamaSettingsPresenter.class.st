@@ -28,7 +28,7 @@ ChatPharoOllamaSettingsPresenter >> connectPresenters [
 	modelsDrop whenSelectedItemChangedDo: [ :name | model model: name ].
 	hostInput whenTextChangedDo: [ :text | model host: text ].
 	portInput whenTextChangedDo: [ :text | model port: text ].
-	temperatureInput whenTextChangedDo: [ :text |
+	temperatureInput whenTextAcceptedDo: [ :text |
 			| num |
 			num := 0.0.
 			[ num := text asNumber ]
