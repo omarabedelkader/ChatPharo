@@ -113,6 +113,15 @@ ChatPharoMistralSettingsPresenter >> initializePresenters [
 		                    text: model temperature asString;
 		                    yourself.
 		
+	temperatureInput whenTextChangedDo: [ :text |
+		| num |
+		[ num := text asNumber ]
+			on: Error do: [ ^ self inform: 'Invalid temperature value' ].
+		(num < 0.0 or: [ num > 1.0 ])
+			ifTrue: [ ^ self inform: 'Temperature must be between 0.0 and 1.0' ].
+		model temperature: num
+	].
+
 	testButton := self newButton
 		              label: 'Test Connection';
 		              icon: (self iconNamed: #glamorousGo);
