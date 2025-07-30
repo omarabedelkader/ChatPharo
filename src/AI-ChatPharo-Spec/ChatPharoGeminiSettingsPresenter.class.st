@@ -119,7 +119,7 @@ ChatPharoGeminiSettingsPresenter >> initializePresenters [
 		                    placeholder: '0.0';
 		                    text: model temperature asString;
 		                    yourself.
-	temperatureInput whenTextAcceptedDo: [ :text |
+	temperatureInput whenTextChangedDo: [ :text |
 		| num |
 		[ num := text asNumber ]
 			on: Error do: [ ^ self inform: 'Invalid temperature value' ].
