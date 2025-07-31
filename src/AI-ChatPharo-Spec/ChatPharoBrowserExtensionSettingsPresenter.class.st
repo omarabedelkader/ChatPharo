@@ -38,13 +38,17 @@ ChatPharoBrowserExtensionSettingsPresenter >> initializePresenters [
 				      label: tool name;
 				      state: (model browserToolsEnabled includes: tool name);
 				      yourself.
-			cb whenChangedDo: [ :checked |
-					checked
-						ifTrue: [ model enableBrowserTool: tool name ]
-						                ifFalse: [
-                        (ChatPharoSafetyAdvisor confirmToolDisableOn: self)
-                                ifTrue: [ model disableBrowserTool: tool name ]
-                                ifFalse: [ cb state: true ] ] ].
+			cb whenChangedDo: [ :isChecked |
+					isChecked
+						ifTrue:  [
+							model enableBrowserTool: tool name ]
+						ifFalse: [
+							(ChatPharoSafetyAdvisor confirmToolDisableOn: self)
+								ifTrue: [
+									model disableBrowserTool: tool name ]
+								ifFalse: [
+									cb withoutChangedEventDo: [ cb state: true ].
+									model enableBrowserTool: tool name ] ] ].
 			toolsLayout add: cb expand: false ]
 ]
 
