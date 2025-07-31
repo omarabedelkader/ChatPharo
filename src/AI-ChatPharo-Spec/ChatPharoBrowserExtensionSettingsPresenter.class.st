@@ -49,7 +49,9 @@ ChatPharoBrowserExtensionSettingsPresenter >> initializePresenters [
                         ifTrue: [
                             model disableBrowserTool: tool name ]
                         ifFalse: [
-                            cb announcer suspendDuring: [ cb state: true ].
+                            cb announcer
+								without: SpChangedAnnouncement
+								do: [ cb state: true ].
                             model enableBrowserTool: tool name ] ] ].
 
         toolsLayout add: cb expand: false ].
