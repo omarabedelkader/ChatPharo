@@ -49,7 +49,7 @@ ChatPharoBrowserExtensionSettingsPresenter >> initializePresenters [
                         ifTrue: [
                             model disableBrowserTool: tool name ]
                         ifFalse: [
-                            cb withoutEventsDo: [ cb state: true ].
+                            cb withoutChangedEventDo: [ cb state: true ].
                             model enableBrowserTool: tool name ] ] ].
 
         toolsLayout add: cb expand: false ].
