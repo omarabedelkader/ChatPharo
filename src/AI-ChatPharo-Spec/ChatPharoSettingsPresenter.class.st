@@ -97,13 +97,17 @@ ChatPharoSettingsPresenter >> connectPresenters [
         browserAutoTabCheckBox whenChangedDo: [ :presenter |
                         model browserAutoTabEnabled: presenter ].
 
-	playgroundToolCheckBox whenChangedDo: [ :checked |
-			checked
-				ifTrue: [ model enableBrowserTool: 'open_playground' ]
-				ifFalse: [
-						(ChatPharoSafetyAdvisor confirmToolDisableOn: self)
-							ifTrue: [ model disableBrowserTool: 'open_playground' ]
-							ifFalse: [ playgroundToolCheckBox state: true ] ] ]
+	playgroundToolCheckBox whenChangedDo: [ :isChecked |
+		isChecked
+			ifTrue:  [
+				model enableBrowserTool: 'open_playground' ]
+			ifFalse: [
+				(ChatPharoSafetyAdvisor confirmToolDisableOn: self)
+					ifTrue: [
+						model disableBrowserTool: 'open_playground' ]
+					ifFalse: [
+						playgroundToolCheckBox state: true.
+						model enableBrowserTool: 'open_playground' ] ] ].
 ]
 
 { #category : 'layout' }
