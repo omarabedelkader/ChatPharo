@@ -60,6 +60,7 @@ ChatPharoSettings class >> loadOrNew [
 							  (ChatPharoBrowserEnvironment new tools collect: [ :t |
 								   t name ]) asOrderedCollection ].
 				  settings maximumIterations.
+				  settings cacheEnabled ifNil: [ settings cacheEnabled: true ].
 				  ^ settings ]
 				  on: Error
 				  do: [ ^ self new ] ]
@@ -181,6 +182,7 @@ ChatPharoSettings >> initialize [
 	agent := ChatPharoNullAgent new.
 	browserExtensionEnabled := false.
 	browserAutoTabEnabled := true.
+	cacheEnabled := true.
 	browserToolsEnabled := (ChatPharoBrowserEnvironment new tools
 		                        collect: [ :t | t name ])
 		                       asOrderedCollection.
@@ -227,4 +229,16 @@ ChatPharoSettings >> useModel: aModelName [
 	agent model: aModelName.
 	self class setDefault: self. 
 	self class saveDefault
+]
+
+{ #category : 'accessing' }
+ChatPharoSettings >> cacheEnabled [
+    ^ cacheEnabled
+]
+
+{ #category : 'accessing' }
+ChatPharoSettings >> cacheEnabled: aBoolean [
+    cacheEnabled := aBoolean.
+    self class setDefault: self.
+    self class saveDefault
 ]
