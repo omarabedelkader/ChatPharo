@@ -234,7 +234,7 @@ ChatPharoSettings >> useModel: aModelName [
 
 { #category : 'accessing' }
 ChatPharoSettings >> cacheEnabled [
-    ^ cacheEnabled
+    ^ cacheEnabled ifNil: [ false ]
 ]
 
 { #category : 'accessing' }
