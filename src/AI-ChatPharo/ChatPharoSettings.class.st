@@ -23,7 +23,8 @@ Class {
 		'browserExtensionEnabled',
 		'browserToolsEnabled',
 		'maximumIterations',
-		'browserAutoTabEnabled'
+		'browserAutoTabEnabled',
+		'cacheEnabled'
 	],
 	#classInstVars : [
 		'Default'
