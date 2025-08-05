@@ -249,6 +249,7 @@ ChatPharoSettingsPresenter >> newChatTab [
                         yourself
                 ) expand: false;
                 add: playgroundToolCheckBox expand: false;
+				add: cacheCheckBox expand: false;
                 yourself
         );
         yourself
@@ -265,7 +266,6 @@ ChatPharoSettingsPresenter >> newConfigurationTab [
 						    add: apiDropList;
 						    yourself)
 				   expand: false;
-				   add: cacheCheckBox expand: false;
 				   add: apiSettingsContainer;
 				   yourself);
 		  yourself
