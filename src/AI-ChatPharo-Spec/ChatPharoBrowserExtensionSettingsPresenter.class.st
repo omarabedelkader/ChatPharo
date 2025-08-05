@@ -41,17 +41,23 @@ ChatPharoBrowserExtensionSettingsPresenter >> initializePresenters [
                   yourself.
 
         cb whenChangedDo: [ :isChecked |
+
             isChecked
-                ifTrue:  [
-                    model enableBrowserTool: tool name ]
+                ifTrue: [
+                    model enableBrowserTool: tool name.
+                ]
                 ifFalse: [
                     (ChatPharoSafetyAdvisor confirmToolDisableOn: self)
                         ifTrue: [
-                            model disableBrowserTool: tool name ]
+                            model disableBrowserTool: tool name.
+                        ]
                         ifFalse: [
-                            cb announcer
-                            suspendAnnouncementsDuring: [ cb state: true ].
-                            model enableBrowserTool: tool name ] ] ].
+                            cb announcer suspendAnnouncementsDuring: [
+                                cb state: (model browserToolsEnabled includes: tool name).
+                            ].
+                        ].
+                ].
+        ].
 
         toolsLayout add: cb expand: false ].
 ]
