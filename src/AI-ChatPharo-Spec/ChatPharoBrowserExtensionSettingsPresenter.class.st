@@ -51,7 +51,8 @@ ChatPharoBrowserExtensionSettingsPresenter >> initializePresenters [
                         ifTrue: [
                             model disableBrowserTool: tool name.
                         ]
-                        ifFalse: [ cb state: true ]]].
+                        ifFalse: [
+                            UIManager default defer: [ cb state: true ] ] ]].
 
         toolsLayout add: cb expand: false ].
 ]
