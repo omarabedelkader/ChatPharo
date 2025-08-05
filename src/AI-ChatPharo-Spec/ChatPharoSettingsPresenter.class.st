@@ -17,7 +17,8 @@ Class {
 		'maxIterationsInput',
 		'playgroundToolCheckBox',
 		'browserAutoTabCheckBox',
-		'chatPharo'
+		'chatPharo',
+		'cacheCheckBox'
 	],
 	#category : 'AI-ChatPharo-Spec-Core',
 	#package : 'AI-ChatPharo-Spec',
@@ -97,17 +98,17 @@ ChatPharoSettingsPresenter >> connectPresenters [
         browserAutoTabCheckBox whenChangedDo: [ :presenter |
                         model browserAutoTabEnabled: presenter ].
 
-	playgroundToolCheckBox whenChangedDo: [ :isChecked |
-		isChecked
-			ifTrue:  [
-				model enableBrowserTool: 'open_playground' ]
-			ifFalse: [
-				(ChatPharoSafetyAdvisor confirmToolDisableOn: self)
-					ifTrue: [
-						model disableBrowserTool: 'open_playground' ]
-					ifFalse: [
-						playgroundToolCheckBox state: true.
-						model enableBrowserTool: 'open_playground' ] ] ].
+	cacheCheckBox whenChangedDo: [ :enabled |
+			model cacheEnabled: enabled.
+			ChatPharoSettings saveDefault ].
+
+	playgroundToolCheckBox whenChangedDo: [ :checked |
+			checked
+				ifTrue: [ model enableBrowserTool: 'open_playground' ]
+				ifFalse: [
+						(ChatPharoSafetyAdvisor confirmToolDisableOn: self)
+							ifTrue: [ model disableBrowserTool: 'open_playground' ]
+							ifFalse: [ playgroundToolCheckBox state: true ] ] ]
 ]
 
 { #category : 'layout' }
@@ -204,6 +205,11 @@ ChatPharoSettingsPresenter >> initializePresenters [
 					                           'open_playground');
 		                          yourself.
 
+	cacheCheckBox := self newCheckBox
+							label: 'Enable cache';
+							state: model cacheEnabled;
+							yourself.
+
 	apiDropList selectItem: (model availableApiChoices
 			 detect: [ :assoc | assoc value = model agent class ]
 			 ifNone: [ model availableApiChoices first ]).
@@ -243,6 +249,7 @@ ChatPharoSettingsPresenter >> newChatTab [
                         yourself
                 ) expand: false;
                 add: playgroundToolCheckBox expand: false;
+				add: cacheCheckBox expand: false;
                 yourself
         );
         yourself

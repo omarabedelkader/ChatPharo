@@ -114,3 +114,15 @@ ChatPharoSettingsTest >> testUseModel [
 	settings useModel: 'mock-advanced'.
 	self assert: (mockApi instVarNamed: #currentModel) equals: 'mock-advanced'.
 ]
+
+{ #category : 'tests' }
+ChatPharoSettingsTest >> testCacheEnabledToggle [
+
+    self assert: settings cacheEnabled.
+
+    settings cacheEnabled: false.
+    self deny: settings cacheEnabled.
+
+    settings cacheEnabled: true.
+    self assert: settings cacheEnabled.
+]
