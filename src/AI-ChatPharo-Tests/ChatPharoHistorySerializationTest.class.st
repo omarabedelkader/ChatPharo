@@ -34,3 +34,14 @@ ChatPharoHistorySerializationTest >> testPromptPrefixWithManyMessages [
 	self
 		assert: (history asPromptPrefix lines size) equals: 50.
 ]
+
+{ #category : 'running' }
+ChatPharoHistorySerializationTest >> testStonRoundTripPreservesMessages [
+    | ston restored |
+    history addUser: 'hello'.
+    history addAssistant: 'hi'.
+    ston := STON toString: history.
+    restored := STON fromString: ston.
+    self assert: (restored messages collect: #role) equals: (history messages collect: #role).
+    self assert: (restored messages collect: #content) equals: (history messages collect: #content).
+]
