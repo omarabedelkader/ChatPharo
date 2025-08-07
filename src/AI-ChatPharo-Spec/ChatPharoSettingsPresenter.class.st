@@ -101,6 +101,10 @@ ChatPharoSettingsPresenter >> connectPresenters [
 	cacheCheckBox whenChangedDo: [ :enabled |
 			model cacheEnabled: enabled.
 			ChatPharoSettings saveDefault ].
+	
+	self addCheckboxLabeled: 'Enable Feedback Buttons'
+			value: [ settings feedbackButtonsEnabled ]
+			changeAction: [ :val | settings feedbackButtonsEnabled: val ].
 
 	playgroundToolCheckBox whenChangedDo: [ :checked |
 			checked
