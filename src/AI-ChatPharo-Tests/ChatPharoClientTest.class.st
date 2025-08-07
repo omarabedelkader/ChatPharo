@@ -32,6 +32,23 @@ ChatPharoClientTest >> testApplyToExecutesBlock [
 ]
 
 { #category : 'running' }
+ChatPharoClientTest >> testBlockSetterGetter [
+
+        | newBlock result |
+        newBlock := [ :a | (a at: 'value') * 2 ].
+        client block: newBlock.
+        result := client applyTo: (Dictionary with: 'value' -> 3).
+        self assert: result equals: 6.
+]
+
+{ #category : 'running' }
+ChatPharoClientTest >> testDescriptionSetterGetter [
+
+        client description: 'x'.
+        self assert: client description equals: 'x'.
+]
+
+{ #category : 'running' }
 ChatPharoClientTest >> testNameSetterGetter [ 
 
         client name: 'x'.
