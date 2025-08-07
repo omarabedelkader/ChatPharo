@@ -44,6 +44,16 @@ ChatPharoHistorySaverTest >> testHistoryStringOnOutputsCorrectFormat [
 ]
 
 { #category : 'running' }
+ChatPharoHistorySaverTest >> testOpenAIChatMessagesOnWithNilContentAddsPlaceholder [ 
+
+        | strm |
+        saver content: nil.
+        strm := Array new writeStream.
+        saver putOpenAIChatMessagesOn: strm.
+        self assert: (strm contents first at: 'content') equals: '[No assistant response]'.
+]
+
+{ #category : 'running' }
 ChatPharoHistorySaverTest >> testOpenAIChatMessagesOnWithToolCalls [ 
 
         | call strm |

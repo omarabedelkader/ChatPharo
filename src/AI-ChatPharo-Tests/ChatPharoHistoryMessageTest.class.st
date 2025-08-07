@@ -35,6 +35,17 @@ ChatPharoHistoryMessageTest >> testHistoryStringOnFormatsCorrectly [
 ]
 
 { #category : 'running' }
+ChatPharoHistoryMessageTest >> testPutOpenAIChatMessagesOnMatchesChatMessagesOn [ 
+
+        | stream1 stream2 |
+        stream1 := Array new writeStream.
+        msg chatMessagesOn: stream1.
+        stream2 := Array new writeStream.
+        msg putOpenAIChatMessagesOn: stream2.
+        self assert: stream2 contents equals: stream1 contents.
+]
+
+{ #category : 'running' }
 ChatPharoHistoryMessageTest >> testRoleContentInitialization [ 
 
         self assert: msg role equals: 'user'.

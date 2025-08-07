@@ -69,3 +69,16 @@ ChatPharoHistoryTest >> testClearRemovesAllMessages [
         history clear.
         self assert: history messages isEmpty.
 ]
+
+{ #category : 'running' }
+ChatPharoHistoryTest >> testPutOpenAIChatMessagesOnMatchesChatMessagesOn [
+
+        | stream1 stream2 |
+        history addUser: 'hello'.
+        history addAssistant: 'hi'.
+        stream1 := Array new writeStream.
+        history chatMessagesOn: stream1.
+        stream2 := Array new writeStream.
+        history putOpenAIChatMessagesOn: stream2.
+        self assert: stream2 contents equals: stream1 contents.
+]
