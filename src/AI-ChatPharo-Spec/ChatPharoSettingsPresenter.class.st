@@ -105,8 +105,8 @@ ChatPharoSettingsPresenter >> connectPresenters [
 	
 	feedbackCheckBox := self 
 		addCheckboxLabeled: 'Enable Feedback Buttons'
-		value: [ ChatPharoSettings feedbackButtonsEnabled ]
-		changeAction: [ :val | ChatPharoSettings feedbackButtonsEnabled: val ].
+		value: [ ChatPharoSettings default feedbackButtonsEnabled ]
+		changeAction: [ :val | ChatPharoSettings default feedbackButtonsEnabled: val ].
 
 	playgroundToolCheckBox whenChangedDo: [ :checked |
 			checked
