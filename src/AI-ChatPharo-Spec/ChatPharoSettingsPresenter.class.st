@@ -19,7 +19,8 @@ Class {
 		'browserAutoTabCheckBox',
 		'chatPharo',
 		'cacheCheckBox',
-		'feedbackCheckBox'
+		'feedbackCheckBox',
+		'welcomeMessageCheckBox'
 	],
 	#category : 'AI-ChatPharo-Spec-Core',
 	#package : 'AI-ChatPharo-Spec',
@@ -82,13 +83,13 @@ ChatPharoSettingsPresenter >> connectPresenters [
 
 	"Bind text inputs to model"
 	systemPromptInput whenTextChangedDo: [ :text |
-		text ~= ChatPharoAgent defaultSystemPrompt ifTrue: [
-			(ChatPharoSafetyAdvisor confirmPromptModificationOn: self)
-				ifTrue: [
-						model agent systemPrompt: text.
-						ChatPharoSettings setDefault: model.
-						ChatPharoSettings saveDefault ]
-				ifFalse: [ systemPromptInput text: model agent systemPrompt ] ] ].
+			text ~= ChatPharoAgent defaultSystemPrompt ifTrue: [
+					(ChatPharoSafetyAdvisor confirmPromptModificationOn: self)
+						ifTrue: [
+								model agent systemPrompt: text.
+								ChatPharoSettings setDefault: model.
+								ChatPharoSettings saveDefault ]
+						ifFalse: [ systemPromptInput text: model agent systemPrompt ] ] ].
 
 	maxIterationsInput whenTextChangedDo: [ :t |
 			t ifNotEmpty: [
@@ -108,18 +109,27 @@ ChatPharoSettingsPresenter >> connectPresenters [
 	browserExtensionCheckBox whenChangedDo: [ :presenter |
 			model browserExtensionEnabled: presenter.
 			self updateBrowserExtensionTab ].
-		
-        browserAutoTabCheckBox whenChangedDo: [ :presenter |
-                        model browserAutoTabEnabled: presenter ].
+
+	browserAutoTabCheckBox whenChangedDo: [ :presenter |
+		model browserAutoTabEnabled: presenter ].
 
 	cacheCheckBox whenChangedDo: [ :enabled |
 			model cacheEnabled: enabled.
 			ChatPharoSettings saveDefault ].
-	
-	feedbackCheckBox := self 
-		addCheckboxLabeled: 'Enable Feedback Buttons'
-		value: [ ChatPharoSettings default feedbackButtonsEnabled ]
-		changeAction: [ :val | ChatPharoSettings default feedbackButtonsEnabled: val ].
+
+	feedbackCheckBox := self
+		                    addCheckboxLabeled: 'Enable Feedback Buttons'
+		                    value: [
+		                    ChatPharoSettings default feedbackButtonsEnabled ]
+		                    changeAction: [ :val |
+		                    ChatPharoSettings default
+			                    feedbackButtonsEnabled: val ].
+		
+        welcomeMessageCheckBox := self
+                addCheckboxLabeled: 'Show Welcome Message'
+                value: [ ChatPharoSettings default welcomeMessageEnabled ]
+                changeAction: [ :val | ChatPharoSettings default welcomeMessageEnabled: val ].
+
 
 	playgroundToolCheckBox whenChangedDo: [ :checked |
 			checked
@@ -249,31 +259,29 @@ ChatPharoSettingsPresenter >> initializeWindow: aWindowPresenter [
 
 { #category : 'initialization' }
 ChatPharoSettingsPresenter >> newChatTab [
-    ^ SpPresenter new
-        layout: (
-            SpBoxLayout newTopToBottom
-                spacing: 12; "Add some vertical spacing between rows for better separation"
-                add: (
-                    SpBoxLayout newHorizontal
-                        spacing: 8;
-                        add: 'System:' expand: false;
-                        add: systemPromptInput;
-                        yourself
-                ) expand: false;
-                add: (
-                    SpBoxLayout newHorizontal
-                        spacing: 8;
-                        add: 'Max iterations:' expand: false;
-                        add: maxIterationsInput;
-                        yourself
-                ) expand: false;
-                add: playgroundToolCheckBox expand: false;
-				add: cacheCheckBox expand: false;
-				add: feedbackCheckBox expand: false;
-                yourself
-        );
-        yourself
 
+	^ SpPresenter new
+		  layout: (SpBoxLayout newTopToBottom
+				   spacing: 12;
+				   "Add some vertical spacing between rows for better separation"
+				   add: (SpBoxLayout newHorizontal
+						    spacing: 8;
+						    add: 'System:' expand: false;
+						    add: systemPromptInput;
+						    yourself)
+				   expand: false;
+				   add: (SpBoxLayout newHorizontal
+						    spacing: 8;
+						    add: 'Max iterations:' expand: false;
+						    add: maxIterationsInput;
+						    yourself)
+				   expand: false;
+				   add: playgroundToolCheckBox expand: false;
+				   add: cacheCheckBox expand: false;
+				   add: feedbackCheckBox expand: false;
+				add: welcomeMessageCheckBox expand: false;
+				   yourself);
+		  yourself
 ]
 
 { #category : 'initialization' }

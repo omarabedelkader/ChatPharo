@@ -105,3 +105,11 @@ ChatPharoSettingsPersistenceTest >> testSystemPromptPersistence [
     loaded := ChatPharoSettings loadOrNew.
     self assert: loaded agent systemPrompt equals: 'hello-system'
 ]
+
+{ #category : 'running' }
+ChatPharoSettingsPersistenceTest >> testWelcomeMessageEnabledPersistence [
+    | loaded |
+    settings welcomeMessageEnabled: false.
+    loaded := ChatPharoSettings loadOrNew.
+    self deny: loaded welcomeMessageEnabled
+]

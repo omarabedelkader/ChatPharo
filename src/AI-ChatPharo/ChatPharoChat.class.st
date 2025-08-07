@@ -116,7 +116,8 @@ ChatPharoChat >> initialize [
 	messages := OrderedCollection new.
 	onToolExecution := nil.
 	cache := Dictionary new.
-	self addWelcomeMessage
+	        (ChatPharoSettings default welcomeMessageEnabled)
+                ifTrue: [ self addWelcomeMessage ]
 ]
 
 { #category : 'accessing' }

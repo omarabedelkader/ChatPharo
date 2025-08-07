@@ -14,8 +14,16 @@ Class {
 ChatPharoChatTest >> setUp [
 
 	super setUp.
+	ChatPharoSettings default welcomeMessageEnabled: false.
 	mockApi := ChatPharoMockAgent new.
 	chat := ChatPharoChat new agent: mockApi
+]
+
+{ #category : 'running' }
+ChatPharoChatTest >> tearDown [
+
+        ChatPharoSettings resetDefault.
+        super tearDown
 ]
 
 { #category : 'running' }
@@ -131,7 +139,7 @@ ChatPharoChatTest >> testManyChatsRemainIsolated [
 			(c instVarNamed: #promptProcess) isTerminated ] ] whileFalse: [
 		(Delay forMilliseconds: 10) wait ].
 
-	self assert: (chats allSatisfy: [ :c | c messages size = 2 ]).
+	self assert: (chats allSatisfy: [ :c | c messages size = 1 ]).
 	self assert:
 		(chats collect: [ :c | c messages last answer ]) asSet size = 5
 ]
@@ -162,8 +170,8 @@ ChatPharoChatTest >> testMultipleChatsDoNotShareState [
 			(chat2 instVarNamed: #promptProcess) isTerminated ] ] whileFalse: [
 		(Delay forMilliseconds: 10) wait ].
 
-	self assert: chat1 messages size = 2.
-	self assert: chat2 messages size = 2
+	self assert: chat1 messages size = 1.
+	self assert: chat2 messages size = 1
 ]
 
 { #category : 'running' }
@@ -205,7 +213,7 @@ ChatPharoChatTest >> testSameQuestionReturnsCachedAnswer [
 
 	chat sendMessage: 'repeat'.
 
-	self assert: chat messages size equals: 3.
+	self assert: chat messages size equals: 2.
 	self assert: chat messages last answer equals: firstAnswer.
 	self assert: mockApi history size equals: firstSize
 ]
@@ -218,7 +226,7 @@ ChatPharoChatTest >> testSendMessageAddsAssistantResponse [
 	[ (chat instVarNamed: #promptProcess) isTerminated ] whileFalse: [
 		(Delay forMilliseconds: 10) wait ].
 
-	self assert: chat messages size equals: 2.
+	self assert: chat messages size equals: 1.
 	self
 		assert: chat messages last answer
 		equals: '<<MOCK-DEFAULT-REPLY to: hi>>'
@@ -238,6 +246,18 @@ ChatPharoChatTest >> testToolExecutionCallbackTriggered [
     [ (chat instVarNamed: #promptProcess) isTerminated ] whileFalse: [ (Delay forMilliseconds: 10) wait ].
 
     self assert: count equals: 1.
+]
+
+{ #category : 'running' }
+ChatPharoChatTest >> testWelcomeMessageToggle [
+
+    | withWelcome withoutWelcome |
+    ChatPharoSettings default welcomeMessageEnabled: true.
+    withWelcome := ChatPharoChat new agent: ChatPharoMockAgent new.
+    self assert: withWelcome messages size equals: 1.
+    ChatPharoSettings default welcomeMessageEnabled: false.
+    withoutWelcome := ChatPharoChat new agent: ChatPharoMockAgent new.
+    self assert: withoutWelcome messages isEmpty.
 ]
 
 { #category : 'running' }

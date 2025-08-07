@@ -25,7 +25,8 @@ Class {
 		'maximumIterations',
 		'browserAutoTabEnabled',
 		'cacheEnabled',
-		'feedbackButtonsEnabled'
+		'feedbackButtonsEnabled',
+		'welcomeMessageEnabled'
 	],
 	#classInstVars : [
 		'Default'
@@ -55,15 +56,17 @@ ChatPharoSettings class >> loadOrNew [
 				  settings := STON fromStream: file.
 				  settings browserExtensionEnabled ifNil: [
 					  settings browserExtensionEnabled: false ].
-			settings browserAutoTabEnabled ifNil: [
-                                          settings browserAutoTabEnabled: true ].
+				  settings browserAutoTabEnabled ifNil: [
+					  settings browserAutoTabEnabled: true ].
 				  settings browserToolsEnabled ifNil: [
 						  settings browserToolsEnabled:
 							  (ChatPharoBrowserEnvironment new tools collect: [ :t |
 								   t name ]) asOrderedCollection ].
 				  settings maximumIterations.
 				  settings cacheEnabled ifNil: [ settings cacheEnabled: true ].
-				  settings feedbackButtonsEnabled ifNil: [ settings feedbackButtonsEnabled: true ].
+				  settings feedbackButtonsEnabled ifNil: [
+					  settings feedbackButtonsEnabled: true ].
+				settings welcomeMessageEnabled ifNil: [ settings welcomeMessageEnabled: true ].
 				  ^ settings ]
 				  on: Error
 				  do: [ ^ self new ] ]
@@ -211,6 +214,7 @@ ChatPharoSettings >> initialize [
 	browserAutoTabEnabled := true.
 	cacheEnabled := true.
 	feedbackButtonsEnabled := true.
+	welcomeMessageEnabled := true.
 	browserToolsEnabled := (ChatPharoBrowserEnvironment new tools
 		                        collect: [ :t | t name ])
 		                       asOrderedCollection.
@@ -257,4 +261,18 @@ ChatPharoSettings >> useModel: aModelName [
 	agent model: aModelName.
 	self class setDefault: self. 
 	self class saveDefault
+]
+
+{ #category : 'accessing' }
+ChatPharoSettings >> welcomeMessageEnabled [ 
+
+       ^ welcomeMessageEnabled ifNil: [ true ]
+]
+
+{ #category : 'accessing' }
+ChatPharoSettings >> welcomeMessageEnabled: aBoolean [ 
+
+       welcomeMessageEnabled := aBoolean.
+       self class setDefault: self.
+       self class saveDefault
 ]

@@ -14,6 +14,7 @@ Class {
 ChatPharoTest >> setUp [
 
 	super setUp.
+	ChatPharoSettings default welcomeMessageEnabled: false.
 	app := ChatPharo new.
 	mockApi := ChatPharoMockAgent new.
 	app settings instVarNamed: #agent put: mockApi
@@ -60,10 +61,7 @@ ChatPharoTest >> testNewChatAddsChatWithMockApi [
 ChatPharoTest >> testNewChatStartsWithWelcomeMessage [
 
 	app newChat.
-	self assert: app chats first messages size equals: 1.
-	self assert:
-		(app chats first messages first answer includesSubstring:
-			 'Welcome to ChatPharo')
+	self assert: app chats first messages isEmpty
 ]
 
 { #category : 'running' }

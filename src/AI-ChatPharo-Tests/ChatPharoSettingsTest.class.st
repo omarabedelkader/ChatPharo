@@ -146,3 +146,13 @@ ChatPharoSettingsTest >> testUseModel [
 	settings useModel: 'mock-advanced'.
 	self assert: (mockApi instVarNamed: #currentModel) equals: 'mock-advanced'.
 ]
+
+{ #category : 'tests' }
+ChatPharoSettingsTest >> testWelcomeMessageEnabledToggle [
+
+    self assert: settings welcomeMessageEnabled.
+    settings welcomeMessageEnabled: false.
+    self deny: settings welcomeMessageEnabled.
+    settings welcomeMessageEnabled: true.
+    self assert: settings welcomeMessageEnabled.
+]
