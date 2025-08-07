@@ -24,7 +24,8 @@ Class {
 		'browserToolsEnabled',
 		'maximumIterations',
 		'browserAutoTabEnabled',
-		'cacheEnabled'
+		'cacheEnabled',
+		'feedbackButtonsEnabled'
 	],
 	#classInstVars : [
 		'Default'
@@ -62,6 +63,7 @@ ChatPharoSettings class >> loadOrNew [
 								   t name ]) asOrderedCollection ].
 				  settings maximumIterations.
 				  settings cacheEnabled ifNil: [ settings cacheEnabled: true ].
+				  settings feedbackButtonsEnabled ifNil: [ settings feedbackButtonsEnabled: true ].
 				  ^ settings ]
 				  on: Error
 				  do: [ ^ self new ] ]
@@ -184,6 +186,7 @@ ChatPharoSettings >> initialize [
 	browserExtensionEnabled := false.
 	browserAutoTabEnabled := true.
 	cacheEnabled := true.
+	feedbackButtonsEnabled := true.
 	browserToolsEnabled := (ChatPharoBrowserEnvironment new tools
 		                        collect: [ :t | t name ])
 		                       asOrderedCollection.
@@ -242,4 +245,16 @@ ChatPharoSettings >> cacheEnabled: aBoolean [
     cacheEnabled := aBoolean.
     self class setDefault: self.
     self class saveDefault
+]
+
+{ #category : 'accessing' }
+ChatPharoSettings >> feedbackButtonsEnabled [
+	^ feedbackButtonsEnabled ifNil: [ true ]
+]
+
+{ #category : 'accessing' }
+ChatPharoSettings >> feedbackButtonsEnabled: aBoolean [
+	feedbackButtonsEnabled := aBoolean.
+	self class setDefault: self.
+	self class saveDefault
 ]
