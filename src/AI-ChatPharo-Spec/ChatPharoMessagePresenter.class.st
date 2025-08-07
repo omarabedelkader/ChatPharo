@@ -34,22 +34,22 @@ ChatPharoMessagePresenter >> connectPresenters [
 
 { #category : 'layout' }
 ChatPharoMessagePresenter >> defaultLayout [
+	| layout |
+	layout := SpBoxLayout newVertical
+		add: 'User' expand: false;
+		add: contentPresenter expand: true;
+		add: model assistantLabel expand: false;
+		add: answerPresenter expand: true.
 
-	^ SpBoxLayout newVertical
-		  add: 'User' expand: false;
-		  add: contentPresenter expand: true;
-		  add: model assistantLabel expand: false;
-		  add: answerPresenter expand: true;
-	      (ChatPharoSettings default feedbackButtonsEnabled)
-			ifTrue: [
-				layout add: (SpBoxLayout newHorizontal
-					spacing: 5;
-					add: goodFeedbackButton;
-					add: badFeedbackButton;
-					yourself) expand: false
-			].
+	ChatPharoSettings default feedbackButtonsEnabled ifTrue: [
+		layout add: (SpBoxLayout newHorizontal
+			spacing: 5;
+			add: goodFeedbackButton;
+			add: badFeedbackButton;
+			yourself) expand: false
+	].
 
-		  yourself
+	^ layout yourself
 ]
 
 { #category : 'accessing' }
