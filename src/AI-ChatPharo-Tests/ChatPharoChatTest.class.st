@@ -120,17 +120,20 @@ ChatPharoChatTest >> testEmptyMessageDoesNotCrash [
 { #category : 'running' }
 ChatPharoChatTest >> testManyChatsRemainIsolated [
 
-    | chats |
-    chats := (1 to: 5) collect: [:i | ChatPharoChat new agent: ChatPharoMockAgent new].
+	| chats |
+	chats := (1 to: 5) collect: [ :i |
+		         ChatPharoChat new agent: ChatPharoMockAgent new ].
 
-    1 to: 5 do: [:i |
-        (chats at: i) sendMessage: 'msg', i asString
-    ].
+	1 to: 5 do: [ :i | (chats at: i) sendMessage: 'msg' , i asString ].
 
-    [ chats allSatisfy: [:c | (c instVarNamed: #promptProcess) isTerminated ] ] whileFalse: [ (Delay forMilliseconds: 10) wait ].
+	[
+		chats allSatisfy: [ :c |
+			(c instVarNamed: #promptProcess) isTerminated ] ] whileFalse: [
+		(Delay forMilliseconds: 10) wait ].
 
-    self assert: (chats allSatisfy: [:c | c messages size = 1]).
-    self assert: ((chats collect: [:c | c messages last answer]) asSet size) = 5.
+	self assert: (chats allSatisfy: [ :c | c messages size = 2 ]).
+	self assert:
+		(chats collect: [ :c | c messages last answer ]) asSet size = 5
 ]
 
 { #category : 'running' }
@@ -145,23 +148,22 @@ ChatPharoChatTest >> testMockAgentSetsAssistantLabel [
 ]
 
 { #category : 'running' }
-ChatPharoChatTest >> testMultipleChatsDoNotShareState [ 
+ChatPharoChatTest >> testMultipleChatsDoNotShareState [
 
-    | chat1 chat2 |
-    chat1 := ChatPharoChat new agent: ChatPharoMockAgent new.
-    chat2 := ChatPharoChat new agent: ChatPharoMockAgent new.
+	| chat1 chat2 |
+	chat1 := ChatPharoChat new agent: ChatPharoMockAgent new.
+	chat2 := ChatPharoChat new agent: ChatPharoMockAgent new.
 
-    chat1 sendMessage: 'hello from chat1'.
-    chat2 sendMessage: 'hello from chat2'.
+	chat1 sendMessage: 'hello from chat1'.
+	chat2 sendMessage: 'hello from chat2'.
 
-    [
-        (chat1 instVarNamed: #promptProcess) isTerminated and: [
-            (chat2 instVarNamed: #promptProcess) isTerminated
-        ]
-    ] whileFalse: [ (Delay forMilliseconds: 10) wait ].
+	[
+		(chat1 instVarNamed: #promptProcess) isTerminated and: [
+			(chat2 instVarNamed: #promptProcess) isTerminated ] ] whileFalse: [
+		(Delay forMilliseconds: 10) wait ].
 
-    self assert: chat1 messages size = 1.
-    self assert: chat2 messages size = 1.
+	self assert: chat1 messages size = 2.
+	self assert: chat2 messages size = 2
 ]
 
 { #category : 'running' }
@@ -192,32 +194,34 @@ ChatPharoChatTest >> testNullAgentSetsAssistantBotLabel [
 ]
 
 { #category : 'running' }
-ChatPharoChatTest >> testSameQuestionReturnsCachedAnswer [ 
+ChatPharoChatTest >> testSameQuestionReturnsCachedAnswer [
 
-    | firstSize firstAnswer |
-    chat sendMessage: 'repeat'.
-    [ (chat instVarNamed: #promptProcess) isTerminated ] whileFalse: [ (Delay forMilliseconds: 10) wait ].
-    firstSize := mockApi history size.
-    firstAnswer := chat messages last answer.
+	| firstSize firstAnswer |
+	chat sendMessage: 'repeat'.
+	[ (chat instVarNamed: #promptProcess) isTerminated ] whileFalse: [
+		(Delay forMilliseconds: 10) wait ].
+	firstSize := mockApi history size.
+	firstAnswer := chat messages last answer.
 
-    chat sendMessage: 'repeat'.
+	chat sendMessage: 'repeat'.
 
-    self assert: chat messages size equals: 2.
-    self assert: (chat messages last answer) equals: firstAnswer.
-    self assert: mockApi history size equals: firstSize.
+	self assert: chat messages size equals: 3.
+	self assert: chat messages last answer equals: firstAnswer.
+	self assert: mockApi history size equals: firstSize
 ]
 
 { #category : 'running' }
 ChatPharoChatTest >> testSendMessageAddsAssistantResponse [
-    chat sendMessage: 'hi'.
 
-    [
-        (chat instVarNamed: #promptProcess) isTerminated
-    ] whileFalse: [ (Delay forMilliseconds: 10) wait ].
+	chat sendMessage: 'hi'.
 
-    self assert: chat messages size equals: 1.
-    self assert: (chat messages last answer) equals: '<<MOCK-DEFAULT-REPLY to: hi>>'.
+	[ (chat instVarNamed: #promptProcess) isTerminated ] whileFalse: [
+		(Delay forMilliseconds: 10) wait ].
 
+	self assert: chat messages size equals: 2.
+	self
+		assert: chat messages last answer
+		equals: '<<MOCK-DEFAULT-REPLY to: hi>>'
 ]
 
 { #category : 'running' }

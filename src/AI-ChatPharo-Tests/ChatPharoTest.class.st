@@ -57,10 +57,13 @@ ChatPharoTest >> testNewChatAddsChatWithMockApi [
 ]
 
 { #category : 'running' }
-ChatPharoTest >> testNewChatStartsWithEmptyHistory [ 
+ChatPharoTest >> testNewChatStartsWithWelcomeMessage [
 
-    app newChat.
-    self assert: (app chats first messages isEmpty).
+	app newChat.
+	self assert: app chats first messages size equals: 1.
+	self assert:
+		(app chats first messages first answer includesSubstring:
+			 'Welcome to ChatPharo')
 ]
 
 { #category : 'running' }
