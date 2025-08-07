@@ -18,7 +18,8 @@ Class {
 		'playgroundToolCheckBox',
 		'browserAutoTabCheckBox',
 		'chatPharo',
-		'cacheCheckBox'
+		'cacheCheckBox',
+		'feedbackCheckBox'
 	],
 	#category : 'AI-ChatPharo-Spec-Core',
 	#package : 'AI-ChatPharo-Spec',
@@ -102,9 +103,10 @@ ChatPharoSettingsPresenter >> connectPresenters [
 			model cacheEnabled: enabled.
 			ChatPharoSettings saveDefault ].
 	
-	self addCheckboxLabeled: 'Enable Feedback Buttons'
-			value: [ settings feedbackButtonsEnabled ]
-			changeAction: [ :val | settings feedbackButtonsEnabled: val ].
+	feedbackCheckBox := self 
+		addCheckboxLabeled: 'Enable Feedback Buttons'
+		value: [ ChatPharoSettings feedbackButtonsEnabled ]
+		changeAction: [ :val | ChatPharoSettings feedbackButtonsEnabled: val ].
 
 	playgroundToolCheckBox whenChangedDo: [ :checked |
 			checked
@@ -254,6 +256,7 @@ ChatPharoSettingsPresenter >> newChatTab [
                 ) expand: false;
                 add: playgroundToolCheckBox expand: false;
 				add: cacheCheckBox expand: false;
+				add: feedbackCheckBox expand: false;
                 yourself
         );
         yourself
