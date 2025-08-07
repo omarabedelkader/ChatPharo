@@ -53,6 +53,19 @@ ChatPharoChat >> addUserMessage: text [
 			 yourself)
 ]
 
+{ #category : 'initialization' }
+ChatPharoChat >> addWelcomeMessage [ 
+
+        | text message |
+        text := 'Welcome to ChatPharo! I can answer questions, help explore your Pharo image, run snippets and search your code. Type a message to get started.'.
+        history addAssistant: text.
+        message := ChatPharoMessage new
+                        answer: text;
+                        assistantLabel: 'ChatPharo';
+                        yourself.
+        messages add: message
+]
+
 { #category : 'accessing' }
 ChatPharoChat >> agent [
     ^ agent ifNotNil: [ agent history: history. agent ]
@@ -102,7 +115,8 @@ ChatPharoChat >> initialize [
 	history := ChatPharoHistory new.
 	messages := OrderedCollection new.
 	onToolExecution := nil.
-	cache := Dictionary new
+	cache := Dictionary new.
+	self addWelcomeMessage
 ]
 
 { #category : 'accessing' }

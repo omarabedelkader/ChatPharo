@@ -26,6 +26,19 @@ Class {
 	#tag : 'Core'
 }
 
+{ #category : 'helpers' }
+ChatPharoSettingsPresenter >> addCheckboxLabeled: aLabel value: aValueBlock changeAction: aChangeBlock [
+	| checkbox |
+	checkbox := self newCheckBox
+		label: aLabel;
+		state: aValueBlock value;
+		yourself.
+
+	checkbox whenChangedDo: aChangeBlock.
+
+	^ checkbox
+]
+
 { #category : 'initialization' }
 ChatPharoSettingsPresenter >> chatPharo [
 
@@ -355,17 +368,4 @@ ChatPharoSettingsPresenter >> updateBrowserExtensionTab [
     browserExtensionCheckBox state
         ifTrue: [ self ensureBrowserExtensionTab ]
         ifFalse: [ self removeBrowserExtensionTab ]
-]
-
-{ #category : 'helpers' }
-ChatPharoSettingsPresenter >> addCheckboxLabeled: aLabel value: aValueBlock changeAction: aChangeBlock [
-	| checkbox |
-	checkbox := self newCheckBox
-		label: aLabel;
-		state: aValueBlock value;
-		yourself.
-
-	checkbox whenChangedDo: aChangeBlock.
-
-	^ checkbox
 ]

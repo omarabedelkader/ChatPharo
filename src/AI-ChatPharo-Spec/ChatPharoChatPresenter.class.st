@@ -22,12 +22,14 @@ Class {
 { #category : 'initialization' }
 ChatPharoChatPresenter >> connectPresenters [
 
-	messageTextField whenSubmitDo: [ :text | self sendMessage ].
-	submitButton action: [ self sendMessage ].
-	cancelButton action: [
-			model cancelMessage.
-			messageTextField text: ''.
-			submitButton enabled: true.
+        model messages do: [ :each |
+                messagesLayout add: each presenter withConstraints: [ :constraints | constraints height: (each height) * 2 ] ].
+        messageTextField whenSubmitDo: [ :text | self sendMessage ].
+        submitButton action: [ self sendMessage ].
+        cancelButton action: [
+                        model cancelMessage.
+                        messageTextField text: ''.
+                        submitButton enabled: true.
 			messageTextField enabled: true ].
 	inspectButton action: [ model inspect ].
 	model whenAnswerReceivedDo: [ :message |

@@ -160,6 +160,18 @@ ChatPharoSettings >> browserToolsEnabled: aCollection [
         self class saveDefault
 ]
 
+{ #category : 'accessing' }
+ChatPharoSettings >> cacheEnabled [
+    ^ cacheEnabled ifNil: [ false ]
+]
+
+{ #category : 'accessing' }
+ChatPharoSettings >> cacheEnabled: aBoolean [
+    cacheEnabled := aBoolean.
+    self class setDefault: self.
+    self class saveDefault
+]
+
 { #category : 'initialization' }
 ChatPharoSettings >> disableBrowserTool: toolName [
 
@@ -176,6 +188,18 @@ ChatPharoSettings >> enableBrowserTool: toolName [
 	self class setDefault: self.
 	self class saveDefault.
 maximumIterations := 3
+]
+
+{ #category : 'accessing' }
+ChatPharoSettings >> feedbackButtonsEnabled [
+	^ feedbackButtonsEnabled ifNil: [ true ]
+]
+
+{ #category : 'accessing' }
+ChatPharoSettings >> feedbackButtonsEnabled: aBoolean [
+	feedbackButtonsEnabled := aBoolean.
+	self class setDefault: self.
+	self class saveDefault
 ]
 
 { #category : 'initialization' }
@@ -232,29 +256,5 @@ ChatPharoSettings >> useModel: aModelName [
 
 	agent model: aModelName.
 	self class setDefault: self. 
-	self class saveDefault
-]
-
-{ #category : 'accessing' }
-ChatPharoSettings >> cacheEnabled [
-    ^ cacheEnabled ifNil: [ false ]
-]
-
-{ #category : 'accessing' }
-ChatPharoSettings >> cacheEnabled: aBoolean [
-    cacheEnabled := aBoolean.
-    self class setDefault: self.
-    self class saveDefault
-]
-
-{ #category : 'accessing' }
-ChatPharoSettings >> feedbackButtonsEnabled [
-	^ feedbackButtonsEnabled ifNil: [ true ]
-]
-
-{ #category : 'accessing' }
-ChatPharoSettings >> feedbackButtonsEnabled: aBoolean [
-	feedbackButtonsEnabled := aBoolean.
-	self class setDefault: self.
 	self class saveDefault
 ]
