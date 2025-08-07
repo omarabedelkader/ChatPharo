@@ -134,6 +134,17 @@ ChatPharoChatTest >> testManyChatsRemainIsolated [
 ]
 
 { #category : 'running' }
+ChatPharoChatTest >> testMockAgentSetsAssistantLabel [
+    chat sendMessage: 'hi'.
+
+    [
+        (chat instVarNamed: #promptProcess) isTerminated
+    ] whileFalse: [ (Delay forMilliseconds: 10) wait ].
+
+    self assert: (chat messages last assistantLabel) equals: 'Assistant'.
+]
+
+{ #category : 'running' }
 ChatPharoChatTest >> testMultipleChatsDoNotShareState [ 
 
     | chat1 chat2 |
@@ -164,6 +175,20 @@ ChatPharoChatTest >> testMultipleConcurrentMessagesHandledSafely [
     ] whileFalse: [ (Delay forMilliseconds: 10) wait ].
 
     self assert: chat messages size >= 1.
+]
+
+{ #category : 'running' }
+ChatPharoChatTest >> testNullAgentSetsAssistantBotLabel [ 
+    | nullAgent |
+    nullAgent := ChatPharoNullAgent new.
+    chat agent: nullAgent.
+    chat sendMessage: 'hi'.
+
+    [
+        (chat instVarNamed: #promptProcess) isTerminated
+    ] whileFalse: [ (Delay forMilliseconds: 10) wait ].
+
+    self assert: (chat messages last assistantLabel) equals: 'Assistant bot'.
 ]
 
 { #category : 'running' }
