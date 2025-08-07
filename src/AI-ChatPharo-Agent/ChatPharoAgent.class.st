@@ -86,7 +86,7 @@ ChatPharoAgent >> configurationErrorMessage [
 ChatPharoAgent >> copyForChat [ 
 
     | clone |
-    clone := self copy.
+    clone := self veryDeepCopy.
     clone history: ChatPharoHistory new.
     clone promptPrefix: ''.
     clone response: ''.
@@ -153,6 +153,11 @@ ChatPharoAgent >> onToolExecution [
 ChatPharoAgent >> onToolExecution: aBlock [ 
 
         onToolExecution := aBlock
+]
+
+{ #category : 'api' }
+ChatPharoAgent >> prompt: aPrompt [
+    ^ self getResponseForPrompt: aPrompt
 ]
 
 { #category : 'accessing' }
