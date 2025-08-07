@@ -70,6 +70,19 @@ ChatPharoHistoryTest >> testClearRemovesAllMessages [
         self assert: history messages isEmpty.
 ]
 
+{ #category : 'tests' }
+ChatPharoHistoryTest >> testMessagesPreserveOrder [ 
+
+        | msgs |
+        history addUser: 'first'.
+        history addAssistant: 'second'.
+        msgs := history messages.
+        self assert: msgs class equals: OrderedCollection.
+        self assert: msgs size equals: 2.
+        self assert: (msgs first content) equals: 'first'.
+        self assert: (msgs second role) equals: 'assistant'.
+]
+
 { #category : 'running' }
 ChatPharoHistoryTest >> testPutOpenAIChatMessagesOnMatchesChatMessagesOn [
 
