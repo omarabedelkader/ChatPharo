@@ -28,6 +28,25 @@ ChatPharoAgentTest >> testAgentConformsToAPI [
 ]
 
 { #category : 'running' }
+ChatPharoAgentTest >> testCopyForChatResetsState [
+
+        | history clone |
+        history := ChatPharoHistory new.
+        history addUser: 'hi'.
+        agent
+                model: 'm';
+                promptPrefix: 'prefix';
+                response: 'resp';
+                history: history.
+        clone := agent copyForChat.
+        self assert: clone ~~ agent.
+        self assert: clone model equals: 'm'.
+        self assert: clone history messages isEmpty.
+        self assert: clone promptPrefix equals: ''.
+        self assert: clone response equals: ''.
+]
+
+{ #category : 'running' }
 ChatPharoAgentTest >> testModelSetterGetter [ 
 
         agent model: 'm'.

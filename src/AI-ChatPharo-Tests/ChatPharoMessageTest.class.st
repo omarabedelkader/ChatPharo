@@ -17,6 +17,15 @@ ChatPharoMessageTest >> testAccessors [
 ]
 
 { #category : 'tests' }
+ChatPharoMessageTest >> testAssistantLabelAccessors [ 
+
+        | msg |
+        msg := ChatPharoMessage new.
+        msg assistantLabel: 'Bot'.
+        self assert: msg assistantLabel equals: 'Bot'.
+]
+
+{ #category : 'tests' }
 ChatPharoMessageTest >> testDefaultInitialization [
 
         | msg |
