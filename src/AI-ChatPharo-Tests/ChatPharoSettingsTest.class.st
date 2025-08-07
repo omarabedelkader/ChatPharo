@@ -35,12 +35,32 @@ ChatPharoSettingsTest >> testAvailableApiChoicesReturnsAssociations [
 ]
 
 { #category : 'tests' }
+ChatPharoSettingsTest >> testAvailableApisIncludesDefaultAgents [
+
+    self assert: (settings availableApis includesAll: {
+            ChatPharoNullAgent.
+            ChatPharoGeminiAgent.
+            ChatPharoOllamaAgent.
+            ChatPharoMistralAgent })
+]
+
+{ #category : 'tests' }
 ChatPharoSettingsTest >> testBrowserAutoTabAccessor [
 
     self assert: settings browserAutoTabEnabled.
     settings browserAutoTabEnabled: false.
     self deny: settings browserAutoTabEnabled
 
+]
+
+{ #category : 'tests' }
+ChatPharoSettingsTest >> testBrowserExtensionEnabledAccessor [ 
+
+    self deny: settings browserExtensionEnabled.
+    settings browserExtensionEnabled: true.
+    self assert: settings browserExtensionEnabled.
+    settings browserExtensionEnabled: false.
+    self deny: settings browserExtensionEnabled
 ]
 
 { #category : 'tests' }
