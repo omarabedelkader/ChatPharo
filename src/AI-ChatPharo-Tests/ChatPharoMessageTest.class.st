@@ -17,6 +17,18 @@ ChatPharoMessageTest >> testAccessors [
 ]
 
 { #category : 'tests' }
+ChatPharoMessageTest >> testDefaultInitialization [
+
+        | msg |
+        msg := ChatPharoMessage new.
+        self assert: msg content equals: String empty.
+        self assert: msg answer equals: String empty.
+        self assert: msg assistantLabel equals: 'Assistant'.
+        self assert: msg feedback isNil.
+        self assert: msg height equals: 140.
+]
+
+{ #category : 'tests' }
 ChatPharoMessageTest >> testFeedbackAccessors [
 
         | msg |
