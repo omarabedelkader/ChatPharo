@@ -34,6 +34,16 @@ ChatPharoHistoryTest >> testAddManyMessages [
 ]
 
 { #category : 'running' }
+ChatPharoHistoryTest >> testAddMessageAddsHistoryMessage [
+
+        | message |
+        message := ChatPharoHistoryMessage role: 'user' content: 'hey'.
+        history addMessage: message.
+        self assert: history messages size equals: 1.
+        self assert: history messages first equals: message.
+]
+
+{ #category : 'running' }
 ChatPharoHistoryTest >> testAddUserAddsMessage [ 
 
         history addUser: 'hello'.
