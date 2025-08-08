@@ -28,6 +28,14 @@ ChatPharoAgentTest >> testAgentConformsToAPI [
 ]
 
 { #category : 'running' }
+ChatPharoAgentTest >> testConfigurationErrorMessage [
+
+        self
+                assert: agent configurationErrorMessage
+                equals: 'Agent is missing required settings.'
+]
+
+{ #category : 'running' }
 ChatPharoAgentTest >> testCopyForChatResetsState [
 
         | history clone |
@@ -65,4 +73,12 @@ ChatPharoAgentTest >> testSystemSetterGetter [
 
 	agent systemPrompt: 's'.
 	self assert: agent systemPrompt equals: 's'
+]
+
+{ #category : 'running' }
+ChatPharoAgentTest >> testUseAdapterSetsModel [
+
+
+        agent useAdapter: 'adapter'.
+        self assert: agent model equals: 'adapter'
 ]
