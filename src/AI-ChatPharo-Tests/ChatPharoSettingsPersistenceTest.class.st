@@ -52,6 +52,25 @@ ChatPharoSettingsPersistenceTest >> testBrowserToolsPersistence [
     self deny: (loaded browserToolsEnabled includes: first)
 ]
 
+{ #category : 'tests' }
+ChatPharoSettingsPersistenceTest >> testCacheEnabledPersistence [ 
+
+    | loaded |
+    settings cacheEnabled: false.
+    loaded := ChatPharoSettings loadOrNew.
+    self deny: loaded cacheEnabled.
+
+]
+
+{ #category : 'tests' }
+ChatPharoSettingsPersistenceTest >> testFeedbackButtonsEnabledPersistence [ 
+
+    | loaded |
+    settings feedbackButtonsEnabled: false.
+    loaded := ChatPharoSettings loadOrNew.
+    self deny: loaded feedbackButtonsEnabled.
+]
+
 { #category : 'running' }
 ChatPharoSettingsPersistenceTest >> testLoadOrNewHandlesCorruptedFile [
 
