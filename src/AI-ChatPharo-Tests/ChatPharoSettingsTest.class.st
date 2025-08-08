@@ -93,6 +93,16 @@ ChatPharoSettingsTest >> testEnableDisableBrowserTool [
 ]
 
 { #category : 'tests' }
+ChatPharoSettingsTest >> testFeedbackButtonsEnabledToggle [
+
+    self assert: settings feedbackButtonsEnabled.
+    settings feedbackButtonsEnabled: false.
+    self deny: settings feedbackButtonsEnabled.
+    settings feedbackButtonsEnabled: true.
+    self assert: settings feedbackButtonsEnabled.
+]
+
+{ #category : 'tests' }
 ChatPharoSettingsTest >> testMaximumIterationsAccessor [ 
 
     settings maximumIterations: 8.

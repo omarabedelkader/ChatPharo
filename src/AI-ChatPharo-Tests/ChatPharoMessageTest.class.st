@@ -47,6 +47,14 @@ ChatPharoMessageTest >> testFeedbackAccessors [
 ]
 
 { #category : 'tests' }
+ChatPharoMessageTest >> testPresenterClass [ 
+
+        | msg |
+        msg := ChatPharoMessage new.
+        self assert: msg presenter class equals: ChatPharoMessagePresenter.
+]
+
+{ #category : 'tests' }
 ChatPharoMessageTest >> testPresenterIsLazyInitialized [ 
 
 	| msg presenter1 presenter |
