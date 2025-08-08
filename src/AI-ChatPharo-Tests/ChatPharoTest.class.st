@@ -65,6 +65,16 @@ ChatPharoTest >> testNewChatStartsWithWelcomeMessage [
 ]
 
 { #category : 'running' }
+ChatPharoTest >> testRemoveChatAt [ 
+
+        app newChat.
+        app newChat.
+        self assert: app chats size equals: 2.
+        app removeChatAt: 1.
+        self assert: app chats size equals: 1
+]
+
+{ #category : 'running' }
 ChatPharoTest >> testSetAndGetMessages [
 	| chat message1 message |
 	chat := ChatPharoChat new.
