@@ -63,6 +63,15 @@ ChatPharoHistoryTest >> testChatMessagesOnOutputsRoleDictionaries [
 ]
 
 { #category : 'running' }
+ChatPharoHistoryTest >> testChatMessagesOnWithEmptyHistoryProducesNoMessages [
+
+        | stream |
+        stream := Array new writeStream.
+        history chatMessagesOn: stream.
+        self assert: stream contents isEmpty.
+]
+
+{ #category : 'running' }
 ChatPharoHistoryTest >> testClearRemovesAllMessages [ 
 
         history addUser: 'a'.

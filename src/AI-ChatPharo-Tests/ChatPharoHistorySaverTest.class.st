@@ -65,6 +65,18 @@ ChatPharoHistorySaverTest >> testOpenAIChatMessagesOnWithToolCalls [
 ]
 
 { #category : 'running' }
+ChatPharoHistorySaverTest >> testOpenAIChatMessagesOnWithToolCallsAddsToolResultMessage [
+
+        | call strm |
+        call := ChatPharoHistorySaverToolCall id: '1' functionName: 'f' arguments: '{}' content: 'result'.
+        saver toolCalls: { call }.
+        strm := Array new writeStream.
+        saver putOpenAIChatMessagesOn: strm.
+        self assert: strm contents size equals: 2.
+        self assert: (strm contents second at: 'role') equals: 'tool'.
+]
+
+{ #category : 'running' }
 ChatPharoHistorySaverTest >> testOpenAIChatMessagesOnWithoutToolCalls [ 
 
         | strm |
