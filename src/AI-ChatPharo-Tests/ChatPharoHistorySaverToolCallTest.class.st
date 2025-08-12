@@ -75,3 +75,11 @@ ChatPharoHistorySaverToolCallTest >> testOpenAIChatToolMessageDefaultsContent [
         dict := callWithoutContent openAIChatToolMessage.
         self assert: (dict at: 'content') equals: '[No tool result]'.
 ]
+
+{ #category : 'tests' }
+ChatPharoHistorySaverToolCallTest >> testOpenAIChatToolMessageUsesContentWhenProvided [
+
+    | dict |
+    dict := call openAIChatToolMessage.
+    self assert: (dict at: 'content') equals: 'c'.
+]

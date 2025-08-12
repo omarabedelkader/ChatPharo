@@ -86,6 +86,19 @@ ChatPharoHistorySaverTest >> testOpenAIChatMessagesOnWithoutToolCalls [
 ]
 
 { #category : 'running' }
+ChatPharoHistorySaverTest >> testPutOpenAIChatMessagesOnWithMultipleToolCalls [
+    | call1 call2 stream |
+    call1 := ChatPharoHistorySaverToolCall id: '1' functionName: 'f1' arguments: '{}' content: 'r1'.
+    call2 := ChatPharoHistorySaverToolCall id: '2' functionName: 'f2' arguments: '{}' content: 'r2'.
+    saver toolCalls: { call1. call2 }.
+    stream := Array new writeStream.
+    saver putOpenAIChatMessagesOn: stream.
+    self assert: ((stream contents first at: 'tool_calls') size) equals: 2.
+    self assert: stream contents size equals: 3.
+    self assert: (stream contents last at: 'tool_call_id') equals: '2'.
+]
+
+{ #category : 'running' }
 ChatPharoHistorySaverTest >> testRoleContentCreation [ 
 
         self assert: saver role equals: 'user'.
