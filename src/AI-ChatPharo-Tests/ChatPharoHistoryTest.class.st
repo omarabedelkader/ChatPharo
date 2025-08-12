@@ -24,6 +24,13 @@ ChatPharoHistoryTest >> testAddAssistantAddsMessage [
 ]
 
 { #category : 'running' }
+ChatPharoHistoryTest >> testAddAssistantSetsRole [
+
+        history addAssistant: 'hi'.
+        self assert: history messages first role equals: 'assistant'.
+]
+
+{ #category : 'running' }
 ChatPharoHistoryTest >> testAddManyMessages [ 
 
     1 to: 1000 do: [:i |
@@ -48,6 +55,13 @@ ChatPharoHistoryTest >> testAddUserAddsMessage [
 
         history addUser: 'hello'.
         self assert: history messages size equals: 1.
+]
+
+{ #category : 'running' }
+ChatPharoHistoryTest >> testAddUserSetsRole [
+
+        history addUser: 'hello'.
+        self assert: history messages first role equals: 'user'.
 ]
 
 { #category : 'running' }
