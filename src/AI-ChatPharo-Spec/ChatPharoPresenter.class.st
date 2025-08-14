@@ -92,22 +92,22 @@ ChatPharoPresenter >> initializePresenters [
 			 help: 'Delete the selected chat';
 			 action: [ self deleteSelectedChat ];
 			 yourself).
-toolbar add: (SpToolbarButtonPresenter new
-                         label: 'Delete All';
-                         icon: (self iconNamed: #delete);
-                         help: 'Delete all chats';
-                         action: [ self deleteAllChats ];
-                         yourself).
+	toolbar add: (SpToolbarButtonPresenter new
+			 label: 'Delete All';
+			 icon: (self iconNamed: #delete);
+			 help: 'Delete all chats';
+			 action: [ self deleteAllChats ];
+			 yourself).
 
 
-	"toolbar add: (SpToolbarButtonPresenter new
+	toolbar add: (SpToolbarButtonPresenter new
 			 label: 'Save Chat';
 			 icon: (self iconNamed: #smallSave);
 			 help: 'Save current chat';
 			 action: [ self saveCurrentChat ];
-			 yourself)."
-
-	"toolbar add: (SpToolbarButtonPresenter new
+			 yourself).
+			
+"toolbar add: (SpToolbarButtonPresenter new
         label: 'Load Chat';
         icon: (self iconNamed: #smallOpen);
         help: 'Load saved chat';
@@ -122,21 +122,21 @@ toolbar add: (SpToolbarButtonPresenter new
 			 yourself).
 
 	connectionStatusLabel := SpToolbarButtonPresenter new
-        label: 'Checking connection...';
-        enabled: false;
-        action: [ ];
-        yourself.
+		                         label: 'Checking connection...';
+		                         enabled: false;
+		                         action: [ ];
+		                         yourself.
 
-    toolbar add: connectionStatusLabel.
+	toolbar add: connectionStatusLabel.
 
 	toolbar add: (SpToolbarButtonPresenter new
-             label: 'Refresh Connection';
-             icon: (self iconNamed: #refresh);
-             help: 'Manually check LLM connection status';
-             action: [ self updateConnectionStatusOnce ];
-             yourself).
+			 label: 'Refresh Connection';
+			 icon: (self iconNamed: #refresh);
+			 help: 'Manually check LLM connection status';
+			 action: [ self updateConnectionStatusOnce ];
+			 yourself).
 
-	self updateConnectionStatus.
+	self updateConnectionStatus
 ]
 
 { #category : 'initialization' }
@@ -173,25 +173,19 @@ ChatPharoPresenter >> openSettings [
 { #category : 'initialization' }
 ChatPharoPresenter >> saveCurrentChat [
 
-    | fileReference jsonData currentChat |
-    currentChat := notebook selectedPage presenterProvider value.
-    jsonData := STON toStringPretty: (currentChat history model collect: [ :msg |
-        Dictionary new
-            at: 'role' put: msg role;
-            at: 'content' put: msg content;
-            yourself
-    ]).
-    
-    fileReference := UIManager default 
-        chooseForSaveFileReference: 'Save chat'
-        extensions: #('json')
-        path: FileLocator home.
-        
-    fileReference ifNotNil: [
-        fileReference writeStream
-            nextPutAll: jsonData;
-            close
-    ]
+	| fileReference jsonData currentChat |
+	currentChat := notebook selectedPage presenterProvider value.
+jsonData := currentChat exportAsJson.
+
+	fileReference := UIManager default
+		                 chooseForSaveFileReference: 'Save chat'
+		                 extensions: #( 'json' )
+		                 path: FileLocator home.
+
+	fileReference ifNotNil: [
+			fileReference writeStream
+				nextPutAll: jsonData;
+				close ]
 ]
 
 { #category : 'initialization' }

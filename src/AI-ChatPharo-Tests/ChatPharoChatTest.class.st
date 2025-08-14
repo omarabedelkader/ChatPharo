@@ -126,6 +126,19 @@ ChatPharoChatTest >> testEmptyMessageDoesNotCrash [
 ]
 
 { #category : 'running' }
+ChatPharoChatTest >> testExportAsJsonIncludesMessages [ 
+
+    | json data |
+    chat addUserMessage: 'hello'.
+    chat addAssistantMessage: 'world'.
+    json := chat exportAsJson.
+    data := STONJSON fromString: json.
+    self assert: data size equals: 2.
+    self assert: (data first at: 'role') equals: 'user'.
+    self assert: (data second at: 'content') equals: 'world'.
+]
+
+{ #category : 'running' }
 ChatPharoChatTest >> testManyChatsRemainIsolated [
 
 	| chats |

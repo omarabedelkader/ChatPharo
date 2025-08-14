@@ -98,6 +98,27 @@ ChatPharoChat >> clearChat [
 	self clearCache
 ]
 
+{ #category : 'accessing' }
+ChatPharoChat >> exportAsJson [
+
+    | msgs |
+    msgs := history messages collect: [ :msg |
+        | dict |
+        dict := Dictionary new
+            at: 'role' put: msg role;
+            at: 'content' put: (msg content ifNil: [ '' ]);
+            yourself.
+        msg toolCalls ifNotNil: [
+            dict at: 'tool_calls' put:
+                (msg toolCalls collect: [ :tc |
+                    (tc respondsTo: #openAIChatToolCall)
+                        ifTrue: [ tc openAIChatToolCall ]
+                        ifFalse: [ tc ] ] as: Array)
+        ].
+        dict ].
+    ^ STONJSON toString: (msgs as: Array)
+]
+
 { #category : 'running' }
 ChatPharoChat >> history [
     ^ history asPromptPrefix
