@@ -31,15 +31,25 @@ ChatPharoHistoryMessage class >> role: role content: content toolCalls: toolCall
 
 { #category : 'accessing' }
 ChatPharoHistoryMessage >> chatMessagesOn: aStream [
-
     | msg |
     msg := Dictionary with: 'role' -> role.
-    content ifNotNil:[ msg add: 'content' -> content ].
-    toolCalls ifNotNil:[
-        msg add: 'tool_calls' -> (toolCalls collect: [ :tc | tc toolCall ] asArray) ].
+    content ifNotNil: [ msg add: 'content' -> content ].
+
+    toolCalls ifNotNil: [
+        msg add: 'tool_calls' ->
+            (toolCalls collect: [ :tc |
+                (tc respondsTo: #openAIChatToolCall)
+                    ifTrue: [ tc openAIChatToolCall ]
+                    ifFalse: [ tc ] ] as: Array) ].
+
     aStream nextPut: msg.
-    toolCalls ifNotNil:[
-        toolCalls do:[ :tc | aStream nextPut: tc toolMessage ] ]
+
+    toolCalls ifNotNil: [
+        toolCalls do: [ :tc |
+            aStream nextPut:
+                ((tc respondsTo: #openAIChatToolMessage)
+                    ifTrue: [ tc openAIChatToolMessage ]
+                    ifFalse: [ tc ]) ] ].
 ]
 
 { #category : 'accessing' }

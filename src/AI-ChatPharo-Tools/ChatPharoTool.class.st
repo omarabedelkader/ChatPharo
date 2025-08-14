@@ -254,27 +254,34 @@ ChatPharoTool >> systemPrompt: aString [
 	^ systemPrompt := aString 
 ]
 
-{ #category : 'initialization' }
-ChatPharoTool >> toolCallsFromMessage: message [ 
+{ #category : 'accessing' }
+ChatPharoTool >> toolCallsFromMessage: message [
 
-	| calls |
-	calls := message at: 'tool_calls' ifAbsent: [ nil ].
-	calls isNil ifTrue: [ ^ nil ].
+    | calls |
+    calls := message at: 'tool_calls' ifAbsent: [ nil ].
+    calls isNil ifTrue: [ ^ nil ].
 
-	^ calls collect: [:c |
-		| fn args content |
-		fn := (c at: 'function') at: 'name'.
-		args := (c at: 'function') at: 'arguments'.
-		content := STONJSON toString:
-			(self applyToolFunction: fn
-				arguments: ([ STONJSON fromString: args ]
-					on: STONReaderError do: [ Dictionary with: 'error' -> 'Invalid arguments' ])).
-		ChatPharoHistorySaverToolCall
-			id: (c at: 'id')
-			functionName: fn
-			arguments: args
-			content: content
-	]
+    ^ calls collect: [ :c |
+        | fn rawArgs parsedArgs content callId |
+        fn := (c at: 'function') at: 'name'.
+        rawArgs := (c at: 'function') at: 'arguments' ifAbsent: [ '{}' ].
+        parsedArgs := (rawArgs isString
+            ifTrue: [
+                [ STONJSON fromString: rawArgs ]
+                    on: Error do: [ Dictionary with: 'error' -> 'Invalid arguments' ] ]
+            ifFalse: [ rawArgs ifNil: [ Dictionary new ] ]).
+
+        content := STONJSON toString:
+            (self applyToolFunction: fn arguments: parsedArgs).
+
+        callId := c at: 'id' ifAbsent: [ 'tool-', (DateAndTime now asString) ].
+
+        ChatPharoHistorySaverToolCall
+            id: callId
+            functionName: fn
+            arguments: (rawArgs isString ifTrue: [ rawArgs ] ifFalse: [ STONJSON toString: parsedArgs ])
+            content: content
+    ].
 ]
 
 { #category : 'accessing' }

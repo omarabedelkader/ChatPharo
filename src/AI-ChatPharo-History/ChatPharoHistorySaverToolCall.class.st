@@ -79,12 +79,17 @@ ChatPharoHistorySaverToolCall >> initializeWithID: anId functionName: aFn argume
 ]
 
 { #category : 'initialization' }
-ChatPharoHistorySaverToolCall >> openAIChatToolCall [ 
+ChatPharoHistorySaverToolCall >> openAIChatToolCall [
 
-	^ Dictionary
-		with:'type'->'function'
-		with:'id'->id
-		with:'function'->(Dictionary with:'name'->functionName with:'arguments'->arguments)
+    ^ Dictionary
+        with: 'type' -> 'function'
+        with: 'id' -> id
+        with: 'function' -> (Dictionary
+            with: 'name' -> functionName
+            with: 'arguments' ->
+                (arguments isString
+                    ifTrue: [ arguments ]
+                    ifFalse: [ STONJSON toString: (arguments ifNil: [ Dictionary new ]) ]))
 ]
 
 { #category : 'initialization' }
