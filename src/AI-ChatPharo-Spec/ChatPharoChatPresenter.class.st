@@ -9,7 +9,6 @@ Class {
 		'messageTextField',
 		'submitButton',
 		'cancelButton',
-		'clearButton',
 		'model',
 		'inspectButton',
 		'scrollableMessages'

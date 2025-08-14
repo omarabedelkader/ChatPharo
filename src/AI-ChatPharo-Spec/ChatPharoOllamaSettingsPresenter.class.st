@@ -13,7 +13,6 @@ Class {
 		'temperatureInput',
 		'installInput',
 		'installButton',
-		'pullButton',
 		'deleteButton',
 		'testButton'
 	],

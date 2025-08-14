@@ -5,10 +5,7 @@ Class {
 	#name : 'ChatPharoPresenter',
 	#superclass : 'SpPresenter',
 	#instVars : [
-		'messagesLayout',
 		'messageTextField',
-		'cancelButton',
-		'clearButton',
 		'model',
 		'notebook',
 		'toolbar',
