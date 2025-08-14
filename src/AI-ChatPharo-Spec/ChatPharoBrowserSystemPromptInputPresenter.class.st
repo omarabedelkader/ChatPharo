@@ -30,7 +30,7 @@ ChatPharoBrowserSystemPromptInputPresenter >> initializePresenters [
 		             yourself.
 ]
 
-{ #category : 'initialization' }
+{ #category : 'accessing - model' }
 ChatPharoBrowserSystemPromptInputPresenter >> setModelBeforeInitialization: anObject [ 
 
     model := anObject

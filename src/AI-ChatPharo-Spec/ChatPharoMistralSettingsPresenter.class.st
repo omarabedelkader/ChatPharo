@@ -163,7 +163,7 @@ ChatPharoMistralSettingsPresenter >> refreshModels [
     ]
 ]
 
-{ #category : 'layout' }
+{ #category : 'accessing - model' }
 ChatPharoMistralSettingsPresenter >> setModelBeforeInitialization: anAgent [ 
 
     model := anAgent
