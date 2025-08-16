@@ -4,9 +4,9 @@ Class {
 	#instVars : [
 		'toolExecution'
 	],
-	#category : 'AI-ChatPharo-Tests-Core',
+	#category : 'AI-ChatPharo-Tests-Mock',
 	#package : 'AI-ChatPharo-Tests',
-	#tag : 'Core'
+	#tag : 'Mock'
 }
 
 { #category : 'private - uffi' }

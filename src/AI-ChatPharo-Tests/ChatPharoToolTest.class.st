@@ -5,9 +5,9 @@ Class {
 		'tool',
 		'testTool'
 	],
-	#category : 'AI-ChatPharo-Tests-Core',
+	#category : 'AI-ChatPharo-Tests-Mock',
 	#package : 'AI-ChatPharo-Tests',
-	#tag : 'Core'
+	#tag : 'Mock'
 }
 
 { #category : 'running' }
@@ -45,4 +45,13 @@ ChatPharoToolTest >> testOnToolExecutionCallbackTriggered [
     tool onToolExecution: [ count := count + 1 ].
     tool applyToolFunction: 'testTool' arguments: Dictionary new.
     self assert: count equals: 1.
+]
+
+{ #category : 'running' }
+ChatPharoToolTest >> testToolCallsFromMessageWithoutToolCallsReturnsNil [
+
+    | message calls |
+    message := Dictionary new.
+    calls := tool toolCallsFromMessage: message.
+    self assert: calls isNil.
 ]
