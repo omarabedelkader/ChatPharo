@@ -59,3 +59,59 @@ ChatPharoMethodBrowser >> updateAgentMethodName [
 	(chat notNil and: [ chat agent respondsTo: #methodName: ]) ifTrue: [
 		chat agent methodName: methodName ].
 ]
+
+{ #category : 'actions' }
+ChatPharoMethodBrowser >> generateTestMethodFor: aMethod [
+
+    | testClass selector prompt response methodBody currentAgent |
+    testClass := self findOrCreateTestClassFor: aMethod methodClass.
+    selector := self testSelectorFor: aMethod selector.
+    aMethod sourceCode ifNil: [ ^ self inform: 'Cannot generate test. Source code is unavailable.' ].
+
+    (testClass includesSelector: selector)
+        ifTrue: [ ^ self inform: 'Test method already exists.' ].
+
+    prompt := 'Generate a test method in Smalltalk SUnit style for the following method. Only return the method body (without the method header):', String cr, aMethod sourceCode.
+
+    currentAgent := ChatPharoSettings default agent.
+    currentAgent := (currentAgent isKindOf: ChatPharoAgent)
+        ifTrue: [ currentAgent copyForChat ]
+        ifFalse: [ currentAgent ].
+
+    response := currentAgent prompt: prompt.
+    methodBody := response ifNil: [ 'self assert: false.' ].
+
+    self generateTestMethodNamed: selector in: testClass withBody: methodBody.
+]
+
+{ #category : 'actions' }
+ChatPharoMethodBrowser >> generateTestMethodNamed: aSelector in: aClass withBody: methodBody [
+	| indentedBody fullSource |
+	indentedBody := String streamContents: [ :stream |
+		(methodBody lines) do: [ :line |
+			stream
+				nextPutAll: '    ';
+				nextPutAll: line;
+				cr ] ].
+	fullSource := String streamContents: [ :s |
+		s
+			nextPutAll: aSelector asString;
+			cr;
+			nextPutAll: indentedBody ].
+	aClass compile: fullSource classified: 'tests'.
+]
+
+{ #category : 'utils' }
+ChatPharoMethodBrowser >> findOrCreateTestClassFor: aClass [
+	| testClassName testClass |
+	testClassName := aClass name , 'Test'.
+	testClass := Smalltalk at: testClassName ifAbsent: [
+		Object subclass: testClassName asSymbol instanceVariableNames: '' classVariableNames: '' poolDictionaries: '' category: aClass category.
+	].
+	^ testClass
+]
+
+{ #category : 'utils' }
+ChatPharoMethodBrowser >> testSelectorFor: aSelector [
+	^ ('test', (aSelector asString first asUppercase), (aSelector asString allButFirst)) asSymbol
+]
