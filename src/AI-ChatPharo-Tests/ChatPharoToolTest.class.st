@@ -48,6 +48,40 @@ ChatPharoToolTest >> testOnToolExecutionCallbackTriggered [
 ]
 
 { #category : 'running' }
+ChatPharoToolTest >> testToolCallsFromMessageInvalidArguments [
+
+    | message calls call expected |
+    message := Dictionary
+        with: 'tool_calls' -> (Array with: (Dictionary
+            with: 'id' -> '1'
+            with: 'function' -> (Dictionary
+                with: 'name' -> 'testTool'
+                with: 'arguments' -> '{invalid-json'))).
+    calls := tool toolCallsFromMessage: message.
+    call := calls first.
+    self assert: call arguments equals: '{invalid-json'.
+    expected := STONJSON toString: (Dictionary with: 'ok' -> true).
+    self assert: call content equals: expected.
+]
+
+{ #category : 'running' }
+ChatPharoToolTest >> testToolCallsFromMessageMissingArgumentsDefaultsToEmpty [
+
+    | message calls call expected |
+    message := Dictionary
+        with: 'tool_calls' -> (Array with: (Dictionary
+            with: 'id' -> '1'
+            with: 'function' -> (Dictionary
+                with: 'name' -> 'testTool'))).
+    calls := tool toolCallsFromMessage: message.
+    call := calls first.
+    self assert: call arguments equals: '{}'.
+    expected := STONJSON toString: (Dictionary with: 'ok' -> true).
+    self assert: call content equals: expected.
+
+]
+
+{ #category : 'running' }
 ChatPharoToolTest >> testToolCallsFromMessageParsesAndExecutesCall [
 
 
@@ -67,6 +101,26 @@ ChatPharoToolTest >> testToolCallsFromMessageParsesAndExecutesCall [
       self assert: calls first functionName equals: 'testTool'.
       self assert: calls first arguments equals: '{}'.
       self assert: calls first content equals: expected.
+]
+
+{ #category : 'running' }
+ChatPharoToolTest >> testToolCallsFromMessageParsesValidCall [
+
+    | message calls call expected |
+    message := Dictionary
+        with: 'tool_calls' -> (Array with: (Dictionary
+            with: 'id' -> '1'
+            with: 'function' -> (Dictionary
+                with: 'name' -> 'testTool'
+                with: 'arguments' -> '{}'))).
+    calls := tool toolCallsFromMessage: message.
+    self assert: calls size equals: 1.
+    call := calls first.
+    self assert: call id equals: '1'.
+    self assert: call functionName equals: 'testTool'.
+    self assert: call arguments equals: '{}'.
+    expected := STONJSON toString: (Dictionary with: 'ok' -> true).
+    self assert: call content equals: expected.
 ]
 
 { #category : 'running' }
