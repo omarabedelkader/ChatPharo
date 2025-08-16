@@ -48,6 +48,28 @@ ChatPharoToolTest >> testOnToolExecutionCallbackTriggered [
 ]
 
 { #category : 'running' }
+ChatPharoToolTest >> testToolCallsFromMessageParsesAndExecutesCall [
+
+
+      | message calls expected count |
+      count := 0.
+      tool onToolExecution: [ count := count + 1 ].
+      message := Dictionary with: 'tool_calls' -> (Array with: (Dictionary
+          with: 'id' -> '1'
+          with: 'function' -> (Dictionary
+              with: 'name' -> 'testTool'
+              with: 'arguments' -> '{}'))).
+      calls := tool toolCallsFromMessage: message.
+      expected := STONJSON toString: (Dictionary with: 'ok' -> true).
+      self assert: calls size equals: 1.
+      self assert: count equals: 1.
+      self assert: calls first id equals: '1'.
+      self assert: calls first functionName equals: 'testTool'.
+      self assert: calls first arguments equals: '{}'.
+      self assert: calls first content equals: expected.
+]
+
+{ #category : 'running' }
 ChatPharoToolTest >> testToolCallsFromMessageWithoutToolCallsReturnsNil [
 
     | message calls |

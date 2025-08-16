@@ -17,6 +17,13 @@ ChatPharoToolTestTool >> applyTo: args [
 ]
 
 { #category : 'accessing' }
+ChatPharoToolTestTool >> initialize [ 
+
+    super initialize.
+    shouldError := false.
+]
+
+{ #category : 'accessing' }
 ChatPharoToolTestTool >> name [ 
     ^ 'testTool'
 
