@@ -74,6 +74,26 @@ ChatPharoHistoryTest >> testAsPromptPrefixIncludesBothMessages [
 ]
 
 { #category : 'running' }
+ChatPharoHistoryTest >> testChatMessagesOnIncludesToolCalls [
+
+    | call stream |
+    call := ChatPharoHistorySaverToolCall
+        id: '1'
+        functionName: 'fn'
+        arguments: '{}'
+        content: 'out'.
+    history addMessage: (ChatPharoHistoryMessage
+        role: 'assistant'
+        content: nil
+        toolCalls: { call }).
+    stream := Array new writeStream.
+    history chatMessagesOn: stream.
+    self assert: stream contents size equals: 2.
+    self assert: ((stream contents first at: 'tool_calls') first at: 'id') equals: '1'.
+    self assert: (stream contents second at: 'tool_call_id') equals: '1'.
+]
+
+{ #category : 'running' }
 ChatPharoHistoryTest >> testChatMessagesOnOutputsRoleDictionaries [
 
         | stream |
