@@ -28,6 +28,14 @@ ChatPharoAgentTest >> testAgentConformsToAPI [
 ]
 
 { #category : 'running' }
+ChatPharoAgentTest >> testBrowserSystemPromptSetterGetter [
+
+        self assert: agent browserSystemPrompt equals: agent class defaultBrowserSystemPrompt.
+        agent browserSystemPrompt: 'browser prompt'.
+        self assert: agent browserSystemPrompt equals: 'browser prompt'.
+]
+
+{ #category : 'running' }
 ChatPharoAgentTest >> testConfigurationErrorMessage [
 
         self
