@@ -114,6 +114,18 @@ ChatPharoSettingsPersistenceTest >> testMaximumIterationsPersistence [
 ]
 
 { #category : 'running' }
+ChatPharoSettingsPersistenceTest >> testResetDefaultRemovesSavedFile [
+
+    | path |
+    ChatPharoSettings setDefault: settings.
+    ChatPharoSettings saveDefault.
+    path := FileLocator imageDirectory / 'chatpharo-settings.ston'.
+    self assert: path exists.
+    ChatPharoSettings resetDefault.
+    self deny: path exists.
+]
+
+{ #category : 'running' }
 ChatPharoSettingsPersistenceTest >> testSystemPromptPersistence [ 
 
     | loaded |
