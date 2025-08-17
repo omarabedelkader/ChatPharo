@@ -75,10 +75,12 @@ ChatPharoSettings class >> loadOrNew [
 { #category : 'accessing' }
 ChatPharoSettings class >> resetDefault [
 
-	<script>
-	Default := nil.
-	'chatpharo-settings.ston' asFileReference deleteIfAbsent: [ "do nothing" ].
-	^self
+        <script>
+        | path |
+        Default := nil.
+        path := FileLocator imageDirectory / 'chatpharo-settings.ston'.
+        path deleteIfAbsent: [ ].
+        ^ self
 ]
 
 { #category : 'accessing' }
