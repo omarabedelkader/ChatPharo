@@ -64,6 +64,39 @@ ChatPharoBrowserEnvironmentTest >> testGetClassCommentsIncludesKey [
 ]
 
 { #category : 'running' }
+ChatPharoBrowserEnvironmentTest >> testGetClassDefinitionsIncludesSuperclassAndPackage [ 
+
+    | reply def |
+    reply := env applyFunctionGetClassDefinitions:
+                (Dictionary with: 'classes' -> (Array with: 'ChatPharoChat')).
+    def := (reply at: 'definition_per_class') at: 'ChatPharoChat'.
+    self assert: (def at: 'superclass') equals: 'Object'.
+    self assert: (def at: 'package') equals: 'AI-ChatPharo'.
+
+]
+
+{ #category : 'running' }
+ChatPharoBrowserEnvironmentTest >> testGetClassMethodsSelectorsOnly [
+
+    | reply methods |
+    reply := env applyFunctionGetClassMethods:
+                (Dictionary with: 'classes' -> (Array with: 'ChatPharoChat') with: 'selectors_only' -> true).
+    methods := ((reply at: 'selectors_per_protocol_per_side_per_class')
+                at: 'ChatPharoChat') at: 'instance'.
+    self assert: methods notEmpty.
+]
+
+{ #category : 'running' }
+ChatPharoBrowserEnvironmentTest >> testGetClassSubclassesEmptyForLeafClass [
+
+    | reply subclasses |
+    reply := env applyFunctionGetClassSubclasses:
+                (Dictionary with: 'classes' -> (Array with: 'ChatPharoChat')).
+    subclasses := (reply at: 'subclasses_per_class') at: 'ChatPharoChat'.
+    self assert: subclasses isEmpty.
+]
+
+{ #category : 'running' }
 ChatPharoBrowserEnvironmentTest >> testGetPackagesIncludesSelfPackage [ 
 
    | reply |
