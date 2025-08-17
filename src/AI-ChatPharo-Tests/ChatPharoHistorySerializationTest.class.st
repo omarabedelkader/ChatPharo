@@ -45,3 +45,14 @@ ChatPharoHistorySerializationTest >> testStonRoundTripPreservesMessages [
     self assert: (restored messages collect: #role) equals: (history messages collect: #role).
     self assert: (restored messages collect: #content) equals: (history messages collect: #content).
 ]
+
+{ #category : 'running' }
+ChatPharoHistorySerializationTest >> testStonRoundTripPreservesToolCalls [
+    | call ston restored |
+    call := ChatPharoHistorySaverToolCall id: '1' functionName: 'fn' arguments: '{}' content: 'out'.
+    history addMessage: (ChatPharoHistoryMessage role: 'assistant' content: 'result' toolCalls: { call }).
+    ston := STON toString: history.
+    restored := STON fromString: ston.
+    self assert: (restored messages first toolCalls first id) equals: '1'.
+    self assert: (restored messages first toolCalls first functionName) equals: 'fn'.
+]
