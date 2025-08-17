@@ -46,12 +46,32 @@ ChatPharoHistoryMessageTest >> testChatMessagesOnIncludesToolCalls [
 ]
 
 { #category : 'running' }
+ChatPharoHistoryMessageTest >> testChatMessagesOnOmitsContentWhenNil [
+
+    | stream |
+    msg content: nil.
+    stream := Array new writeStream.
+    msg chatMessagesOn: stream.
+    self deny: ((stream contents first) includesKey: 'content').
+]
+
+{ #category : 'running' }
 ChatPharoHistoryMessageTest >> testHistoryStringOnFormatsCorrectly [ 
 
         | strm |
         strm := String new writeStream.
         msg historyStringOn: strm.
         self assert: strm contents equals: 'user: hi' , String cr.
+]
+
+{ #category : 'running' }
+ChatPharoHistoryMessageTest >> testHistoryStringOnHandlesNilContent [
+
+    | strm |
+    msg content: nil.
+    strm := String new writeStream.
+    msg historyStringOn: strm.
+    self assert: strm contents equals: 'user: ' , String cr.
 ]
 
 { #category : 'running' }
