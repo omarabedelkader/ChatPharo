@@ -82,6 +82,24 @@ ChatPharoSettingsTest >> testCacheEnabledToggle [
 ]
 
 { #category : 'tests' }
+ChatPharoSettingsTest >> testEnableBrowserToolDoesNotDuplicate [
+
+    | name count |
+    name := settings browserToolsEnabled anyOne.
+    count := settings browserToolsEnabled occurrencesOf: name.
+    settings enableBrowserTool: name.
+    self assert: (settings browserToolsEnabled occurrencesOf: name) equals: count.
+]
+
+{ #category : 'tests' }
+ChatPharoSettingsTest >> testEnableBrowserToolResetsMaximumIterations [
+
+    settings maximumIterations: 10.
+    settings enableBrowserTool: settings browserToolsEnabled anyOne.
+    self assert: settings maximumIterations equals: 3.
+]
+
+{ #category : 'tests' }
 ChatPharoSettingsTest >> testEnableDisableBrowserTool [ 
 
         | name |
