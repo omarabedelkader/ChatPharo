@@ -24,7 +24,7 @@ ChatPharoMethodBrowser class >> tabOrder [
 { #category : 'initialization' }
 ChatPharoMethodBrowser >> defaultTitle [
 
-	^ methodName
+	^ methodName ifNil: [ 'No method selected' ]
 ]
 
 { #category : 'accessing' }
@@ -57,5 +57,7 @@ ChatPharoMethodBrowser >> updateAgent [
 ChatPharoMethodBrowser >> updateAgentMethodName [
 
 	(chat notNil and: [ chat agent respondsTo: #methodName: ]) ifTrue: [
-		chat agent methodName: methodName ].
+        methodName ifNotNil: [
+            chat agent methodName: methodName ]
+    ].
 ]
