@@ -54,7 +54,7 @@ ChatPharoOllamaSettingsPresenter >> defaultLayout [
 		              expand: false;
 		              add: installInput expand: true;
 		              add: installButton expand: false;
-		              "add: deleteButton expand: false;"
+		              add: deleteButton expand: false;
 		              yourself.
 
 	hostRow := SpBoxLayout newHorizontal
@@ -147,16 +147,31 @@ ChatPharoOllamaSettingsPresenter >> initializePresenters [
 								                 'Model ' , installInput text , ' not found.' ] ];
 		                 yourself.
 	deleteButton := self newButton
-		                label: 'Delete';
-		                icon: (self iconNamed: #delete);
-		                action: [
-						(model class isValidModel: installInput text)
-							ifTrue: [
-								model class deleteModel: installInput text.
-								self refreshModels ]
-							ifFalse: [
-								self inform: 'Model ' , installInput text , ' not found.' ] ];
-		                yourself.
+				label: 'Delete';
+				icon: (self iconNamed: #delete);
+				action: [
+					installInput text isEmptyOrNil
+						ifTrue: [
+							self inform: 'Please enter the model name to delete.'
+						]
+						ifFalse: [
+							UIManager default defer: [
+								(Delay forMilliseconds: 200) wait. "optional delay"
+								[
+									| result |
+									result := model class deleteModel: installInput text.
+									self refreshModels.
+									installInput text: ''.
+									result
+										ifTrue: [ self inform: 'Model ', installInput text, ' deleted successfully.' ]
+										ifFalse: [ self inform: 'Failed to delete model: ', installInput text ].
+								] on: Error do: [ :ex |
+									self inform: 'Error: ', ex messageText.
+								].
+							].
+						].
+				];
+				yourself.
 	        testButton := self newButton
                                label: 'Test Connection';
                                icon: (self iconNamed: #glamorousGo);
