@@ -103,7 +103,7 @@ ChatPharoMistralAgent >> initialize [
         host := 'api.mistral.ai'.
         apiKey := ''.
         model := ''.
-        temperature := 0.7
+        temperature := nil
 ]
 
 { #category : 'accessing' }

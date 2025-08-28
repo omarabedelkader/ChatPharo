@@ -109,17 +109,12 @@ ChatPharoMistralSettingsPresenter >> initializePresenters [
 	modelDrop whenSelectedItemChangedDo: [ :m | model model: m ].
 	
 	temperatureInput := self newTextInput
-		                    placeholder: '0.0';
-		                    text: model temperature asString;
-		                    yourself.
-		
+		placeholder: '0.0 (leave empty for default)';
+		text: (model temperature ifNil: [''] ifNotNil: [model temperature asString]);
+		yourself.
+
 	temperatureInput whenTextChangedDo: [ :text |
-		| num |
-		[ num := text asNumber ]
-			on: Error do: [ ^ self inform: 'Invalid temperature value' ].
-		(num < 0.0 or: [ num > 1.0 ])
-			ifTrue: [ ^ self inform: 'Temperature must be between 0.0 and 1.0' ].
-		model temperature: num
+		self updateTemperatureFrom: text
 	].
 
 	testButton := self newButton
@@ -127,6 +122,28 @@ ChatPharoMistralSettingsPresenter >> initializePresenters [
 		              icon: (self iconNamed: #glamorousGo);
 		              action: [ self testConnection ];
 		              yourself
+]
+
+{ #category : 'helper' }
+ChatPharoMistralSettingsPresenter >> updateTemperatureFrom: text [
+
+	| s num |
+	s := (text ifNil: ['']) asString trimBoth.
+
+	s isEmpty ifTrue: [
+		model temperature: nil.
+		^ self
+	].
+
+	[ num := Number readFrom: s readStream ]
+		on: Error do: [
+			self inform: 'Temperature must be a number between 0.0 and 1.0 (or leave empty).'.
+			^ self
+		].
+
+	(num < 0.0 or: [ num > 1.0 ])
+		ifTrue: [ self inform: 'Temperature must be between 0.0 and 1.0 (or leave empty).' ]
+		ifFalse: [ model temperature: num asFloat ].
 ]
 
 { #category : 'accessing' }
