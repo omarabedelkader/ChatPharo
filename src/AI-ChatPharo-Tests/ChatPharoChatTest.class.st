@@ -139,6 +139,19 @@ ChatPharoChatTest >> testExportAsJsonIncludesMessages [
 ]
 
 { #category : 'running' }
+ChatPharoChatTest >> testHandlesManySequentialMessages [
+
+    1 to: 20 do: [ :i |
+        chat sendMessage: 'msg', i asString.
+        [ (chat instVarNamed: #promptProcess) isTerminated ]
+            whileFalse: [ (Delay forMilliseconds: 10) wait ].
+    ].
+
+    self assert: chat messages size equals: 20.
+    self assert: mockApi history size equals: 20.
+]
+
+{ #category : 'running' }
 ChatPharoChatTest >> testManyChatsRemainIsolated [
 
 	| chats |
@@ -201,6 +214,19 @@ ChatPharoChatTest >> testMultipleConcurrentMessagesHandledSafely [
 ]
 
 { #category : 'running' }
+ChatPharoChatTest >> testNewAgentInheritsExistingHistory [
+
+    | secondAgent hist |
+    chat sendMessage: 'hi'.
+    chat waitForPromptProcessDone.
+    hist := chat instVarNamed: #history.
+    secondAgent := ChatPharoNullAgent new.
+    chat agent: secondAgent.
+    chat agent.
+    self assert: secondAgent history == hist.
+]
+
+{ #category : 'running' }
 ChatPharoChatTest >> testNullAgentSetsAssistantBotLabel [ 
     | nullAgent |
     nullAgent := ChatPharoNullAgent new.
@@ -212,6 +238,27 @@ ChatPharoChatTest >> testNullAgentSetsAssistantBotLabel [
     ] whileFalse: [ (Delay forMilliseconds: 10) wait ].
 
     self assert: (chat messages last assistantLabel) equals: 'Assistant bot'.
+]
+
+{ #category : 'running' }
+ChatPharoChatTest >> testRecoveryAfterFailureAllowsSubsequentMessages [
+
+    | failingChat |
+    failingChat := ChatPharoChat new agent: ChatPharoNullAgent new.
+
+    failingChat sendMessage: 'fail'.
+
+    [ (failingChat instVarNamed: #promptProcess) isTerminated ]
+        whileFalse: [ (Delay forMilliseconds: 10) wait ].
+
+    failingChat agent: ChatPharoMockAgent new.
+    failingChat sendMessage: 'ok'.
+
+    [ (failingChat instVarNamed: #promptProcess) isTerminated ]
+        whileFalse: [ (Delay forMilliseconds: 10) wait ].
+
+    self assert: failingChat messages size equals: 2.
+    self assert: failingChat messages last answer equals: '<<MOCK-DEFAULT-REPLY to: ok>>'.
 ]
 
 { #category : 'running' }
