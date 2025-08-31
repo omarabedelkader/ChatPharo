@@ -75,7 +75,7 @@ ChatPharoMessagePresenter >> initializePresenters [
 	badFeedbackButton := self newButton
 		                     label: 'Bad';
 		                     help: 'Mark code as invalid';
-		                     yourself
+		                     yourself.
 	copyButton := self newButton
 					label: 'Copy';
 					help: 'Copy answer to clipboard';
