@@ -38,12 +38,12 @@ ChatPharoMessagePresenter >> defaultLayout [
 	| layout answerWithCopy |
 	
 	answerWithCopy := SpOverlayLayout new
-		add: answerPresenter;
-		add: (SpBoxLayout newHorizontal
-				add: SpNullPresenter new expand: true;
-				add: copyButton expand: false;
-				yourself)
-			alignTop;
+		with: answerPresenter;
+		overlay: (SpBoxLayout newHorizontal
+					add: SpNullPresenter new expand: true;
+					add: copyButton expand: false;
+					yourself)
+			alignment: #topRight;
 		yourself.
 	
 	layout := SpBoxLayout newVertical
