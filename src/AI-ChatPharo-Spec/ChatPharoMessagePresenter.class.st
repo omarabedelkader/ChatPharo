@@ -80,9 +80,9 @@ ChatPharoMessagePresenter >> initializePresenters [
 						label: 'Copy';
 						help: 'Copy answer to clipboard';
 						action: [ 
-						Clipboard clipboardText: model answer ifNil: [ '' ].
-						UIManager default inform: 'Copied to clipboard' 
-						].
+							Clipboard clipboardText: (model answer ifNil: [ '' ]).
+							UIManager default inform: 'Copied to clipboard'
+						];
 						yourself.
 ]
 
