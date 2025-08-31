@@ -16,7 +16,8 @@ Class {
 		'contentPresenter',
 		'answerPresenter',
 		'goodFeedbackButton',
-		'badFeedbackButton'
+		'badFeedbackButton',
+		'copyButton'
 	],
 	#category : 'AI-ChatPharo-Spec-Core',
 	#package : 'AI-ChatPharo-Spec',
@@ -39,7 +40,11 @@ ChatPharoMessagePresenter >> defaultLayout [
 		add: 'User' expand: false;
 		add: contentPresenter expand: true;
 		add: model assistantLabel expand: false;
-		add: answerPresenter expand: true.
+		add: (SpBoxLayout newHorizontal
+            spacing: 5;
+            add: answerPresenter expand: true;
+            add: copyButton expand: false;
+            yourself).
 
 	ChatPharoSettings default feedbackButtonsEnabled ifTrue: [
 		layout add: (SpBoxLayout newHorizontal
@@ -71,6 +76,11 @@ ChatPharoMessagePresenter >> initializePresenters [
 		                     label: 'Bad';
 		                     help: 'Mark code as invalid';
 		                     yourself
+	copyButton := self newButton
+					label: 'Copy';
+					help: 'Copy answer to clipboard';
+					action: [ Clipboard clipboardText: model answer ifNil: [ '' ] ];
+					yourself
 ]
 
 { #category : 'layout' }
