@@ -35,16 +35,22 @@ ChatPharoMessagePresenter >> connectPresenters [
 
 { #category : 'layout' }
 ChatPharoMessagePresenter >> defaultLayout [
-	| layout |
+	| layout answerWithCopy |
+	
+	answerWithCopy := SpOverlayLayout new
+		add: answerPresenter;
+		add: (SpBoxLayout newHorizontal
+				add: SpNullPresenter new expand: true;
+				add: copyButton expand: false;
+				yourself)
+			alignTop;
+		yourself.
+	
 	layout := SpBoxLayout newVertical
 		add: 'User' expand: false;
 		add: contentPresenter expand: true;
 		add: model assistantLabel expand: false;
-		add: (SpBoxLayout newHorizontal
-            spacing: 5;
-            add: answerPresenter expand: true;
-            add: copyButton expand: false;
-            yourself).
+		add: answerWithCopy expand: true.
 
 	ChatPharoSettings default feedbackButtonsEnabled ifTrue: [
 		layout add: (SpBoxLayout newHorizontal
