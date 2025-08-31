@@ -77,7 +77,7 @@ ChatPharoMessagePresenter >> initializePresenters [
 		                     help: 'Mark code as invalid';
 		                     yourself.
 	copyButton := self newButton
-						label: 'Copy';
+						icon: (self iconNamed: #smallCopy);
 						help: 'Copy answer to clipboard';
 						action: [ 
 							Clipboard clipboardText: (model answer ifNil: [ '' ]).
