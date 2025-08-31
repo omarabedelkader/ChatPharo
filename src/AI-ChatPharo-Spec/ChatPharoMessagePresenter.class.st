@@ -38,7 +38,7 @@ ChatPharoMessagePresenter >> defaultLayout [
 	| layout answerWithCopy |
 	
 	answerWithCopy := SpOverlayLayout new
-		with: answerPresenter;
+		base: answerPresenter;
 		overlay: (SpBoxLayout newHorizontal
 					add: SpNullPresenter new expand: true;
 					add: copyButton expand: false;
