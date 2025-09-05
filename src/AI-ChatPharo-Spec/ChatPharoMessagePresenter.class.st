@@ -29,7 +29,7 @@ ChatPharoMessagePresenter >> connectPresenters [
 
 	contentPresenter document: (Microdown parse: model content).
 	answerPresenter document: (Microdown parse: model answer).
-		goodFeedbackButton action: [ model feedback: true ].
+	goodFeedbackButton action: [ model feedback: true ].
 	badFeedbackButton action: [ model feedback: false ]
 ]
 
@@ -44,8 +44,9 @@ ChatPharoMessagePresenter >> defaultLayout [
             c vAlignStart;
               hAlignEnd ].
 
-    answerContainer whenMouseEnterDo: [ copyButton visible: true ].
-    answerContainer whenMouseLeaveDo: [ copyButton visible: false ].
+    answerContainer withEventsDo: [ :events |
+        events whenMouseEnterDo: [ copyButton visible: true ].
+        events whenMouseLeaveDo: [ copyButton visible: false ] ].
 
     layout := SpBoxLayout newVertical
         add: 'User' expand: false;
