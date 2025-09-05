@@ -33,16 +33,18 @@ ChatPharoMessagePresenter >> connectPresenters [
 	badFeedbackButton action: [ model feedback: false ]
 ]
 
+{ #category : 'layout' }
 ChatPharoMessagePresenter >> defaultLayout [
 	| layout answerWithCopy |
-
-	answerWithCopy := SpOverlayLayout new.
-	answerWithCopy
-		add: answerPresenter withConstraints: [ :c |
-			c alignTop; alignLeft; alignRight; alignBottom ].
-	answerWithCopy
-		add: copyButton withConstraints: [ :c |
-			c alignTop; alignRight ].
+	
+	answerWithCopy := SpOverlayLayout new
+		base: answerPresenter;
+		overlay: (SpBoxLayout newHorizontal
+					add: SpNullPresenter new expand: true;
+					add: copyButton expand: false;
+					yourself)
+			alignment: #topRight;
+		yourself.
 	
 	layout := SpBoxLayout newVertical
 		add: 'User' expand: false;
