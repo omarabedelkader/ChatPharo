@@ -94,11 +94,7 @@ ChatPharoMessagePresenter >> initializePresenters [
 						];
 						yourself.
 
-	copyButton
-		minWidth: 16;
-		minHeight: 16;
-		maxWidth: 20;
-		maxHeight: 20.
+	copyButton beTiny; beFlat.
 	copyButton visible: false.
 ]
 
