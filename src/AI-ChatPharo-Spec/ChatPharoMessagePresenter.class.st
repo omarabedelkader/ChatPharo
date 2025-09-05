@@ -42,7 +42,9 @@ ChatPharoMessagePresenter >> defaultLayout [
         child: answerPresenter;
         addOverlay: copyButton withConstraints: [ :c |
             c vAlignStart;
-              hAlignEnd ].
+              hAlignEnd;
+			  width: 20;
+          	  height: 20 ].
 
     answerPresenter eventHandler
 		whenMouseEnterDo: [ :evt | copyButton visible: true ];
@@ -94,7 +96,6 @@ ChatPharoMessagePresenter >> initializePresenters [
 						];
 						yourself.
 
-	copyButton beTiny; beFlat.
 	copyButton visible: false.
 ]
 
