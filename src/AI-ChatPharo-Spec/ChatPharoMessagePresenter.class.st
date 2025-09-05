@@ -91,8 +91,8 @@ ChatPharoMessagePresenter >> initializePresenters [
 						yourself.
 
 	copyButton visible: false.
-    answerPresenter whenMouseEnterDo: [ copyButton visible: true ].
-    answerPresenter whenMouseLeaveDo: [ copyButton visible: false ].
+    answerPresenter widget whenMouseEnter: [ copyButton visible: true ].
+    answerPresenter widget whenMouseLeave: [ copyButton visible: false ].
 ]
 
 { #category : 'layout' }
