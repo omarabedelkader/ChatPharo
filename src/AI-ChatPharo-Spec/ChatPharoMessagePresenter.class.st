@@ -35,20 +35,23 @@ ChatPharoMessagePresenter >> connectPresenters [
 
 { #category : 'layout' }
 ChatPharoMessagePresenter >> defaultLayout [
-    | layout answerWithCopy |
+    | layout answerContainer |
 
-    answerWithCopy := SpOverlayLayout new.
-    answerWithCopy
+    answerContainer := SpOverlayLayout new.
+    answerContainer
         child: answerPresenter;
         addOverlay: copyButton withConstraints: [ :c |
-            c vAlignStart;    
-            hAlignEnd ].      
+            c vAlignStart;
+              hAlignEnd ].
+
+    answerContainer whenMouseEnterDo: [ copyButton visible: true ].
+    answerContainer whenMouseLeaveDo: [ copyButton visible: false ].
 
     layout := SpBoxLayout newVertical
         add: 'User' expand: false;
         add: contentPresenter expand: true;
         add: model assistantLabel expand: false;
-        add: answerWithCopy expand: true.
+        add: answerContainer expand: true.
 
     ChatPharoSettings default feedbackButtonsEnabled ifTrue: [
         layout add: (SpBoxLayout newHorizontal
@@ -91,8 +94,6 @@ ChatPharoMessagePresenter >> initializePresenters [
 						yourself.
 
 	copyButton visible: false.
-    answerPresenter asMorph whenMouseEnter: [ copyButton visible: true ].
-    answerPresenter asMorph whenMouseLeave: [ copyButton visible: false ].
 ]
 
 { #category : 'layout' }
