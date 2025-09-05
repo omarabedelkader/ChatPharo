@@ -82,12 +82,17 @@ ChatPharoMessagePresenter >> initializePresenters [
 		                     yourself.
 	copyButton := self newButton
 						icon: (self iconNamed: #smallCopy);
+						label: '';
 						help: 'Copy answer to clipboard';
 						action: [ 
 							Clipboard clipboardText: (model answer ifNil: [ '' ]).
 							UIManager default inform: 'Copied to clipboard'
 						];
 						yourself.
+
+	copyButton visible: false.
+    answerPresenter whenMouseEnterDo: [ copyButton visible: true ].
+    answerPresenter whenMouseLeaveDo: [ copyButton visible: false ].
 ]
 
 { #category : 'layout' }
