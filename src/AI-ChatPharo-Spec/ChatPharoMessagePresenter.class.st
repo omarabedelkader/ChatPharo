@@ -33,32 +33,32 @@ ChatPharoMessagePresenter >> connectPresenters [
 	badFeedbackButton action: [ model feedback: false ]
 ]
 
+{ #category : 'layout' }
 ChatPharoMessagePresenter >> defaultLayout [
-	| layout answerWithCopy |
+    | layout answerWithCopy |
 
-	answerWithCopy := SpOverlayLayout new.
-	answerWithCopy
-		add: answerPresenter withConstraints: [ :c |
-			c alignTop; alignLeft; alignRight; alignBottom ].
-	answerWithCopy
-		add: copyButton withConstraints: [ :c |
-			c alignTop; alignRight ].
+    answerWithCopy := SpOverlayLayout new.
+    answerWithCopy
+        child: answerPresenter;
+        addOverlay: copyButton withConstraints: [ :c |
+            c vAlignStart;    
+            hAlignEnd ].      
 
-	layout := SpBoxLayout newVertical
-		add: 'User' expand: false;
-		add: contentPresenter expand: true;
-		add: model assistantLabel expand: false;
-		add: answerWithCopy expand: true.
+    layout := SpBoxLayout newVertical
+        add: 'User' expand: false;
+        add: contentPresenter expand: true;
+        add: model assistantLabel expand: false;
+        add: answerWithCopy expand: true.
 
-	ChatPharoSettings default feedbackButtonsEnabled ifTrue: [
-		layout add: (SpBoxLayout newHorizontal
-			spacing: 5;
-			add: goodFeedbackButton;
-			add: badFeedbackButton;
-			yourself) expand: false
-	].
+    ChatPharoSettings default feedbackButtonsEnabled ifTrue: [
+        layout add: (SpBoxLayout newHorizontal
+            spacing: 5;
+            add: goodFeedbackButton;
+            add: badFeedbackButton;
+            yourself) expand: false
+    ].
 
-	^ layout yourself
+    ^ layout yourself
 ]
 
 { #category : 'accessing' }
