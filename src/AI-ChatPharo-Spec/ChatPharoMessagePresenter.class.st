@@ -44,9 +44,9 @@ ChatPharoMessagePresenter >> defaultLayout [
             c vAlignStart;
               hAlignEnd ].
 
-    answerContainer withEventsDo: [ :events |
-        events whenMouseEnterDo: [ copyButton visible: true ].
-        events whenMouseLeaveDo: [ copyButton visible: false ] ].
+    answerPresenter eventHandler
+        whenMouseEnterDo: [ copyButton visible: true ];
+        whenMouseLeaveDo: [ copyButton visible: false ].
 
     layout := SpBoxLayout newVertical
         add: 'User' expand: false;
