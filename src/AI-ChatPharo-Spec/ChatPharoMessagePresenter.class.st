@@ -16,7 +16,8 @@ Class {
 		'contentPresenter',
 		'answerPresenter',
 		'goodFeedbackButton',
-		'badFeedbackButton'
+		'badFeedbackButton',
+		'copyButton'
 	],
 	#category : 'AI-ChatPharo-Spec-Core',
 	#package : 'AI-ChatPharo-Spec',
@@ -28,28 +29,40 @@ ChatPharoMessagePresenter >> connectPresenters [
 
 	contentPresenter document: (Microdown parse: model content).
 	answerPresenter document: (Microdown parse: model answer).
-		goodFeedbackButton action: [ model feedback: true ].
+	goodFeedbackButton action: [ model feedback: true ].
 	badFeedbackButton action: [ model feedback: false ]
 ]
 
 { #category : 'layout' }
 ChatPharoMessagePresenter >> defaultLayout [
-	| layout |
-	layout := SpBoxLayout newVertical
-		add: 'User' expand: false;
-		add: contentPresenter expand: true;
-		add: model assistantLabel expand: false;
-		add: answerPresenter expand: true.
+    | layout answerContainer |
 
-	ChatPharoSettings default feedbackButtonsEnabled ifTrue: [
-		layout add: (SpBoxLayout newHorizontal
-			spacing: 5;
-			add: goodFeedbackButton;
-			add: badFeedbackButton;
-			yourself) expand: false
-	].
+    answerContainer := SpOverlayLayout new.
+    answerContainer
+        child: answerPresenter;
+        addOverlay: copyButton withConstraints: [ :c |
+            c vAlignStart;
+              hAlignEnd ].
 
-	^ layout yourself
+    answerPresenter eventHandler
+		whenMouseEnterDo: [ :evt | copyButton visible: true ];
+		whenMouseLeaveDo: [ :evt | copyButton visible: false ].
+
+    layout := SpBoxLayout newVertical
+        add: 'User' expand: false;
+        add: contentPresenter expand: true;
+        add: model assistantLabel expand: false;
+        add: answerContainer expand: true.
+
+    ChatPharoSettings default feedbackButtonsEnabled ifTrue: [
+        layout add: (SpBoxLayout newHorizontal
+            spacing: 5;
+            add: goodFeedbackButton;
+            add: badFeedbackButton;
+            yourself) expand: false
+    ].
+
+    ^ layout yourself
 ]
 
 { #category : 'accessing' }
@@ -70,7 +83,18 @@ ChatPharoMessagePresenter >> initializePresenters [
 	badFeedbackButton := self newButton
 		                     label: 'Bad';
 		                     help: 'Mark code as invalid';
-		                     yourself
+		                     yourself.
+	copyButton := self newButton
+						icon: (self iconNamed: #smallCopy);
+						label: '';
+						help: 'Copy answer to clipboard';
+						action: [ 
+							Clipboard clipboardText: (model answer ifNil: [ '' ]).
+							UIManager default inform: 'Copied to clipboard'
+						];
+						yourself.
+
+	copyButton visible: false.
 ]
 
 { #category : 'layout' }
