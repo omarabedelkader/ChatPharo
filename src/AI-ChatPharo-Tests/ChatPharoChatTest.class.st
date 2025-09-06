@@ -139,6 +139,25 @@ ChatPharoChatTest >> testExportAsJsonIncludesMessages [
 ]
 
 { #category : 'running' }
+ChatPharoChatTest >> testExportAsJsonIncludesToolCalls [
+
+    | json data call hist |
+    call := ChatPharoHistorySaverToolCall
+        id: '1'
+        functionName: 'fn'
+        arguments: '{}'
+        content: 'out'.
+    hist := chat instVarNamed: #history.
+    hist addMessage: (ChatPharoHistoryMessage
+        role: 'assistant'
+        content: nil
+        toolCalls: { call }).
+    json := chat exportAsJson.
+    data := STONJSON fromString: json.
+    self assert: ((data first at: 'tool_calls') first at: 'id') equals: '1'.
+]
+
+{ #category : 'running' }
 ChatPharoChatTest >> testHandlesManySequentialMessages [
 
     1 to: 20 do: [ :i |
@@ -306,6 +325,18 @@ ChatPharoChatTest >> testToolExecutionCallbackTriggered [
     [ (chat instVarNamed: #promptProcess) isTerminated ] whileFalse: [ (Delay forMilliseconds: 10) wait ].
 
     self assert: count equals: 1.
+]
+
+{ #category : 'running' }
+ChatPharoChatTest >> testWelcomeMessageHasContentAndLabel [
+
+    | chatWithWelcome firstMessage |
+    ChatPharoSettings default welcomeMessageEnabled: true.
+    chatWithWelcome := ChatPharoChat new agent: ChatPharoMockAgent new.
+    self assert: chatWithWelcome messages size equals: 1.
+    firstMessage := chatWithWelcome messages first.
+    self assert: (firstMessage answer beginsWith: 'Welcome to ChatPharo!').
+    self assert: firstMessage assistantLabel equals: 'ChatPharo'.
 ]
 
 { #category : 'running' }

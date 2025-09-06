@@ -65,6 +65,12 @@ ChatPharoHistoryTest >> testAddUserSetsRole [
 ]
 
 { #category : 'running' }
+ChatPharoHistoryTest >> testAsPromptPrefixEmptyWhenNoMessages [
+
+    self assert: history asPromptPrefix equals: String empty.
+]
+
+{ #category : 'running' }
 ChatPharoHistoryTest >> testAsPromptPrefixIncludesBothMessages [ 
 
         history addUser: 'hello'.
