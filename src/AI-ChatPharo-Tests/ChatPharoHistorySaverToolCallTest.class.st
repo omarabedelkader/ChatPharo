@@ -60,6 +60,34 @@ ChatPharoHistorySaverToolCallTest >> testOpenAIChatToolCall [
 ]
 
 { #category : 'tests' }
+ChatPharoHistorySaverToolCallTest >> testOpenAIChatToolCallDefaultsEmptyArgumentsWhenNil [
+
+    | callWithoutArgs dict expected |
+    callWithoutArgs := ChatPharoHistorySaverToolCall
+        id: '1'
+        functionName: 'fn'
+        arguments: nil
+        content: 'c'.
+    dict := callWithoutArgs openAIChatToolCall.
+    expected := STONJSON toString: Dictionary new.
+    self assert: (dict at: 'function' at: 'arguments') equals: expected.
+]
+
+{ #category : 'tests' }
+ChatPharoHistorySaverToolCallTest >> testOpenAIChatToolCallSerializesDictionaryArguments [
+
+    | callWithDict dict expected |
+    callWithDict := ChatPharoHistorySaverToolCall
+        id: '1'
+        functionName: 'fn'
+        arguments: (Dictionary with: 'a' -> 1)
+        content: 'c'.
+    dict := callWithDict openAIChatToolCall.
+    expected := STONJSON toString: (Dictionary with: 'a' -> 1).
+    self assert: (dict at: 'function' at: 'arguments') equals: expected.
+]
+
+{ #category : 'tests' }
 ChatPharoHistorySaverToolCallTest >> testOpenAIChatToolMessage [ 
 
         | dict |
