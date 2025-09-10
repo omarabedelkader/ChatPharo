@@ -26,7 +26,8 @@ Class {
 		'onAnswerReceived',
 		'history',
 		'onToolExecution',
-		'cache'
+		'cache',
+        'onAnswerStarted'
 	],
 	#category : 'AI-ChatPharo',
 	#package : 'AI-ChatPharo'
@@ -39,9 +40,27 @@ ChatPharoChat >> addAssistantMessage: answerText [
     label := (self agent isKindOf: ChatPharoNullAgent)
                 ifTrue: [ 'Assistant bot' ]
                 ifFalse: [ 'Assistant' ].
-    messages last
-        answer: answerText;
-        assistantLabel: label
+    (messages isEmpty)
+        ifTrue: [
+            messages add: (ChatPharoMessage new
+                         answer: answerText;
+                         assistantLabel: label;
+                         yourself)
+        ]
+        ifFalse: [
+            messages last
+                answer: answerText;
+                assistantLabel: label
+        ].
+]
+
+{ #category : 'running' }
+ChatPharoChat >> addErrorMessage: aString [
+	history addAssistant: aString.
+	messages add: (ChatPharoMessage new
+			 content: aString;
+			 assistantLabel: 'Error';
+			 yourself)
 ]
 
 { #category : 'running' }
@@ -74,19 +93,27 @@ ChatPharoChat >> agent [
 { #category : 'accessing' }
 ChatPharoChat >> agent: anObject [
 
-	agent := anObject
+	agent := anObject.
+    (agent respondsTo: #history:) ifTrue: [ agent history: history ].
 ]
 
 { #category : 'running' }
 ChatPharoChat >> cancelMessage [
-
-	promptProcess terminate
+    promptProcess ifNotNil: [
+        [ promptProcess terminate ] on: Error do: [ :ex | "ignore termination errors" ].
+        promptProcess := nil.
+    ].
 ]
 
 { #category : 'running' }
 ChatPharoChat >> clearCache [
 
 	cache removeAll
+]
+
+{ #category : 'running' }
+ChatPharoChat >> clearCacheFor: aText [
+	cache removeKey: aText ifAbsent: [ ].
 ]
 
 { #category : 'running' }
@@ -136,6 +163,8 @@ ChatPharoChat >> initialize [
 	history := ChatPharoHistory new.
 	messages := OrderedCollection new.
 	onToolExecution := nil.
+    onAnswerStarted := nil.
+	onAnswerReceived := nil.
 	cache := Dictionary new.
 	        (ChatPharoSettings default welcomeMessageEnabled)
                 ifTrue: [ self addWelcomeMessage ]
@@ -162,25 +191,57 @@ ChatPharoChat >> presenter [
 { #category : 'running' }
 ChatPharoChat >> sendMessage: aText [
 
-        | answer |
+    | answer assistantPlaceholder proc backend |
+    aText ifNil: [ ^ self ].
+    (aText isString and: [ aText isEmpty ]) ifTrue: [
         self addUserMessage: aText.
-        (cache includesKey: aText)
-                ifTrue: [
-                        answer := cache at: aText.
-                        self addAssistantMessage: answer.
-                        onAnswerReceived ifNotNil: [ :blk | blk value: messages last ]
-                ]
-                ifFalse: [
-                        promptProcess := [
-                                 | backend |
-                                 backend := self agent.
-                                 backend onToolExecution: [ self triggerToolExecution ].
-                                 backend promptPrefix: history asPromptPrefix.
-                                 answer := backend getResponseForPrompt: aText.
-                                 cache at: aText put: answer.
-                                 self addAssistantMessage: answer.
-                                 onAnswerReceived ifNotNil: [ :blk | blk value: messages last ] ] fork
-                ]
+        ^ self
+    ].
+
+    self addUserMessage: aText.
+
+    (cache includesKey: aText) ifTrue: [
+        answer := cache at: aText.
+        self addAssistantMessage: answer.
+        onAnswerReceived ifNotNil: [ :blk | blk value: messages last ].
+        ^ self
+    ].
+
+    assistantPlaceholder := ChatPharoMessage new.
+    assistantPlaceholder answer: ''.
+    assistantPlaceholder assistantLabel: ((self agent isKindOf: ChatPharoNullAgent) ifTrue: ['Assistant bot'] ifFalse: ['Assistant']).
+    messages add: assistantPlaceholder.
+
+    onAnswerStarted ifNotNil: [ :blk | blk value ].
+
+    proc := [
+        [ 
+            backend := self agent.
+            (backend isNil or: [ backend isKindOf: ChatPharoNullAgent ]) ifTrue: [
+                answer := 'No backend is configured'.
+            ] ifFalse: [
+                (backend respondsTo: #onToolExecution:) ifTrue: [
+                    backend onToolExecution: [ self triggerToolExecution ].
+                ].
+                backend promptPrefix: history asPromptPrefix.
+                answer := backend getResponseForPrompt: aText.
+            ].
+            cache at: aText put: answer.
+            history addAssistant: answer.
+            assistantPlaceholder answer: answer.
+            onAnswerReceived ifNotNil: [ :blk | blk value: assistantPlaceholder ].
+        ] on: Error do: [ :ex |
+            answer := 'An error occurred: ', ex messageText.
+            cache at: aText put: answer.
+            history addAssistant: answer.
+            assistantPlaceholder answer: answer.
+            assistantPlaceholder assistantLabel: 'Error'.
+            onAnswerReceived ifNotNil: [ :blk | blk value: assistantPlaceholder ].
+        ] ensure: [
+            promptProcess := nil
+        ].
+    ].
+    promptProcess := proc fork.
 ]
 
 { #category : 'running' }
@@ -191,15 +252,19 @@ ChatPharoChat >> triggerToolExecution [
 
 { #category : 'running' }
 ChatPharoChat >> waitForPromptProcessDone [ 
-    | promptProcess |
-promptProcess ifNotNil: [ promptProcess waitUntil: [ promptProcess isTerminated ] ].
-
+    
+    promptProcess ifNotNil: [ promptProcess waitUntil: [ promptProcess isTerminated ] ].
 ]
 
 { #category : 'running' }
 ChatPharoChat >> whenAnswerReceivedDo: aBlock [
 
 	onAnswerReceived := aBlock
+]
+
+{ #category : 'running' }
+ChatPharoChat >> whenAnswerStartedDo: aBlock [
+    onAnswerStarted := aBlock
 ]
 
 { #category : 'running' }
