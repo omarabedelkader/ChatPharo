@@ -13,11 +13,11 @@ Class {
 ChatPharoCodeMenu class >> menuOn: aBuilder [
 
 	<contextMenu>
-	<RubSmalltalkCodeMenu>
-	(aBuilder item: #'Ask ChatPharo' translated)
-		order: 9;
-		keyText: 'cp';
-		selector: #openChatCharo;
-		help: 'Get help from ChatPharo to understand the code';
-		icon: ChatPharoIcons chatPharoIcon
+        <RubSmalltalkCodeMenu>
+        (aBuilder item: #'Ask ChatPharo' translated)
+                order: 9;
+                keyText: 'cp';
+                selector: #openChatCharo;
+                help: 'Get help from ChatPharo to understand the code';
+                icon: ChatPharoIcons chatPharoIcon
 ]
