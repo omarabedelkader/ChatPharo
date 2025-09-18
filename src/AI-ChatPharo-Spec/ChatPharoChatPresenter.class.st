@@ -21,23 +21,46 @@ Class {
 { #category : 'initialization' }
 ChatPharoChatPresenter >> connectPresenters [
 
-        model messages do: [ :each |
-                messagesLayout add: each presenter withConstraints: [ :constraints | constraints height: (each height) * 2 ] ].
-        messageTextField whenSubmitDo: [ :text | self sendMessage ].
-        submitButton action: [ self sendMessage ].
-        cancelButton action: [
-                        model cancelMessage.
-                        messageTextField text: ''.
-                        submitButton enabled: true.
-			messageTextField enabled: true ].
-	inspectButton action: [ model inspect ].
-	model whenAnswerReceivedDo: [ :message |
-			messagesLayout add: message presenter withConstraints: [ :constraints | constraints height: (message height) * 2].
+	model messages do: [ :each |
+		messagesLayout add: each presenter withConstraints: [ :constraints | constraints height: each height * 2 ] ].
+	
+	messageTextField whenSubmitDo: [ :text | self sendMessage ].
+	
+	submitButton action: [ self sendMessage ].
+	
+	cancelButton action: [
+			ChatPharoLogger logFrontend: 'Cancel button pressed in chat tab' details: (Dictionary new
+					 at: 'chatId' put: model identityHash;
+					 yourself).
+			model cancelMessage.
 			messageTextField text: ''.
 			submitButton enabled: true.
 			messageTextField enabled: true ].
-	 model whenToolExecutionDo: [
-                        messageTextField text: 'Running, searching code and executing tools...' ]
+		
+		
+	inspectButton action: [
+			ChatPharoLogger logFrontend: 'Inspect chat requested' details: (Dictionary new
+					 at: 'chatId' put: model identityHash;
+					 yourself).
+			model inspect ].
+		
+	model whenAnswerReceivedDo: [ :message |
+			messagesLayout add: message presenter withConstraints: [ :constraints | constraints height: message height * 2 ].
+			messageTextField text: ''.
+			submitButton enabled: true.
+			messageTextField enabled: true.
+			ChatPharoLogger logFrontend: 'Assistant message rendered'
+                                details: (Dictionary new
+                                        at: 'chatId' put: model identityHash;
+                                        at: 'assistantLabel' put: message assistantLabel;
+                                        yourself) ].
+		
+		
+	model whenToolExecutionDo: [ messageTextField text: 'Running, searching code and executing tools...'.
+		ChatPharoLogger logFrontend: 'Tool execution feedback shown'
+                                details: (Dictionary new
+                                        at: 'chatId' put: model identityHash;
+                                        yourself) ]
 ]
 
 { #category : 'layout' }
@@ -101,10 +124,19 @@ ChatPharoChatPresenter >> sendMessage [
 
 	| text |
 	text := messageTextField text.
-	        (model agent isConfigured)
-                ifFalse: [
-                        self inform: model agent configurationErrorMessage.
-                        ^ self ].
+	model agent isConfigured ifFalse: [
+		ChatPharoLogger logFrontend: 'Send blocked - agent not configured'
+                                details: (Dictionary new
+                                        at: 'chatId' put: model identityHash;
+                                        at: 'agent' put: (ChatPharoLogger agentNameFor: model agent);
+                                        yourself).
+			self inform: model agent configurationErrorMessage.
+			^ self ].
+	ChatPharoLogger logFrontend: 'Chat tab send triggered' details: (Dictionary new
+			 at: 'chatId' put: model identityHash;
+			 at: 'text' put: text;
+			 at: 'agent' put: (ChatPharoLogger agentNameFor: model agent);
+			 yourself).
 	submitButton enabled: false.
 	messageTextField enabled: false.
 	messageTextField text: 'Running...'.

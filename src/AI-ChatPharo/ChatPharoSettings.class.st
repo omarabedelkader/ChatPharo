@@ -134,7 +134,11 @@ ChatPharoSettings >> browserAutoTabEnabled: aBoolean [
 
         browserAutoTabEnabled := aBoolean.
         self class setDefault: self.
-        self class saveDefault
+        self class saveDefault.
+        ChatPharoLogger logFrontend: 'Browser auto-tab toggled'
+                details: (Dictionary new
+                        at: 'enabled' put: aBoolean;
+                        yourself)
 ]
 
 { #category : 'initialization' }
@@ -146,9 +150,14 @@ ChatPharoSettings >> browserExtensionEnabled [
 { #category : 'initialization' }
 ChatPharoSettings >> browserExtensionEnabled: aBoolean [
 
-	browserExtensionEnabled := aBoolean.
-	        self class setDefault: self.
-        self class saveDefault
+	        browserExtensionEnabled := aBoolean.
+                self class setDefault: self.
+        self class saveDefault.
+        ChatPharoLogger logFrontend: 'Browser extension toggled'
+                details: (Dictionary new
+                        at: 'enabled' put: aBoolean;
+                        yourself)
+
 ]
 
 { #category : 'initialization' }
@@ -161,8 +170,12 @@ ChatPharoSettings >> browserToolsEnabled [
 ChatPharoSettings >> browserToolsEnabled: aCollection [
 
 	browserToolsEnabled := aCollection.
-        self class setDefault: self.
-        self class saveDefault
+	self class setDefault: self.
+	self class saveDefault.
+	        ChatPharoLogger logFrontend: 'Browser tools selection updated'
+                details: (Dictionary new
+                        at: 'tools' put: aCollection asArray printString;
+                        yourself)
 ]
 
 { #category : 'accessing' }
@@ -172,27 +185,42 @@ ChatPharoSettings >> cacheEnabled [
 
 { #category : 'accessing' }
 ChatPharoSettings >> cacheEnabled: aBoolean [
-    cacheEnabled := aBoolean.
-    self class setDefault: self.
-    self class saveDefault
+
+	cacheEnabled := aBoolean.
+	self class setDefault: self.
+	self class saveDefault.
+	    ChatPharoLogger logFrontend: 'Response cache toggled'
+            details: (Dictionary new
+                    at: 'enabled' put: aBoolean;
+                    yourself)
 ]
 
 { #category : 'initialization' }
 ChatPharoSettings >> disableBrowserTool: toolName [
 
-	browserToolsEnabled remove: toolName ifAbsent: [ ].
-	self class setDefault: self.
-	self class saveDefault
+        browserToolsEnabled remove: toolName ifAbsent: [ ].
+        self class setDefault: self.
+        self class saveDefault.
+        ChatPharoLogger logFrontend: 'Browser tool disabled'
+                details: (Dictionary new
+                        at: 'tool' put: toolName;
+                        at: 'remainingTools' put: browserToolsEnabled asArray printString;
+                        yourself)
+
 ]
 
 { #category : 'initialization' }
 ChatPharoSettings >> enableBrowserTool: toolName [
-
-	(browserToolsEnabled includes: toolName) ifFalse: [
-		browserToolsEnabled add: toolName ].
-	self class setDefault: self.
-	self class saveDefault.
-maximumIterations := 3
+        (browserToolsEnabled includes: toolName) ifFalse: [
+                browserToolsEnabled add: toolName ].
+        self class setDefault: self.
+        self class saveDefault.
+maximumIterations := 3.
+        ChatPharoLogger logFrontend: 'Browser tool enabled'
+                details: (Dictionary new
+                        at: 'tool' put: toolName;
+                        at: 'tools' put: browserToolsEnabled asArray printString;
+                        yourself)
 ]
 
 { #category : 'accessing' }
@@ -202,9 +230,14 @@ ChatPharoSettings >> feedbackButtonsEnabled [
 
 { #category : 'accessing' }
 ChatPharoSettings >> feedbackButtonsEnabled: aBoolean [
-	feedbackButtonsEnabled := aBoolean.
-	self class setDefault: self.
-	self class saveDefault
+
+        feedbackButtonsEnabled := aBoolean.
+        self class setDefault: self.
+        self class saveDefault.
+        ChatPharoLogger logFrontend: 'Feedback buttons toggled'
+                details: (Dictionary new
+                        at: 'enabled' put: aBoolean;
+                        yourself)
 ]
 
 { #category : 'initialization' }
@@ -217,10 +250,14 @@ ChatPharoSettings >> initialize [
 	cacheEnabled := true.
 	feedbackButtonsEnabled := true.
 	welcomeMessageEnabled := true.
-	browserToolsEnabled := (ChatPharoBrowserEnvironment new tools
-		                        collect: [ :t | t name ])
-		                       asOrderedCollection.
-	maximumIterations := 3
+        browserToolsEnabled := (ChatPharoBrowserEnvironment new tools
+                                        collect: [ :t | t name ])
+                                       asOrderedCollection.
+        maximumIterations := 3.
+        ChatPharoLogger logSystem: 'Settings initialized'
+                details: (Dictionary new
+                        at: 'defaultAgent' put: (ChatPharoLogger agentNameFor: agent);
+                        yourself)
 ]
 
 { #category : 'initialization' }
@@ -232,9 +269,13 @@ ChatPharoSettings >> maximumIterations [
 { #category : 'initialization' }
 ChatPharoSettings >> maximumIterations: aNumber [
 
-	maximumIterations := aNumber max: 1.
-	self class setDefault: self.
-	self class saveDefault
+        maximumIterations := aNumber max: 1.
+        self class setDefault: self.
+        self class saveDefault.
+        ChatPharoLogger logFrontend: 'Maximum iterations updated'
+                details: (Dictionary new
+                        at: 'value' put: maximumIterations;
+                        yourself)
 ]
 
 { #category : 'initialization' }
@@ -252,17 +293,26 @@ ChatPharoSettings >> presenter [
 { #category : 'initialization' }
 ChatPharoSettings >> useApi: anAgentClass [
 
-	agent := anAgentClass new.
-	self class setDefault: self.
-	self class saveDefault
+        agent := anAgentClass new.
+        self class setDefault: self.
+        self class saveDefault.
+        ChatPharoLogger logFrontend: 'Active agent changed'
+                details: (Dictionary new
+                        at: 'agent' put: (ChatPharoLogger agentNameFor: agent);
+                        yourself)
 ]
 
 { #category : 'initialization' }
 ChatPharoSettings >> useModel: aModelName [
 
-	agent model: aModelName.
-	self class setDefault: self. 
-	self class saveDefault
+        agent model: aModelName.
+        self class setDefault: self.
+        self class saveDefault.
+        ChatPharoLogger logFrontend: 'Model selection updated'
+                details: (Dictionary new
+                        at: 'agent' put: (ChatPharoLogger agentNameFor: agent);
+                        at: 'model' put: aModelName;
+                        yourself)
 ]
 
 { #category : 'accessing' }
@@ -272,9 +322,13 @@ ChatPharoSettings >> welcomeMessageEnabled [
 ]
 
 { #category : 'accessing' }
-ChatPharoSettings >> welcomeMessageEnabled: aBoolean [ 
+ChatPharoSettings >> welcomeMessageEnabled: aBoolean [
 
-       welcomeMessageEnabled := aBoolean.
-       self class setDefault: self.
-       self class saveDefault
+	welcomeMessageEnabled := aBoolean.
+	self class setDefault: self.
+	self class saveDefault.
+       ChatPharoLogger logFrontend: 'Welcome message toggled'
+               details: (Dictionary new
+                       at: 'enabled' put: aBoolean;
+                       yourself)
 ]

@@ -28,17 +28,26 @@ Class {
 { #category : 'context' }
 ChatPharo class >> ask: text [
 
-	  | chat agentCopy |
-        agentCopy := ChatPharoSettings default agent.
-        agentCopy := (agentCopy isKindOf: ChatPharoAgent)
-                        ifTrue: [ agentCopy copyForChat ]
-                        ifFalse: [ agentCopy ].
+	| chat agentCopy |
+	ChatPharoLogger logFrontend: 'Quick ask invoked'
+                details: (Dictionary new
+                        at: 'prompt' put: text;
+                        yourself).
+	agentCopy := ChatPharoSettings default agent.
+	agentCopy := (agentCopy isKindOf: ChatPharoAgent)
+		             ifTrue: [ agentCopy copyForChat ]
+		             ifFalse: [ agentCopy ].
 	chat := ChatPharoChat new
 		        agent: ChatPharoSettings default agent;
-			agent: agentCopy;
+		        agent: agentCopy;
 		        yourself.
 	chat presenter open.
-	text ifNotEmpty: [ chat sendMessage: text ]
+	text ifNotEmpty: [ chat sendMessage: text ].
+ChatPharoLogger logSystem: 'Quick ask completed'
+                details: (Dictionary new
+                        at: 'prompt' put: text;
+                        at: 'activeAgent' put: (ChatPharoLogger agentNameFor: agentCopy);
+                        yourself)
 ]
 
 { #category : 'accessing' }
@@ -60,22 +69,29 @@ ChatPharo >> initialize [
 
 	super initialize.
 	settings := ChatPharoSettings default.
-	settings agent systemPrompt isEmpty ifTrue: [
-                settings agent systemPrompt: ChatPharoAgent defaultSystemPrompt ].
-	chats := OrderedCollection new
+	settings agent systemPrompt isEmpty ifTrue: [ settings agent systemPrompt: ChatPharoAgent defaultSystemPrompt ].
+	chats := OrderedCollection new.
+	ChatPharoLogger logSystem: 'ChatPharo initialized' details: (Dictionary new
+			 at: 'defaultAgent' put: (ChatPharoLogger agentNameFor: settings agent);
+			 yourself)
 ]
 
 { #category : 'initialization' }
 ChatPharo >> newChat [
 
-	        | agentCopy |
-        agentCopy := self settings agent.
-        agentCopy := (agentCopy isKindOf: ChatPharoAgent)
-                        ifTrue: [ agentCopy copyForChat ]
-                        ifFalse: [ agentCopy ].
-        chats add: (ChatPharoChat new
-                agent: agentCopy;
-                yourself)
+	| agentCopy |
+	agentCopy := self settings agent.
+	agentCopy := (agentCopy isKindOf: ChatPharoAgent)
+		             ifTrue: [ agentCopy copyForChat ]
+		             ifFalse: [ agentCopy ].
+	chats add: (ChatPharoChat new
+			 agent: agentCopy;
+			 yourself).
+        ChatPharoLogger logFrontend: 'New chat session created'
+                details: (Dictionary new
+                        at: 'totalChats' put: chats size;
+                        at: 'agent' put: (ChatPharoLogger agentNameFor: agentCopy);
+                        yourself)
 ]
 
 { #category : 'initialization' }
@@ -85,16 +101,33 @@ ChatPharo >> presenter [
 ]
 
 { #category : 'accessing' }
-ChatPharo >> removeAllChats [ 
+ChatPharo >> removeAllChats [
 
-        chats do: [ :each | each clearChat ].
-        chats removeAll
+	| removed |
+	chats do: [ :each | each clearChat ].
+	        removed := chats size.
+        chats removeAll.
+        ChatPharoLogger logFrontend: 'All chats removed'
+                details: (Dictionary new
+                        at: 'removedCount' put: removed;
+                        yourself)
 ]
 
 { #category : 'accessing' }
 ChatPharo >> removeChatAt: anIndex [
 
-        chats removeAt: anIndex
+	        | removedChat agentName |
+        removedChat := chats at: anIndex ifAbsent: [ nil ].
+        chats removeAt: anIndex.
+        agentName := removedChat
+                ifNotNil: [ ChatPharoLogger agentNameFor: removedChat agent ]
+                ifNil: [ 'None' ].
+        ChatPharoLogger logFrontend: 'Chat removed'
+                details: (Dictionary new
+                        at: 'index' put: anIndex;
+                        at: 'remainingChats' put: chats size;
+                        at: 'agent' put: agentName;
+                        yourself)
 ]
 
 { #category : 'accessing' }

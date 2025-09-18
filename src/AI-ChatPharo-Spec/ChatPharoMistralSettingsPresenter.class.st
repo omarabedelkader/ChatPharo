@@ -124,28 +124,6 @@ ChatPharoMistralSettingsPresenter >> initializePresenters [
 		              yourself
 ]
 
-{ #category : 'helper' }
-ChatPharoMistralSettingsPresenter >> updateTemperatureFrom: text [
-
-	| s num |
-	s := (text ifNil: ['']) asString trimBoth.
-
-	s isEmpty ifTrue: [
-		model temperature: nil.
-		^ self
-	].
-
-	[ num := Number readFrom: s readStream ]
-		on: Error do: [
-			self inform: 'Temperature must be a number between 0.0 and 1.0 (or leave empty).'.
-			^ self
-		].
-
-	(num < 0.0 or: [ num > 1.0 ])
-		ifTrue: [ self inform: 'Temperature must be between 0.0 and 1.0 (or leave empty).' ]
-		ifFalse: [ model temperature: num asFloat ].
-]
-
 { #category : 'accessing' }
 ChatPharoMistralSettingsPresenter >> model [
 
@@ -217,4 +195,26 @@ ChatPharoMistralSettingsPresenter >> testConnection [
         (model testConnection)
                 ifTrue: [ self inform: 'Connection successful.' ]
                 ifFalse: [ self inform: 'Connection failed.' ]
+]
+
+{ #category : 'helper' }
+ChatPharoMistralSettingsPresenter >> updateTemperatureFrom: text [
+
+	| s num |
+	s := (text ifNil: ['']) asString trimBoth.
+
+	s isEmpty ifTrue: [
+		model temperature: nil.
+		^ self
+	].
+
+	[ num := Number readFrom: s readStream ]
+		on: Error do: [
+			self inform: 'Temperature must be a number between 0.0 and 1.0 (or leave empty).'.
+			^ self
+		].
+
+	(num < 0.0 or: [ num > 1.0 ])
+		ifTrue: [ self inform: 'Temperature must be between 0.0 and 1.0 (or leave empty).' ]
+		ifFalse: [ model temperature: num asFloat ].
 ]
