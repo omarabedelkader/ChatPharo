@@ -43,61 +43,97 @@ ChatPharoSettings class >> default [
 ]
 
 { #category : 'accessing' }
+ChatPharoSettings class >> legacySettingsFileReference [
+
+        ^ FileLocator imageDirectory / 'chatpharo-settings.ston'
+]
+
+{ #category : 'accessing' }
 ChatPharoSettings class >> loadOrNew [
 
 	| path |
-	path := FileLocator imageDirectory / 'chatpharo-settings.ston'.
-
+	self migrateLegacySettingsIfNecessary.
+	path := self settingsFileReference.
 	path exists ifFalse: [ ^ self new ].
 
 	^ path readStreamDo: [ :file |
 			  [
 				  | settings |
 				  settings := STON fromStream: file.
-				  settings browserExtensionEnabled ifNil: [
-					  settings browserExtensionEnabled: false ].
-				  settings browserAutoTabEnabled ifNil: [
-					  settings browserAutoTabEnabled: true ].
+				  settings browserExtensionEnabled ifNil: [ settings browserExtensionEnabled: false ].
+				  settings browserAutoTabEnabled ifNil: [ settings browserAutoTabEnabled: true ].
 				  settings browserToolsEnabled ifNil: [
-						  settings browserToolsEnabled:
-							  (ChatPharoBrowserEnvironment new tools collect: [ :t |
-								   t name ]) asOrderedCollection ].
+					  settings browserToolsEnabled: (ChatPharoBrowserEnvironment new tools collect: [ :t | t name ]) asOrderedCollection ].
 				  settings maximumIterations.
 				  settings cacheEnabled ifNil: [ settings cacheEnabled: true ].
-				  settings feedbackButtonsEnabled ifNil: [
-					  settings feedbackButtonsEnabled: true ].
-				settings welcomeMessageEnabled ifNil: [ settings welcomeMessageEnabled: true ].
+				  settings feedbackButtonsEnabled ifNil: [ settings feedbackButtonsEnabled: true ].
+				  settings welcomeMessageEnabled ifNil: [ settings welcomeMessageEnabled: true ].
 				  ^ settings ]
 				  on: Error
 				  do: [ ^ self new ] ]
 ]
 
 { #category : 'accessing' }
+ChatPharoSettings class >> migrateLegacySettingsIfNecessary [
+
+        | legacyPath newPath |
+        newPath := self settingsFileReference.
+        newPath exists ifTrue: [ ^ self ].
+        legacyPath := self legacySettingsFileReference.
+        legacyPath exists ifFalse: [ ^ self ].
+        newPath parent ensureCreateDirectory.
+        [ legacyPath moveTo: newPath ]
+                on: Error
+                do: [ legacyPath readStreamDo: [ :input |
+                                newPath writeStreamDo: [ :output |
+                                        output nextPutAll: input contents ] ].
+                        legacyPath deleteIfAbsent: [ ] ]
+]
+
+{ #category : 'accessing' }
 ChatPharoSettings class >> resetDefault [
 
-        <script>
-        | path |
-        Default := nil.
-        path := FileLocator imageDirectory / 'chatpharo-settings.ston'.
-        path deleteIfAbsent: [ ].
-        ^ self
+	<script>
+	| path directory |
+	Default := nil.
+	path := self settingsFileReference.
+	path deleteIfAbsent: [ ].
+	directory := path parent.
+        (directory exists and: [ directory isDirectory and: [ directory children isEmpty ]])
+                ifTrue: [ directory delete ].
+        self legacySettingsFileReference deleteIfAbsent: [ ].
+	^ self
 ]
 
 { #category : 'accessing' }
 ChatPharoSettings class >> saveDefault [
 
-	| path |
-	path := FileLocator imageDirectory / 'chatpharo-settings.ston'.
-	path deleteIfAbsent: [ ].
-	path writeStreamDo: [ :stream |
-		STON put: self default onStream: stream ].
-	^ self
+| path |
+        path := self settingsFileReference.
+        path parent ensureCreateDirectory.
+        path deleteIfAbsent: [ ].
+        path writeStreamDo: [ :stream |
+                STON put: self default onStream: stream ].
+        self legacySettingsFileReference deleteIfAbsent: [ ].
+        ^ self
 ]
 
 { #category : 'accessing' }
 ChatPharoSettings class >> setDefault: aSettings [ 
 
 	Default := aSettings
+]
+
+{ #category : 'accessing' }
+ChatPharoSettings class >> settingsDirectory [
+
+        ^ FileLocator imageDirectory / 'chatpahro'
+]
+
+{ #category : 'accessing' }
+ChatPharoSettings class >> settingsFileReference [
+
+        ^ self settingsDirectory / 'chatpharo-settings.ston'
 ]
 
 { #category : 'initialization' }

@@ -74,12 +74,13 @@ ChatPharoSettingsPersistenceTest >> testFeedbackButtonsEnabledPersistence [
 { #category : 'running' }
 ChatPharoSettingsPersistenceTest >> testLoadOrNewHandlesCorruptedFile [
 
-    | path loaded |
-    path := FileLocator imageDirectory / 'chatpharo-settings.ston'.
-    path writeStreamDo: [ :stream | stream nextPutAll: 'invalid' ].
-    loaded := ChatPharoSettings loadOrNew.
-    self assert: loaded class equals: ChatPharoSettings.
-    self assert: loaded agent class equals: ChatPharoNullAgent.
+	| path loaded |
+	path := ChatPharoSettings settingsFileReference.
+    path parent ensureCreateDirectory.
+	path writeStreamDo: [ :stream | stream nextPutAll: 'invalid' ].
+	loaded := ChatPharoSettings loadOrNew.
+	self assert: loaded class equals: ChatPharoSettings.
+	self assert: loaded agent class equals: ChatPharoNullAgent
 ]
 
 { #category : 'running' }
@@ -114,15 +115,32 @@ ChatPharoSettingsPersistenceTest >> testMaximumIterationsPersistence [
 ]
 
 { #category : 'running' }
+ChatPharoSettingsPersistenceTest >> testMigratesLegacySettingsFile [
+
+    | legacy newPath legacySettings loaded |
+    legacy := ChatPharoSettings legacySettingsFileReference.
+    newPath := ChatPharoSettings settingsFileReference.
+    newPath deleteIfAbsent: [ ].
+    legacy deleteIfAbsent: [ ].
+    legacySettings := ChatPharoSettings new.
+    legacySettings instVarNamed: 'maximumIterations' put: 42.
+    legacy writeStreamDo: [ :stream | STON put: legacySettings onStream: stream ].
+    loaded := ChatPharoSettings loadOrNew.
+    self assert: loaded maximumIterations equals: 42.
+    self assert: newPath exists.
+    self deny: legacy exists.
+]
+
+{ #category : 'running' }
 ChatPharoSettingsPersistenceTest >> testResetDefaultRemovesSavedFile [
 
-    | path |
-    ChatPharoSettings setDefault: settings.
-    ChatPharoSettings saveDefault.
-    path := FileLocator imageDirectory / 'chatpharo-settings.ston'.
-    self assert: path exists.
-    ChatPharoSettings resetDefault.
-    self deny: path exists.
+	| path |
+	ChatPharoSettings setDefault: settings.
+	ChatPharoSettings saveDefault.
+	path := ChatPharoSettings settingsFileReference.
+	self assert: path exists.
+	ChatPharoSettings resetDefault.
+	self deny: path exists
 ]
 
 { #category : 'running' }
