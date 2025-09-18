@@ -34,14 +34,22 @@ Class {
 
 { #category : 'running' }
 ChatPharoChat >> addAssistantMessage: answerText [
-    | label |
-    history addAssistant: answerText.
-    label := (self agent isKindOf: ChatPharoNullAgent)
-                ifTrue: [ 'Assistant bot' ]
-                ifFalse: [ 'Assistant' ].
-    messages last
-        answer: answerText;
-        assistantLabel: label
+
+	| label |
+	history addAssistant: answerText.
+	label := (self agent isKindOf: ChatPharoNullAgent)
+		         ifTrue: [ 'Assistant bot' ]
+		         ifFalse: [ 'Assistant' ].
+	messages last
+		answer: answerText;
+		assistantLabel: label.
+	    ChatPharoLogger logBackend: 'Assistant response recorded'
+            details: (Dictionary new
+                    at: 'chatId' put: self identityHash;
+                    at: 'agent' put: (ChatPharoLogger agentNameFor: self agent);
+                    at: 'assistantLabel' put: label;
+                    at: 'response' put: answerText;
+                    yourself)
 ]
 
 { #category : 'running' }
