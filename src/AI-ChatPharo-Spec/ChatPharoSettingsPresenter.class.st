@@ -21,6 +21,8 @@ Class {
 		'cacheCheckBox',
 		'loggingCheckBox',
 		'feedbackCheckBox',
+		'askFeatureCheckBox',
+		'codeFeatureCheckBox',
 		'welcomeMessageCheckBox'
 	],
 	#category : 'AI-ChatPharo-Spec-Core',
@@ -101,9 +103,19 @@ ChatPharoSettingsPresenter >> connectPresenters [
 	cacheCheckBox whenChangedDo: [ :enabled |
 			model cacheEnabled: enabled.
 			ChatPharoSettings saveDefault ].
-		
-		loggingCheckBox whenChangedDo: [ :enabled |
-                        model loggingEnabled: enabled ].
+
+	loggingCheckBox whenChangedDo: [ :enabled | model loggingEnabled: enabled ].
+	
+	
+	        askFeatureCheckBox := self
+                                    addCheckboxLabeled: 'Enable Ask button in editors'
+                                    value: [ model askFeatureEnabled ]
+                                    changeAction: [ :val | model askFeatureEnabled: val ].
+
+        codeFeatureCheckBox := self
+                                        addCheckboxLabeled: 'Enable Code button in editors'
+                                        value: [ model codeFeatureEnabled ]
+                                        changeAction: [ :val | model codeFeatureEnabled: val ].
 
 	feedbackCheckBox := self
 		                    addCheckboxLabeled: 'Enable Feedback Buttons'
@@ -253,8 +265,7 @@ ChatPharoSettingsPresenter >> newChatTab [
 	^ SpPresenter new
 		  layout: (SpBoxLayout newTopToBottom
 				   spacing: 12;
-				   "Add some vertical spacing between rows for better separation"
-				   add: (SpBoxLayout newHorizontal
+				   "Add some vertical spacing between rows for better separation"add: (SpBoxLayout newHorizontal
 						    spacing: 8;
 						    add: 'System:' expand: false;
 						    add: systemPromptInput;
@@ -268,9 +279,11 @@ ChatPharoSettingsPresenter >> newChatTab [
 				   expand: false;
 				   add: playgroundToolCheckBox expand: false;
 				   add: cacheCheckBox expand: false;
-				add: loggingCheckBox expand: false;
+				   add: loggingCheckBox expand: false;
+				add: askFeatureCheckBox expand: false;
+                                   add: codeFeatureCheckBox expand: false;
 				   add: feedbackCheckBox expand: false;
-				add: welcomeMessageCheckBox expand: false;
+				   add: welcomeMessageCheckBox expand: false;
 				   yourself);
 		  yourself
 ]

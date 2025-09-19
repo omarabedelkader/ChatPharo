@@ -27,7 +27,9 @@ Class {
 		'cacheEnabled',
 		'feedbackButtonsEnabled',
 		'welcomeMessageEnabled',
-		'loggingEnabled'
+		'loggingEnabled',
+		'askFeatureEnabled',
+		'codeFeatureEnabled'
 	],
 	#classInstVars : [
 		'Default'
@@ -69,7 +71,9 @@ ChatPharoSettings class >> loadOrNew [
 				  settings cacheEnabled ifNil: [ settings cacheEnabled: true ].
 				  settings feedbackButtonsEnabled ifNil: [ settings feedbackButtonsEnabled: true ].
 				  settings welcomeMessageEnabled ifNil: [ settings welcomeMessageEnabled: true ].
-				settings loggingEnabled.
+				  settings loggingEnabled.
+				settings askFeatureEnabled ifNil: [ settings askFeatureEnabled: true ].
+                                  settings codeFeatureEnabled ifNil: [ settings codeFeatureEnabled: true ].
 				  ^ settings ]
 				  on: Error
 				  do: [ ^ self new ] ]
@@ -144,6 +148,23 @@ ChatPharoSettings class >> settingsFileReference [
 ChatPharoSettings >> agent [
 
 	^ agent
+]
+
+{ #category : 'accessing' }
+ChatPharoSettings >> askFeatureEnabled [
+
+        ^ askFeatureEnabled ifNil: [ askFeatureEnabled := true ]
+]
+
+{ #category : 'accessing' }
+ChatPharoSettings >> askFeatureEnabled: aBoolean [ 
+        askFeatureEnabled := aBoolean.
+        self class setDefault: self.
+        self class saveDefault.
+        ChatPharoLogger logFrontend: 'Ask feature toggled'
+                details: (Dictionary new
+                        at: 'enabled' put: aBoolean;
+                        yourself)
 ]
 
 { #category : 'initialization' }
@@ -235,6 +256,23 @@ ChatPharoSettings >> cacheEnabled: aBoolean [
                     yourself)
 ]
 
+{ #category : 'accessing' }
+ChatPharoSettings >> codeFeatureEnabled [
+
+        ^ codeFeatureEnabled ifNil: [ codeFeatureEnabled := true ]
+]
+
+{ #category : 'accessing' }
+ChatPharoSettings >> codeFeatureEnabled: aBoolean [
+        codeFeatureEnabled := aBoolean.
+        self class setDefault: self.
+        self class saveDefault.
+        ChatPharoLogger logFrontend: 'Code feature toggled'
+                details: (Dictionary new
+                        at: 'enabled' put: aBoolean;
+                        yourself)
+]
+
 { #category : 'initialization' }
 ChatPharoSettings >> disableBrowserTool: toolName [
 
@@ -291,6 +329,8 @@ ChatPharoSettings >> initialize [
 	feedbackButtonsEnabled := true.
 	welcomeMessageEnabled := true.
 	loggingEnabled := true.
+	askFeatureEnabled := true.
+        codeFeatureEnabled := true.
 	browserToolsEnabled := (ChatPharoBrowserEnvironment new tools collect: [ :t | t name ]) asOrderedCollection.
 	maximumIterations := 3.
 	ChatPharoLogger loggingEnabled: true.

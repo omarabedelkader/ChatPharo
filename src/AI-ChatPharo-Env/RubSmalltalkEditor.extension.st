@@ -7,3 +7,11 @@ RubSmalltalkEditor >> openChatCharo [
     selected := self selection asString.
     ChatPharo ask: selected
 ]
+
+{ #category : '*AI-ChatPharo-Env' }
+RubSmalltalkEditor >> openChatCharoCode [
+
+        | selected |
+        selected := self selection asString.
+        ChatPharo code: selected
+]

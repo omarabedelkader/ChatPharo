@@ -12,6 +12,7 @@ Class {
 { #category : 'as yet unclassified' }
 ChatPharoAskCommand class >> canBeExecutedInContext: aContext [
 
+ (ChatPharoSettings default askFeatureEnabled) ifFalse: [ ^ false ].
     ^ aContext selectedMethodItems notEmpty
 ]
 
@@ -36,10 +37,10 @@ ChatPharoAskCommand class >> clyMenuActivation [
 { #category : 'execution' }
 ChatPharoAskCommand >> execute [
 
-    | method |
-    element ifNil: [ ^ self ].
-    method := element browserItem actualObject.
-    ChatPharo ask: method sourceCode
+	| method |
+	element ifNil: [ ^ self ].
+	method := element browserItem actualObject.
+	ChatPharo askAboutMethod: method
 ]
 
 { #category : 'execution' }

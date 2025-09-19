@@ -13,11 +13,21 @@ Class {
 ChatPharoCodeMenu class >> menuOn: aBuilder [
 
 	<contextMenu>
-        <RubSmalltalkCodeMenu>
-        (aBuilder item: #'Ask ChatPharo' translated)
-                order: 9;
-                keyText: 'cp';
-                selector: #openChatCharo;
-                help: 'Get help from ChatPharo to understand the code';
-                icon: ChatPharoIcons chatPharoIcon
+	<RubSmalltalkCodeMenu>
+| settings |
+        settings := ChatPharoSettings default.
+        settings askFeatureEnabled ifTrue: [
+                (aBuilder item: #'Ask ChatPharo' translated)
+                        order: 9;
+                        keyText: 'cp';
+                        selector: #openChatCharo;
+                        help: 'Get help from ChatPharo to understand the code';
+                        icon: ChatPharoIcons chatPharoIcon ].
+        settings codeFeatureEnabled ifTrue: [
+                (aBuilder item: #'Code ChatPharo' translated)
+                        order: 10;
+                        keyText: 'cc';
+                        selector: #openChatCharoCode;
+                        help: 'Ask ChatPharo to propose code changes';
+                        icon: ChatPharoIcons chatPharoIcon ]
 ]

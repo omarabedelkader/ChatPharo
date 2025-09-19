@@ -28,26 +28,192 @@ Class {
 { #category : 'context' }
 ChatPharo class >> ask: text [
 
-	| chat agentCopy |
-	ChatPharoLogger logFrontend: 'Quick ask invoked'
-                details: (Dictionary new
-                        at: 'prompt' put: text;
-                        yourself).
-	agentCopy := ChatPharoSettings default agent.
-	agentCopy := (agentCopy isKindOf: ChatPharoAgent)
-		             ifTrue: [ agentCopy copyForChat ]
-		             ifFalse: [ agentCopy ].
-	chat := ChatPharoChat new
-		        agent: ChatPharoSettings default agent;
-		        agent: agentCopy;
-		        yourself.
-	chat presenter open.
-	text ifNotEmpty: [ chat sendMessage: text ].
-ChatPharoLogger logSystem: 'Quick ask completed'
-                details: (Dictionary new
-                        at: 'prompt' put: text;
-                        at: 'activeAgent' put: (ChatPharoLogger agentNameFor: agentCopy);
-                        yourself)
+^ self
+                performQuickActionNamed: 'Quick ask'
+                prompt: text
+                additionalDetails: nil
+                customizeAgent: nil
+]
+
+{ #category : 'context' }
+ChatPharo class >> askAboutMethod: aMethod [
+
+        | methodClass source className selector packageName prompt details |
+        methodClass := (aMethod respondsTo: #methodClass)
+                        ifTrue: [ aMethod methodClass ]
+                        ifFalse: [ nil ].
+        source := (aMethod respondsTo: #sourceCode)
+                        ifTrue: [ aMethod sourceCode ]
+                        ifFalse: [ '' ].
+        className := methodClass
+                        ifNotNil: [ methodClass name asString ]
+                        ifNil: [ nil ].
+        selector := (aMethod respondsTo: #selector)
+                        ifTrue: [ aMethod selector asString ]
+                        ifFalse: [ nil ].
+        packageName := (methodClass respondsTo: #package)
+                        ifTrue: [
+                                | package |
+                                package := methodClass package.
+                                package ifNotNil: [ package name asString ] ]
+                        ifFalse: [ nil ].
+        prompt := self
+                        promptForMethodExplanationSource: source
+                        className: className
+                        selector: selector.
+        details := Dictionary new.
+        className ifNotNil: [ details at: 'class' put: className ].
+        selector ifNotNil: [ details at: 'selector' put: selector ].
+        packageName ifNotNil: [ details at: 'package' put: packageName ].
+        ^ self
+                performQuickActionNamed: 'Quick ask'
+                prompt: prompt
+                additionalDetails: details
+                customizeAgent: [ :agent |
+                        packageName ifNotNil: [
+                                (agent respondsTo: #packageName:)
+                                        ifTrue: [ agent packageName: packageName ] ] ]
+]
+
+{ #category : 'context' }
+ChatPharo class >> code: sourceText [
+
+        | prompt |
+        prompt := self codePromptForSource: sourceText context: nil.
+        ^ self
+                performQuickActionNamed: 'Quick code'
+                prompt: prompt
+                additionalDetails: nil
+                customizeAgent: nil
+
+]
+
+{ #category : 'context' }
+ChatPharo class >> codeForMethod: aMethod [
+
+        | methodClass source className selector packageName context details prompt |
+        methodClass := (aMethod respondsTo: #methodClass)
+                        ifTrue: [ aMethod methodClass ]
+                        ifFalse: [ nil ].
+        source := (aMethod respondsTo: #sourceCode)
+                        ifTrue: [ aMethod sourceCode ]
+                        ifFalse: [ '' ].
+        className := methodClass
+                        ifNotNil: [ methodClass name asString ]
+                        ifNil: [ nil ].
+        selector := (aMethod respondsTo: #selector)
+                        ifTrue: [ aMethod selector asString ]
+                        ifFalse: [ nil ].
+        packageName := (methodClass respondsTo: #package)
+                        ifTrue: [
+                                | package |
+                                package := methodClass package.
+                                package ifNotNil: [ package name asString ] ]
+                        ifFalse: [ nil ].
+        context := Dictionary new.
+        className ifNotNil: [ context at: 'Class' put: className ].
+        selector ifNotNil: [ context at: 'Selector' put: selector ].
+        context isEmpty ifTrue: [ context := nil ].
+        prompt := self codePromptForSource: source context: context.
+        details := Dictionary new.
+        className ifNotNil: [ details at: 'class' put: className ].
+        selector ifNotNil: [ details at: 'selector' put: selector ].
+        packageName ifNotNil: [ details at: 'package' put: packageName ].
+        ^ self
+                performQuickActionNamed: 'Quick code'
+                prompt: prompt
+                additionalDetails: details
+                customizeAgent: [ :agent |
+                        packageName ifNotNil: [
+                                (agent respondsTo: #packageName:)
+                                        ifTrue: [ agent packageName: packageName ] ] ]
+]
+
+{ #category : 'context' }
+ChatPharo class >> codePromptForSource: source context: contextDictionary [
+
+    | lines safeSource |
+    safeSource := source ifNil: [ '' ].
+
+    lines := OrderedCollection new.
+    contextDictionary ifNotNil: [
+        contextDictionary associationsDo: [ :assoc |
+            assoc value ifNotNil: [
+                lines add: assoc key , ': ' , assoc value ] ] ].
+
+    ^ String streamContents: [ :stream |
+        stream
+            nextPutAll: 'Suggest improvements or provide a revised Smalltalk implementation for the following code while preserving its behaviour.';
+            cr;
+            cr.
+        lines do: [ :line |
+            stream nextPutAll: line; cr ].
+        lines isEmpty ifFalse: [ stream cr ].
+        stream
+            nextPutAll: '```smalltalk';
+            cr;
+            nextPutAll: safeSource;
+            cr;
+            nextPutAll: '```' ]
+
+]
+
+{ #category : 'context' }
+ChatPharo class >> performQuickActionNamed: actionName prompt: prompt additionalDetails: details customizeAgent: customizationBlock [
+
+        | agentCopy chat baseDetails frontendDetails backendDetails |
+        baseDetails := details
+                        ifNil: [ Dictionary new ]
+                        ifNotNil: [ details copy ].
+        baseDetails at: 'prompt' put: prompt.
+        frontendDetails := baseDetails copy.
+        ChatPharoLogger
+                logFrontend: actionName , ' invoked'
+                details: frontendDetails.
+        agentCopy := ChatPharoSettings default agent.
+        agentCopy := (agentCopy isKindOf: ChatPharoAgent)
+                             ifTrue: [ agentCopy copyForChat ]
+                             ifFalse: [ agentCopy ].
+        customizationBlock ifNotNil: [ customizationBlock value: agentCopy ].
+        chat := ChatPharoChat new
+                        agent: ChatPharoSettings default agent;
+                        agent: agentCopy;
+                        yourself.
+        chat presenter open.
+        prompt ifNotEmpty: [ chat sendMessage: prompt ].
+        backendDetails := baseDetails copy.
+        backendDetails at: 'activeAgent' put: (ChatPharoLogger agentNameFor: agentCopy).
+        ChatPharoLogger
+                logSystem: actionName , ' completed'
+                details: backendDetails.
+        ^ chat
+]
+
+{ #category : 'context' }
+ChatPharo class >> promptForMethodExplanationSource: source className: className selector: selector [
+
+    | lines safeSource |
+    safeSource := source ifNil: [ '' ].
+
+    lines := OrderedCollection new.
+    className ifNotNil: [ lines add: 'Class: ' , className ].
+    selector ifNotNil: [ lines add: 'Selector: ' , selector ].
+
+    ^ String streamContents: [ :stream |
+        stream
+            nextPutAll: 'Explain what the following Smalltalk method does and highlight any potential improvements or edge cases.';
+            cr;
+            cr.
+        lines do: [ :line |
+            stream nextPutAll: line; cr ].
+        lines isEmpty ifFalse: [ stream cr ].
+        stream
+            nextPutAll: '```smalltalk';
+            cr;
+            nextPutAll: safeSource;
+            cr;
+            nextPutAll: '```' ]
+
 ]
 
 { #category : 'accessing' }
