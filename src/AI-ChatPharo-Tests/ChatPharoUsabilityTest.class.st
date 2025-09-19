@@ -36,6 +36,19 @@ ChatPharoUsabilityTest >> testChatAddWelcomeMessageSetsFriendlyLabel [
 ]
 
 { #category : 'running' }
+ChatPharoUsabilityTest >> testChatInitializationAddsWelcomeMessageToHistory [
+        | chat history |
+        ChatPharoSettings default welcomeMessageEnabled: true.
+        chat := ChatPharoChat new agent: ChatPharoMockAgent new.
+        history := chat instVarNamed: #history.
+
+        self assert: history messages size equals: 1.
+        self assert: (history messages first role) equals: 'assistant'.
+        self assert: ((history messages first content)
+                includesSubstring: 'Welcome to ChatPharo')
+]
+
+{ #category : 'running' }
 ChatPharoUsabilityTest >> testChatMessagePresenterIsReused [
 
         | message presenter |
@@ -55,8 +68,32 @@ ChatPharoUsabilityTest >> testChatMessageStartsWithEmptyStrings [
 ]
 
 { #category : 'running' }
+ChatPharoUsabilityTest >> testChatWithNullAgentUsesAssistantBotLabel [
+        | chat |
+        ChatPharoSettings default welcomeMessageEnabled: false.
+        chat := ChatPharoChat new agent: ChatPharoNullAgent new.
+        chat sendMessage: 'hello'.
+        self waitForChatProcess: chat.
+
+        self assert: chat messages size equals: 1.
+        self assert: chat messages last assistantLabel equals: 'Assistant bot'.
+        self assert: (chat messages last answer includesSubstring: 'No backend is configured')
+]
+
+{ #category : 'running' }
 ChatPharoUsabilityTest >> testSettingsAskFeatureEnabledByDefault [
         self assert: settings askFeatureEnabled
+]
+
+{ #category : 'running' }
+ChatPharoUsabilityTest >> testSettingsAvailableApiChoicesExposeDisplayNames [
+        | choices nullChoice |
+        choices := settings availableApiChoices.
+        self deny: choices isEmpty.
+        nullChoice := choices detect: [ :assoc | assoc key = 'None (offline)' ].
+
+        self assert: nullChoice value equals: ChatPharoNullAgent.
+        self assert: (choices collect: [ :assoc | assoc key ]) asSet size equals: choices size
 ]
 
 { #category : 'running' }
@@ -80,4 +117,13 @@ ChatPharoUsabilityTest >> testSettingsCodeFeatureEnabledByDefault [
 { #category : 'running' }
 ChatPharoUsabilityTest >> testSettingsDefaultMaximumIterationsIsThree [
         self assert: settings maximumIterations equals: 3
+]
+
+{ #category : 'running' }
+ChatPharoUsabilityTest >> waitForChatProcess: aChat [
+        [
+                | process |
+                process := aChat instVarNamed: #promptProcess.
+                process isNil or: [ process isTerminated ]
+        ] whileFalse: [ (Delay forMilliseconds: 10) wait ]
 ]

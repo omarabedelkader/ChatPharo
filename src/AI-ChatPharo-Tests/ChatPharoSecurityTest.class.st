@@ -430,6 +430,17 @@ ChatPharoSecurityTest >> testLoggerStringifyNilReturnsNilString [
 ]
 
 { #category : 'tests' }
+ChatPharoSecurityTest >> testLoggingDisabledDeletesExistingLogFile [
+        ChatPharoLogger logBackend: 'create entry'.
+        self assert: ChatPharoLogger logFile exists.
+
+        ChatPharoLogger loggingEnabled: false.
+
+        self deny: ChatPharoLogger logFile exists.
+        ChatPharoLogger loggingEnabled: true
+]
+
+{ #category : 'tests' }
 ChatPharoSecurityTest >> testLoggingDisabledPreventsBackendLogging [
         ChatPharoLogger loggingEnabled: false.
         ChatPharoLogger deleteLogFile.

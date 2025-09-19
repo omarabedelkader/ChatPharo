@@ -24,6 +24,23 @@ ChatPharoRegressionTest >> tearDown [
 ]
 
 { #category : 'running' }
+ChatPharoRegressionTest >> testLoggerAgentNameForAgentWithDisplayName [
+
+        | agent |
+        agent := ChatPharoNullAgent new.
+
+        self assert: (ChatPharoLogger agentNameFor: agent) equals: 'None (offline)'
+]
+
+{ #category : 'running' }
+ChatPharoRegressionTest >> testLoggerAgentNameForAgentWithoutDisplayNameUsesClassName [
+        | agent |
+        agent := ChatPharoMockAgent new.
+
+        self assert: (ChatPharoLogger agentNameFor: agent) equals: 'ChatPharoMockAgent'
+]
+
+{ #category : 'running' }
 ChatPharoRegressionTest >> testLoggerAgentNameForNilReturnsNone [
         self assert: (ChatPharoLogger agentNameFor: nil) equals: 'None'
 ]

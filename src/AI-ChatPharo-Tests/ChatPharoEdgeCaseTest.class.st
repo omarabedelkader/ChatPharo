@@ -47,6 +47,18 @@ ChatPharoEdgeCaseTest >> testClearCacheWhenEmptyLeavesCacheEmpty [
         self assert: (chat instVarNamed: #cache) isEmpty
 ]
 
+{ #category : 'tests' }
+ChatPharoEdgeCaseTest >> testExportAsJsonWithNilUserMessageExportsEmptyString [
+        | json data |
+        chat addUserMessage: nil.
+        json := chat exportAsJson.
+        data := STONJSON fromString: json.
+
+        self assert: data size equals: 1.
+        self assert: (data first at: 'role') equals: 'user'.
+        self assert: (data first at: 'content') equals: ''
+]
+
 { #category : 'running' }
 ChatPharoEdgeCaseTest >> testExportAsJsonWithoutMessagesIsEmptyArray [
 

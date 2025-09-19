@@ -166,6 +166,19 @@ ChatPharoStressTest >> testChatPromptProcessTerminatedAfterEachCompletion [
 ]
 
 { #category : 'tests' }
+ChatPharoStressTest >> testChatSendMessageBurstInvokesAnswerReceivedCallbackForEachMessage [
+        | callbackCount |
+        callbackCount := 0.
+        chat whenAnswerReceivedDo: [ :message | callbackCount := callbackCount + 1 ].
+
+        1 to: 20 do: [ :index |
+                chat sendMessage: 'callback-' , index asString.
+                self waitForChatProcess ].
+
+        self assert: callbackCount equals: 20
+]
+
+{ #category : 'tests' }
 ChatPharoStressTest >> testChatSendMessageBurstMaintainsAssistantAnswerFormatting [
 
         1 to: 5 do: [ :index |
