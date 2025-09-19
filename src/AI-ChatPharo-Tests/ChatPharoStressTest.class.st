@@ -39,6 +39,15 @@ ChatPharoStressTest >> testCacheHandlesFiftyDistinctEntries [
         self assert: (chat instVarNamed: #cache) size equals: 50
 ]
 
+{ #category : 'tests' }
+ChatPharoStressTest >> testCacheHandlesOneHundredDistinctEntries [
+        1 to: 100 do: [ :index |
+                chat sendMessage: 'unique-' , index asString.
+                self waitForChatProcess ].
+
+        self assert: (chat instVarNamed: #cache) size equals: 100
+]
+
 { #category : 'running' }
 ChatPharoStressTest >> testCacheHandlesTenDistinctEntries [
 
@@ -62,6 +71,22 @@ ChatPharoStressTest >> testCacheHitUnderLoadAvoidsAdditionalBackendCalls [
                 self waitForChatProcess ].
 
         self assert: mockAgent history size equals: initialCalls
+]
+
+{ #category : 'tests' }
+ChatPharoStressTest >> testChatAlternatingDuplicatePromptsLimitBackendCalls [
+        chat sendMessage: 'repeat-A'.
+        self waitForChatProcess.
+        chat sendMessage: 'repeat-B'.
+        self waitForChatProcess.
+
+        1 to: 10 do: [ :index |
+                chat sendMessage: 'repeat-A'.
+                self waitForChatProcess.
+                chat sendMessage: 'repeat-B'.
+                self waitForChatProcess ].
+
+        self assert: mockAgent history size equals: 2
 ]
 
 { #category : 'tests' }
@@ -90,6 +115,36 @@ ChatPharoStressTest >> testChatCacheStoresLatestResponseForRepeatedPrompt [
 ]
 
 { #category : 'tests' }
+ChatPharoStressTest >> testChatCachedResponseStillTriggersCallback [
+        | callbackCount |
+        chat sendMessage: 'cache-callback'.
+        self waitForChatProcess.
+        callbackCount := 0.
+        chat whenAnswerReceivedDo: [ :message |
+                callbackCount := callbackCount + 1.
+                self assert: message answer notEmpty ].
+        chat sendMessage: 'cache-callback'.
+        self waitForChatProcess.
+
+        self assert: callbackCount equals: 1
+]
+
+{ #category : 'tests' }
+ChatPharoStressTest >> testChatClearCacheAfterReuseForcesNewBackendCall [
+        chat sendMessage: 'repeat-cycle'.
+        self waitForChatProcess.
+        self assert: mockAgent history size equals: 1.
+        chat sendMessage: 'repeat-cycle'.
+        self waitForChatProcess.
+        self assert: mockAgent history size equals: 1.
+        chat clearCache.
+        chat sendMessage: 'repeat-cycle'.
+        self waitForChatProcess.
+
+        self assert: mockAgent history size equals: 2
+]
+
+{ #category : 'tests' }
 ChatPharoStressTest >> testChatClearChatAfterHundredMessagesClearsAllState [
         1 to: 20 do: [ :index |
                 chat sendMessage: 'clear-' , index asString.
@@ -100,6 +155,19 @@ ChatPharoStressTest >> testChatClearChatAfterHundredMessagesClearsAllState [
         self assert: chat messages isEmpty.
         self assert: (chat instVarNamed: #cache) isEmpty.
         self assert: ((chat instVarNamed: #history) messages) isEmpty
+]
+
+{ #category : 'tests' }
+ChatPharoStressTest >> testChatExportAsJsonAfterAsyncMessagesAlternatesRoles [
+        | data |
+        1 to: 5 do: [ :index |
+                chat sendMessage: 'async-' , index asString.
+                self waitForChatProcess ].
+
+        data := STONJSON fromString: chat exportAsJson.
+        self assert: data size equals: 10.
+        self assert: (data first at: 'role') equals: 'user'.
+        self assert: (data second at: 'role') equals: 'assistant'
 ]
 
 { #category : 'tests' }
@@ -158,6 +226,21 @@ ChatPharoStressTest >> testChatHistoryPromptPrefixEndsWithMostRecentAssistantEnt
 ]
 
 { #category : 'tests' }
+ChatPharoStressTest >> testChatManualAndAsyncMessagesCombinedMaintainCounts [
+        | historyInstance |
+        1 to: 5 do: [ :index |
+                chat addUserMessage: 'manual-' , index asString.
+                chat addAssistantMessage: 'reply-' , index asString ].
+        1 to: 5 do: [ :index |
+                chat sendMessage: 'async-' , index asString.
+                self waitForChatProcess ].
+
+        historyInstance := chat instVarNamed: #history.
+        self assert: chat messages size equals: 10.
+        self assert: historyInstance messages size equals: 20
+]
+
+{ #category : 'tests' }
 ChatPharoStressTest >> testChatPromptProcessTerminatedAfterEachCompletion [
         1 to: 10 do: [ :index |
                 chat sendMessage: 'proc-' , index asString.
@@ -186,6 +269,15 @@ ChatPharoStressTest >> testChatSendMessageBurstMaintainsAssistantAnswerFormattin
                 self waitForChatProcess ].
 
         self assert: (chat messages last answer) equals: '<<MOCK-DEFAULT-REPLY to: answer-5>>'
+]
+
+{ #category : 'tests' }
+ChatPharoStressTest >> testChatSendMessageBurstMaintainsAssistantLabelUnderLoad [
+        1 to: 30 do: [ :index |
+                chat sendMessage: 'label-' , index asString.
+                self waitForChatProcess ].
+
+        self assert: chat messages last assistantLabel equals: 'Assistant'
 ]
 
 { #category : 'tests' }
@@ -225,6 +317,56 @@ ChatPharoStressTest >> testChatSendMessageBurstUsesCacheForDuplicatesWhileMainta
 ]
 
 { #category : 'tests' }
+ChatPharoStressTest >> testChatSendMessageCachesAnswerForEachPrompt [
+        1 to: 5 do: [ :index |
+                | prompt message |
+                prompt := 'cache-proof-' , index asString.
+                chat sendMessage: prompt.
+                self waitForChatProcess.
+                message := chat messages last.
+                self assert: ((chat instVarNamed: #cache) at: prompt) equals: message answer ].
+
+        self assert: (chat instVarNamed: #cache) size equals: 5
+]
+
+{ #category : 'tests' }
+ChatPharoStressTest >> testChatSendMessageHistoryPromptPrefixBeginsWithFirstUserEntry [
+        1 to: 5 do: [ :index |
+                chat sendMessage: 'send-' , index asString.
+                self waitForChatProcess ].
+
+        self assert: (chat historyPromptPrefix beginsWith: 'user: send-1')
+]
+
+{ #category : 'tests' }
+ChatPharoStressTest >> testChatSendMessageHundredTimesMaintainsAssistantLabelSequence [
+        1 to: 100 do: [ :index |
+                chat sendMessage: 'assistant-' , index asString.
+                self waitForChatProcess ].
+
+        self assert: (chat messages allSatisfy: [ :each | each assistantLabel = 'Assistant' ])
+]
+
+{ #category : 'tests' }
+ChatPharoStressTest >> testChatSendMessageHundredTimesMaintainsHistoryEntries [
+        1 to: 100 do: [ :index |
+                chat sendMessage: 'history-' , index asString.
+                self waitForChatProcess ].
+
+        self assert: (chat instVarNamed: #history) messages size equals: 200
+]
+
+{ #category : 'tests' }
+ChatPharoStressTest >> testChatSendMessageHundredTimesMaintainsMessageCount [
+
+        1 to: 100 do: [ :index |
+                chat sendMessage: 'message-' , index asString.
+                self waitForChatProcess ].
+
+        self assert: chat messages size equals: 100
+]
+
+{ #category : 'tests' }
 ChatPharoStressTest >> testChatSendMessageSequentialCancellationsDoNotLeaveProcessRunning [
         1 to: 10 do: [ :index |
                 chat sendMessage: 'cancel-' , index asString.
@@ -245,6 +387,18 @@ ChatPharoStressTest >> testHistoryAsPromptPrefixWithManyMessagesContainsLastEntr
 ]
 
 { #category : 'tests' }
+ChatPharoStressTest >> testHistoryAsPromptPrefixWithThousandMessagesContainsFirstAndLast [
+        | prefix |
+        1 to: 1000 do: [ :index |
+                history addUser: 'User ' , index asString.
+                history addAssistant: 'Reply ' , index asString ].
+
+        prefix := history asPromptPrefix.
+        self assert: (prefix includesSubstring: 'user: User 1').
+        self assert: (prefix includesSubstring: 'assistant: Reply 1000')
+]
+
+{ #category : 'tests' }
 ChatPharoStressTest >> testHistoryAsPromptPrefixWithTwoHundredMessagesContainsFirstAndLast [
         1 to: 200 do: [ :index |
                 history addUser: 'User ' , index asString.
@@ -252,6 +406,19 @@ ChatPharoStressTest >> testHistoryAsPromptPrefixWithTwoHundredMessagesContainsFi
 
         self assert: (history asPromptPrefix includesSubstring: 'user: User 1').
         self assert: (history asPromptPrefix includesSubstring: 'assistant: Reply 200')
+]
+
+{ #category : 'tests' }
+ChatPharoStressTest >> testHistoryChatMessagesOnFiveHundredPairsMaintainsCount [
+        | entries |
+        1 to: 500 do: [ :index |
+                history addUser: 'User ' , index asString.
+                history addAssistant: 'Reply ' , index asString ].
+        entries := Array streamContents: [ :stream | history chatMessagesOn: stream ].
+
+        self assert: entries size equals: 1000.
+        self assert: (entries first at: 'content') equals: 'User 1'.
+        self assert: (entries last at: 'content') equals: 'Reply 500'
 ]
 
 { #category : 'tests' }

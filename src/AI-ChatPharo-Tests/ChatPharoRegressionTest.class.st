@@ -45,6 +45,56 @@ ChatPharoRegressionTest >> testLoggerAgentNameForNilReturnsNone [
         self assert: (ChatPharoLogger agentNameFor: nil) equals: 'None'
 ]
 
+{ #category : 'tests' }
+ChatPharoRegressionTest >> testLoggerLogBackendWithCollectionDetailsWritesEntries [
+        | contents |
+        ChatPharoLogger logBackend: 'collection entry' details: #(1 2).
+        contents := ChatPharoLogger logFile readStreamDo: [ :stream | stream contents ].
+
+        self assert: (contents includesSubstring: '- 1').
+        self assert: (contents includesSubstring: '- 2')
+]
+
+{ #category : 'tests' }
+ChatPharoRegressionTest >> testLoggerLogBackendWithNilDetailsStillWritesEntry [
+        | contents |
+        ChatPharoLogger logBackend: 'nil details' details: nil.
+        contents := ChatPharoLogger logFile readStreamDo: [ :stream | stream contents ].
+
+        self assert: (contents includesSubstring: '[BACKEND] nil details')
+]
+
+{ #category : 'tests' }
+ChatPharoRegressionTest >> testLoggerLogFrontendWritesFrontendCategory [
+        | contents |
+        ChatPharoLogger logFrontend: 'frontend entry'.
+        contents := ChatPharoLogger logFile readStreamDo: [ :stream | stream contents ].
+
+        self assert: (contents includesSubstring: '[FRONTEND] frontend entry')
+]
+
+{ #category : 'tests' }
+ChatPharoRegressionTest >> testLoggerLogSystemWritesSystemCategory [
+        | contents |
+        ChatPharoLogger logSystem: 'system entry'.
+        contents := ChatPharoLogger logFile readStreamDo: [ :stream | stream contents ].
+
+        self assert: (contents includesSubstring: '[SYSTEM] system entry')
+]
+
+{ #category : 'tests' }
+ChatPharoRegressionTest >> testLoggerStringifyHandlesNil [
+        self assert: (ChatPharoLogger stringify: nil) equals: 'nil'
+]
+
+{ #category : 'tests' }
+ChatPharoRegressionTest >> testLoggerStringifyReturnsAsStringWhenAvailable [
+        | object |
+        object := Object new.
+
+        self assert: (ChatPharoLogger stringify: object) equals: object asString
+]
+
 { #category : 'running' }
 ChatPharoRegressionTest >> testLoggerWriteDetailsHandlesCollectionEntries [
 
@@ -84,6 +134,16 @@ ChatPharoRegressionTest >> testLoggingEnabledCreatesLogFileOnBackendLog [
         self assert: ChatPharoLogger logFile exists
 ]
 
+{ #category : 'tests' }
+ChatPharoRegressionTest >> testSettingsLoadOrNewReturnsNewWhenFileMissing [
+        | loaded |
+        ChatPharoSettings resetDefault.
+        loaded := ChatPharoSettings loadOrNew.
+
+        self assert: loaded class equals: ChatPharoSettings.
+        self assert: loaded ~= ChatPharoSettings default
+]
+
 { #category : 'running' }
 ChatPharoRegressionTest >> testSettingsLoggingToggleBackToTrueAllowsLogging [
 
@@ -106,4 +166,52 @@ ChatPharoRegressionTest >> testSettingsLoggingToggleSyncsLogger [
         settings loggingEnabled: false.
 
         self deny: ChatPharoLogger loggingEnabled
+]
+
+{ #category : 'tests' }
+ChatPharoRegressionTest >> testSettingsResetDefaultRemovesSettingsFile [
+        | settings |
+        settings := ChatPharoSettings new.
+        ChatPharoSettings setDefault: settings.
+        ChatPharoSettings saveDefault.
+        self assert: ChatPharoSettings settingsFileReference exists.
+        ChatPharoSettings resetDefault.
+
+        self deny: ChatPharoSettings settingsFileReference exists
+]
+
+{ #category : 'tests' }
+ChatPharoRegressionTest >> testSettingsSaveDefaultPersistsCacheEnabled [
+        | settings loaded |
+        settings := ChatPharoSettings new.
+        settings cacheEnabled: false.
+        ChatPharoSettings setDefault: settings.
+        ChatPharoSettings saveDefault.
+        loaded := ChatPharoSettings loadOrNew.
+
+        self deny: loaded cacheEnabled
+]
+
+{ #category : 'tests' }
+ChatPharoRegressionTest >> testSettingsSaveDefaultPersistsMaximumIterations [
+        | settings loaded |
+        settings := ChatPharoSettings new.
+        settings maximumIterations: 7.
+        ChatPharoSettings setDefault: settings.
+        ChatPharoSettings saveDefault.
+        loaded := ChatPharoSettings loadOrNew.
+
+        self assert: loaded maximumIterations equals: 7
+]
+
+{ #category : 'tests' }
+ChatPharoRegressionTest >> testSettingsSaveDefaultPersistsWelcomeMessageToggle [
+        | settings loaded |
+        settings := ChatPharoSettings new.
+        settings welcomeMessageEnabled: false.
+        ChatPharoSettings setDefault: settings.
+        ChatPharoSettings saveDefault.
+        loaded := ChatPharoSettings loadOrNew.
+
+        self deny: loaded welcomeMessageEnabled
 ]

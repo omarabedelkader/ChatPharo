@@ -39,12 +39,46 @@ ChatPharoEdgeCaseTest >> testAddAssistantMessageWithNilAnswerExportsPlaceholder 
 
 ]
 
+{ #category : 'tests' }
+ChatPharoEdgeCaseTest >> testChatHistoryPromptPrefixWithoutMessagesIsEmptyString [
+
+        self assert: chat historyPromptPrefix equals: ''
+]
+
 { #category : 'running' }
 ChatPharoEdgeCaseTest >> testClearCacheWhenEmptyLeavesCacheEmpty [
 
         chat clearCache.
 
         self assert: (chat instVarNamed: #cache) isEmpty
+]
+
+{ #category : 'tests' }
+ChatPharoEdgeCaseTest >> testClearChatAfterExportResetsState [
+        | historyInstance |
+        chat sendMessage: 'clear export'.
+        self waitForChatProcess.
+        chat exportAsJson.
+        chat clearChat.
+        historyInstance := chat instVarNamed: #history.
+
+        self assert: chat messages isEmpty.
+        self assert: historyInstance messages isEmpty.
+        self assert: (chat instVarNamed: #cache) isEmpty
+]
+
+{ #category : 'tests' }
+ChatPharoEdgeCaseTest >> testExportAsJsonWithMultilineMessagesPreservesNewlines [
+        | json data userText assistantText |
+        userText := 'Line1' , String lf , 'Line2'.
+        assistantText := 'Answer1' , String lf , 'Answer2'.
+        chat addUserMessage: userText.
+        chat addAssistantMessage: assistantText.
+        json := chat exportAsJson.
+        data := STONJSON fromString: json.
+
+        self assert: (data first at: 'content') equals: userText.
+        self assert: (data last at: 'content') equals: assistantText
 ]
 
 { #category : 'tests' }
@@ -69,6 +103,36 @@ ChatPharoEdgeCaseTest >> testExportAsJsonWithoutMessagesIsEmptyArray [
 ]
 
 { #category : 'tests' }
+ChatPharoEdgeCaseTest >> testSendMessageAfterReplacingCallbackOnlyLatestBlockRuns [
+        | counter |
+        counter := 0.
+        chat whenAnswerReceivedDo: [ :message | counter := counter + 10 ].
+        chat whenAnswerReceivedDo: [ :message | counter := counter + 1 ].
+        chat sendMessage: 'replace callback'.
+        self waitForChatProcess.
+
+        self assert: counter equals: 1
+]
+
+{ #category : 'tests' }
+ChatPharoEdgeCaseTest >> testSendMessageWithEmojiPreservesAssistantLabe [
+        chat sendMessage: 'Hello'.
+        self waitForChatProcess.
+
+        self assert: chat messages last content equals: 'Hello'.
+        self assert: chat messages last assistantLabel equals: 'Assistant'.
+        self assert: (chat messages last answer includesSubstring: 'Hello')
+]
+
+{ #category : 'tests' }
+ChatPharoEdgeCaseTest >> testSendMessageWithEmptyStringProducesAnswer [
+        chat sendMessage: ''.
+        self waitForChatProcess.
+
+        self assert: (chat messages last answer) equals: '<<MOCK-DEFAULT-REPLY to: >>'
+]
+
+{ #category : 'tests' }
 ChatPharoEdgeCaseTest >> testSendMessageWithLongTextPreservesContentLength [
 
         | longText |
@@ -77,6 +141,48 @@ ChatPharoEdgeCaseTest >> testSendMessageWithLongTextPreservesContentLength [
         self waitForChatProcess.
 
         self assert: (chat messages last content size) equals: longText size
+]
+
+{ #category : 'tests' }
+ChatPharoEdgeCaseTest >> testSendMessageWithLongUnicodeStringPreservesLength [
+        | longText |
+        longText := String new: 200 withAll: 'あ' first.
+        chat sendMessage: longText.
+        self waitForChatProcess.
+
+        self assert: (chat messages last content size) equals: longText size
+]
+
+{ #category : 'tests' }
+ChatPharoEdgeCaseTest >> testSendMessageWithToolExecutionInvokesCallback [
+        | toolAgent triggered |
+        toolAgent := ChatPharoToolMockAgent new.
+        triggered := false.
+        chat agent: toolAgent.
+        chat whenToolExecutionDo: [ triggered := true ].
+        chat sendMessage: 'tool please'.
+        self waitForChatProcess.
+
+        self assert: triggered
+]
+
+{ #category : 'tests' }
+ChatPharoEdgeCaseTest >> testSendMessageWithTrailingWhitespacePreservesExactContent [
+        chat sendMessage: 'text   '.
+        self waitForChatProcess.
+
+        self assert: chat messages last content equals: 'text   '
+]
+
+{ #category : 'tests' }
+ChatPharoEdgeCaseTest >> testSendMessageWithUnicodeCharactersPreservesContentAndAnswer [
+        | unicode |
+        unicode := 'こんにちは'.
+        chat sendMessage: unicode.
+        self waitForChatProcess.
+
+        self assert: chat messages last content equals: unicode.
+        self assert: (chat messages last answer includesSubstring: unicode)
 ]
 
 { #category : 'tests' }
