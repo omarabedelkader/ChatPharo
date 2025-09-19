@@ -2,7 +2,8 @@ Class {
 	#name : 'ChatPharoLogger',
 	#superclass : 'Object',
 	#classInstVars : [
-		'LogMutex'
+		'LogMutex',
+		'LoggingEnabled'
 	],
 	#category : 'AI-ChatPharo',
 	#package : 'AI-ChatPharo'
@@ -18,6 +19,12 @@ ChatPharoLogger class >> agentNameFor: anAgent [
 ]
 
 { #category : 'class initialization' }
+ChatPharoLogger class >> deleteLogFile [
+
+    self logFile deleteIfAbsent: [ ]
+]
+
+{ #category : 'class initialization' }
 ChatPharoLogger class >> ensureMutex [
 
     LogMutex ifNil: [ LogMutex := Mutex new ].
@@ -27,7 +34,8 @@ ChatPharoLogger class >> ensureMutex [
 { #category : 'class initialization' }
 ChatPharoLogger class >> initialize [
 
-    LogMutex := Mutex new
+	LogMutex := Mutex new.
+	LoggingEnabled := true
 ]
 
 { #category : 'class initialization' }
@@ -45,16 +53,17 @@ ChatPharoLogger class >> logBackend: aDescription details: details [
 { #category : 'class initialization' }
 ChatPharoLogger class >> logCategory: aCategory description: aDescription details: details [
 
-    | entry |
-    entry := String streamContents: [ :stream |
-        stream
-            nextPutAll: '[' , DateAndTime now asString , '] ';
-            nextPutAll: '[' , aCategory asUppercase , '] ';
-            nextPutAll: aDescription.
-        details ifNotNil: [
-            stream cr.
-            self writeDetails: details on: stream ] ].
-    self writeEntry: entry
+	| entry |
+	self loggingEnabled ifFalse: [ ^ self ].
+	entry := String streamContents: [ :stream |
+			         stream
+				         nextPutAll: '[' , DateAndTime now asString , '] ';
+				         nextPutAll: '[' , aCategory asUppercase , '] ';
+				         nextPutAll: aDescription.
+			         details ifNotNil: [
+					         stream cr.
+					         self writeDetails: details on: stream ] ].
+	self writeEntry: entry
 ]
 
 { #category : 'class initialization' }
@@ -91,6 +100,23 @@ ChatPharoLogger class >> logSystem: aDescription [
 ChatPharoLogger class >> logSystem: aDescription details: details [
 
     self logCategory: 'SYSTEM' description: aDescription details: details
+]
+
+{ #category : 'class initialization' }
+ChatPharoLogger class >> loggingEnabled [
+
+    ^ LoggingEnabled ifNil: [ LoggingEnabled := true ]
+]
+
+{ #category : 'class initialization' }
+ChatPharoLogger class >> loggingEnabled: aBoolean [
+
+    (self loggingEnabled = aBoolean) ifTrue: [ ^ self ].
+    aBoolean
+        ifTrue: [ LoggingEnabled := true ]
+        ifFalse: [
+            LoggingEnabled := false.
+            self deleteLogFile ]
 ]
 
 { #category : 'class initialization' }
@@ -133,15 +159,16 @@ ChatPharoLogger class >> writeDetails: details on: aStream [
 { #category : 'class initialization' }
 ChatPharoLogger class >> writeEntry: anEntry [
 
-    | directory file |
-    self ensureMutex critical: [
-        directory := self logDirectory.
-        directory ensureCreateDirectory.
-        file := self logFile.
-        file ensureCreateFile.
-        file writeStreamDo: [ :stream |
-            stream setToEnd.
-            stream
-                nextPutAll: anEntry;
-                nextPut: Character lf ] ]
+	| directory file |
+	self loggingEnabled ifFalse: [ ^ self ].
+	self ensureMutex critical: [
+			directory := self logDirectory.
+			directory ensureCreateDirectory.
+			file := self logFile.
+			file ensureCreateFile.
+			file writeStreamDo: [ :stream |
+					stream setToEnd.
+					stream
+						nextPutAll: anEntry;
+						nextPut: Character lf ] ]
 ]
