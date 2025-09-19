@@ -26,7 +26,8 @@ Class {
 		'browserAutoTabEnabled',
 		'cacheEnabled',
 		'feedbackButtonsEnabled',
-		'welcomeMessageEnabled'
+		'welcomeMessageEnabled',
+		'loggingEnabled'
 	],
 	#classInstVars : [
 		'Default'
@@ -38,7 +39,7 @@ Class {
 { #category : 'accessing' }
 ChatPharoSettings class >> default [
 
-	Default ifNil: [ Default := self loadOrNew ].
+	Default ifNil: [ self setDefault: self loadOrNew ].
 	^ Default
 ]
 
@@ -68,6 +69,7 @@ ChatPharoSettings class >> loadOrNew [
 				  settings cacheEnabled ifNil: [ settings cacheEnabled: true ].
 				  settings feedbackButtonsEnabled ifNil: [ settings feedbackButtonsEnabled: true ].
 				  settings welcomeMessageEnabled ifNil: [ settings welcomeMessageEnabled: true ].
+				settings loggingEnabled.
 				  ^ settings ]
 				  on: Error
 				  do: [ ^ self new ] ]
@@ -119,15 +121,17 @@ ChatPharoSettings class >> saveDefault [
 ]
 
 { #category : 'accessing' }
-ChatPharoSettings class >> setDefault: aSettings [ 
+ChatPharoSettings class >> setDefault: aSettings [
 
-	Default := aSettings
+	Default := aSettings.
+	ChatPharoLogger loggingEnabled: aSettings loggingEnabled.
+        ^ Default
 ]
 
 { #category : 'accessing' }
 ChatPharoSettings class >> settingsDirectory [
 
-        ^ FileLocator imageDirectory / 'chatpahro'
+	^ FileLocator imageDirectory / 'chatpharo'
 ]
 
 { #category : 'accessing' }
@@ -286,14 +290,28 @@ ChatPharoSettings >> initialize [
 	cacheEnabled := true.
 	feedbackButtonsEnabled := true.
 	welcomeMessageEnabled := true.
-        browserToolsEnabled := (ChatPharoBrowserEnvironment new tools
-                                        collect: [ :t | t name ])
-                                       asOrderedCollection.
-        maximumIterations := 3.
-        ChatPharoLogger logSystem: 'Settings initialized'
-                details: (Dictionary new
-                        at: 'defaultAgent' put: (ChatPharoLogger agentNameFor: agent);
-                        yourself)
+	loggingEnabled := true.
+	browserToolsEnabled := (ChatPharoBrowserEnvironment new tools collect: [ :t | t name ]) asOrderedCollection.
+	maximumIterations := 3.
+	ChatPharoLogger loggingEnabled: true.
+	ChatPharoLogger logSystem: 'Settings initialized' details: (Dictionary new
+			 at: 'defaultAgent' put: (ChatPharoLogger agentNameFor: agent);
+			 yourself)
+]
+
+{ #category : 'initialization' }
+ChatPharoSettings >> loggingEnabled [
+
+    ^ loggingEnabled ifNil: [ loggingEnabled := true ]
+]
+
+{ #category : 'initialization' }
+ChatPharoSettings >> loggingEnabled: aBoolean [
+
+    loggingEnabled = aBoolean ifTrue: [ ^ loggingEnabled ].
+    loggingEnabled := aBoolean.
+    self class setDefault: self.
+    self class saveDefault
 ]
 
 { #category : 'initialization' }

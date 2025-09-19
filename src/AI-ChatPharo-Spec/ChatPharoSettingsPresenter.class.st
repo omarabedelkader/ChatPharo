@@ -19,6 +19,7 @@ Class {
 		'browserAutoTabCheckBox',
 		'chatPharo',
 		'cacheCheckBox',
+		'loggingCheckBox',
 		'feedbackCheckBox',
 		'welcomeMessageCheckBox'
 	],
@@ -60,28 +61,16 @@ ChatPharoSettingsPresenter >> connectPresenters [
 			ollamaModelDropList items: model models.
 			ollamaModelDropList items ifNotEmpty: [
 					| selected |
-					selected := ollamaModelDropList items
-						            detect: [ :each | each = model agent model ]
-						            ifNone: [ nil ].
-					selected
-						ifNotNil: [ ollamaModelDropList selectItem: selected ]
-						ifNil: [ ollamaModelDropList selectFirst ] ] ].
-
-	"Handle API dropdown selection"
+					selected := ollamaModelDropList items detect: [ :each | each = model agent model ] ifNone: [ nil ].
+					selected ifNotNil: [ ollamaModelDropList selectItem: selected ] ifNil: [ ollamaModelDropList selectFirst ] ] ]. "Handle API dropdown selection"
 	apiDropList whenSelectedItemChangedDo: [ :assoc |
 			| apiClass newPresenter |
 			apiClass := assoc value.
-			model useApi: apiClass.
-
-			"Clear old settings and install new presenter"
+			model useApi: apiClass. "Clear old settings and install new presenter"
 			apiSettingsContainer removeAll.
 			newPresenter := apiClass settingsPresenterFor: model agent.
-			newPresenter ifNotNil: [ apiSettingsContainer add: newPresenter ].
-
-			"Update system prompt inputs"
-			systemPromptInput text: model agent systemPrompt ].
-
-	"Bind text inputs to model"
+			newPresenter ifNotNil: [ apiSettingsContainer add: newPresenter ]. "Update system prompt inputs"
+			systemPromptInput text: model agent systemPrompt ]. "Bind text inputs to model"
 	systemPromptInput whenTextChangedDo: [ :text |
 			text ~= ChatPharoAgent defaultSystemPrompt ifTrue: [
 					(ChatPharoSafetyAdvisor confirmPromptModificationOn: self)
@@ -101,34 +90,30 @@ ChatPharoSettingsPresenter >> connectPresenters [
 									ifTrue: [
 											model maximumIterations: 1.
 											maxIterationsInput text: '1' ]
-									ifFalse: [
-									maxIterationsInput text: model maximumIterations asString ] ]
-						ifFalse: [ model maximumIterations: num ] ] ].
-
-	"Bind checkbox state to model"
+									ifFalse: [ maxIterationsInput text: model maximumIterations asString ] ]
+						ifFalse: [ model maximumIterations: num ] ] ]. "Bind checkbox state to model"
 	browserExtensionCheckBox whenChangedDo: [ :presenter |
 			model browserExtensionEnabled: presenter.
 			self updateBrowserExtensionTab ].
 
-	browserAutoTabCheckBox whenChangedDo: [ :presenter |
-		model browserAutoTabEnabled: presenter ].
+	browserAutoTabCheckBox whenChangedDo: [ :presenter | model browserAutoTabEnabled: presenter ].
 
 	cacheCheckBox whenChangedDo: [ :enabled |
 			model cacheEnabled: enabled.
 			ChatPharoSettings saveDefault ].
+		
+		loggingCheckBox whenChangedDo: [ :enabled |
+                        model loggingEnabled: enabled ].
 
 	feedbackCheckBox := self
 		                    addCheckboxLabeled: 'Enable Feedback Buttons'
-		                    value: [
-		                    ChatPharoSettings default feedbackButtonsEnabled ]
-		                    changeAction: [ :val |
-		                    ChatPharoSettings default
-			                    feedbackButtonsEnabled: val ].
-		
-        welcomeMessageCheckBox := self
-                addCheckboxLabeled: 'Show Welcome Message'
-                value: [ ChatPharoSettings default welcomeMessageEnabled ]
-                changeAction: [ :val | ChatPharoSettings default welcomeMessageEnabled: val ].
+		                    value: [ ChatPharoSettings default feedbackButtonsEnabled ]
+		                    changeAction: [ :val | ChatPharoSettings default feedbackButtonsEnabled: val ].
+
+	welcomeMessageCheckBox := self
+		                          addCheckboxLabeled: 'Show Welcome Message'
+		                          value: [ ChatPharoSettings default welcomeMessageEnabled ]
+		                          changeAction: [ :val | ChatPharoSettings default welcomeMessageEnabled: val ].
 
 
 	playgroundToolCheckBox whenChangedDo: [ :checked |
@@ -238,6 +223,11 @@ ChatPharoSettingsPresenter >> initializePresenters [
 							label: 'Enable cache';
 							state: model cacheEnabled;
 							yourself.
+							
+	loggingCheckBox := self newCheckBox
+                                        label: 'Enable logging';
+                                        state: model loggingEnabled;
+                                        yourself.
 
 	apiDropList selectItem: (model availableApiChoices
 			 detect: [ :assoc | assoc value = model agent class ]
@@ -278,6 +268,7 @@ ChatPharoSettingsPresenter >> newChatTab [
 				   expand: false;
 				   add: playgroundToolCheckBox expand: false;
 				   add: cacheCheckBox expand: false;
+				add: loggingCheckBox expand: false;
 				   add: feedbackCheckBox expand: false;
 				add: welcomeMessageCheckBox expand: false;
 				   yourself);
