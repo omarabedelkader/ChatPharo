@@ -18,17 +18,34 @@
     </nav>
   </header>
 
-  <main>
-    <h2>Core Modules</h2>
-    <p>Details about the main modules and their usage.</p>
+  <div class="toc-toggle-container">
+    <button id="toc-toggle" class="toc-toggle" type="button" aria-expanded="true" aria-controls="toc">
+      Hide table of contents
+    </button>
+  </div>
 
-    <h2>Classes & Methods</h2>
-    <p>Comprehensive reference of classes, methods, and parameters.</p>
-  </main>
+  <div class="layout">
+    <aside id="toc" class="toc" aria-labelledby="toc-title">
+      <h2 id="toc-title" class="toc__title">Contents</h2>
+      <nav class="toc__nav" aria-label="Table of contents">
+        <ul class="toc__list"></ul>
+      </nav>
+    </aside>
+
+    <main>
+      <h2>Core Modules</h2>
+      <p>Details about the main modules and their usage.</p>
+
+      <h2>Classes &amp; Methods</h2>
+      <p>Comprehensive reference of classes, methods, and parameters.</p>
+    </main>
+  </div>
 
   <footer>
     &copy; <span id="year"></span> ChatPharo Project.
   </footer>
+
+  <script src="assets/js/toc.js"></script>
   <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
 </body>
 </html>
