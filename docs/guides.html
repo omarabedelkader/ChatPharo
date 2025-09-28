@@ -35,13 +35,28 @@
     </button>
   </header>
 
-  <main>
-    <h2>Tutorials</h2>
-    <p>Step-by-step guides to help you get the most out of ChatPharo.</p>
+  <div class="toc-toggle-container">
+    <button id="toc-toggle" class="toc-toggle" type="button" aria-expanded="true" aria-controls="toc">
+      Hide table of contents
+    </button>
+  </div>
 
-    <h2>Best Practices</h2>
-    <p>Recommended workflows and design patterns.</p>
-  </main>
+  <div class="layout">
+    <aside id="toc" class="toc" aria-labelledby="toc-title">
+      <h2 id="toc-title" class="toc__title">Contents</h2>
+      <nav class="toc__nav" aria-label="Table of contents">
+        <ul class="toc__list"></ul>
+      </nav>
+    </aside>
+
+    <main>
+      <h2>Tutorials</h2>
+      <p>Step-by-step guides to help you get the most out of ChatPharo.</p>
+
+      <h2>Best Practices</h2>
+      <p>Recommended workflows and design patterns.</p>
+    </main>
+  </div>
 
   <footer>
     &copy; <span id="year"></span> ChatPharo Project.

@@ -35,17 +35,33 @@
     </button>
   </header>
 
-  <main>
-    <h2>Project Overview</h2>
-    <p>ChatPharo is a framework for intelligent completion and language tooling in Pharo, powered by modern language models.</p>
+  <div class="toc-toggle-container">
+    <button id="toc-toggle" class="toc-toggle" type="button" aria-expanded="true" aria-controls="toc">
+      Hide table of contents
+    </button>
+  </div>
+  <div class="layout">
+    <aside id="toc" class="toc" aria-labelledby="toc-title">
+      <h2 id="toc-title" class="toc__title">Contents</h2>
+      <nav class="toc__nav" aria-label="Table of contents">
+        <ul class="toc__list"></ul>
+      </nav>
+    </aside>
+    <main>
+      <h2>Project Overview</h2>
+      <p>
+        ChatPharo is a framework for intelligent completion and language tooling in Pharo, powered by modern language models.
+      </p>
 
-    <h2>Contributors</h2>
-    <p>Developed and maintained by the ChatPharo team and the open-source community.</p>
-  </main>
+      <h2>Contributors</h2>
+      <p>Developed and maintained by the ChatPharo team and the open-source community.</p>
+    </main>
+  </div>
 
   <footer>
     &copy; <span id="year"></span> ChatPharo Project.
   </footer>
+  <script src="assets/js/toc.js"></script>
   <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
 </body>
 </html>
