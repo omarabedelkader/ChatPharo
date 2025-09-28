@@ -33,7 +33,8 @@
   </script>
   <script src="assets/js/theme-toggle.js" defer></script>
   <link rel="stylesheet" href="assets/css/style.css" />
-</head><body>
+</head>
+<body>
   <header>
     <h1>📘 ChatPharo Documentation</h1>
     <p>A framework for intelligent completion and language tooling in Pharo.</p>
@@ -48,15 +49,34 @@
     </button>
   </header>
 
-  <main>
-    <h2>Welcome</h2>
-    <p>This site contains the official documentation and wiki for <strong>ChatPharo</strong>. Use the navigation links above to explore guides, tutorials, and API references.</p>
-  </main>
+  <div class="toc-toggle-container">
+    <button id="toc-toggle" class="toc-toggle" type="button" aria-expanded="true" aria-controls="toc">
+      Hide table of contents
+    </button>
+  </div>
+
+  <div class="layout">
+    <aside id="toc" class="toc" aria-labelledby="toc-title">
+      <h2 id="toc-title" class="toc__title">Contents</h2>
+      <nav class="toc__nav" aria-label="Table of contents">
+        <ul class="toc__list"></ul>
+      </nav>
+    </aside>
+
+    <main>
+      <h2>Welcome</h2>
+      <p>
+        This site contains the official documentation and wiki for <strong>ChatPharo</strong>. Use the navigation links above
+        to explore guides, tutorials, and API references.
+      </p>
+    </main>
+  </div>
 
   <footer>
     &copy; <span id="year"></span> ChatPharo Project. All rights reserved.
   </footer>
 
+  <script src="assets/js/toc.js"></script>
   <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
 </body>
 </html>
