@@ -5,6 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>API Reference - ChatPharo</title>
   <meta name="description" content="API reference for ChatPharo framework." />
+  <script>
+    (function () {
+      const storageKey = 'chatpharo-docs-theme';
+      try {
+        const storedTheme = localStorage.getItem(storageKey);
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const theme = storedTheme || (prefersDark ? 'dark' : 'light');
+        document.documentElement.dataset.theme = theme;
+      } catch (error) {
+        document.documentElement.dataset.theme = 'light';
+      }
+    })();
+  </script>
+  <script src="assets/js/theme-toggle.js" defer></script>
   <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 <body>
@@ -16,6 +30,8 @@
       <a href="guides.html">Guides</a>
       <a href="about.html">About</a>
     </nav>
+    <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle dark theme" aria-pressed="false">
+      🌙 Dark theme
   </header>
 
   <div class="toc-toggle-container">

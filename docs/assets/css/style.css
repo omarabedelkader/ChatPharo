@@ -1,8 +1,23 @@
 :root {
   --primary: #007acc;
-  --text: #333;
-  --bg: #f9f9f9;
-  --muted: #666;
+  --primary-hover: #005f99;
+  --text: #1e293b;
+  --bg: #f5f7fa;
+  --surface: #ffffff;
+  --muted: #64748b;
+  --border: rgba(15, 23, 42, 0.12);
+  --shadow: 0 2px 5px rgba(15, 23, 42, 0.08);
+}
+
+:root[data-theme="dark"] {
+  --primary: #66b7ff;
+  --primary-hover: #8dd1ff;
+  --text: #e2e8f0;
+  --bg: #0f172a;
+  --surface: #1e293b;
+  --muted: #94a3b8;
+  --border: rgba(148, 163, 184, 0.35);
+  --shadow: 0 6px 18px rgba(2, 6, 23, 0.6);
 }
 
 body {
@@ -12,11 +27,18 @@ body {
   background: var(--bg);
   color: var(--text);
   line-height: 1.6;
+  color-scheme: light;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+:root[data-theme="dark"] body {
+  color-scheme: dark;
 }
 
 header {
   padding: 2rem 1rem;
   background: white;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
   text-align: center;
 }
@@ -53,11 +75,11 @@ nav a {
   text-decoration: none;
   color: var(--primary);
   font-weight: 500;
-  transition: color 0.2s;
+  transition: color 0.2 sease;
 }
 
 nav a:hover {
-  color: #005f99;
+  color: var(--primary-hover);
 }
 
 .toc-toggle-container {
@@ -178,7 +200,34 @@ footer {
   padding: 2rem;
   font-size: 0.9rem;
   text-align: center;
-  color: var(--muted);
+  border-top: 1px solid var(--border);
+}
+
+.theme-toggle {
+  margin-top: 1.5rem;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  padding: 0.5rem 1.25rem;
+  border-radius: 999px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.theme-toggle:hover,
+.theme-toggle:focus {
+  outline: none;
+  background: var(--surface);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.theme-toggle:focus-visible {
+  box-shadow: 0 0 0 3px rgba(0, 122, 204, 0.3);
 }
 
 @media (max-width: 900px) {
