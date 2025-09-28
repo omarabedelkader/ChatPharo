@@ -1,12 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>My Repo Website</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <h1>Hello GitHub Pages 👋</h1>
-  <p>If you see this, it works!</p>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- SEO -->
+  <title>ChatPharo Documentation</title>
+  <meta name="description" content="Official documentation and wiki for ChatPharo, a framework for intelligent completion in Pharo." />
+  <meta name="keywords" content="ChatPharo, Pharo, completion engine, LLM, documentation, wiki, framework" />
+  <meta name="author" content="ChatPharo Team" />
+
+  <!-- Social preview -->
+  <meta property="og:title" content="ChatPharo Documentation" />
+  <meta property="og:description" content="Explore the documentation and wiki for ChatPharo." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://yourusername.github.io/ChatPharo/" />
+  <meta property="og:image" content="https://yourusername.github.io/ChatPharo/assets/img/preview.png" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head><body>
+  <header>
+    <h1>📘 ChatPharo Documentation</h1>
+    <p>A framework for intelligent completion and language tooling in Pharo.</p>
+    <nav>
+      <a href="getting-started.html">Getting Started</a>
+      <a href="guides.html">Guides</a>
+      <a href="api.html">API Reference</a>
+      <a href="about.html">About</a>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Welcome</h2>
+    <p>This site contains the official documentation and wiki for <strong>ChatPharo</strong>. Use the navigation links above to explore guides, tutorials, and API references.</p>
+  </main>
+
+  <footer>
+    &copy; <span id="year"></span> ChatPharo Project. All rights reserved.
+  </footer>
+
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
 </body>
 </html>
