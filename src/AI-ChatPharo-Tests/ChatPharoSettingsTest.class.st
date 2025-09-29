@@ -28,6 +28,21 @@ ChatPharoSettingsTest >> tearDown [
 ]
 
 { #category : 'tests' }
+ChatPharoSettingsTest >> testAskFeatureEnabledDefaultsTrue [
+
+    self assert: settings askFeatureEnabled
+]
+
+{ #category : 'tests' }
+ChatPharoSettingsTest >> testAskFeatureEnabledToggle [
+
+    settings askFeatureEnabled: false.
+    self deny: settings askFeatureEnabled.
+    settings askFeatureEnabled: true.
+    self assert: settings askFeatureEnabled
+]
+
+{ #category : 'tests' }
 ChatPharoSettingsTest >> testAvailableApiChoicesReturnsAssociations [
 	| choices |
 	choices := settings availableApiChoices.
@@ -70,6 +85,21 @@ ChatPharoSettingsTest >> testBrowserToolsEnabledDefault [
 ]
 
 { #category : 'tests' }
+ChatPharoSettingsTest >> testBrowserToolsEnabledSetterReplacesCollection [
+
+    | tools |
+    tools := OrderedCollection with: 'A' with: 'B'.
+    settings browserToolsEnabled: tools.
+    self assert: settings browserToolsEnabled identicalTo: tools
+]
+
+{ #category : 'tests' }
+ChatPharoSettingsTest >> testCacheEnabledDefaultIsTrue [
+
+    self assert: settings cacheEnabled
+]
+
+{ #category : 'tests' }
 ChatPharoSettingsTest >> testCacheEnabledToggle [
 
     self assert: settings cacheEnabled.
@@ -79,6 +109,38 @@ ChatPharoSettingsTest >> testCacheEnabledToggle [
 
     settings cacheEnabled: true.
     self assert: settings cacheEnabled.
+]
+
+{ #category : 'tests' }
+ChatPharoSettingsTest >> testCodeFeatureEnabledDefaultsTrue [
+
+    self assert: settings codeFeatureEnabled
+]
+
+{ #category : 'tests' }
+ChatPharoSettingsTest >> testCodeFeatureEnabledToggle [
+
+    settings codeFeatureEnabled: false.
+    self deny: settings codeFeatureEnabled.
+    settings codeFeatureEnabled: true.
+    self assert: settings codeFeatureEnabled
+]
+
+{ #category : 'tests' }
+ChatPharoSettingsTest >> testDisableBrowserToolIgnoresUnknownTool [
+
+    | snapshot |
+    snapshot := settings browserToolsEnabled copy.
+    settings disableBrowserTool: 'non-existent tool'.
+    self assert: settings browserToolsEnabled equals: snapshot
+]
+
+{ #category : 'tests' }
+ChatPharoSettingsTest >> testEnableBrowserToolAddsMissingTool [
+
+    settings browserToolsEnabled: OrderedCollection new.
+    settings enableBrowserTool: 'NewTool'.
+    self assert: (settings browserToolsEnabled includes: 'NewTool')
 ]
 
 { #category : 'tests' }
@@ -118,6 +180,26 @@ ChatPharoSettingsTest >> testFeedbackButtonsEnabledToggle [
     self deny: settings feedbackButtonsEnabled.
     settings feedbackButtonsEnabled: true.
     self assert: settings feedbackButtonsEnabled.
+]
+
+{ #category : 'tests' }
+ChatPharoSettingsTest >> testLoggingEnabledDefaultsTrue [
+
+    self assert: settings loggingEnabled
+]
+
+{ #category : 'tests' }
+ChatPharoSettingsTest >> testLoggingEnabledToggleAlsoUpdatesLogger [
+
+    | original |
+    original := ChatPharoLogger loggingEnabled.
+    settings loggingEnabled: false.
+    self deny: settings loggingEnabled.
+    self deny: ChatPharoLogger loggingEnabled.
+    settings loggingEnabled: true.
+    self assert: settings loggingEnabled.
+    self assert: ChatPharoLogger loggingEnabled.
+    ChatPharoLogger loggingEnabled: original
 ]
 
 { #category : 'tests' }

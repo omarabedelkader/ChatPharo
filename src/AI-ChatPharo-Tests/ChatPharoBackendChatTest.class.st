@@ -94,6 +94,20 @@ ChatPharoBackendChatTest >> testAgentAccessorInjectsHistoryIntoAgent [
     self assert: agent history identicalTo: (chat instVarNamed: #history)
 ]
 
+{ #category : 'as yet unclassified' }
+ChatPharoBackendChatTest >> testAgentReinjectsHistoryOnRepeatedAccess [
+
+    | spy replacement |
+    spy := ChatPharoBackendSpyAgent new.
+    chat agent: spy.
+    chat agent.
+    replacement := ChatPharoHistory new.
+    spy history: replacement.
+    chat agent.
+    self deny: spy history identicalTo: replacement.
+    self assert: spy history identicalTo: (chat instVarNamed: #history)
+]
+
 { #category : 'running' }
 ChatPharoBackendChatTest >> testClearCacheDoesNotRemoveMessages [
 
@@ -116,6 +130,28 @@ ChatPharoBackendChatTest >> testExportAsJsonContainsUserAndAssistantEntries [
     self assert: ((data first) at: 'role') equals: 'user'.
     self assert: ((data second) at: 'role') equals: 'assistant'.
     self assert: ((data second) at: 'content') equals: 'There'
+]
+
+{ #category : 'tests' }
+ChatPharoBackendChatTest >> testExportAsJsonIncludesToolCalls [
+
+    | toolCall data json |
+    toolCall := ChatPharoHistorySaverToolCall
+        id: 'tool-1'
+        functionName: 'lookup'
+        arguments: (Dictionary with: 'q' -> '42')
+        content: 'result'.
+    (chat instVarNamed: #history)
+        addMessage: (ChatPharoHistoryMessage
+            role: 'assistant'
+            content: 'Using tool'
+            toolCalls: { toolCall }).
+    json := chat exportAsJson.
+    data := STONJSON fromString: json.
+    self assert: data size equals: 1.
+    self assert: ((data first) at: 'tool_calls') size equals: 1.
+    self assert: (((data first) at: 'tool_calls') first at: 'id') equals: 'tool-1'
+
 ]
 
 { #category : 'running' }
@@ -151,6 +187,68 @@ ChatPharoBackendChatTest >> testInitializeWithoutWelcomeMessageStartsEmpty [
     self assert: (chat instVarNamed: #history) messages isEmpty
 ]
 
+{ #category : 'tests' }
+ChatPharoBackendChatTest >> testSendMessageCachesNewResponse [
+
+    | expected |
+    expected := '<<MOCK-DEFAULT-REPLY to: Ping>>'.
+    chat sendMessage: 'Ping'.
+    self waitForPromptProcess.
+    self assert: ((chat instVarNamed: #cache) at: 'Ping') equals: expected.
+    self assert: chat messages last answer equals: expected
+]
+
+{ #category : 'tests' }
+ChatPharoBackendChatTest >> testSendMessageInvokesOnAnswerCallback [
+
+    | received |
+    received := nil.
+    chat instVarNamed: #onAnswerReceived put: [ :message | received := message answer ].
+    chat sendMessage: 'Hello'.
+    self waitForPromptProcess.
+    self assert: received equals: '<<MOCK-DEFAULT-REPLY to: Hello>>'
+]
+
+{ #category : 'tests' }
+ChatPharoBackendChatTest >> testSendMessagePassesPromptPrefixToAgent [
+
+    | spy |
+    spy := ChatPharoBackendSpyAgent new.
+    spy response: 'done'.
+    chat agent: spy.
+    chat sendMessage: 'Question'.
+    self waitForPromptProcess.
+    self assert: spy promptPrefixes size equals: 1.
+    self assert: spy promptPrefixes first equals: ('user: Question' , String cr)
+]
+
+{ #category : 'tests' }
+ChatPharoBackendChatTest >> testSendMessageTriggersToolExecutionWhenRequested [
+
+    | spy executed |
+    spy := ChatPharoBackendSpyAgent new.
+    executed := false.
+    chat agent: spy.
+    chat instVarNamed: #onToolExecution put: [ executed := true ].
+    spy response: 'done'.
+    chat sendMessage: 'Run tool'.
+    self waitForPromptProcess.
+    self assert: executed.
+    self assert: spy toolExecutionInvoked
+]
+
+{ #category : 'tests' }
+ChatPharoBackendChatTest >> testSendMessageUsesCacheWhenEntryPresent [
+
+    | cache |
+    cache := chat instVarNamed: #cache.
+    cache at: 'Cached prompt' put: 'cached response'.
+    chat instVarNamed: #onAnswerReceived put: [ :msg | self assert: msg answer equals: 'cached response' ].
+    chat sendMessage: 'Cached prompt'.
+    self assert: chat messages last answer equals: 'cached response'.
+    self assert: (chat instVarNamed: #promptProcess) isNil
+]
+
 { #category : 'running' }
 ChatPharoBackendChatTest >> testTriggerToolExecutionInvokesCallback [
 
@@ -159,4 +257,14 @@ ChatPharoBackendChatTest >> testTriggerToolExecutionInvokesCallback [
     chat instVarNamed: #onToolExecution put: [ triggered := true ].
     chat triggerToolExecution.
     self assert: triggered
+]
+
+{ #category : 'as yet unclassified' }
+ChatPharoBackendChatTest >> waitForPromptProcess [
+
+    | process | 
+    process := chat instVarNamed: #promptProcess.
+    process ifNil: [ ^ self ].
+    [ process isTerminated ]
+        whileFalse: [ (Delay forMilliseconds: 10) wait ]
 ]

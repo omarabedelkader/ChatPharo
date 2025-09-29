@@ -25,6 +25,12 @@ ChatPharoBackendLoggerTest >> tearDown [
 ]
 
 { #category : 'running' }
+ChatPharoBackendLoggerTest >> testAgentNameForDefaultsToClassName [
+
+    self assert: (ChatPharoLogger agentNameFor: Object new) equals: 'Object'
+]
+
+{ #category : 'running' }
 ChatPharoBackendLoggerTest >> testAgentNameForNilReturnsNone [
 
     self assert: (ChatPharoLogger agentNameFor: nil) equals: 'None'
@@ -38,7 +44,69 @@ ChatPharoBackendLoggerTest >> testAgentNameForUsesDisplayNameWhenAvailable [
 ]
 
 { #category : 'running' }
+ChatPharoBackendLoggerTest >> testEnsureMutexReturnsSameInstance [
+
+    self assert: ChatPharoLogger ensureMutex identicalTo: ChatPharoLogger ensureMutex
+]
+
+{ #category : 'running' }
+ChatPharoBackendLoggerTest >> testLoggingEnabledSetterChangesValue [
+
+    | original |
+    original := ChatPharoLogger loggingEnabled.
+    ChatPharoLogger loggingEnabled: true.
+    self assert: ChatPharoLogger loggingEnabled.
+    ChatPharoLogger loggingEnabled: false.
+    self deny: ChatPharoLogger loggingEnabled.
+    ChatPharoLogger loggingEnabled: original
+]
+
+{ #category : 'running' }
+ChatPharoBackendLoggerTest >> testStringifyFallsBackToPrintString [
+
+    | object |
+    object := Object new.
+    self assert: (ChatPharoLogger stringify: object) equals: object printString
+]
+
+{ #category : 'running' }
 ChatPharoBackendLoggerTest >> testStringifyNilReturnsNilLiteral [
 
     self assert: (ChatPharoLogger stringify: nil) equals: 'nil'
+]
+
+{ #category : 'running' }
+ChatPharoBackendLoggerTest >> testStringifyUsesAsStringWhenAvailable [
+
+    | object |
+    object := 42.
+    self assert: (ChatPharoLogger stringify: object) equals: '42'
+]
+
+{ #category : 'running' }
+ChatPharoBackendLoggerTest >> testWriteDetailsHandlesCollection [
+    | text |
+    text := String streamContents: [ :stream |
+        ChatPharoLogger writeDetails: #(1 2) on: stream ].
+    self assert: (text includesSubstring: '  Details:').
+    self assert: (text includesSubstring: '- 1').
+    self assert: (text includesSubstring: '- 2')
+]
+
+{ #category : 'running' }
+ChatPharoBackendLoggerTest >> testWriteDetailsHandlesNil [
+
+    | text |
+    text := String streamContents: [ :stream |
+        ChatPharoLogger writeDetails: nil on: stream ].
+    self assert: (text includesSubstring: 'nil')
+]
+
+{ #category : 'running' }
+ChatPharoBackendLoggerTest >> testWriteDetailsHandlesString [
+
+    | text |
+    text := String streamContents: [ :stream |
+        ChatPharoLogger writeDetails: 'message' on: stream ].
+    self assert: (text includesSubstring: 'message')
 ]
