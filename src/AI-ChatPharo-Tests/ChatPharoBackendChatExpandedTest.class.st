@@ -7,9 +7,9 @@ Class {
 		'originalDefault',
 		'originalLogging'
 	],
-	#category : 'AI-ChatPharo-Tests-Env',
+	#category : 'AI-ChatPharo-Tests-Core',
 	#package : 'AI-ChatPharo-Tests',
-	#tag : 'Env'
+	#tag : 'Core'
 }
 
 { #category : 'running' }

@@ -4,9 +4,9 @@ Class {
 	#instVars : [
 		'appliedCalls'
 	],
-	#category : 'AI-ChatPharo-Tests-Env',
+	#category : 'AI-ChatPharo-Tests-Mock',
 	#package : 'AI-ChatPharo-Tests',
-	#tag : 'Env'
+	#tag : 'Mock'
 }
 
 { #category : 'initialization' }

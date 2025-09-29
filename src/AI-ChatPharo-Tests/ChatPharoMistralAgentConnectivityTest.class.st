@@ -7,9 +7,9 @@ Class {
 	#classVars : [
 		'LastOpened'
 	],
-	#category : 'AI-ChatPharo-Tests-Mock',
+	#category : 'AI-ChatPharo-Tests-Agent',
 	#package : 'AI-ChatPharo-Tests',
-	#tag : 'Mock'
+	#tag : 'Agent'
 }
 
 { #category : 'running' }

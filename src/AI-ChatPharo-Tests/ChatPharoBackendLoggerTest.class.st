@@ -4,9 +4,9 @@ Class {
 	#instVars : [
 		'originalLogging'
 	],
-	#category : 'AI-ChatPharo-Tests-Mock',
+	#category : 'AI-ChatPharo-Tests-Logger',
 	#package : 'AI-ChatPharo-Tests',
-	#tag : 'Mock'
+	#tag : 'Logger'
 }
 
 { #category : 'running' }

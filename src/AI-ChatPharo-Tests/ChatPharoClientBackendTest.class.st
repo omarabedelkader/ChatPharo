@@ -4,8 +4,9 @@ Class {
 	#instVars : [
 		'originalPlayground'
 	],
-	#category : 'AI-ChatPharo-Tests',
-	#package : 'AI-ChatPharo-Tests'
+	#category : 'AI-ChatPharo-Tests-Agent',
+	#package : 'AI-ChatPharo-Tests',
+	#tag : 'Agent'
 }
 
 { #category : 'running' }

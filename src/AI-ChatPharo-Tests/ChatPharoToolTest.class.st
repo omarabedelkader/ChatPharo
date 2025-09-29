@@ -5,9 +5,9 @@ Class {
 		'tool',
 		'testTool'
 	],
-	#category : 'AI-ChatPharo-Tests-Mock',
+	#category : 'AI-ChatPharo-Tests-Tools',
 	#package : 'AI-ChatPharo-Tests',
-	#tag : 'Mock'
+	#tag : 'Tools'
 }
 
 { #category : 'running' }

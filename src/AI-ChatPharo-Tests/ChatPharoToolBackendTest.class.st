@@ -5,9 +5,9 @@ Class {
 		'tool',
 		'echoClient'
 	],
-	#category : 'AI-ChatPharo-Tests-Env',
+	#category : 'AI-ChatPharo-Tests-Tools',
 	#package : 'AI-ChatPharo-Tests',
-	#tag : 'Env'
+	#tag : 'Tools'
 }
 
 { #category : 'running' }

@@ -4,8 +4,9 @@ Class {
 	#instVars : [
 		'history'
 	],
-	#category : 'AI-ChatPharo-Tests',
-	#package : 'AI-ChatPharo-Tests'
+	#category : 'AI-ChatPharo-Tests-History',
+	#package : 'AI-ChatPharo-Tests',
+	#tag : 'History'
 }
 
 { #category : 'running' }

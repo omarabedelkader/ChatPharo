@@ -5,9 +5,9 @@ Class {
 		'app',
 		'mockAgent'
 	],
-	#category : 'AI-ChatPharo-Tests-Agent',
+	#category : 'AI-ChatPharo-Tests-Security',
 	#package : 'AI-ChatPharo-Tests',
-	#tag : 'Agent'
+	#tag : 'Security'
 }
 
 { #category : 'running' }

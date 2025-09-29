@@ -4,8 +4,9 @@ Class {
 	#instVars : [
 		'presenter'
 	],
-	#category : 'AI-ChatPharo-Tests',
-	#package : 'AI-ChatPharo-Tests'
+	#category : 'AI-ChatPharo-Tests-Security',
+	#package : 'AI-ChatPharo-Tests',
+	#tag : 'Security'
 }
 
 { #category : 'running' }
