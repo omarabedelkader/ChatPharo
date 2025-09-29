@@ -17,6 +17,14 @@ ChatPharoBackendHistoryExpandedTest >> setUp [
 ]
 
 { #category : 'running' }
+ChatPharoBackendHistoryExpandedTest >> testAddAssistantCreatesAssistantMessage [
+
+    history addAssistant: 'hi'.
+    self assert: history messages size equals: 1.
+    self assert: history messages first role equals: 'assistant'.
+]
+
+{ #category : 'running' }
 ChatPharoBackendHistoryExpandedTest >> testAddAssistantMessageLeavesToolCallsNil [
 
     history addAssistant: 'Hello backend'.
@@ -67,6 +75,14 @@ ChatPharoBackendHistoryExpandedTest >> testAddMessageWithToolCallPersistsReferen
         toolCalls: { toolCall }.
     history addMessage: custom.
     self assert: history messages first toolCalls first identicalTo: toolCall
+]
+
+{ #category : 'running' }
+ChatPharoBackendHistoryExpandedTest >> testAddUserCreatesUserMessage [
+
+    history addUser: 'hello'.
+    self assert: history messages first role equals: 'user'.
+    self assert: history messages first content equals: 'hello'.
 ]
 
 { #category : 'running' }
@@ -190,6 +206,27 @@ ChatPharoBackendHistoryExpandedTest >> testChatMessagesOnEmitsToolResultForEachT
 ]
 
 { #category : 'running' }
+ChatPharoBackendHistoryExpandedTest >> testChatMessagesOnIncludesToolMessages [
+
+    | toolCall stream collection |
+    toolCall := ChatPharoHistorySaverToolCall
+        id: 'id-1'
+        functionName: 'fn'
+        arguments: '{}'
+        content: 'tool-result'.
+    history addMessage: (ChatPharoHistoryMessage
+        role: 'assistant'
+        content: nil
+        toolCalls: { toolCall }).
+    stream := WriteStream on: OrderedCollection new.
+    history chatMessagesOn: stream.
+    collection := stream contents.
+    self assert: collection size equals: 2.
+    self assert: (collection first at: 'role') equals: 'assistant'.
+    self assert: (collection second at: 'role') equals: 'tool'.
+]
+
+{ #category : 'running' }
 ChatPharoBackendHistoryExpandedTest >> testChatMessagesOnOmitsContentKeyWhenNil [
 
     | message stream json |
@@ -227,10 +264,9 @@ ChatPharoBackendHistoryExpandedTest >> testClearAllowsNewEntriesAfterReset [
 { #category : 'running' }
 ChatPharoBackendHistoryExpandedTest >> testClearRemovesAllMessages [
 
-    history addUser: 'First'.
-    history addAssistant: 'Second'.
+    history addUser: 'hi'.
     history clear.
-    self assert: history messages isEmpty
+    self assert: history messages isEmpty.
 ]
 
 { #category : 'running' }
@@ -365,6 +401,67 @@ ChatPharoBackendHistoryExpandedTest >> testHistoryMessagesAreDistinctInstances [
     self deny: history messages first identicalTo: history messages last
 ]
 
+{ #category : 'tests' }
+ChatPharoBackendHistoryExpandedTest >> testHistorySaverHistoryStringIncludesToolCalls [
+
+    | saver stream toolCall |
+    toolCall := ChatPharoHistorySaverToolCall
+        id: 'id-1'
+        functionName: 'fn'
+        arguments: '{}'
+        content: 'result'.
+    saver := ChatPharoHistorySaver role: 'assistant' content: 'answer' toolCalls: { toolCall }.
+    stream := WriteStream on: String new.
+    saver historyStringOn: stream.
+    self assert: (stream contents includesSubstring: 'assistant: answer').
+]
+
+{ #category : 'tests' }
+ChatPharoBackendHistoryExpandedTest >> testHistorySaverToolCallOpenAIChatToolCallStructure [
+
+    | call dict |
+    call := ChatPharoHistorySaverToolCall
+        id: 'call-1'
+        functionName: 'fn'
+        arguments: (Dictionary with: 'key' -> 'value')
+        content: 'content'.
+    dict := call openAIChatToolCall.
+    self assert: (dict at: 'id') equals: 'call-1'.
+    self assert: (((dict at: 'function') at: 'arguments') includesSubstring: '"key"').
+]
+
+{ #category : 'tests' }
+ChatPharoBackendHistoryExpandedTest >> testHistorySaverToolCallOpenAIChatToolMessageDefaultsWhenNil [ 
+
+    | call message |
+    call := ChatPharoHistorySaverToolCall
+        id: 'call-2'
+        functionName: 'fn'
+        arguments: '{}'
+        content: nil.
+    message := call openAIChatToolMessage.
+    self assert: (message at: 'content') equals: '[No tool result]'.
+
+]
+
+{ #category : 'tests' }
+ChatPharoBackendHistoryExpandedTest >> testHistorySaverToolCallsAppendToolMessages [
+
+    | saver stream toolCall collection |
+    toolCall := ChatPharoHistorySaverToolCall
+        id: 'id-2'
+        functionName: 'fn'
+        arguments: '{}'
+        content: 'result'.
+    saver := ChatPharoHistorySaver role: 'assistant' content: nil toolCalls: { toolCall }.
+    stream := WriteStream on: OrderedCollection new.
+    saver putOpenAIChatMessagesOn: stream.
+    collection := stream contents.
+    self assert: collection size equals: 2.
+    self assert: (collection first at: 'role') equals: 'assistant'.
+    self assert: (collection second at: 'role') equals: 'tool'.
+]
+
 { #category : 'running' }
 ChatPharoBackendHistoryExpandedTest >> testMessagesCollectionIsMutable [
 
@@ -378,6 +475,18 @@ ChatPharoBackendHistoryExpandedTest >> testMessagesInitiallyEmptyOrderedCollecti
 
     self assert: history messages isEmpty.
     self assert: history messages class equals: OrderedCollection
+]
+
+{ #category : 'tests' }
+ChatPharoBackendHistoryExpandedTest >> testPutOpenAIChatMessagesOnDelegatesToChatMessagesOn [
+
+    | stream collection |
+    history addUser: 'hi'.
+    stream := WriteStream on: OrderedCollection new.
+    history putOpenAIChatMessagesOn: stream.
+    collection := stream contents.
+    self assert: collection size equals: 1.
+    self assert: (collection first at: 'role') equals: 'user'.
 ]
 
 { #category : 'running' }
