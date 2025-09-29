@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guides - ChatPharo</title>
+  <meta name="description" content="Guides and tutorials for ChatPharo." />
+    <script>
+    (function () {
+      const storageKey = 'chatpharo-docs-theme';
+      try {
+        const storedTheme = localStorage.getItem(storageKey);
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const theme = storedTheme || (prefersDark ? 'dark' : 'light');
+        document.documentElement.dataset.theme = theme;
+      } catch (error) {
+        document.documentElement.dataset.theme = 'light';
+      }
+    })();
+  </script>
+  <script src="assets/js/theme-toggle.js" defer></script>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <header>
+    <h1>📖 Guides</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="getting-started.html">Getting Started</a>
+      <a href="api.html">API Reference</a>
+      <a href="about.html">About</a>
+    </nav>
+    <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle dark theme" aria-pressed="false">
+      🌙 Dark theme
+    </button>
+  </header>
+
+  <div class="toc-toggle-container">
+    <button id="toc-toggle" class="toc-toggle" type="button" aria-expanded="true" aria-controls="toc">
+      Hide table of contents
+    </button>
+  </div>
+
+  <div class="layout">
+    <aside id="toc" class="toc" aria-labelledby="toc-title">
+      <h2 id="toc-title" class="toc__title">Contents</h2>
+      <nav class="toc__nav" aria-label="Table of contents">
+        <ul class="toc__list"></ul>
+      </nav>
+    </aside>
+
+    <main>
+      <h2>Tutorials</h2>
+      <p>Step-by-step guides to help you get the most out of ChatPharo.</p>
+
+      <h2>Best Practices</h2>
+      <p>Recommended workflows and design patterns.</p>
+    </main>
+  </div>
+
+  <footer>
+    &copy; <span id="year"></span> ChatPharo Project.
+  </footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
