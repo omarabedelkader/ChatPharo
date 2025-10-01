@@ -3,43 +3,82 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>About - ChatPharo</title>
-  <meta name="description" content="About the ChatPharo framework and its contributors." />
-    <script>
-    (function () {
-      const storageKey = 'chatpharo-docs-theme';
-      try {
-        const storedTheme = localStorage.getItem(storageKey);
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const theme = storedTheme || (prefersDark ? 'dark' : 'light');
-        document.documentElement.dataset.theme = theme;
-      } catch (error) {
-        document.documentElement.dataset.theme = 'light';
-      }
-    })();
-  </script>
+
+  <!-- Page title defined RIGHT HERE, in this page -->
+  <title>About</title>
+
+  <!-- SEO -->
+  <meta name="description" content="Official documentation and wiki for ChatPharo, a framework for intelligent completion in Pharo." />
+  <meta name="keywords" content="ChatPharo, Pharo, completion engine, LLM, documentation, wiki, framework" />
+  <meta name="author" content="ChatPharo Team" />
+
+  <!-- Social preview -->
+  <meta property="og:title" content="ChatPharo Documentation" />
+  <meta property="og:description" content="Explore the documentation and wiki for ChatPharo." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://omarabedelkader.github.io/ChatPharo/" />
+  <meta property="og:image" content="https://omarabedelkader.github.io/ChatPharo/assets/img/preview.png" />
+
+  <!-- Styles -->
   <link rel="stylesheet" href="assets/css/style.css" />
-  <script src="assets/js/theme-toggle.js" defer></script>
 </head>
 <body>
-  <header>
-    <h1>ℹ️ About ChatPharo</h1>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="getting-started.html">Getting Started</a>
-      <a href="guides.html">Guides</a>
-      <a href="api.html">API Reference</a>
-    </nav>
-    <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle dark theme" aria-pressed="false">
-      🌙 Dark theme
-    </button>
-  </header>
 
+  <!-- Shared Taskbar -->
+  <div id="taskbar-container" aria-live="polite"></div>
+
+  <script>
+    // Use the title defined IN THIS PAGE
+    const pageTitle = document.title;
+
+    // Keep OG title in sync (helps if you ever change document.title via JS)
+    const ogTitleEl = document.querySelector('meta[property="og:title"]');
+    if (ogTitleEl) ogTitleEl.setAttribute('content', pageTitle);
+
+    // Load the shared taskbar, then inject an H1 using this page's title
+    fetch("taskbar.html")
+      .then(r => {
+        if (!r.ok) throw new Error(`Failed to load taskbar.html: ${r.status}`);
+        return r.text();
+      })
+      .then(html => {
+        const container = document.getElementById("taskbar-container");
+        container.innerHTML = html;
+
+        // Find the header that was just inserted
+        const header = container.querySelector("header") || document.querySelector("header");
+
+        // If there's no site title, create one from THIS PAGE's <title>
+        if (header && !header.querySelector(".site-title")) {
+          const h1 = document.createElement("h1");
+          h1.className = "site-title";
+          h1.textContent = "ℹ️ " + pageTitle;
+          header.prepend(h1);
+        }
+
+        // (Re)attach behavior for the theme toggle
+        const script = document.createElement("script");
+        script.src = "assets/js/theme-toggle.js";
+        document.body.appendChild(script);
+      })
+      .catch(err => {
+        console.error(err);
+        // Graceful fallback: render a minimal header so the page isn’t broken
+        document.getElementById("taskbar-container").innerHTML = `
+          <header class="site-header">
+            <h1 class="site-title">📘 ${pageTitle}</h1>
+            <nav><a href="index.html">Home</a></nav>
+          </header>`;
+      });
+  </script>
+
+  <!-- TOC toggle -->
   <div class="toc-toggle-container">
     <button id="toc-toggle" class="toc-toggle" type="button" aria-expanded="true" aria-controls="toc">
       Hide table of contents
     </button>
   </div>
+
   <div class="layout">
     <aside id="toc" class="toc" aria-labelledby="toc-title">
       <h2 id="toc-title" class="toc__title">Contents</h2>
@@ -47,21 +86,22 @@
         <ul class="toc__list"></ul>
       </nav>
     </aside>
-    <main>
-      <h2>Project Overview</h2>
-      <p>
-        ChatPharo is a framework for intelligent completion and language tooling in Pharo, powered by modern language models.
-      </p>
 
-      <h2>Contributors</h2>
-      <p>Developed and maintained by the ChatPharo team and the open-source community.</p>
+    <main>
+      <h2>Welcome</h2>
+      <p>
+        This site contains the official documentation and wiki for <strong>ChatPharo</strong>. 
+        Use the navigation links above to explore guides, tutorials, and API references.
+      </p>
     </main>
   </div>
 
   <footer>
-    &copy; <span id="year"></span> ChatPharo Project.
+    &copy; <span id="year"></span> ChatPharo Project. All rights reserved.
   </footer>
-  <script src="assets/js/toc.js"></script>
-  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+  <script src="assets/js/toc.js" defer></script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>

@@ -4,78 +4,99 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+  <!-- Page title defined RIGHT HERE, in this page -->
+  <title>ChatPharo Documentation</title>
+
   <!-- SEO -->
-  <title>ChatPharo – Coming Soon</title>
-  <meta name="description" content="ChatPharo website is temporarily unavailable. We will be back soon!" />
-  <meta name="keywords" content="ChatPharo, Pharo, coming soon, maintenance" />
+  <meta name="description" content="Official documentation and wiki for ChatPharo, a framework for intelligent completion in Pharo." />
+  <meta name="keywords" content="ChatPharo, Pharo, completion engine, LLM, documentation, wiki, framework" />
   <meta name="author" content="ChatPharo Team" />
 
   <!-- Social preview -->
-  <meta property="og:title" content="ChatPharo – Coming Soon" />
-  <meta property="og:description" content="The ChatPharo website is temporarily down. Stay tuned for updates!" />
+  <meta property="og:title" content="ChatPharo Documentation" />
+  <meta property="og:description" content="Explore the documentation and wiki for ChatPharo." />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://yourusername.github.io/ChatPharo/" />
-  <meta property="og:image" content="https://yourusername.github.io/ChatPharo/assets/img/preview.png" />
+  <meta property="og:url" content="https://omarabedelkader.github.io/ChatPharo/" />
+  <meta property="og:image" content="https://omarabedelkader.github.io/ChatPharo/assets/img/preview.png" />
 
-  <!-- Theme setup -->
-  <script>
-    (function () {
-      const storageKey = 'chatpharo-docs-theme';
-      try {
-        const storedTheme = localStorage.getItem(storageKey);
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const theme = storedTheme || (prefersDark ? 'dark' : 'light');
-        document.documentElement.dataset.theme = theme;
-      } catch (error) {
-        document.documentElement.dataset.theme = 'light';
-      }
-    })();
-  </script>
+  <!-- Styles -->
   <link rel="stylesheet" href="assets/css/style.css" />
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: system-ui, sans-serif;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      text-align: center;
-      background: var(--bg, #f5f5f5);
-      color: var(--text, #222);
-    }
-    h1 {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-    }
-    p {
-      font-size: 1.2rem;
-      margin-bottom: 2rem;
-    }
-    footer {
-      position: absolute;
-      bottom: 1rem;
-      font-size: 0.9rem;
-      color: #777;
-    }
-    [data-theme="dark"] {
-      --bg: #1e1e1e;
-      --text: #f0f0f0;
-    }
-  </style>
 </head>
 <body>
-  <main>
-    <h1>🚧 Website Unavailable</h1>
-    <p>This website is not available right now.<br/>We will be back soon! Stay tuned ✨</p>
-  </main>
+
+  <!-- Shared Taskbar -->
+  <div id="taskbar-container" aria-live="polite"></div>
+
+  <script>
+    // Use the title defined IN THIS PAGE
+    const pageTitle = document.title;
+
+    // Keep OG title in sync (helps if you ever change document.title via JS)
+    const ogTitleEl = document.querySelector('meta[property="og:title"]');
+    if (ogTitleEl) ogTitleEl.setAttribute('content', pageTitle);
+
+    // Load the shared taskbar, then inject an H1 using this page's title
+    fetch("taskbar.html")
+      .then(r => {
+        if (!r.ok) throw new Error(`Failed to load taskbar.html: ${r.status}`);
+        return r.text();
+      })
+      .then(html => {
+        const container = document.getElementById("taskbar-container");
+        container.innerHTML = html;
+
+        // Find the header that was just inserted
+        const header = container.querySelector("header") || document.querySelector("header");
+
+        // If there's no site title, create one from THIS PAGE's <title>
+        if (header && !header.querySelector(".site-title")) {
+          const h1 = document.createElement("h1");
+          h1.className = "site-title";
+          h1.textContent = "📘" + pageTitle;
+          header.prepend(h1);
+        }
+
+        // (Re)attach behavior for the theme toggle
+        const script = document.createElement("script");
+        script.src = "assets/js/theme-toggle.js";
+        document.body.appendChild(script);
+      })
+      .catch(err => {
+        console.error(err);
+        // Graceful fallback: render a minimal header so the page isn’t broken
+        document.getElementById("taskbar-container").innerHTML = `
+          <header class="site-header">
+            <h1 class="site-title">📘 ${pageTitle}</h1>
+            <nav><a href="index.html">Home</a></nav>
+          </header>`;
+      });
+  </script>
+
+  <!-- TOC toggle -->
+  <div class="toc-toggle-container">
+    <button id="toc-toggle" class="toc-toggle" type="button" aria-expanded="true" aria-controls="toc">
+      Hide table of contents
+    </button>
+  </div>
+
+  <div class="layout">
+    <aside id="toc" class="toc" aria-labelledby="toc-title">
+      <h2 id="toc-title" class="toc__title">Contents</h2>
+      <nav class="toc__nav" aria-label="Table of contents">
+        <ul class="toc__list"></ul>
+      </nav>
+    </aside>
+
+    <main>
+      <h2>Welcome</h2>
+      <p>
+    </main>
+  </div>
 
   <footer>
     &copy; <span id="year"></span> ChatPharo Project. All rights reserved.
   </footer>
-
+  <script src="assets/js/toc.js" defer></script>
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
   </script>
