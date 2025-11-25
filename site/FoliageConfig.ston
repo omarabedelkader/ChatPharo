@@ -1,7 +1,0 @@
-Foliage {
-	#baseUri : 'https://omarabedelkader.github.io',
-	#webRootPrefix : '/ChatPharo',
-	#blogs: [ 
-		'news': 'News'
-	]
-}
