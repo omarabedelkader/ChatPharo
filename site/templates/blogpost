@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<html>
+	{{> head }}
+	<body>
+		<div id="main">
+		{{> headerSite}}
+		{{> menu}}
+
+                <div id="mainContent">
+                    <h1><a href="{{pathString}}">{{{title}}}</a></h1>
+                    {{{body}}}
+		<p><div class="date">{{{publicationDate}}}</div></p>
+
+<style>
+  .col-left {
+     margin-bottom: 3cm;
+  }
+  .col-right {
+     margin-bottom: 3cm;
+  }
+</style>
+
+<p class="col-left">
+<div>
+	<div class="col-left" style="float: left">
+	{{# previousPost }}
+	&lt;-- <a href="{{pathString}}">{{{title}}}</a>
+	{{/ previousPost }}
+	</div>
+	<div class="col-right" style="float: right">
+	{{# nextPost }}
+	<a href="{{pathString}}">{{{title}}}</a> --&gt;
+	{{/ nextPost }}
+	</div>
+	</div>
+</div>
+</p>
+        </div>
+    </body>
+</html>

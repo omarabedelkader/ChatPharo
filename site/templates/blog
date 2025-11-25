@@ -1,0 +1,13 @@
+<html>
+	{{> head }}
+	<body>
+	
+	{{> headerSite }}
+	{{> menu }}
+
+	<div id="mainContent">
+		<h1>{{{title}}}</h1>
+		{{{body}}}
+	</div>
+	</body>
+</html>
