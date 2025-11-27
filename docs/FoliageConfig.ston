@@ -1,6 +1,6 @@
 Foliage {
 	#baseUri : 'https://omarabedelkader.github.io',
-	#webRootPrefix : '/ChatPharo/docs',
+	#webRootPrefix : '/ChatPharo',
 	#blogs: [ 
 		'news': 'News'
 	]
