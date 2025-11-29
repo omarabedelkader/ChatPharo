@@ -52,27 +52,27 @@ ChatPharo follows a **layered architecture** with clear separation of concerns:
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                    User Interface Layer                  │
+│                    User Interface Layer                 │
 │  (Spec Presenters: ChatPharoPresenter, Settings, etc.)  │
 └────────────────────┬────────────────────────────────────┘
                      │
 ┌────────────────────▼────────────────────────────────────┐
-│                   Application Layer                      │
+│                   Application Layer                     │
 │    (ChatPharo, ChatPharoChat, ChatPharoMessage)         │
 └────────────────────┬────────────────────────────────────┘
                      │
 ┌────────────────────▼────────────────────────────────────┐
-│                    Agent Layer                           │
-│  (ChatPharoAgent, OllamaAgent, GeminiAgent, etc.)      │
+│                    Agent Layer                          │
+│  (ChatPharoAgent, OllamaAgent, GeminiAgent, etc.)       │
 └────────────────────┬────────────────────────────────────┘
                      │
 ┌────────────────────▼────────────────────────────────────┐
-│                    Tool Layer                            │
+│                    Tool Layer                           │
 │   (ChatPharoTool, ChatPharoClient, BrowserEnvironment)  │
 └────────────────────┬────────────────────────────────────┘
                      │
 ┌────────────────────▼────────────────────────────────────┐
-│                 History & Persistence                    │
+│                 History & Persistence                   │
 │     (ChatPharoHistory, ChatPharoSettings, Logger)       │
 └─────────────────────────────────────────────────────────┘
 ```
