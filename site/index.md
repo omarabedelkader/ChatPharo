@@ -526,20 +526,20 @@ ChatPharoSettings  ─▶  ChatPharoSettingsPresenter ─▶ Tabbed Settings
 **Layout**:
 ```
 ┌────────────────────────────────────────────────────────┐
-│  [New Chat] [Delete] [Delete All] [Save] [Settings]   │ ← Toolbar
+│  [New Chat] [Delete] [Delete All] [Save] [Settings]    │ ← Toolbar
 ├────────────────────────────────────────────────────────┤
 │  ┌──────┬──────┬──────┐                                │
 │  │Chat 1│Chat 2│Chat 3│                                │ ← Notebook Tabs
 │  └──────┴──────┴──────┘                                │
 │  ┌────────────────────────────────────────────────┐    │
-│  │  User: How do I create a class?               │    │
-│  │  Assistant: To create a class in Pharo...     │    │
-│  │  ──────────────────────────────────────────── │    │ ← Chat Messages
-│  │  User: Show me an example                     │    │
-│  │  Assistant: ```smalltalk...                   │    │
+│  │  User: How do I create a class?                │    │
+│  │  Assistant: To create a class in Pharo...      │    │
+│  │  ────────────────────────────────────────────  │    │ ← Chat Messages
+│  │  User: Show me an example                      │    │
+│  │  Assistant: ```smalltalk...                    │    │
 │  └────────────────────────────────────────────────┘    │
 │  ┌────────────────────────────────────────────────┐    │
-│  │ Type your message here...         [Submit]    │    │ ← Input Field
+│  │ Type your message here...         [Submit]     │    │ ← Input Field
 │  └────────────────────────────────────────────────┘    │
 └────────────────────────────────────────────────────────┘
 ```
