@@ -75,7 +75,7 @@ ChatPharoSettings class >> loadOrNew [
 				  settings browserExtensionEnabled ifNil: [ settings browserExtensionEnabled: false ].
 				  settings browserAutoTabEnabled ifNil: [ settings browserAutoTabEnabled: true ].
 				  settings browserToolsEnabled ifNil: [
-					  settings browserToolsEnabled: (ChatPharoBrowserEnvironment new tools collect: [ :t | t name ]) asOrderedCollection ].
+				  settings browserToolsEnabled: (ChatPharoBrowserEnvironment new tools collect: [ :t | t name ]) asOrderedCollection ].
 				  settings maximumIterations.
 				  settings cacheEnabled ifNil: [ settings cacheEnabled: true ].
 				  settings feedbackButtonsEnabled ifNil: [ settings feedbackButtonsEnabled: true ].
@@ -537,6 +537,19 @@ ChatPharoSettings >> models [
 	^ agent class modelNames
 ]
 
+{ #category : 'private' }
+ChatPharoSettings >> newConfiguredSandbox [
+	"Create and return a new sandbox configured with current settings"
+
+	| sandbox |
+	sandbox := ChatPharoSandbox new.
+	sandbox timeout: self sandboxTimeout.
+	sandbox restrictFileSystem: self sandboxRestrictFileSystem.
+	sandbox restrictNetwork: self sandboxRestrictNetwork.
+	sandbox restrictSystemAccess: self sandboxRestrictSystemAccess.
+	^ sandbox
+]
+
 { #category : 'initialization' }
 ChatPharoSettings >> multivers [
 	"Return the multiverse configuration"
@@ -598,6 +611,36 @@ ChatPharoSettings >> privateSetIsDeveloper: aBoolean [
 ]
 
 { #category : 'private' }
+ChatPharoSettings >> privateSetSandboxEnabled: aBoolean [
+	"Set sandboxEnabled without triggering save. Used during loading."
+	sandboxEnabled := aBoolean
+]
+
+{ #category : 'private' }
+ChatPharoSettings >> privateSetSandboxRestrictFileSystem: aBoolean [
+	"Set sandboxRestrictFileSystem without triggering save. Used during loading."
+	sandboxRestrictFileSystem := aBoolean
+]
+
+{ #category : 'private' }
+ChatPharoSettings >> privateSetSandboxRestrictNetwork: aBoolean [
+	"Set sandboxRestrictNetwork without triggering save. Used during loading."
+	sandboxRestrictNetwork := aBoolean
+]
+
+{ #category : 'private' }
+ChatPharoSettings >> privateSetSandboxRestrictSystemAccess: aBoolean [
+	"Set sandboxRestrictSystemAccess without triggering save. Used during loading."
+	sandboxRestrictSystemAccess := aBoolean
+]
+
+{ #category : 'private' }
+ChatPharoSettings >> privateSetSandboxTimeout: anInteger [
+	"Set sandboxTimeout without triggering save. Used during loading."
+	sandboxTimeout := anInteger
+]
+
+{ #category : 'private' }
 ChatPharoSettings >> privateSetUserName: aString [
 	"Set userName without triggering save. Used during loading."
 	userName := aString
@@ -607,6 +650,96 @@ ChatPharoSettings >> privateSetUserName: aString [
 ChatPharoSettings >> privateSetUserOrganization: aString [
 	"Set userOrganization without triggering save. Used during loading."
 	userOrganization := aString
+]
+
+{ #category : 'private' }
+ChatPharoSettings >> sandboxEnabled [
+
+	^ sandboxEnabled ifNil: [ sandboxEnabled := false ]
+]
+
+{ #category : 'private' }
+ChatPharoSettings >> sandboxEnabled: aBoolean [
+
+	sandboxEnabled := aBoolean.
+	self class setDefault: self.
+	self class saveDefault.
+	ChatPharoLogger logFrontend: 'Sandbox toggled'
+		details: (Dictionary new
+			at: 'enabled' put: aBoolean;
+			yourself)
+]
+
+{ #category : 'private' }
+ChatPharoSettings >> sandboxRestrictFileSystem [
+
+	^ sandboxRestrictFileSystem ifNil: [ sandboxRestrictFileSystem := true ]
+]
+
+{ #category : 'private' }
+ChatPharoSettings >> sandboxRestrictFileSystem: aBoolean [
+
+	sandboxRestrictFileSystem := aBoolean.
+	self class setDefault: self.
+	self class saveDefault.
+	ChatPharoLogger logFrontend: 'Sandbox file system restriction toggled'
+		details: (Dictionary new
+			at: 'enabled' put: aBoolean;
+			yourself)
+]
+
+{ #category : 'private' }
+ChatPharoSettings >> sandboxRestrictNetwork [
+
+	^ sandboxRestrictNetwork ifNil: [ sandboxRestrictNetwork := true ]
+]
+
+{ #category : 'private' }
+ChatPharoSettings >> sandboxRestrictNetwork: aBoolean [
+
+	sandboxRestrictNetwork := aBoolean.
+	self class setDefault: self.
+	self class saveDefault.
+	ChatPharoLogger logFrontend: 'Sandbox network restriction toggled'
+		details: (Dictionary new
+			at: 'enabled' put: aBoolean;
+			yourself)
+]
+
+{ #category : 'private' }
+ChatPharoSettings >> sandboxRestrictSystemAccess [
+
+	^ sandboxRestrictSystemAccess ifNil: [ sandboxRestrictSystemAccess := true ]
+]
+
+{ #category : 'private' }
+ChatPharoSettings >> sandboxRestrictSystemAccess: aBoolean [
+
+	sandboxRestrictSystemAccess := aBoolean.
+	self class setDefault: self.
+	self class saveDefault.
+	ChatPharoLogger logFrontend: 'Sandbox system access restriction toggled'
+		details: (Dictionary new
+			at: 'enabled' put: aBoolean;
+			yourself)
+]
+
+{ #category : 'private' }
+ChatPharoSettings >> sandboxTimeout [
+
+	^ sandboxTimeout ifNil: [ sandboxTimeout := 5000 ]
+]
+
+{ #category : 'private' }
+ChatPharoSettings >> sandboxTimeout: anInteger [
+
+	sandboxTimeout := anInteger.
+	self class setDefault: self.
+	self class saveDefault.
+	ChatPharoLogger logFrontend: 'Sandbox timeout updated'
+		details: (Dictionary new
+			at: 'timeout' put: anInteger;
+			yourself)
 ]
 
 { #category : 'skills' }
