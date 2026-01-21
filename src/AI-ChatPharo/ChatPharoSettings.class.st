@@ -43,7 +43,7 @@ Class {
 		'sandboxRestrictFileSystem',
 		'sandboxRestrictNetwork',
 		'sandboxRestrictSystemAccess',
-		'sandboxTimeou'
+		'sandboxTimeout'
 	],
 	#classInstVars : [
 		'Default'
