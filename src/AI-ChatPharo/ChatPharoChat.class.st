@@ -88,7 +88,7 @@ ChatPharoChat >> agent: anObject [
 { #category : 'running' }
 ChatPharoChat >> cancelMessage [
 
-	promptProcess terminate
+	promptProcess ifNotNil: [ :process | process terminate ]
 ]
 
 { #category : 'running' }
