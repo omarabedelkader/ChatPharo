@@ -43,6 +43,11 @@ ChatPharoHistoryMessage >> chatMessagesOn: aStream [
                     ifFalse: [ tc ] ] as: Array) ].
 
     aStream nextPut: msg.
+
+ toolCalls ifNotNil: [
+        toolCalls do: [ :tc |
+            (tc respondsTo: #openAIChatToolMessage)
+                ifTrue: [ aStream nextPut: tc openAIChatToolMessage ] ] ].
 ]
 
 { #category : 'accessing' }

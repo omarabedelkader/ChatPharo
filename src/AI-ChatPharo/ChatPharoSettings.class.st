@@ -38,7 +38,12 @@ Class {
 		'developerId',
 		'userName',
 		'userOrganization',
-		'multivers'
+		'multivers',
+		'sandboxEnabled',
+		'sandboxRestrictFileSystem',
+		'sandboxRestrictNetwork',
+		'sandboxRestrictSystemAccess',
+		'sandboxTimeou'
 	],
 	#classInstVars : [
 		'Default'
@@ -537,19 +542,6 @@ ChatPharoSettings >> models [
 	^ agent class modelNames
 ]
 
-{ #category : 'private' }
-ChatPharoSettings >> newConfiguredSandbox [
-	"Create and return a new sandbox configured with current settings"
-
-	| sandbox |
-	sandbox := ChatPharoSandbox new.
-	sandbox timeout: self sandboxTimeout.
-	sandbox restrictFileSystem: self sandboxRestrictFileSystem.
-	sandbox restrictNetwork: self sandboxRestrictNetwork.
-	sandbox restrictSystemAccess: self sandboxRestrictSystemAccess.
-	^ sandbox
-]
-
 { #category : 'initialization' }
 ChatPharoSettings >> multivers [
 	"Return the multiverse configuration"
@@ -584,6 +576,19 @@ ChatPharoSettings >> multiversEnabled: aBoolean [
 	self multivers enabled: aBoolean.
 	self class setDefault: self.
 	self class saveDefault
+]
+
+{ #category : 'private' }
+ChatPharoSettings >> newConfiguredSandbox [
+	"Create and return a new sandbox configured with current settings"
+
+	| sandbox |
+	sandbox := ChatPharoSandbox new.
+	sandbox timeout: self sandboxTimeout.
+	sandbox restrictFileSystem: self sandboxRestrictFileSystem.
+	sandbox restrictNetwork: self sandboxRestrictNetwork.
+	sandbox restrictSystemAccess: self sandboxRestrictSystemAccess.
+	^ sandbox
 ]
 
 { #category : 'initialization' }

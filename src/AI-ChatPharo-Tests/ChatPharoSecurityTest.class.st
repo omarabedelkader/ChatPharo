@@ -163,7 +163,7 @@ ChatPharoSecurityTest >> testHistoryMessageChatMessagesOnPreservesRawToolCallDic
         entries := Array streamContents: [ :stream |
                 message chatMessagesOn: stream ].
 
-        self assert: entries size equals: 2.
+        self assert: entries size equals: 1.
         self assert: ((entries first at: 'tool_calls') first at: 'custom') equals: 'value'.
         self assert: (entries second at: 'custom') equals: 'value'
 ]

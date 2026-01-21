@@ -148,7 +148,7 @@ ChatPharoBackendChatTest >> testExportAsJsonIncludesToolCalls [
             toolCalls: { toolCall }).
     json := chat exportAsJson.
     data := STONJSON fromString: json.
-    self assert: data size equals: 1.
+    self assert: data size equals: 2.
     self assert: ((data first) at: 'tool_calls') size equals: 1.
     self assert: (((data first) at: 'tool_calls') first at: 'id') equals: 'tool-1'
 
