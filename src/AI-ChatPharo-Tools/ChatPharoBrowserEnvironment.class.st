@@ -382,9 +382,13 @@ ChatPharoBrowserEnvironment >> initializeWithEnvironment: env [
 		         self functionGetClassMethods.
 		         self functionGetClassSubclasses.
 		         self functionFindMethodsWithSubstring.
-		self functionDescribePackage.
-		ChatPharoClient toolCheckSyntax.
-		         ChatPharoClient toolOpenPlayground }
+		         self functionDescribePackage.
+		         ChatPharoClient toolCheckSyntax.
+		          ChatPharoClient toolOpenPlayground } asOrderedCollection.
+
+	"Add skill tools if enabled and the Skills package is loaded"
+	(Smalltalk hasClassNamed: #ChatPharoSkillEnvironment) ifTrue: [
+		tools addAll: (Smalltalk at: #ChatPharoSkillEnvironment) new tools ]
 ]
 
 { #category : 'initialization' }

@@ -29,7 +29,10 @@ Class {
 		'welcomeMessageEnabled',
 		'loggingEnabled',
 		'askFeatureEnabled',
-		'codeFeatureEnabled'
+		'codeFeatureEnabled',
+		'skillsEnabled',
+		'automaticSkillsEnabled',
+		'skillToolsEnabled'
 	],
 	#classInstVars : [
 		'Default'
@@ -72,8 +75,11 @@ ChatPharoSettings class >> loadOrNew [
 				  settings feedbackButtonsEnabled ifNil: [ settings feedbackButtonsEnabled: true ].
 				  settings welcomeMessageEnabled ifNil: [ settings welcomeMessageEnabled: true ].
 				  settings loggingEnabled.
-				settings askFeatureEnabled ifNil: [ settings askFeatureEnabled: true ].
-                                  settings codeFeatureEnabled ifNil: [ settings codeFeatureEnabled: true ].
+				  settings askFeatureEnabled ifNil: [ settings askFeatureEnabled: true ].
+				  settings codeFeatureEnabled ifNil: [ settings codeFeatureEnabled: true ].
+								  settings skillsEnabled ifNil: [ settings skillsEnabled: OrderedCollection new ].
+				  settings automaticSkillsEnabled ifNil: [ settings automaticSkillsEnabled: true ].
+				  settings skillToolsEnabled ifNil: [ settings skillToolsEnabled: true ].
 				  ^ settings ]
 				  on: Error
 				  do: [ ^ self new ] ]
@@ -165,6 +171,25 @@ ChatPharoSettings >> askFeatureEnabled: aBoolean [
                 details: (Dictionary new
                         at: 'enabled' put: aBoolean;
                         yourself)
+]
+
+{ #category : 'initialization' }
+ChatPharoSettings >> automaticSkillsEnabled [
+	"Whether skills can be automatically triggered based on query keywords"
+
+	^ automaticSkillsEnabled ifNil: [ automaticSkillsEnabled := true ]
+]
+
+{ #category : 'initialization' }
+ChatPharoSettings >> automaticSkillsEnabled: aBoolean [
+
+	automaticSkillsEnabled := aBoolean.
+	self class setDefault: self.
+	self class saveDefault.
+	ChatPharoLogger logFrontend: 'Automatic skills toggled'
+		details: (Dictionary new
+			at: 'enabled' put: aBoolean;
+			yourself)
 ]
 
 { #category : 'initialization' }
@@ -288,6 +313,20 @@ ChatPharoSettings >> disableBrowserTool: toolName [
 ]
 
 { #category : 'initialization' }
+ChatPharoSettings >> disableSkill: skillName [
+	"Disable a manually enabled skill"
+
+	skillsEnabled remove: skillName ifAbsent: [ ].
+	self class setDefault: self.
+	self class saveDefault.
+	ChatPharoLogger logFrontend: 'Skill disabled'
+		details: (Dictionary new
+			at: 'skill' put: skillName;
+			at: 'remainingSkills' put: skillsEnabled asArray printString;
+			yourself)
+]
+
+{ #category : 'initialization' }
 ChatPharoSettings >> enableBrowserTool: toolName [
         (browserToolsEnabled includes: toolName) ifFalse: [
                 browserToolsEnabled add: toolName ].
@@ -299,6 +338,21 @@ maximumIterations := 3.
                         at: 'tool' put: toolName;
                         at: 'tools' put: browserToolsEnabled asArray printString;
                         yourself)
+]
+
+{ #category : 'initialization' }
+ChatPharoSettings >> enableSkill: skillName [
+	"Enable a skill for manual inclusion"
+
+	(skillsEnabled includes: skillName) ifFalse: [
+		skillsEnabled add: skillName ].
+	self class setDefault: self.
+	self class saveDefault.
+	ChatPharoLogger logFrontend: 'Skill enabled'
+		details: (Dictionary new
+			at: 'skill' put: skillName;
+			at: 'skills' put: skillsEnabled asArray printString;
+			yourself)
 ]
 
 { #category : 'accessing' }
@@ -330,9 +384,12 @@ ChatPharoSettings >> initialize [
 	welcomeMessageEnabled := true.
 	loggingEnabled := true.
 	askFeatureEnabled := true.
-        codeFeatureEnabled := true.
+	codeFeatureEnabled := true.
 	browserToolsEnabled := (ChatPharoBrowserEnvironment new tools collect: [ :t | t name ]) asOrderedCollection.
 	maximumIterations := 3.
+		skillsEnabled := OrderedCollection new.
+	automaticSkillsEnabled := true.
+	skillToolsEnabled := true.
 	ChatPharoLogger loggingEnabled: true.
 	ChatPharoLogger logSystem: 'Settings initialized' details: (Dictionary new
 			 at: 'defaultAgent' put: (ChatPharoLogger agentNameFor: agent);
@@ -382,6 +439,44 @@ ChatPharoSettings >> models [
 ChatPharoSettings >> presenter [
 
 	^  ChatPharoSettingsPresenter on: self
+]
+
+{ #category : 'initialization' }
+ChatPharoSettings >> skillToolsEnabled [
+	"Whether skill tools (list_available_skills, get_skill_context) are available to the LLM"
+
+	^ skillToolsEnabled ifNil: [ skillToolsEnabled := true ]
+]
+
+{ #category : 'initialization' }
+ChatPharoSettings >> skillToolsEnabled: aBoolean [
+
+	skillToolsEnabled := aBoolean.
+	self class setDefault: self.
+	self class saveDefault.
+	ChatPharoLogger logFrontend: 'Skill tools toggled'
+		details: (Dictionary new
+			at: 'enabled' put: aBoolean;
+			yourself)
+]
+
+{ #category : 'initialization' }
+ChatPharoSettings >> skillsEnabled [
+	"Collection of manually enabled skill names"
+
+	^ skillsEnabled ifNil: [ skillsEnabled := OrderedCollection new ]
+]
+
+{ #category : 'initialization' }
+ChatPharoSettings >> skillsEnabled: aCollection [
+
+	skillsEnabled := aCollection.
+	self class setDefault: self.
+	self class saveDefault.
+	ChatPharoLogger logFrontend: 'Skills selection updated'
+		details: (Dictionary new
+			at: 'skills' put: aCollection asArray printString;
+			yourself)
 ]
 
 { #category : 'initialization' }
