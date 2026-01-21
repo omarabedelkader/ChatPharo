@@ -101,11 +101,23 @@ BaselineOfAIChatPharo >> postLoad [
 	"UIManager default inform:
 		'ChatPharo is currently in beta. You might encounter bugs or memory issues that could halt your image.'"
 
-	self class loadBackgroundImage.
-	"ChatPharoShortcuts installAsGlobalCategory."
+	self class loadBackgroundImage. "ChatPharoShortcuts installAsGlobalCategory."
 	KMRepository reset.
-	SystemAnnouncer uniqueInstance
-		when: UIThemeChanged
-		send: #loadBackgroundImage
-		to: self class
+	SystemAnnouncer uniqueInstance when: UIThemeChanged send: #loadBackgroundImage to: self class.
+	self class showFirstLaunchSetupIfNeeded
+]
+
+{ #category : 'baselines' }
+BaselineOfAIChatPharo >> showFirstLaunchSetupIfNeeded [
+	"Show the setup dialog if ChatPharo is not yet configured.
+	Deferred to run after UI is ready."
+
+	<script>
+	[
+		(Delay forMilliseconds: 500) wait.
+		World ifNotNil: [
+			ChatPharoSettings default isConfigured ifFalse: [
+				WorldMorph doOneCycle.
+				ChatPharoSetupPresenter openIfNeeded ] ]
+	] fork
 ]
