@@ -9,7 +9,8 @@ Class {
 		'model',
 		'notebook',
 		'toolbar',
-		'connectionStatusLabel'
+		'connectionStatusLabel',
+		'multiversStatusLabel'
 	],
 	#category : 'AI-ChatPharo-Spec-Core',
 	#package : 'AI-ChatPharo-Spec',
@@ -143,6 +144,17 @@ ChatPharoPresenter >> initializePresenters [
 		                         yourself.
 
 	toolbar add: connectionStatusLabel.
+	
+	multiversStatusLabel := SpToolbarButtonPresenter new
+		label: '';
+		icon: (self iconNamed: #branch);
+		help: 'Multivers mode status';
+		enabled: false;
+		action: [ self openSettings ];
+		yourself.
+
+	toolbar add: multiversStatusLabel.
+	self updateMultiversStatus.
 
 	toolbar add: (SpToolbarButtonPresenter new
 			 label: 'Refresh Connection';
@@ -297,6 +309,7 @@ ChatPharoPresenter >> updateConnectionStatus [
                         yourself).
 		[
 			self updateConnectionStatusOnce.
+			self updateMultiversStatus.
 			(Delay forSeconds: 10) wait ] repeat ] forkAt: Processor userBackgroundPriority
 ]
 
@@ -321,4 +334,25 @@ ChatPharoPresenter >> updateConnectionStatusOnce [
                         at: 'status' put: statusText;
                         at: 'agent' put: (ChatPharoLogger agentNameFor: agent);
                         yourself)
+]
+
+{ #category : 'initialization' }
+ChatPharoPresenter >> updateMultiversStatus [
+	"Update the multivers status indicator in the toolbar"
+
+	| multivers statusText helpText |
+	multivers := ChatPharoSettings default multivers.
+
+	(multivers notNil and: [ multivers canExecute ])
+		ifTrue: [
+			statusText := 'Multivers (' , multivers stepsCount asString , ')'.
+			helpText := 'Multivers mode ACTIVE with ' , multivers stepsCount asString , ' agents in chain. Click to configure.' ]
+		ifFalse: [
+			statusText := 'Multivers Off'.
+			helpText := 'Multivers mode disabled. Click to configure.' ].
+
+	multiversStatusLabel
+		label: statusText;
+		help: helpText;
+		enabled: true
 ]

@@ -38,11 +38,7 @@ Class {
 		'developerId',
 		'userName',
 		'userOrganization',
-		'sandboxEnabled',
-		'sandboxTimeout',
-		'sandboxRestrictFileSystem',
-		'sandboxRestrictNetwork',
-		'sandboxRestrictSystemAccess'
+		'multivers'
 	],
 	#classInstVars : [
 		'Default'
@@ -97,11 +93,7 @@ ChatPharoSettings class >> loadOrNew [
 				  settings developerId ifNil: [ settings privateSetDeveloperId: '' ].
 				  settings userName ifNil: [ settings privateSetUserName: '' ].
 				  settings userOrganization ifNil: [ settings privateSetUserOrganization: '' ].
-				  settings sandboxEnabled ifNil: [ settings privateSetSandboxEnabled: false ].
-				  settings sandboxTimeout ifNil: [ settings privateSetSandboxTimeout: 5000 ].
-				  settings sandboxRestrictFileSystem ifNil: [ settings privateSetSandboxRestrictFileSystem: true ].
-				  settings sandboxRestrictNetwork ifNil: [ settings privateSetSandboxRestrictNetwork: true ].
-				  settings sandboxRestrictSystemAccess ifNil: [ settings privateSetSandboxRestrictSystemAccess: true ].
+				settings multivers ifNil: [ settings multivers: ChatPharoMultivers new ].
 				  ^ settings ]
 				  on: Error
 				  do: [ ^ self new ] ]
@@ -460,14 +452,10 @@ ChatPharoSettings >> initialize [
 	codeFeatureEnabled := true.
 	browserToolsEnabled := (ChatPharoBrowserEnvironment new tools collect: [ :t | t name ]) asOrderedCollection.
 	maximumIterations := 3.
-		skillsEnabled := OrderedCollection new.
+	skillsEnabled := OrderedCollection new.
 	automaticSkillsEnabled := true.
 	skillToolsEnabled := true.
-	sandboxEnabled := false.
-	sandboxTimeout := 5000.
-	sandboxRestrictFileSystem := true.
-	sandboxRestrictNetwork := true.
-	sandboxRestrictSystemAccess := true.
+	multivers := ChatPharoMultivers new.
 	ChatPharoLogger loggingEnabled: true.
 	ChatPharoLogger logSystem: 'Settings initialized' details: (Dictionary new
 			 at: 'defaultAgent' put: (ChatPharoLogger agentNameFor: agent);
@@ -560,6 +548,42 @@ ChatPharoSettings >> newConfiguredSandbox [
 	sandbox restrictNetwork: self sandboxRestrictNetwork.
 	sandbox restrictSystemAccess: self sandboxRestrictSystemAccess.
 	^ sandbox
+]
+
+{ #category : 'initialization' }
+ChatPharoSettings >> multivers [
+	"Return the multiverse configuration"
+
+	^ multivers ifNil: [ multivers := ChatPharoMultivers new ]
+]
+
+{ #category : 'initialization' }
+ChatPharoSettings >> multivers: aMultivers [
+
+	multivers := aMultivers.
+	self class setDefault: self.
+	self class saveDefault.
+	ChatPharoLogger logFrontend: 'Multivers configuration updated'
+		details: (Dictionary new
+			at: 'enabled' put: aMultivers enabled;
+			at: 'stepsCount' put: aMultivers stepsCount;
+			yourself)
+]
+
+{ #category : 'initialization' }
+ChatPharoSettings >> multiversEnabled [
+	"Return whether multivers mode is enabled"
+
+	^ self multivers enabled
+]
+
+{ #category : 'initialization' }
+ChatPharoSettings >> multiversEnabled: aBoolean [
+	"Enable or disable multivers mode"
+
+	self multivers enabled: aBoolean.
+	self class setDefault: self.
+	self class saveDefault
 ]
 
 { #category : 'initialization' }

@@ -193,21 +193,15 @@ ChatPharoSettingsPresenter >> initializePresenters [
 
 	notebook addPage:
 		(SpNotebookPage title: 'Extensions' icon: (self iconNamed: #smallCogInitialState) provider: [ self newExtensionsTab ]).
+
+	notebook addPage:
+		(SpNotebookPage title: 'Security' icon: (self iconNamed: #lock) provider: [ ChatPharoSecuritySettingsPresenter on: model ]).
+
+	notebook addPage: (SpNotebookPage title: 'Personal' icon: (self iconNamed: #user) provider: [ self newPersonalTab ]).
+
+	notebook addPage: (SpNotebookPage title: 'Skills' icon: (self iconNamed: #smallObjects) provider: [ self newSkillsTab ]).
 	
-		notebook addPage: (SpNotebookPage
-			 title: 'Security'
-			 icon: (self iconNamed: #lock)
-			 provider: [ ChatPharoSecuritySettingsPresenter on: model ]).
-		
-		notebook addPage: (SpNotebookPage
-			 title: 'Personal'
-			 icon: (self iconNamed: #user)
-			 provider: [ self newPersonalTab ]).
-			
-		notebook addPage: (SpNotebookPage
-			 title: 'Skills'
-			 icon: (self iconNamed: #smallObjects)
-			 provider: [ self newSkillsTab ]).
+	notebook addPage: (SpNotebookPage title: 'Multivers' icon: (self iconNamed: #branch) provider: [ self newMultiversTab ]).
 
 	modelsRefreshButton := self newButton
 		                       label: 'Refresh';
@@ -359,6 +353,13 @@ history := history ifNil: [ model agent history ].
                                    add: historyView;
                                    yourself);
                   yourself
+]
+
+{ #category : 'initialization' }
+ChatPharoSettingsPresenter >> newMultiversTab [
+	"Creates the Multivers configuration tab"
+
+	^ ChatPharoMultiversPresenter on: model
 ]
 
 { #category : 'initialization' }

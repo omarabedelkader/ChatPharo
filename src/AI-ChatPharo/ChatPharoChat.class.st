@@ -35,21 +35,25 @@ Class {
 { #category : 'running' }
 ChatPharoChat >> addAssistantMessage: answerText [
 
-	| label |
+	| label multivers |
 	history addAssistant: answerText.
-	label := (self agent isKindOf: ChatPharoNullAgent)
-		         ifTrue: [ 'Assistant bot' ]
-		         ifFalse: [ 'Assistant' ].
+		"Determine label based on mode"
+	multivers := ChatPharoSettings default multivers.
+	label := (multivers notNil and: [ multivers canExecute ])
+		ifTrue: [ 'Multivers (' , multivers stepsCount asString , ' agents)' ]
+		ifFalse: [
+			(self agent isKindOf: ChatPharoNullAgent)
+				ifTrue: [ 'Assistant bot' ]
+				ifFalse: [ 'Assistant' ] ].
 	messages last
 		answer: answerText;
 		assistantLabel: label.
-	    ChatPharoLogger logBackend: 'Assistant response recorded'
-            details: (Dictionary new
-                    at: 'chatId' put: self identityHash;
-                    at: 'agent' put: (ChatPharoLogger agentNameFor: self agent);
-                    at: 'assistantLabel' put: label;
-                    at: 'response' put: answerText;
-                    yourself)
+	ChatPharoLogger logBackend: 'Assistant response recorded' details: (Dictionary new
+			 at: 'chatId' put: self identityHash;
+			 at: 'agent' put: (ChatPharoLogger agentNameFor: self agent);
+			 at: 'assistantLabel' put: label;
+			 at: 'response' put: answerText;
+			 yourself)
 ]
 
 { #category : 'running' }
@@ -218,25 +222,57 @@ ChatPharoChat >> presenter [
 { #category : 'running' }
 ChatPharoChat >> sendMessage: aText [
 
-        | answer |
-        self addUserMessage: aText.
-        (cache includesKey: aText)
-                ifTrue: [
-                        answer := cache at: aText.
-                        self addAssistantMessage: answer.
-                        onAnswerReceived ifNotNil: [ :blk | blk value: messages last ]
-                ]
-                ifFalse: [
-                        promptProcess := [
-                                 | backend |
-                                 backend := self agent.
-                                 backend onToolExecution: [ self triggerToolExecution ].
-                                 backend promptPrefix: history asPromptPrefix.
-                                 answer := backend getResponseForPrompt: aText.
-                                 cache at: aText put: answer.
-                                 self addAssistantMessage: answer.
-                                 onAnswerReceived ifNotNil: [ :blk | blk value: messages last ] ] fork
-                ]
+| answer multivers |
+	self addUserMessage: aText.
+	(cache includesKey: aText) ifTrue: [
+		answer := cache at: aText.
+		self addAssistantMessage: answer.
+		onAnswerReceived ifNotNil: [ :blk | blk value: messages last ].
+		^ self ].
+
+	"Check if multivers mode is enabled and can execute"
+	multivers := ChatPharoSettings default multivers.
+	(multivers notNil and: [ multivers canExecute ]) ifTrue: [
+		^ self sendMessageViaMultivers: aText ].
+
+	"Standard single-agent execution"
+	promptProcess := [
+		| backend |
+		backend := self agent.
+		backend onToolExecution: [ self triggerToolExecution ].
+		backend promptPrefix: history asPromptPrefix.
+		answer := backend getResponseForPrompt: aText.
+		cache at: aText put: answer.
+		self addAssistantMessage: answer.
+		onAnswerReceived ifNotNil: [ :blk | blk value: messages last ] ] fork
+]
+
+{ #category : 'running' }
+ChatPharoChat >> sendMessageViaMultivers: aText [
+
+	"Execute the message through the multivers chain"
+
+	| multivers |
+	multivers := ChatPharoSettings default multivers.
+
+	promptProcess := [
+		| answer |
+		ChatPharoLogger logBackend: 'Starting multivers chain execution'
+			details: (Dictionary new
+				at: 'prompt' put: aText;
+				at: 'stepsCount' put: multivers stepsCount;
+				yourself).
+
+		answer := multivers executeForPrompt: aText.
+		cache at: aText put: answer.
+		self addAssistantMessage: answer.
+
+		ChatPharoLogger logBackend: 'Multivers chain execution completed'
+			details: (Dictionary new
+				at: 'responseLength' put: answer size;
+				yourself).
+
+		onAnswerReceived ifNotNil: [ :blk | blk value: messages last ] ] fork
 ]
 
 { #category : 'running' }
