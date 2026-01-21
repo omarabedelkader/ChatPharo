@@ -46,6 +46,19 @@ ChatPharoState class >> chatPharoSetupWizardWorldMenuOn: aBuilder [
 ]
 
 { #category : 'world state' }
+ChatPharoState class >> chatPharoTutorialWorldMenuOn: aBuilder [
+
+	<worldMenu>
+	(aBuilder item: #ChatPharoTutorial)
+		parent: #ChatPharo;
+		order: 3;
+		action: [ ChatPharoTutorial start ];
+		label: 'Tutorial';
+		icon: (self iconNamed: #smallHelp);
+		help: 'Start the interactive ChatPharo tutorial'
+]
+
+{ #category : 'world state' }
 ChatPharoState class >> chatPharoWikiWorldMenuOn: aBuilder [
 
 	<worldMenu>

@@ -43,7 +43,10 @@ Class {
 		'sandboxRestrictFileSystem',
 		'sandboxRestrictNetwork',
 		'sandboxRestrictSystemAccess',
-		'sandboxTimeout'
+		'sandboxTimeout',
+		'userLevel',
+		'tutorialCompleted',
+		'wantsTutorial'
 	],
 	#classInstVars : [
 		'Default'
@@ -80,7 +83,7 @@ ChatPharoSettings class >> loadOrNew [
 				  settings browserExtensionEnabled ifNil: [ settings browserExtensionEnabled: false ].
 				  settings browserAutoTabEnabled ifNil: [ settings browserAutoTabEnabled: true ].
 				  settings browserToolsEnabled ifNil: [
-				  settings browserToolsEnabled: (ChatPharoBrowserEnvironment new tools collect: [ :t | t name ]) asOrderedCollection ].
+					  settings browserToolsEnabled: (ChatPharoBrowserEnvironment new tools collect: [ :t | t name ]) asOrderedCollection ].
 				  settings maximumIterations.
 				  settings cacheEnabled ifNil: [ settings cacheEnabled: true ].
 				  settings feedbackButtonsEnabled ifNil: [ settings feedbackButtonsEnabled: true ].
@@ -98,7 +101,10 @@ ChatPharoSettings class >> loadOrNew [
 				  settings developerId ifNil: [ settings privateSetDeveloperId: '' ].
 				  settings userName ifNil: [ settings privateSetUserName: '' ].
 				  settings userOrganization ifNil: [ settings privateSetUserOrganization: '' ].
-				settings multivers ifNil: [ settings multivers: ChatPharoMultivers new ].
+				  settings multivers ifNil: [ settings multivers: ChatPharoMultivers new ].
+				  settings userLevel ifNil: [ settings privateSetUserLevel: 'beginner' ].
+				  settings tutorialCompleted ifNil: [ settings privateSetTutorialCompleted: false ].
+				  settings wantsTutorial ifNil: [ settings privateSetWantsTutorial: false ].
 				  ^ settings ]
 				  on: Error
 				  do: [ ^ self new ] ]
@@ -235,6 +241,13 @@ ChatPharoSettings >> availableApis [
 		  ChatPharoGeminiAgent .
 		ChatPharoOllamaAgent .
 		ChatPharoMistralAgent}
+]
+
+{ #category : 'initialization' }
+ChatPharoSettings >> availableUserLevels [
+	"Returns the available user experience levels"
+
+	^ #( 'beginner' 'intermediate' 'advanced' )
 ]
 
 { #category : 'initialization' }
@@ -460,6 +473,9 @@ ChatPharoSettings >> initialize [
 	skillsEnabled := OrderedCollection new.
 	automaticSkillsEnabled := true.
 	skillToolsEnabled := true.
+		userLevel := 'beginner'.
+	tutorialCompleted := false.
+	wantsTutorial := false.
 	multivers := ChatPharoMultivers new.
 	ChatPharoLogger loggingEnabled: true.
 	ChatPharoLogger logSystem: 'Settings initialized' details: (Dictionary new
@@ -645,6 +661,18 @@ ChatPharoSettings >> privateSetSandboxTimeout: anInteger [
 	sandboxTimeout := anInteger
 ]
 
+{ #category : 'initialization' }
+ChatPharoSettings >> privateSetTutorialCompleted: aBoolean [
+	"Set tutorialCompleted without triggering save. Used during loading."
+	tutorialCompleted := aBoolean
+]
+
+{ #category : 'initialization' }
+ChatPharoSettings >> privateSetUserLevel: aString [
+	"Set userLevel without triggering save. Used during loading."
+	userLevel := aString
+]
+
 { #category : 'private' }
 ChatPharoSettings >> privateSetUserName: aString [
 	"Set userName without triggering save. Used during loading."
@@ -655,6 +683,12 @@ ChatPharoSettings >> privateSetUserName: aString [
 ChatPharoSettings >> privateSetUserOrganization: aString [
 	"Set userOrganization without triggering save. Used during loading."
 	userOrganization := aString
+]
+
+{ #category : 'initialization' }
+ChatPharoSettings >> privateSetWantsTutorial: aBoolean [
+	"Set wantsTutorial without triggering save. Used during loading."
+	wantsTutorial := aBoolean
 ]
 
 { #category : 'private' }
@@ -786,6 +820,26 @@ ChatPharoSettings >> skillsEnabled: aCollection [
 ]
 
 { #category : 'initialization' }
+ChatPharoSettings >> tutorialCompleted [
+	"Returns whether the user has completed the ChatPharo tutorial"
+
+	^ tutorialCompleted ifNil: [ tutorialCompleted := false ]
+]
+
+{ #category : 'initialization' }
+ChatPharoSettings >> tutorialCompleted: aBoolean [
+	"Set whether the tutorial has been completed"
+
+	tutorialCompleted := aBoolean.
+	self class setDefault: self.
+	self class saveDefault.
+	ChatPharoLogger logSystem: 'Tutorial completion status updated'
+		details: (Dictionary new
+			at: 'tutorialCompleted' put: aBoolean;
+			yourself)
+]
+
+{ #category : 'initialization' }
 ChatPharoSettings >> useApi: anAgentClass [
 
         agent := anAgentClass new.
@@ -808,6 +862,43 @@ ChatPharoSettings >> useModel: aModelName [
                         at: 'agent' put: (ChatPharoLogger agentNameFor: agent);
                         at: 'model' put: aModelName;
                         yourself)
+]
+
+{ #category : 'initialization' }
+ChatPharoSettings >> userLevel [
+	"Returns the user's experience level: 'beginner', 'intermediate', or 'advanced'"
+
+	^ userLevel ifNil: [ userLevel := 'beginner' ]
+]
+
+{ #category : 'initialization' }
+ChatPharoSettings >> userLevel: aString [ 
+	"Set the user's experience level"
+
+	userLevel := aString.
+	self class setDefault: self.
+	self class saveDefault.
+	ChatPharoLogger logSystem: 'User level updated'
+		details: (Dictionary new
+			at: 'userLevel' put: aString;
+			yourself)
+]
+
+{ #category : 'initialization' }
+ChatPharoSettings >> userLevelDisplayName [
+	"Returns a user-friendly display name for the current level"
+
+	^ self userLevelDisplayNameFor: self userLevel
+]
+
+{ #category : 'initialization' }
+ChatPharoSettings >> userLevelDisplayNameFor: aLevel [
+	"Returns a user-friendly display name for the given level"
+
+	aLevel = 'beginner' ifTrue: [ ^ 'Beginner - New to Pharo' ].
+	aLevel = 'intermediate' ifTrue: [ ^ 'Intermediate - Familiar with Pharo basics' ].
+	aLevel = 'advanced' ifTrue: [ ^ 'Advanced - Experienced Pharo developer' ].
+	^ aLevel
 ]
 
 { #category : 'developer' }
@@ -843,6 +934,26 @@ ChatPharoSettings >> userOrganization: aString [
 	ChatPharoLogger logSystem: 'User organization updated'
 		details: (Dictionary new
 			at: 'userOrganization' put: aString;
+			yourself)
+]
+
+{ #category : 'initialization' }
+ChatPharoSettings >> wantsTutorial [
+	"Returns whether the user opted to see the tutorial"
+
+	^ wantsTutorial ifNil: [ wantsTutorial := false ]
+]
+
+{ #category : 'initialization' }
+ChatPharoSettings >> wantsTutorial: aBoolean [
+	"Set whether the user wants to see the tutorial"
+
+	wantsTutorial := aBoolean.
+	self class setDefault: self.
+	self class saveDefault.
+	ChatPharoLogger logSystem: 'Tutorial preference updated'
+		details: (Dictionary new
+			at: 'wantsTutorial' put: aBoolean;
 			yourself)
 ]
 
