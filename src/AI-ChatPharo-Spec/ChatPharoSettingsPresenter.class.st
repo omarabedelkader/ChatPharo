@@ -1,5 +1,5 @@
 "
-Multi-tab dialog (Chat, History, API, Configuration). Hosts per-agent sub-presenters (see below) and general actions such as “Delete all chats”.
+Multi-tab dialog (Chat, History, API, Configuration, Personal). Hosts per-agent sub-presenters (see below) and general actions such as “Delete all chats”.
 "
 Class {
 	#name : 'ChatPharoSettingsPresenter',
@@ -23,7 +23,12 @@ Class {
 		'feedbackCheckBox',
 		'askFeatureCheckBox',
 		'codeFeatureCheckBox',
-		'welcomeMessageCheckBox'
+		'welcomeMessageCheckBox',
+		'userNameInput',
+		'userOrganizationInput',
+		'developerIdInput',
+		'developerStatusLabel',
+		'verifyDeveloperButton'
 	],
 	#category : 'AI-ChatPharo-Spec-Core',
 	#package : 'AI-ChatPharo-Spec',
@@ -146,6 +151,20 @@ ChatPharoSettingsPresenter >> defaultLayout [
 ]
 
 { #category : 'initialization' }
+ChatPharoSettingsPresenter >> developerStatusText [
+	"Return the developer status text."
+
+	| settings |
+	settings := ChatPharoSettings default.
+	settings isDeveloper
+		ifTrue: [ ^ 'Verified Developer' ]
+		ifFalse: [
+			settings developerId isEmpty
+				ifTrue: [ ^ 'Not a developer' ]
+				ifFalse: [ ^ 'Developer ID not verified' ] ]
+]
+
+{ #category : 'initialization' }
 ChatPharoSettingsPresenter >> ensureBrowserExtensionTab [
 
 	browserExtensionPage ifNil: [
@@ -175,6 +194,11 @@ ChatPharoSettingsPresenter >> initializePresenters [
 	notebook addPage:
 		(SpNotebookPage title: 'Extensions' icon: (self iconNamed: #smallCogInitialState) provider: [ self newExtensionsTab ]).
 		
+		notebook addPage: (SpNotebookPage
+			 title: 'Personal'
+			 icon: (self iconNamed: #user)
+			 provider: [ self newPersonalTab ]).
+			
 		notebook addPage: (SpNotebookPage
 			 title: 'Skills'
 			 icon: (self iconNamed: #smallObjects)
@@ -333,6 +357,86 @@ history := history ifNil: [ model agent history ].
 ]
 
 { #category : 'initialization' }
+ChatPharoSettingsPresenter >> newPersonalTab [
+	"Create the personal configuration tab."
+
+	| settings nameRow orgRow devIdRow statusRow buttonRow |
+	settings := ChatPharoSettings default.
+
+	userNameInput := self newTextInput
+		placeholder: 'Your name...';
+		text: settings userName;
+		yourself.
+
+	userOrganizationInput := self newTextInput
+		placeholder: 'Organization/Company...';
+		text: settings userOrganization;
+		yourself.
+
+	developerIdInput := self newTextInput
+		placeholder: 'Developer ID (optional)...';
+		text: settings developerId;
+		yourself.
+
+	developerStatusLabel := self newLabel
+		label: (self developerStatusText);
+		yourself.
+
+	verifyDeveloperButton := self newButton
+		label: 'Verify Developer ID';
+		icon: (self iconNamed: #glamorousGo);
+		action: [ self verifyDeveloperId ];
+		yourself.
+
+	userNameInput whenTextChangedDo: [ :text |
+		settings userName: text trimBoth ].
+
+	userOrganizationInput whenTextChangedDo: [ :text |
+		settings userOrganization: text trimBoth ].
+
+	nameRow := SpBoxLayout newHorizontal
+		spacing: 8;
+		add: (self newLabel label: 'Name:') expand: false;
+		add: userNameInput expand: true;
+		yourself.
+
+	orgRow := SpBoxLayout newHorizontal
+		spacing: 8;
+		add: (self newLabel label: 'Organization:') expand: false;
+		add: userOrganizationInput expand: true;
+		yourself.
+
+	devIdRow := SpBoxLayout newHorizontal
+		spacing: 8;
+		add: (self newLabel label: 'Developer ID:') expand: false;
+		add: developerIdInput expand: true;
+		yourself.
+
+	statusRow := SpBoxLayout newHorizontal
+		spacing: 8;
+		add: (self newLabel label: 'Status:') expand: false;
+		add: developerStatusLabel expand: true;
+		yourself.
+
+	buttonRow := SpBoxLayout newHorizontal
+		spacing: 8;
+		add: verifyDeveloperButton expand: false;
+		yourself.
+
+	^ SpPresenter new
+		layout: (SpBoxLayout newTopToBottom
+			spacing: 12;
+			borderWidth: 8;
+			add: nameRow expand: false;
+			add: orgRow expand: false;
+			add: devIdRow expand: false;
+			add: buttonRow expand: false;
+			add: statusRow expand: false;
+			yourself);
+		yourself
+]
+
+{ #category : 'initialization' }
 ChatPharoSettingsPresenter >> newSkillsTab [
 	"Creates the Skills configuration tab"
 
@@ -379,4 +483,43 @@ ChatPharoSettingsPresenter >> updateBrowserExtensionTab [
     browserExtensionCheckBox state
         ifTrue: [ self ensureBrowserExtensionTab ]
         ifFalse: [ self removeBrowserExtensionTab ]
+]
+
+{ #category : 'initialization' }
+ChatPharoSettingsPresenter >> verifyDeveloperId [
+	"Verify the developer ID entered in the personal tab."
+
+	| enteredId settings |
+	enteredId := developerIdInput text trimBoth.
+	settings := ChatPharoSettings default.
+
+	enteredId isEmpty ifTrue: [
+		settings isDeveloper: false.
+		settings developerId: ''.
+		developerStatusLabel label: 'Not a developer'.
+		self inform: 'Developer ID cleared.'.
+		^ self ].
+
+	developerStatusLabel label: 'Verifying...'.
+	verifyDeveloperButton enabled: false.
+
+	[
+		| isValid |
+		isValid := ChatPharoDeveloperConfig verifyDeveloperId: enteredId.
+
+		self defer: [
+			verifyDeveloperButton enabled: true.
+			isValid
+				ifTrue: [
+					settings developerId: enteredId.
+					settings isDeveloper: true.
+					developerStatusLabel label: 'Verified Developer'.
+					self inform: 'Developer ID verified successfully!' ]
+				ifFalse: [
+					settings developerId: enteredId.
+					settings isDeveloper: false.
+					developerStatusLabel label: 'Developer ID not verified'.
+					self inform: 'Invalid Developer ID.' ]
+		]
+	] fork
 ]

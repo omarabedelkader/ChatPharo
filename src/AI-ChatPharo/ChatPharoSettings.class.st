@@ -32,7 +32,12 @@ Class {
 		'codeFeatureEnabled',
 		'skillsEnabled',
 		'automaticSkillsEnabled',
-		'skillToolsEnabled'
+		'skillToolsEnabled',
+		'isConfigured',
+		'isDeveloper',
+		'developerId',
+		'userName',
+		'userOrganization'
 	],
 	#classInstVars : [
 		'Default'
@@ -77,9 +82,16 @@ ChatPharoSettings class >> loadOrNew [
 				  settings loggingEnabled.
 				  settings askFeatureEnabled ifNil: [ settings askFeatureEnabled: true ].
 				  settings codeFeatureEnabled ifNil: [ settings codeFeatureEnabled: true ].
-								  settings skillsEnabled ifNil: [ settings skillsEnabled: OrderedCollection new ].
+				  settings skillsEnabled ifNil: [ settings skillsEnabled: OrderedCollection new ].
 				  settings automaticSkillsEnabled ifNil: [ settings automaticSkillsEnabled: true ].
 				  settings skillToolsEnabled ifNil: [ settings skillToolsEnabled: true ].
+				  settings askFeatureEnabled ifNil: [ settings askFeatureEnabled: true ].
+				  settings codeFeatureEnabled ifNil: [ settings codeFeatureEnabled: true ].
+				  settings isConfigured ifNil: [ settings privateSetIsConfigured: false ].
+				  settings isDeveloper ifNil: [ settings privateSetIsDeveloper: false ].
+				  settings developerId ifNil: [ settings privateSetDeveloperId: '' ].
+				  settings userName ifNil: [ settings privateSetUserName: '' ].
+				  settings userOrganization ifNil: [ settings privateSetUserOrganization: '' ].
 				  ^ settings ]
 				  on: Error
 				  do: [ ^ self new ] ]
@@ -182,14 +194,14 @@ ChatPharoSettings >> askFeatureEnabled: aBoolean [
                         yourself)
 ]
 
-{ #category : 'initialization' }
+{ #category : 'skills' }
 ChatPharoSettings >> automaticSkillsEnabled [
 	"Whether skills can be automatically triggered based on query keywords"
 
 	^ automaticSkillsEnabled ifNil: [ automaticSkillsEnabled := true ]
 ]
 
-{ #category : 'initialization' }
+{ #category : 'skills' }
 ChatPharoSettings >> automaticSkillsEnabled: aBoolean [
 
 	automaticSkillsEnabled := aBoolean.
@@ -307,6 +319,22 @@ ChatPharoSettings >> codeFeatureEnabled: aBoolean [
                         yourself)
 ]
 
+{ #category : 'developer' }
+ChatPharoSettings >> developerId [
+
+	^ developerId ifNil: [ developerId := '' ]
+]
+
+{ #category : 'developer' }
+ChatPharoSettings >> developerId: aString [
+
+	developerId := aString.
+	self class setDefault: self.
+	self class saveDefault.
+	ChatPharoLogger logSystem: 'Developer ID updated'
+		details: (Dictionary new
+			at: 'developerId' put: (aString ifEmpty: [ 'empty' ] ifNotEmpty: [ 'set' ]);
+			yourself)
 { #category : 'as yet unclassified' }
 ChatPharoSettings >> disableAllBrowserTools [
         "Disable all browser tools."
@@ -430,6 +458,42 @@ ChatPharoSettings >> initialize [
 ]
 
 { #category : 'initialization' }
+ChatPharoSettings >> isConfigured [
+
+	^ isConfigured ifNil: [ isConfigured := false ]
+]
+
+{ #category : 'initialization' }
+ChatPharoSettings >> isConfigured: aBoolean [
+
+	isConfigured := aBoolean.
+	self class setDefault: self.
+	self class saveDefault.
+	ChatPharoLogger logSystem: 'Configuration status updated'
+		details: (Dictionary new
+			at: 'isConfigured' put: aBoolean;
+			yourself)
+]
+
+{ #category : 'initialization' }
+ChatPharoSettings >> isDeveloper [
+
+	^ isDeveloper ifNil: [ isDeveloper := false ]
+]
+
+{ #category : 'initialization' }
+ChatPharoSettings >> isDeveloper: aBoolean [
+
+	isDeveloper := aBoolean.
+	self class setDefault: self.
+	self class saveDefault.
+	ChatPharoLogger logSystem: 'Developer status updated'
+		details: (Dictionary new
+			at: 'isDeveloper' put: aBoolean;
+			yourself)
+]
+
+{ #category : 'initialization' }
 ChatPharoSettings >> loggingEnabled [
 
     ^ loggingEnabled ifNil: [ loggingEnabled := true ]
@@ -474,14 +538,44 @@ ChatPharoSettings >> presenter [
 	^  ChatPharoSettingsPresenter on: self
 ]
 
-{ #category : 'initialization' }
+{ #category : 'private' }
+ChatPharoSettings >> privateSetDeveloperId: aString [
+	"Set developer ID without triggering save. Used during loading."
+	developerId := aString
+]
+
+{ #category : 'private' }
+ChatPharoSettings >> privateSetIsConfigured: aBoolean [
+	"Set isConfigured without triggering save. Used during loading."
+	isConfigured := aBoolean
+]
+
+{ #category : 'private' }
+ChatPharoSettings >> privateSetIsDeveloper: aBoolean [
+	"Set isDeveloper without triggering save. Used during loading."
+	isDeveloper := aBoolean
+]
+
+{ #category : 'private' }
+ChatPharoSettings >> privateSetUserName: aString [
+	"Set userName without triggering save. Used during loading."
+	userName := aString
+]
+
+{ #category : 'private' }
+ChatPharoSettings >> privateSetUserOrganization: aString [
+	"Set userOrganization without triggering save. Used during loading."
+	userOrganization := aString
+]
+
+{ #category : 'skills' }
 ChatPharoSettings >> skillToolsEnabled [
 	"Whether skill tools (list_available_skills, get_skill_context) are available to the LLM"
 
 	^ skillToolsEnabled ifNil: [ skillToolsEnabled := true ]
 ]
 
-{ #category : 'initialization' }
+{ #category : 'skills' }
 ChatPharoSettings >> skillToolsEnabled: aBoolean [
 
 	skillToolsEnabled := aBoolean.
@@ -493,14 +587,14 @@ ChatPharoSettings >> skillToolsEnabled: aBoolean [
 			yourself)
 ]
 
-{ #category : 'initialization' }
+{ #category : 'skills' }
 ChatPharoSettings >> skillsEnabled [
 	"Collection of manually enabled skill names"
 
 	^ skillsEnabled ifNil: [ skillsEnabled := OrderedCollection new ]
 ]
 
-{ #category : 'initialization' }
+{ #category : 'skills' }
 ChatPharoSettings >> skillsEnabled: aCollection [
 
 	skillsEnabled := aCollection.
@@ -535,6 +629,42 @@ ChatPharoSettings >> useModel: aModelName [
                         at: 'agent' put: (ChatPharoLogger agentNameFor: agent);
                         at: 'model' put: aModelName;
                         yourself)
+]
+
+{ #category : 'developer' }
+ChatPharoSettings >> userName [
+
+	^ userName ifNil: [ userName := '' ]
+]
+
+{ #category : 'developer' }
+ChatPharoSettings >> userName: aString [
+
+	userName := aString.
+	self class setDefault: self.
+	self class saveDefault.
+	ChatPharoLogger logSystem: 'User name updated'
+		details: (Dictionary new
+			at: 'userName' put: aString;
+			yourself)
+]
+
+{ #category : 'developer' }
+ChatPharoSettings >> userOrganization [
+
+	^ userOrganization ifNil: [ userOrganization := '' ]
+]
+
+{ #category : 'developer' }
+ChatPharoSettings >> userOrganization: aString [
+
+	userOrganization := aString.
+	self class setDefault: self.
+	self class saveDefault.
+	ChatPharoLogger logSystem: 'User organization updated'
+		details: (Dictionary new
+			at: 'userOrganization' put: aString;
+			yourself)
 ]
 
 { #category : 'accessing' }
