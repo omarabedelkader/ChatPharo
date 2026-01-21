@@ -1,3 +1,22 @@
+"
+A **Multiverse chain** configuration.
+* Holds an ordered collection of `ChatPharoMultiversStep` objects representing the agent chain.
+* When enabled, prompts flow through each step sequentially: the output of step N becomes part of the input for step N+1.
+* Provides methods to add, remove, and reorder steps in the chain.
+* **Why** – enables users to chain multiple LLM agents together for complex multi-model workflows.
+Example:
+```smalltalk
+multivers := ChatPharoMultivers new.
+multivers addStep: (ChatPharoMultiversStep new
+    agentClass: ChatPharoOllamaAgent;
+    model: 'llama3';
+    yourself).
+multivers addStep: (ChatPharoMultiversStep new
+    agentClass: ChatPharoGeminiAgent;
+    model: 'models/gemini-2.0-flash';
+    yourself).
+```
+"
 Class {
 	#name : 'ChatPharoMultivers',
 	#superclass : 'Object',

@@ -37,7 +37,8 @@ Class {
 		'isDeveloper',
 		'developerId',
 		'userName',
-		'userOrganization'
+		'userOrganization',
+		'multivers'
 	],
 	#classInstVars : [
 		'Default'
@@ -92,6 +93,7 @@ ChatPharoSettings class >> loadOrNew [
 				  settings developerId ifNil: [ settings privateSetDeveloperId: '' ].
 				  settings userName ifNil: [ settings privateSetUserName: '' ].
 				  settings userOrganization ifNil: [ settings privateSetUserOrganization: '' ].
+				settings multivers ifNil: [ settings multivers: ChatPharoMultivers new ].
 				  ^ settings ]
 				  on: Error
 				  do: [ ^ self new ] ]
@@ -450,9 +452,10 @@ ChatPharoSettings >> initialize [
 	codeFeatureEnabled := true.
 	browserToolsEnabled := (ChatPharoBrowserEnvironment new tools collect: [ :t | t name ]) asOrderedCollection.
 	maximumIterations := 3.
-		skillsEnabled := OrderedCollection new.
+	skillsEnabled := OrderedCollection new.
 	automaticSkillsEnabled := true.
 	skillToolsEnabled := true.
+	multivers := ChatPharoMultivers new.
 	ChatPharoLogger loggingEnabled: true.
 	ChatPharoLogger logSystem: 'Settings initialized' details: (Dictionary new
 			 at: 'defaultAgent' put: (ChatPharoLogger agentNameFor: agent);
@@ -532,6 +535,13 @@ ChatPharoSettings >> maximumIterations: aNumber [
 ChatPharoSettings >> models [
 
 	^ agent class modelNames
+]
+
+{ #category : 'initialization' }
+ChatPharoSettings >> multivers [
+	"Return the multiverse configuration"
+
+	^ multivers ifNil: [ multivers := ChatPharoMultivers new ]
 ]
 
 { #category : 'initialization' }
