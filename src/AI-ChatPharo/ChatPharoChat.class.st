@@ -106,6 +106,22 @@ ChatPharoChat >> clearChat [
 	self clearCache
 ]
 
+{ #category : 'accessing' }
+ChatPharoChat >> exportAsJson [
+
+	| entries normalized |
+	entries := Array streamContents: [ :stream |
+		history putOpenAIChatMessagesOn: stream ].
+	normalized := entries collect: [ :entry |
+		| dict |
+		dict := entry copy.
+		(dict includesKey: 'role') ifTrue: [
+			(dict includesKey: 'content') ifFalse: [
+				dict at: 'content' put: '' ] ].
+		dict ].
+	^ STONJSON toString: normalized
+]
+
 { #category : 'running' }
 ChatPharoChat >> history [
     ^ history asPromptPrefix
