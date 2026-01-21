@@ -545,6 +545,35 @@ ChatPharoSettings >> multivers [
 ]
 
 { #category : 'initialization' }
+ChatPharoSettings >> multivers: aMultivers [
+
+	multivers := aMultivers.
+	self class setDefault: self.
+	self class saveDefault.
+	ChatPharoLogger logFrontend: 'Multivers configuration updated'
+		details: (Dictionary new
+			at: 'enabled' put: aMultivers enabled;
+			at: 'stepsCount' put: aMultivers stepsCount;
+			yourself)
+]
+
+{ #category : 'initialization' }
+ChatPharoSettings >> multiversEnabled [
+	"Return whether multivers mode is enabled"
+
+	^ self multivers enabled
+]
+
+{ #category : 'initialization' }
+ChatPharoSettings >> multiversEnabled: aBoolean [
+	"Enable or disable multivers mode"
+
+	self multivers enabled: aBoolean.
+	self class setDefault: self.
+	self class saveDefault
+]
+
+{ #category : 'initialization' }
 ChatPharoSettings >> presenter [
 
 	^  ChatPharoSettingsPresenter on: self
