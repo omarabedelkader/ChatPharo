@@ -120,12 +120,14 @@ ChatPharoPresenter >> initializePresenters [
 			 icon: (self iconNamed: #smallSave);
 			 help: 'Save current chat';
 			 action: [ self saveCurrentChat ];
-			 yourself). "toolbar add: (SpToolbarButtonPresenter new
-        label: 'Load Chat';
-        icon: (self iconNamed: #smallOpen);
-        help: 'Load saved chat';
-        action: [ self loadChat ];
-        yourself)."
+			 yourself). 
+			
+	toolbar add: (SpToolbarButtonPresenter new
+			 label: 'Load Chat';
+			 icon: (self iconNamed: #smallOpen);
+			 help: 'Load chat from JSON file';
+			 action: [ self loadChat ];
+			 yourself).
 
 	toolbar add: (SpToolbarButtonPresenter new
 			 label: 'Settings';
@@ -167,6 +169,50 @@ ChatPharoPresenter >> initializeWindow: aWindowPresenter [
 ]
 
 { #category : 'initialization' }
+ChatPharoPresenter >> loadChat [
+	"Load a chat from a JSON file into a new tab"
+
+	| fileReference jsonData newPage chatName |
+	fileReference := UIManager default
+		chooseExistingFileReference: 'Load chat'
+		extensions: #( 'json' )
+		path: FileLocator home.
+
+	fileReference ifNil: [ ^ self ].
+
+	[
+		jsonData := fileReference readStream contents.
+		fileReference readStream close.
+
+		"Create a new chat and import the JSON"
+		chatName := fileReference basenameWithoutExtension.
+		model newChat.
+		model chats last importFromJson: jsonData.
+
+		"Add the new page to notebook"
+		newPage := SpNotebookPage
+			title: chatName
+			icon: (self iconNamed: #announcement)
+			provider: [ model chats last presenter ].
+		notebook addPage: newPage.
+		notebook selectPage: newPage.
+
+		ChatPharoLogger logFrontend: 'Chat loaded from file'
+			details: (Dictionary new
+				at: 'path' put: fileReference fullName;
+				at: 'chatTitle' put: chatName;
+				at: 'totalTabs' put: notebook pages size;
+				yourself)
+	] on: Error do: [ :ex |
+		self inform: 'Failed to load chat: ', ex messageText.
+		ChatPharoLogger logFrontend: 'Chat load failed'
+			details: (Dictionary new
+				at: 'path' put: fileReference fullName;
+				at: 'error' put: ex messageText;
+				yourself) ]
+]
+
+{ #category : 'initialization' }
 ChatPharoPresenter >> notebook [
 
 	^ notebook
@@ -195,20 +241,33 @@ ChatPharoPresenter >> openSettings [
 ChatPharoPresenter >> saveCurrentChat [
 
 	| fileReference jsonData currentChat |
+	notebook selectedPage ifNil: [
+		^ self inform: 'No chat selected.' ].
 	currentChat := notebook selectedPage presenterProvider value.
 	jsonData := currentChat exportAsJson.
 
-	fileReference := UIManager default chooseForSaveFileReference: 'Save chat' extensions: #( 'json' ) path: FileLocator home.
+	fileReference := UIManager default
+		chooseForSaveFileReference: 'Save chat'
+		extensions: #( 'json' )
+		path: FileLocator home.
 
-	fileReference ifNotNil: [
-			fileReference writeStream
-				nextPutAll: jsonData;
-				close. 
-				ChatPharoLogger logFrontend: 'Chat exported to file'
-                                details: (Dictionary new
-                                        at: 'path' put: fileReference fullName;
-                                        at: 'chatTitle' put: notebook selectedPage title;
-                                        yourself) ]
+	fileReference ifNil: [ ^ self ].
+
+	[
+		fileReference writeStreamDo: [ :stream |
+			stream nextPutAll: jsonData ].
+		ChatPharoLogger logFrontend: 'Chat exported to file'
+			details: (Dictionary new
+				at: 'path' put: fileReference fullName;
+				at: 'chatTitle' put: notebook selectedPage title;
+				yourself)
+	] on: Error do: [ :ex |
+		self inform: 'Failed to save chat: ', ex messageText.
+		ChatPharoLogger logFrontend: 'Chat save failed'
+			details: (Dictionary new
+				at: 'path' put: fileReference fullName;
+				at: 'error' put: ex messageText;
+				yourself) ]
 ]
 
 { #category : 'initialization' }

@@ -106,27 +106,6 @@ ChatPharoChat >> clearChat [
 	self clearCache
 ]
 
-{ #category : 'accessing' }
-ChatPharoChat >> exportAsJson [
-
-    | msgs |
-    msgs := history messages collect: [ :msg |
-        | dict |
-        dict := Dictionary new
-            at: 'role' put: msg role;
-            at: 'content' put: (msg content ifNil: [ '' ]);
-            yourself.
-        msg toolCalls ifNotNil: [
-            dict at: 'tool_calls' put:
-                (msg toolCalls collect: [ :tc |
-                    (tc respondsTo: #openAIChatToolCall)
-                        ifTrue: [ tc openAIChatToolCall ]
-                        ifFalse: [ tc ] ] as: Array)
-        ].
-        dict ].
-    ^ STONJSON toString: (msgs as: Array)
-]
-
 { #category : 'running' }
 ChatPharoChat >> history [
     ^ history asPromptPrefix
@@ -135,6 +114,54 @@ ChatPharoChat >> history [
 { #category : 'running' }
 ChatPharoChat >> historyPromptPrefix [
     ^ history asPromptPrefix
+]
+
+{ #category : 'accessing' }
+ChatPharoChat >> importFromJson: aJsonString [
+    "Import a chat from a JSON string. The JSON should be an array of message objects
+    with 'role' and 'content' keys, optionally with 'tool_calls' for assistant messages."
+
+    | parsedMessages currentUserContent |
+    self clearChat.
+    parsedMessages := STONJSON fromString: aJsonString.
+    currentUserContent := nil.
+
+    parsedMessages do: [ :msgDict |
+        | role content toolCalls historyMsg |
+        role := msgDict at: 'role'.
+        content := msgDict at: 'content' ifAbsent: [ '' ].
+        toolCalls := msgDict at: 'tool_calls' ifAbsent: [ nil ].
+
+        "Create tool calls if present"
+        toolCalls ifNotNil: [
+            toolCalls := toolCalls collect: [ :tcDict |
+                | funcDict |
+                funcDict := tcDict at: 'function' ifAbsent: [ Dictionary new ].
+                ChatPharoHistorySaverToolCall
+                    id: (tcDict at: 'id' ifAbsent: [ '' ])
+                    functionName: (funcDict at: 'name' ifAbsent: [ '' ])
+                    arguments: (funcDict at: 'arguments' ifAbsent: [ '' ])
+                    content: nil ] ].
+
+        "Add to history"
+        historyMsg := ChatPharoHistoryMessage role: role content: content toolCalls: toolCalls.
+        history addMessage: historyMsg.
+
+        "Build UI messages - pair user with assistant"
+        role = 'user' ifTrue: [ currentUserContent := content ].
+        role = 'assistant' ifTrue: [
+            messages add: (ChatPharoMessage new
+                content: (currentUserContent ifNil: [ '' ]);
+                answer: (content ifNil: [ '' ]);
+                assistantLabel: 'Assistant';
+                yourself).
+            currentUserContent := nil ] ].
+
+    ChatPharoLogger logBackend: 'Chat imported from JSON'
+        details: (Dictionary new
+            at: 'chatId' put: self identityHash;
+            at: 'messagesImported' put: parsedMessages size;
+            yourself)
 ]
 
 { #category : 'initialization' }
