@@ -168,6 +168,15 @@ ChatPharoSettings >> agent [
 	^ agent
 ]
 
+{ #category : 'as yet unclassified' }
+ChatPharoSettings >> allBrowserToolsEnabled [
+        "Return true if all available browser tools are enabled."
+
+        | allToolNames |
+        allToolNames := ChatPharoBrowserEnvironment new tools collect: [ :t | t name ].
+        ^ allToolNames allSatisfy: [ :name | browserToolsEnabled includes: name ]
+]
+
 { #category : 'accessing' }
 ChatPharoSettings >> askFeatureEnabled [
 
@@ -326,6 +335,15 @@ ChatPharoSettings >> developerId: aString [
 		details: (Dictionary new
 			at: 'developerId' put: (aString ifEmpty: [ 'empty' ] ifNotEmpty: [ 'set' ]);
 			yourself)
+{ #category : 'as yet unclassified' }
+ChatPharoSettings >> disableAllBrowserTools [
+        "Disable all browser tools."
+
+        browserToolsEnabled := OrderedCollection new.
+        self class setDefault: self.
+        self class saveDefault.
+        ChatPharoLogger logFrontend: 'All browser tools disabled'
+                details: Dictionary new
 ]
 
 { #category : 'initialization' }
@@ -354,6 +372,19 @@ ChatPharoSettings >> disableSkill: skillName [
 			at: 'skill' put: skillName;
 			at: 'remainingSkills' put: skillsEnabled asArray printString;
 			yourself)
+]
+
+{ #category : 'as yet unclassified' }
+ChatPharoSettings >> enableAllBrowserTools [
+        "Enable all available browser tools."
+
+        browserToolsEnabled := (ChatPharoBrowserEnvironment new tools collect: [ :t | t name ]) asOrderedCollection.
+        self class setDefault: self.
+        self class saveDefault.
+        ChatPharoLogger logFrontend: 'All browser tools enabled'
+                details: (Dictionary new
+                        at: 'tools' put: browserToolsEnabled asArray printString;
+                        yourself)
 ]
 
 { #category : 'initialization' }

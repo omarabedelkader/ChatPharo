@@ -7,7 +7,10 @@ Class {
 	#instVars : [
 		'model',
 		'promptInput',
-		'toolsLayout'
+		'toolsLayout',
+		'selectAllCheckbox',
+		'toolCheckboxes',
+		'isUpdatingCheckboxes'
 	],
 	#category : 'AI-ChatPharo-Spec-Extentions',
 	#package : 'AI-ChatPharo-Spec',
@@ -28,37 +31,97 @@ ChatPharoBrowserExtensionSettingsPresenter >> defaultLayout [
 ]
 
 { #category : 'initialization' }
+ChatPharoBrowserExtensionSettingsPresenter >> deselectAllTools [
+	"Disable all tools after confirmation and update all checkboxes."
+
+	(ChatPharoSafetyAdvisor confirmToolDisableOn: self)
+		ifTrue: [
+				model disableAllBrowserTools.
+				isUpdatingCheckboxes := true.
+				toolCheckboxes do: [ :cb | cb state ifTrue: [ cb state: false ] ] ]
+		ifFalse: [
+				isUpdatingCheckboxes := true.
+				selectAllCheckbox state: true ].
+	isUpdatingCheckboxes := false
+]
+
+{ #category : 'initialization' }
 ChatPharoBrowserExtensionSettingsPresenter >> initializePresenters [
 
+	| tools |
 	promptInput := ChatPharoBrowserSystemPromptInputPresenter on: model.
-    toolsLayout := SpBoxLayout newTopToBottom.
+ toolsLayout := SpBoxLayout newTopToBottom.
+	toolCheckboxes := OrderedCollection new.
+	isUpdatingCheckboxes := false.
+	tools := ChatPharoBrowserEnvironment new tools.
 
-    ChatPharoBrowserEnvironment new tools do: [ :tool |
-        | cb |
-        cb := self newCheckBox
-                  label: tool name;
-                  state: (model browserToolsEnabled includes: tool name);
-                  yourself.
+	"Create the 'Select All' checkbox"
+	selectAllCheckbox := self newCheckBox
+		label: 'Select All Tools';
+		state: model allBrowserToolsEnabled;
+		yourself.
 
-        cb whenChangedDo: [ :isChecked |
+	selectAllCheckbox whenChangedDo: [ :isChecked |
+		isUpdatingCheckboxes ifFalse: [
+			isChecked
+				ifTrue: [ self selectAllTools ]
+				ifFalse: [ self deselectAllTools ] ] ].
 
-            isChecked
-                ifTrue: [
-                    model enableBrowserTool: tool name.
-                ]
-                ifFalse: [
-                    (ChatPharoSafetyAdvisor confirmToolDisableOn: self)
-                        ifTrue: [
-                            model disableBrowserTool: tool name.
-                        ]
-                        ifFalse: [
-                            UIManager default defer: [ cb state: true ] ] ]].
+	toolsLayout add: selectAllCheckbox expand: false.
+	toolsLayout add: (SpBoxLayout newTopToBottom) expand: false. "Spacer"
 
-        toolsLayout add: cb expand: false ].
+	"Create individual tool checkboxes"
+	tools do: [ :tool |
+		| cb |
+		cb := self newCheckBox
+			label: tool name;
+			state: (model browserToolsEnabled includes: tool name);
+			yourself.
+
+		cb whenChangedDo: [ :isChecked |
+			isUpdatingCheckboxes ifFalse: [
+				isChecked
+					ifTrue: [
+						model enableBrowserTool: tool name.
+						self updateSelectAllCheckboxState ]
+					ifFalse: [
+						(ChatPharoSafetyAdvisor confirmToolDisableOn: self)
+							ifTrue: [
+								model disableBrowserTool: tool name.
+								self updateSelectAllCheckboxState ]
+							ifFalse: [
+								isUpdatingCheckboxes := true.
+								cb state: true.
+								isUpdatingCheckboxes := false ] ] ] ].
+
+		toolCheckboxes add: cb.
+		toolsLayout add: cb expand: false ]
+]
+
+{ #category : 'initialization' }
+ChatPharoBrowserExtensionSettingsPresenter >> selectAllTools [
+	"Enable all tools and update all checkboxes."
+
+	model enableAllBrowserTools.
+	isUpdatingCheckboxes := true.
+	toolCheckboxes do: [ :cb |
+		cb state ifFalse: [ cb state: true ] ].
+	isUpdatingCheckboxes := false
 ]
 
 { #category : 'layout' }
 ChatPharoBrowserExtensionSettingsPresenter >> setModelBeforeInitialization: anObject [ 
 
     model := anObject
+]
+
+{ #category : 'initialization' }
+ChatPharoBrowserExtensionSettingsPresenter >> updateSelectAllCheckboxState [
+
+	| allSelected |
+	allSelected := toolCheckboxes allSatisfy: [ :cb | cb state ].
+	selectAllCheckbox state = allSelected ifTrue: [ ^ self ].
+	isUpdatingCheckboxes := true.
+	selectAllCheckbox state: allSelected.
+	isUpdatingCheckboxes := false
 ]
