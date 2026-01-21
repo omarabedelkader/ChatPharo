@@ -24,8 +24,8 @@ Class {
 		'label',
 		'agentSettings'
 	],
-	#category : 'AI-ChatPharo',
-	#package : 'AI-ChatPharo'
+	#category : 'AI-ChatPharo-Multivers',
+	#package : 'AI-ChatPharo-Multivers'
 }
 
 { #category : 'accessing' }
