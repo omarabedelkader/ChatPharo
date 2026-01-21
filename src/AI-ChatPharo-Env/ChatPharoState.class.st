@@ -33,12 +33,25 @@ ChatPharoState class >> chatPharoSettingsWorldMenuOn: aBuilder [
 ]
 
 { #category : 'world state' }
+ChatPharoState class >> chatPharoSetupWizardWorldMenuOn: aBuilder [
+
+	<worldMenu>
+	(aBuilder item: #ChatPharoSetupWizard)
+		parent: #ChatPharo;
+		order: 4;
+		action: [ ChatPharoSetupPresenter open ];
+		label: 'Setup Wizard';
+		icon: (self iconNamed: #user);
+		help: 'Open the ChatPharo setup wizard to configure your profile'
+]
+
+{ #category : 'world state' }
 ChatPharoState class >> chatPharoWikiWorldMenuOn: aBuilder [
 
 	<worldMenu>
 	(aBuilder item: #ChatPharoDocumentation)
 		parent: #ChatPharo;
-		order: 3;
+		order: 5;
 		action: [
 			WebBrowser openOn:
 					'https://github.com/omarabedelkader/ChatPharo/blob/main/doc/ChatPharo-Wiki.md' ];
