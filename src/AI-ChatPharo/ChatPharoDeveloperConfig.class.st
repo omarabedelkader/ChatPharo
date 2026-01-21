@@ -48,7 +48,7 @@ ChatPharoDeveloperConfig class >> cleanToken: aString [
 ChatPharoDeveloperConfig class >> developerIdsUrl [
 	"Return the URL for fetching authorized developer IDs."
 
-	^ 'https://github.com/omarabedelkader/omarabedelkader.github.io/blob/main/idtoken.txt'
+	^ 'https://raw.githubusercontent.com/omarabedelkader/omarabedelkader.github.io/main/idtoken.txt'
 ]
 
 { #category : 'accessing' }
