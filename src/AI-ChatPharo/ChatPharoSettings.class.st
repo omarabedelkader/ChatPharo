@@ -335,6 +335,8 @@ ChatPharoSettings >> developerId: aString [
 		details: (Dictionary new
 			at: 'developerId' put: (aString ifEmpty: [ 'empty' ] ifNotEmpty: [ 'set' ]);
 			yourself)
+]
+
 { #category : 'as yet unclassified' }
 ChatPharoSettings >> disableAllBrowserTools [
         "Disable all browser tools."
