@@ -193,6 +193,11 @@ ChatPharoSettingsPresenter >> initializePresenters [
 
 	notebook addPage:
 		(SpNotebookPage title: 'Extensions' icon: (self iconNamed: #smallCogInitialState) provider: [ self newExtensionsTab ]).
+	
+		notebook addPage: (SpNotebookPage
+			 title: 'Security'
+			 icon: (self iconNamed: #lock)
+			 provider: [ ChatPharoSecuritySettingsPresenter on: model ]).
 		
 		notebook addPage: (SpNotebookPage
 			 title: 'Personal'

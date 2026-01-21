@@ -371,6 +371,80 @@ ChatPharoBrowserEnvironment >> functionGetPackages [
 ]
 
 { #category : 'initialization' }
+ChatPharoBrowserEnvironment >> functionGetSandboxStatus [
+	"Returns current sandbox configuration"
+
+	^ ChatPharoClient
+		  name: 'get_sandbox_status'
+		  description:
+		  'Gets the current sandbox security configuration. Use this to understand what restrictions are in place before executing code.'
+		  parameters: (Dictionary
+				   with: 'type' -> 'object'
+				   with: 'properties' -> Dictionary new
+				   with: 'required' -> #(  ))
+		  block: [ :arguments |
+				  | settings |
+				  settings := ChatPharoSettings default.
+				  Dictionary
+					  with: 'sandbox_enabled' -> settings sandboxEnabled
+					  with: 'timeout_ms' -> settings sandboxTimeout
+					  with: 'restrict_file_system' -> settings sandboxRestrictFileSystem
+					  with: 'restrict_network' -> settings sandboxRestrictNetwork
+					  with: 'restrict_system_access' -> settings sandboxRestrictSystemAccess ]
+]
+
+{ #category : 'initialization' }
+ChatPharoBrowserEnvironment >> functionSandboxEvaluate [
+	"Evaluates code in sandbox with explicit restrictions - always sandboxed regardless of global setting"
+
+	^ ChatPharoClient
+		  name: 'sandbox_evaluate'
+		  description:
+		  'Evaluates a Smalltalk expression in a sandboxed environment with timeout and security restrictions. Always runs in sandbox mode regardless of global settings. Use this for testing potentially risky code safely.'
+		  parameters: (Dictionary
+				   with: 'type' -> 'object'
+				   with: 'properties' -> (Dictionary
+						    with: 'expression' -> (Dictionary
+								     with: 'type' -> 'string'
+								     with:
+								     'description'
+								     -> 'The Smalltalk expression to evaluate')
+						    with: 'timeout_ms' -> (Dictionary
+								     with: 'type' -> 'integer'
+								     with:
+								     'description'
+								     -> 'Optional timeout in milliseconds (default: 5000)'))
+				   with: 'required' -> #( 'expression' ))
+		  block: [ :arguments |
+				  | expression sandbox result timeoutMs |
+				  expression := arguments at: 'expression'.
+				  timeoutMs := arguments at: 'timeout_ms' ifAbsent: [ 5000 ].
+
+				  sandbox := ChatPharoSandbox withDefaults.
+				  sandbox timeout: timeoutMs.
+
+				  result := sandbox evaluate: expression.
+				  result isSuccess
+					  ifTrue: [
+							  Dictionary
+								  with: 'success' -> true
+								  with: 'value' -> result value asString
+								  with: 'sandboxed' -> true ]
+					  ifFalse: [
+							  result hasViolations
+								  ifTrue: [
+									  Dictionary
+										  with: 'success' -> false
+										  with: 'blocked' -> true
+										  with: 'reason' -> result errorMessage
+										  with: 'violations' -> result violations ]
+								  ifFalse: [
+									  Dictionary
+										  with: 'success' -> false
+										  with: 'error' -> result errorMessage ] ] ]
+]
+
+{ #category : 'initialization' }
 ChatPharoBrowserEnvironment >> initializeWithEnvironment: env [
 
 	browserEnvironment := env.
@@ -384,9 +458,8 @@ ChatPharoBrowserEnvironment >> initializeWithEnvironment: env [
 		         self functionFindMethodsWithSubstring.
 		         self functionDescribePackage.
 		         ChatPharoClient toolCheckSyntax.
-		          ChatPharoClient toolOpenPlayground } asOrderedCollection.
-
-	"Add skill tools if enabled and the Skills package is loaded"
+		         ChatPharoClient toolOpenPlayground. self functionGetSandboxStatus.
+		self functionSandboxEvaluate } asOrderedCollection. "Add skill tools if enabled and the Skills package is loaded"
 	(Smalltalk hasClassNamed: #ChatPharoSkillEnvironment) ifTrue: [
 		tools addAll: (Smalltalk at: #ChatPharoSkillEnvironment) new tools ]
 ]
