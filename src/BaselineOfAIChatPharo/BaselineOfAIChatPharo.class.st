@@ -77,6 +77,21 @@ BaselineOfAIChatPharo class >> loadBackgroundImage [
 ]
 
 { #category : 'baselines' }
+BaselineOfAIChatPharo class >> showFirstLaunchSetupIfNeeded [
+	"Show the setup dialog if ChatPharo is not yet configured.
+	Deferred to run after UI is ready."
+
+	<script>
+	[
+		(Delay forMilliseconds: 500) wait.
+		World ifNotNil: [
+			ChatPharoSettings default isConfigured ifFalse: [
+				WorldMorph doOneCycle.
+				ChatPharoSetupPresenter openIfNeeded ] ]
+	] fork
+]
+
+{ #category : 'baselines' }
 BaselineOfAIChatPharo >> baseline: spec [
 
 	<baseline>
@@ -109,15 +124,5 @@ BaselineOfAIChatPharo >> postLoad [
 
 { #category : 'baselines' }
 BaselineOfAIChatPharo >> showFirstLaunchSetupIfNeeded [
-	"Show the setup dialog if ChatPharo is not yet configured.
-	Deferred to run after UI is ready."
-
-	<script>
-	[
-		(Delay forMilliseconds: 500) wait.
-		World ifNotNil: [
-			ChatPharoSettings default isConfigured ifFalse: [
-				WorldMorph doOneCycle.
-				ChatPharoSetupPresenter openIfNeeded ] ]
-	] fork
+	^ self class showFirstLaunchSetupIfNeeded
 ]
