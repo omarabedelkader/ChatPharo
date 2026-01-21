@@ -165,25 +165,20 @@ ChatPharoSettingsPresenter >> initializePresenters [
 	notebook := self newNotebook.
 	apiSettingsContainer := SpBoxLayout newTopToBottom.
 
-	notebook addPage: (SpNotebookPage
-			 title: 'Chat'
-			 icon: (self iconNamed: #announcement)
-			 provider: [ self newChatTab ]).
+	notebook addPage: (SpNotebookPage title: 'Chat' icon: (self iconNamed: #announcement) provider: [ self newChatTab ]).
 
-	notebook addPage: (SpNotebookPage
-			 title: 'History'
-			 icon: (self iconNamed: #history)
-			 provider: [ self newHistoryTab ]).
+	notebook addPage: (SpNotebookPage title: 'History' icon: (self iconNamed: #history) provider: [ self newHistoryTab ]).
 
-	notebook addPage: (SpNotebookPage
-			 title: 'Configuration'
-			 icon: (self iconNamed: #smallConfiguration)
-			 provider: [ self newConfigurationTab ]).
+	notebook addPage:
+		(SpNotebookPage title: 'Configuration' icon: (self iconNamed: #smallConfiguration) provider: [ self newConfigurationTab ]).
 
-	notebook addPage: (SpNotebookPage
-			 title: 'Extensions'
-			 icon: (self iconNamed: #smallCogInitialState)
-			 provider: [ self newExtensionsTab ]).
+	notebook addPage:
+		(SpNotebookPage title: 'Extensions' icon: (self iconNamed: #smallCogInitialState) provider: [ self newExtensionsTab ]).
+		
+		notebook addPage: (SpNotebookPage
+			 title: 'Skills'
+			 icon: (self iconNamed: #smallObjects)
+			 provider: [ self newSkillsTab ]).
 
 	modelsRefreshButton := self newButton
 		                       label: 'Refresh';
@@ -218,32 +213,29 @@ ChatPharoSettingsPresenter >> initializePresenters [
 		                            label: 'Enable browser tab';
 		                            state: model browserExtensionEnabled;
 		                            yourself.
-		
+
 	browserAutoTabCheckBox := self newCheckBox
 		                          label: 'Open tab on selection';
 		                          state: model browserAutoTabEnabled;
 		                          yourself.
-		
+
 	playgroundToolCheckBox := self newCheckBox
 		                          label: 'Enable open playground tool';
-		                          state:
-			                          (model browserToolsEnabled includes:
-					                           'open_playground');
+		                          state: (model browserToolsEnabled includes: 'open_playground');
 		                          yourself.
 
 	cacheCheckBox := self newCheckBox
-							label: 'Enable cache';
-							state: model cacheEnabled;
-							yourself.
-							
-	loggingCheckBox := self newCheckBox
-                                        label: 'Enable logging';
-                                        state: model loggingEnabled;
-                                        yourself.
+		                 label: 'Enable cache';
+		                 state: model cacheEnabled;
+		                 yourself.
 
-	apiDropList selectItem: (model availableApiChoices
-			 detect: [ :assoc | assoc value = model agent class ]
-			 ifNone: [ model availableApiChoices first ]).
+	loggingCheckBox := self newCheckBox
+		                   label: 'Enable logging';
+		                   state: model loggingEnabled;
+		                   yourself.
+
+	apiDropList selectItem:
+		(model availableApiChoices detect: [ :assoc | assoc value = model agent class ] ifNone: [ model availableApiChoices first ]).
 
 	self refreshApiSettings.
 	self updateBrowserExtensionTab
@@ -338,6 +330,13 @@ history := history ifNil: [ model agent history ].
                                    add: historyView;
                                    yourself);
                   yourself
+]
+
+{ #category : 'initialization' }
+ChatPharoSettingsPresenter >> newSkillsTab [
+	"Creates the Skills configuration tab"
+
+	^ ChatPharoSkillsSettingsPresenter on: model
 ]
 
 { #category : 'initialization' }
