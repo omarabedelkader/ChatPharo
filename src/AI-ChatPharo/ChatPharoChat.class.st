@@ -112,6 +112,11 @@ ChatPharoChat >> history [
 ]
 
 { #category : 'running' }
+ChatPharoChat >> historyMessages [
+    ^ history messages
+]
+
+{ #category : 'running' }
 ChatPharoChat >> historyPromptPrefix [
     ^ history asPromptPrefix
 ]

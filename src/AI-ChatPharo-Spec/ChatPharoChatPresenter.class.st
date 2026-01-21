@@ -83,7 +83,7 @@ ChatPharoChatPresenter >> defaultLayout [
 ChatPharoChatPresenter >> exportAsJson [
 
     | msgs |
-    msgs := history messages collect: [ :msg |
+    msgs :=  model historyMessages collect: [ :msg |
         | dict |
         dict := Dictionary new
             at: 'role' put: msg role;
