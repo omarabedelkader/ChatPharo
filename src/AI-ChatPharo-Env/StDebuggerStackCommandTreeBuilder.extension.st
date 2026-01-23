@@ -5,6 +5,7 @@ StDebuggerStackCommandTreeBuilder >> chatPharoCommandsGroup [
 	"Build a command group for ChatPharo in the stack context menu"
 
 	| group debuggerContext |
+	debuggerContext := self chatPharoDebuggerContext.
 	group := (CmCommandGroup named: 'ChatPharo') asSpecGroup.
 	group beDisplayedAsGroup.
 	group description: 'Ask ChatPharo about the debugging context'.

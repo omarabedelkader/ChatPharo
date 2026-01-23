@@ -5,6 +5,7 @@ StDebuggerToolbarCommandTreeBuilder >> chatPharoCommandsGroup [
 	"Build a command group containing ChatPharo integration commands"
 
 	| group debuggerContext |
+	debuggerContext := self chatPharoDebuggerContext.
 	group := (CmCommandGroup named: 'ChatPharo') asSpecGroup.
 	group beDisplayedAsGroup.
 	group description: 'ChatPharo AI assistance'.

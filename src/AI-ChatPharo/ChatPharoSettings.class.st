@@ -292,18 +292,20 @@ ChatPharoSettings >> browserExtensionEnabled: aBoolean [
 { #category : 'initialization' }
 ChatPharoSettings >> browserToolsEnabled [
 
-        ^ browserToolsEnabled
+browserToolsEnabled ifNil: [
+                browserToolsEnabled := (ChatPharoBrowserEnvironment new tools
+                        collect: [ :t | t name ]) asOrderedCollection ].
 ]
 
 { #category : 'initialization' }
 ChatPharoSettings >> browserToolsEnabled: aCollection [
 
-	browserToolsEnabled := aCollection.
+	browserToolsEnabled := aCollection ifNil: [ OrderedCollection new ].
 	self class setDefault: self.
 	self class saveDefault.
 	        ChatPharoLogger logFrontend: 'Browser tools selection updated'
                 details: (Dictionary new
-                        at: 'tools' put: aCollection asArray printString;
+                        at: 'tools' put: browserToolsEnabled asArray printString;
                         yourself)
 ]
 
