@@ -182,6 +182,122 @@ ChatPharoBrowserEnvironment >> applyFunctionGetPackages: arguments [
 				   package name ]) sorted
 ]
 
+{ #category : 'as yet unclassified' }
+ChatPharoBrowserEnvironment >> applyFunctionRenameClass: arguments [
+	"Rename a single class using Pharo's modern refactoring engine."
+
+	| oldName newName theClass refactoring |
+	oldName := arguments at: 'old_name'.
+	newName := arguments at: 'new_name'.
+
+	"Validate the old class exists"
+	theClass := self classNamed: oldName.
+	theClass ifNil: [
+		^ Dictionary with: 'error' -> ('Class not found: ' , oldName) ].
+
+	"Validate new name is a valid class name"
+	(newName isEmpty or: [ newName first isUppercase not ]) ifTrue: [
+		^ Dictionary with: 'error' -> 'New class name must start with an uppercase letter' ].
+
+	"Check if the new name is already taken"
+	(Smalltalk globals includesKey: newName asSymbol) ifTrue: [
+		^ Dictionary with: 'error' -> ('A class with name ' , newName , ' already exists') ].
+
+	"Perform the refactoring"
+	[
+		refactoring := ReRenameClassRefactoring
+			rename: theClass
+			to: newName asSymbol.
+		refactoring execute.
+
+		^ Dictionary
+			with: 'success' -> true
+			with: 'old_name' -> oldName
+			with: 'new_name' -> newName
+			with: 'message' -> ('Successfully renamed ' , oldName , ' to ' , newName)
+	] on: Error do: [ :error |
+		^ Dictionary with: 'error' -> ('Refactoring failed: ' , error messageText) ]
+
+]
+
+{ #category : 'as yet unclassified' }
+ChatPharoBrowserEnvironment >> applyFunctionRenameClassesInPackage: arguments [
+	"Rename multiple classes in a package based on pattern matching."
+
+	| packageName searchPattern replacePattern classes renamedClasses errors dryRun |
+	packageName := arguments at: 'package'.
+	searchPattern := arguments at: 'search_pattern'.
+	replacePattern := arguments at: 'replace_pattern'.
+	dryRun := arguments at: 'dry_run' ifAbsent: [ false ].
+
+	"Validate package exists"
+	classes := self classesInPackageNamed: packageName.
+	classes ifNil: [
+		^ Dictionary with: 'error' -> ('Package not found: ' , packageName) ].
+
+	renamedClasses := OrderedCollection new.
+	errors := OrderedCollection new.
+
+	"Find classes matching the pattern and compute new names"
+	classes do: [ :theClass |
+		| oldName newName |
+		oldName := theClass name asString.
+
+		(oldName includesSubstring: searchPattern) ifTrue: [
+			newName := oldName copyReplaceAll: searchPattern with: replacePattern.
+
+			"Validate new name"
+			(newName isEmpty or: [ newName first isUppercase not ])
+				ifTrue: [
+					errors add: (Dictionary
+						with: 'old_name' -> oldName
+						with: 'error' -> 'New name would not start with uppercase') ]
+				ifFalse: [
+					(Smalltalk globals includesKey: newName asSymbol)
+						ifTrue: [
+							errors add: (Dictionary
+								with: 'old_name' -> oldName
+								with: 'new_name' -> newName
+								with: 'error' -> 'Target name already exists') ]
+						ifFalse: [
+							dryRun
+								ifTrue: [
+									renamedClasses add: (Dictionary
+										with: 'old_name' -> oldName
+										with: 'new_name' -> newName
+										with: 'status' -> 'would_rename') ]
+								ifFalse: [
+									[
+										| refactoring |
+										refactoring := ReRenameClassRefactoring
+											rename: theClass
+											to: newName asSymbol.
+										refactoring execute.
+
+										renamedClasses add: (Dictionary
+											with: 'old_name' -> oldName
+											with: 'new_name' -> newName
+											with: 'status' -> 'renamed')
+									] on: Error do: [ :error |
+										errors add: (Dictionary
+											with: 'old_name' -> oldName
+											with: 'new_name' -> newName
+											with: 'error' -> error messageText) ] ] ] ] ] ].
+
+^ (Dictionary new)
+	at: 'package' put: packageName;
+	at: 'search_pattern' put: searchPattern;
+	at: 'replace_pattern' put: replacePattern;
+	at: 'dry_run' put: dryRun;
+	at: 'renamed_classes' put: renamedClasses asArray;
+	at: 'errors' put: errors asArray;
+	at: 'total_matched' put: (renamedClasses size + errors size);
+	at: 'successful' put: renamedClasses size;
+	yourself
+
+
+]
+
 { #category : 'accessing' }
 ChatPharoBrowserEnvironment >> browserEnvironment [
 
@@ -394,6 +510,54 @@ ChatPharoBrowserEnvironment >> functionGetSandboxStatus [
 ]
 
 { #category : 'initialization' }
+ChatPharoBrowserEnvironment >> functionRenameClass [
+	"Tool to rename a single class using Pharo's Refactoring Browser."
+
+	^ ChatPharoClient
+		name: 'rename_class'
+		description: 'Renames a class in the Pharo image. This will update all references to the class throughout the codebase. Use with care as this modifies the live system.'
+		parameters: (Dictionary
+			with: 'type' -> 'object'
+			with: 'properties' -> (Dictionary
+				with: 'old_name' -> (Dictionary
+					with: 'type' -> 'string'
+					with: 'description' -> 'The current name of the class to rename')
+				with: 'new_name' -> (Dictionary
+					with: 'type' -> 'string'
+					with: 'description' -> 'The new name for the class (must start with uppercase)'))
+			with: 'required' -> #( 'old_name' 'new_name' ))
+		block: [ :arguments |
+			self applyFunctionRenameClass: arguments ]
+]
+
+{ #category : 'initialization' }
+ChatPharoBrowserEnvironment >> functionRenameClassesInPackage [
+	"Tool to rename multiple classes in a package using pattern matching."
+
+	^ ChatPharoClient
+		name: 'rename_classes_in_package'
+		description: 'Renames multiple classes in a package by replacing a substring pattern in their names. For example, replace "Old" with "New" to rename "OldFoo" to "NewFoo". Use dry_run=true first to preview changes. This modifies the live system.'
+		parameters: (Dictionary
+			with: 'type' -> 'object'
+			with: 'properties' -> (Dictionary
+				with: 'package' -> (Dictionary
+					with: 'type' -> 'string'
+					with: 'description' -> 'The name of the package containing the classes to rename')
+				with: 'search_pattern' -> (Dictionary
+					with: 'type' -> 'string'
+					with: 'description' -> 'The substring to search for in class names')
+				with: 'replace_pattern' -> (Dictionary
+					with: 'type' -> 'string'
+					with: 'description' -> 'The string to replace the search pattern with')
+				with: 'dry_run' -> (Dictionary
+					with: 'type' -> 'boolean'
+					with: 'description' -> 'If true, only preview what would be renamed without actually performing the rename. Always use dry_run first to verify the changes.'))
+			with: 'required' -> #( 'package' 'search_pattern' 'replace_pattern' ))
+		block: [ :arguments |
+			self applyFunctionRenameClassesInPackage: arguments ]
+]
+
+{ #category : 'initialization' }
 ChatPharoBrowserEnvironment >> functionSandboxEvaluate [
 	"Evaluates code in sandbox with explicit restrictions - always sandboxed regardless of global setting"
 
@@ -457,9 +621,14 @@ ChatPharoBrowserEnvironment >> initializeWithEnvironment: env [
 		         self functionGetClassSubclasses.
 		         self functionFindMethodsWithSubstring.
 		         self functionDescribePackage.
+		         "Refactoring tools"
+		         self functionRenameClass.
+		         self functionRenameClassesInPackage.
 		         ChatPharoClient toolCheckSyntax.
-		         ChatPharoClient toolOpenPlayground. self functionGetSandboxStatus.
-		self functionSandboxEvaluate } asOrderedCollection. "Add skill tools if enabled and the Skills package is loaded"
+		         ChatPharoClient toolCheckSyntax.
+		         ChatPharoClient toolOpenPlayground.
+		         self functionGetSandboxStatus.
+		         self functionSandboxEvaluate } asOrderedCollection. "Add skill tools if enabled and the Skills package is loaded"
 	(Smalltalk hasClassNamed: #ChatPharoSkillEnvironment) ifTrue: [
 		tools addAll: (Smalltalk at: #ChatPharoSkillEnvironment) new tools ]
 ]
