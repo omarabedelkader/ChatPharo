@@ -393,15 +393,14 @@ ChatPharoSettings >> disableAllBrowserTools [
 { #category : 'initialization' }
 ChatPharoSettings >> disableBrowserTool: toolName [
 
-        browserToolsEnabled remove: toolName ifAbsent: [ ].
-        self class setDefault: self.
-        self class saveDefault.
-        ChatPharoLogger logFrontend: 'Browser tool disabled'
-                details: (Dictionary new
-                        at: 'tool' put: toolName;
-                        at: 'remainingTools' put: browserToolsEnabled asArray printString;
-                        yourself)
-
+	browserToolsEnabled ifNil: [ browserToolsEnabled := OrderedCollection new ].
+	browserToolsEnabled remove: toolName ifAbsent: [ ].
+	self class setDefault: self.
+	self class saveDefault.
+	ChatPharoLogger logFrontend: 'Browser tool disabled' details: (Dictionary new
+			 at: 'tool' put: toolName;
+			 at: 'remainingTools' put: browserToolsEnabled asArray printString;
+			 yourself)
 ]
 
 { #category : 'initialization' }
@@ -433,16 +432,15 @@ ChatPharoSettings >> enableAllBrowserTools [
 
 { #category : 'initialization' }
 ChatPharoSettings >> enableBrowserTool: toolName [
-        (browserToolsEnabled includes: toolName) ifFalse: [
-                browserToolsEnabled add: toolName ].
-        self class setDefault: self.
-        self class saveDefault.
-maximumIterations := 3.
-        ChatPharoLogger logFrontend: 'Browser tool enabled'
-                details: (Dictionary new
-                        at: 'tool' put: toolName;
-                        at: 'tools' put: browserToolsEnabled asArray printString;
-                        yourself)
+
+	browserToolsEnabled ifNil: [ browserToolsEnabled := OrderedCollection new ].
+	(browserToolsEnabled includes: toolName) ifFalse: [ browserToolsEnabled add: toolName ].
+	self class setDefault: self.
+	self class saveDefault.
+	ChatPharoLogger logFrontend: 'Browser tool enabled' details: (Dictionary new
+			 at: 'tool' put: toolName;
+			 at: 'tools' put: browserToolsEnabled asArray printString;
+			 yourself)
 ]
 
 { #category : 'initialization' }
