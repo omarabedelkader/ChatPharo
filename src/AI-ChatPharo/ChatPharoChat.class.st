@@ -36,15 +36,15 @@ Class {
 ChatPharoChat >> addAssistantMessage: answerText [
 
 	| label multivers |
-	history addAssistant: answerText.
-		"Determine label based on mode"
+	"Note: history is already updated by the agent's getResponseForPrompt: method
+	Determine label based on mode"
 	multivers := ChatPharoSettings default multivers.
 	label := (multivers notNil and: [ multivers canExecute ])
-		ifTrue: [ 'Multivers (' , multivers stepsCount asString , ' agents)' ]
-		ifFalse: [
-			(self agent isKindOf: ChatPharoNullAgent)
-				ifTrue: [ 'Assistant bot' ]
-				ifFalse: [ 'Assistant' ] ].
+		         ifTrue: [ 'Multivers (' , multivers stepsCount asString , ' agents)' ]
+		         ifFalse: [
+				         (self agent isKindOf: ChatPharoNullAgent)
+					         ifTrue: [ 'Assistant bot' ]
+					         ifFalse: [ 'Assistant' ] ].
 	messages last
 		answer: answerText;
 		assistantLabel: label.

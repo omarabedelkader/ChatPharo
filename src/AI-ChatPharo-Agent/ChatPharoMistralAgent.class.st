@@ -70,9 +70,6 @@ ChatPharoMistralAgent >> getResponseForPrompt: prompt [
                        tools: self tools.
         model ifNotEmpty: [ api model: model ].
         self history ifNil: [ self history: ChatPharoHistory new ].
-        self history addMessage:
-                (ChatPharoHistorySaver role: 'user' content: prompt).
-
         result := api getResponseForHistory: self history.
         self history addMessage: result.
 

@@ -99,8 +99,6 @@ ChatPharoGeminiAgent >> getResponseForPrompt: userPrompt [
 		api onToolExecution: self onToolExecution ].
 	model ifNotEmpty: [ api model: model ].
 	self history ifNil: [ self history: ChatPharoHistory new ].
-	self history addMessage:
-		(ChatPharoHistorySaver role: 'user' content: userPrompt).
 
         result := api getResponseForHistory: self history.
         self history addMessage: result.
