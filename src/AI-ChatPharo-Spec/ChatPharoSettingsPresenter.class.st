@@ -20,6 +20,7 @@ Class {
 		'chatPharo',
 		'cacheCheckBox',
 		'loggingCheckBox',
+		'openLogsButton',
 		'feedbackCheckBox',
 		'askFeatureCheckBox',
 		'codeFeatureCheckBox',
@@ -200,7 +201,7 @@ ChatPharoSettingsPresenter >> initializePresenters [
 	notebook addPage: (SpNotebookPage title: 'Personal' icon: (self iconNamed: #user) provider: [ self newPersonalTab ]).
 
 	notebook addPage: (SpNotebookPage title: 'Skills' icon: (self iconNamed: #smallObjects) provider: [ self newSkillsTab ]).
-	
+
 	notebook addPage: (SpNotebookPage title: 'Multivers' icon: (self iconNamed: #branch) provider: [ self newMultiversTab ]).
 
 	modelsRefreshButton := self newButton
@@ -252,6 +253,13 @@ ChatPharoSettingsPresenter >> initializePresenters [
 		                 state: model cacheEnabled;
 		                 yourself.
 
+openLogsButton := self newButton
+		                  label: 'Open Logs';
+		                  icon: (self iconNamed: #glamorousOpen);
+		                  help: 'Open the ChatPharo log file';
+		                  action: [ self openLogs ];
+		                  yourself.
+		
 	loggingCheckBox := self newCheckBox
 		                   label: 'Enable logging';
 		                   state: model loggingEnabled;
@@ -295,8 +303,14 @@ ChatPharoSettingsPresenter >> newChatTab [
 				   add: playgroundToolCheckBox expand: false;
 				   add: cacheCheckBox expand: false;
 				   add: loggingCheckBox expand: false;
-				add: askFeatureCheckBox expand: false;
-                                   add: codeFeatureCheckBox expand: false;
+				add: (SpBoxLayout newHorizontal
+						    spacing: 8;
+						    add: loggingCheckBox expand: false;
+						    add: openLogsButton expand: false;
+						    yourself)
+				   expand: false;
+				   add: askFeatureCheckBox expand: false;
+				   add: codeFeatureCheckBox expand: false;
 				   add: feedbackCheckBox expand: false;
 				   add: welcomeMessageCheckBox expand: false;
 				   yourself);
@@ -459,6 +473,17 @@ ChatPharoSettingsPresenter >> notebook [
 ChatPharoSettingsPresenter >> notebook: anObject [
 
 	notebook := anObject
+]
+
+{ #category : 'initialization' }
+ChatPharoSettingsPresenter >> openLogs [
+	"Open the ChatPharo log file."
+
+	| logFile |
+	logFile := ChatPharoLogger logFile.
+	logFile exists
+		ifTrue: [ WebBrowser openOn: logFile fullName ]
+		ifFalse: [ self inform: 'No log file found. Enable logging and use ChatPharo to generate logs.' ]
 ]
 
 { #category : 'initialization' }
