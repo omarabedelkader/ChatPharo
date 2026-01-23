@@ -38,6 +38,7 @@ ChatPharoChat >> addAssistantMessage: answerText [
 	| label multivers |
 	"Note: history is already updated by the agent's getResponseForPrompt: method
 	Determine label based on mode"
+	history addAssistant: answerText.
 	multivers := ChatPharoSettings default multivers.
 	label := (multivers notNil and: [ multivers canExecute ])
 		         ifTrue: [ 'Multivers (' , multivers stepsCount asString , ' agents)' ]
