@@ -36,6 +36,28 @@ ChatPharo class >> ask: text [
 ]
 
 { #category : 'context' }
+ChatPharo class >> askAboutDebugContext: aDebugInfoDictionary [
+	"Open ChatPharo with context from the debugger.
+	aDebugInfoDictionary contains debugging information such as:
+	- exception: the exception class name
+	- errorMessage: the error message
+	- method: the method where the error occurred
+	- receiver: the receiver class
+	- selector: the selector being executed
+	- sourceCode: the source code of the method
+	- stackTrace: the stack trace"
+
+	| prompt details |
+	prompt := self promptForDebugContext: aDebugInfoDictionary.
+	details := aDebugInfoDictionary copy.
+	^ self
+		performQuickActionNamed: 'Debug ask'
+		prompt: prompt
+		additionalDetails: details
+		customizeAgent: nil
+]
+
+{ #category : 'context' }
 ChatPharo class >> askAboutMethod: aMethod [
 
         | methodClass source className selector packageName prompt details |
@@ -187,6 +209,52 @@ ChatPharo class >> performQuickActionNamed: actionName prompt: prompt additional
                 logSystem: actionName , ' completed'
                 details: backendDetails.
         ^ chat
+]
+
+{ #category : 'context' }
+ChatPharo class >> promptForDebugContext: aDebugInfoDictionary [
+	"Build a prompt for asking about a debugging context"
+
+	| exception errorMessage method receiver selector sourceCode stackTrace |
+	exception := aDebugInfoDictionary at: 'exception' ifAbsent: [ 'Unknown' ].
+	errorMessage := aDebugInfoDictionary at: 'errorMessage' ifAbsent: [ '' ].
+	method := aDebugInfoDictionary at: 'method' ifAbsent: [ '' ].
+	receiver := aDebugInfoDictionary at: 'receiver' ifAbsent: [ '' ].
+	selector := aDebugInfoDictionary at: 'selector' ifAbsent: [ '' ].
+	sourceCode := aDebugInfoDictionary at: 'sourceCode' ifAbsent: [ '' ].
+	stackTrace := aDebugInfoDictionary at: 'stackTrace' ifAbsent: [ '' ].
+
+	^ String streamContents: [ :stream |
+		stream
+			nextPutAll: 'I encountered an error while debugging Smalltalk code. Please help me understand what went wrong and how to fix it.';
+			cr;
+			cr.
+		stream nextPutAll: '## Error Information'; cr.
+		stream nextPutAll: '- **Exception**: '; nextPutAll: exception; cr.
+		errorMessage isEmpty ifFalse: [
+			stream nextPutAll: '- **Message**: '; nextPutAll: errorMessage; cr ].
+		receiver isEmpty ifFalse: [
+			stream nextPutAll: '- **Receiver Class**: '; nextPutAll: receiver; cr ].
+		selector isEmpty ifFalse: [
+			stream nextPutAll: '- **Selector**: '; nextPutAll: selector; cr ].
+		method isEmpty ifFalse: [
+			stream nextPutAll: '- **Method**: '; nextPutAll: method; cr ].
+		stream cr.
+		sourceCode isEmpty ifFalse: [
+			stream nextPutAll: '## Method Source Code'; cr.
+			stream nextPutAll: '```smalltalk'; cr.
+			stream nextPutAll: sourceCode; cr.
+			stream nextPutAll: '```'; cr; cr ].
+		stackTrace isEmpty ifFalse: [
+			stream nextPutAll: '## Stack Trace'; cr.
+			stream nextPutAll: '```'; cr.
+			stream nextPutAll: stackTrace; cr.
+			stream nextPutAll: '```'; cr; cr ].
+		stream
+			nextPutAll: 'Please explain:'; cr;
+			nextPutAll: '1. What is causing this error?'; cr;
+			nextPutAll: '2. How can I fix it?'; cr;
+			nextPutAll: '3. Are there any common pitfalls related to this type of error?' ]
 ]
 
 { #category : 'context' }
