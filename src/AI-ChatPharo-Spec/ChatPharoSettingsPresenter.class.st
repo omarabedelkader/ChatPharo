@@ -34,7 +34,9 @@ Class {
 		'ethicsMandateInput',
 		'cognitiveLoadBudgetInput',
 		'tokenBudgetInput',
-		'timeBudgetInput'
+		'timeBudgetInput',
+		'icebergExtensionCheckBox',
+		'icebergExtensionPage'
 	],
 	#category : 'AI-ChatPharo-Spec-Core',
 	#package : 'AI-ChatPharo-Spec',
@@ -109,6 +111,10 @@ ChatPharoSettingsPresenter >> connectPresenters [
 			model browserExtensionEnabled: presenter.
 			self updateBrowserExtensionTab ].
 
+	icebergExtensionCheckBox whenChangedDo: [ :presenter |
+			model icebergExtensionEnabled: presenter.
+			self updateIcebergExtensionTab ].
+		
 	browserAutoTabCheckBox whenChangedDo: [ :presenter | model browserAutoTabEnabled: presenter ].
 
 	cacheCheckBox whenChangedDo: [ :enabled |
@@ -116,17 +122,17 @@ ChatPharoSettingsPresenter >> connectPresenters [
 			ChatPharoSettings saveDefault ].
 
 	loggingCheckBox whenChangedDo: [ :enabled | model loggingEnabled: enabled ].
-	
-	
-	        askFeatureCheckBox := self
-                                    addCheckboxLabeled: 'Enable Ask button in editors'
-                                    value: [ model askFeatureEnabled ]
-                                    changeAction: [ :val | model askFeatureEnabled: val ].
 
-        codeFeatureCheckBox := self
-                                        addCheckboxLabeled: 'Enable Code button in editors'
-                                        value: [ model codeFeatureEnabled ]
-                                        changeAction: [ :val | model codeFeatureEnabled: val ].
+
+	askFeatureCheckBox := self
+		                      addCheckboxLabeled: 'Enable Ask button in editors'
+		                      value: [ model askFeatureEnabled ]
+		                      changeAction: [ :val | model askFeatureEnabled: val ].
+
+	codeFeatureCheckBox := self
+		                       addCheckboxLabeled: 'Enable Code button in editors'
+		                       value: [ model codeFeatureEnabled ]
+		                       changeAction: [ :val | model codeFeatureEnabled: val ].
 
 	feedbackCheckBox := self
 		                    addCheckboxLabeled: 'Enable Feedback Buttons'
@@ -138,27 +144,25 @@ ChatPharoSettingsPresenter >> connectPresenters [
 		                          value: [ ChatPharoSettings default welcomeMessageEnabled ]
 		                          changeAction: [ :val | ChatPharoSettings default welcomeMessageEnabled: val ].
 
-	ethicsDirectorCheckBox whenChangedDo: [ :enabled |
-		model ethicsDirectorEnabled: enabled ].
+	ethicsDirectorCheckBox whenChangedDo: [ :enabled | model ethicsDirectorEnabled: enabled ].
 
-	ethicsMandateInput whenTextChangedDo: [ :text |
-		model ethicsMandate: text trimBoth ].
+	ethicsMandateInput whenTextChangedDo: [ :text | model ethicsMandate: text trimBoth ].
 
 	cognitiveLoadBudgetInput whenTextChangedDo: [ :text |
-		text isEmpty
-			ifTrue: [ model cognitiveLoadBudget: nil ]
-			ifFalse: [ model cognitiveLoadBudget: text asNumber ] ].
+			text isEmpty
+				ifTrue: [ model cognitiveLoadBudget: nil ]
+				ifFalse: [ model cognitiveLoadBudget: text asNumber ] ].
 
 	tokenBudgetInput whenTextChangedDo: [ :text |
-		text isEmpty
-			ifTrue: [ model tokenBudget: nil ]
-			ifFalse: [ model tokenBudget: text asNumber ] ].
+			text isEmpty
+				ifTrue: [ model tokenBudget: nil ]
+				ifFalse: [ model tokenBudget: text asNumber ] ].
 
 	timeBudgetInput whenTextChangedDo: [ :text |
-		text isEmpty
-			ifTrue: [ model timeBudgetMinutes: nil ]
-			ifFalse: [ model timeBudgetMinutes: text asNumber ] ].
-		
+			text isEmpty
+				ifTrue: [ model timeBudgetMinutes: nil ]
+				ifFalse: [ model timeBudgetMinutes: text asNumber ] ].
+
 
 	playgroundToolCheckBox whenChangedDo: [ :checked |
 			checked
@@ -201,6 +205,18 @@ ChatPharoSettingsPresenter >> ensureBrowserExtensionTab [
 				                        provider: [
 				                       ChatPharoBrowserExtensionSettingsPresenter on: model  ].
 			notebook addPage: browserExtensionPage ]
+]
+
+{ #category : 'initialization' }
+ChatPharoSettingsPresenter >> ensureIcebergExtensionTab [
+
+	icebergExtensionPage ifNil: [
+		icebergExtensionPage := SpNotebookPage
+			                        title: 'Iceberg Tab'
+			                        icon: (self iconNamed: #branch)
+			                        provider: [ self newIcebergTab ].
+		notebook addPage: icebergExtensionPage ].
+	notebook selectPage: icebergExtensionPage
 ]
 
 { #category : 'initialization' }
@@ -265,6 +281,11 @@ ChatPharoSettingsPresenter >> initializePresenters [
 		                            label: 'Enable browser tab';
 		                            state: model browserExtensionEnabled;
 		                            yourself.
+		
+	icebergExtensionCheckBox := self newCheckBox
+		                            label: 'Iceberg';
+		                            state: model icebergExtensionEnabled;
+		                            yourself.
 
 	browserAutoTabCheckBox := self newCheckBox
 		                          label: 'Open tab on selection';
@@ -292,7 +313,7 @@ ChatPharoSettingsPresenter >> initializePresenters [
 		                   label: 'Enable logging';
 		                   state: model loggingEnabled;
 		                   yourself.
-		
+
 	ethicsDirectorCheckBox := self newCheckBox
 		                          label: 'Enable Ethics Director';
 		                          state: model ethicsDirectorEnabled;
@@ -322,7 +343,8 @@ ChatPharoSettingsPresenter >> initializePresenters [
 		(model availableApiChoices detect: [ :assoc | assoc value = model agent class ] ifNone: [ model availableApiChoices first ]).
 
 	self refreshApiSettings.
-	self updateBrowserExtensionTab
+	self updateBrowserExtensionTab.
+	self updateIcebergExtensionTab
 ]
 
 { #category : 'initialization' }
@@ -429,8 +451,8 @@ ChatPharoSettingsPresenter >> newExtensionsTab [
 	^ SpPresenter new
 		  layout: (SpBoxLayout newTopToBottom
 				   add: browserExtensionCheckBox expand: false;
-					"add: browserAutoTabCheckBox expand: false;"
-				   yourself);
+				add: icebergExtensionCheckBox expand: false;
+				   "add: browserAutoTabCheckBox expand: false;"yourself);
 		  yourself
 ]
 
@@ -458,6 +480,21 @@ history := history ifNil: [ model agent history ].
                                    add: historyView;
                                    yourself);
                   yourself
+]
+
+{ #category : 'initialization' }
+ChatPharoSettingsPresenter >> newIcebergTab [
+
+	| infoLabel |
+	infoLabel := self newLabel
+		             label: 'Iceberg integration is enabled. Open the Iceberg commit browser to generate a commit message.';
+		             yourself.
+
+	^ SpPresenter new
+		  layout: (SpBoxLayout newTopToBottom
+				   add: infoLabel expand: false;
+				   yourself);
+		  yourself
 ]
 
 { #category : 'initialization' }
@@ -594,6 +631,14 @@ ChatPharoSettingsPresenter >> removeBrowserExtensionTab [
         browserExtensionPage := nil ]
 ]
 
+{ #category : 'initialization' }
+ChatPharoSettingsPresenter >> removeIcebergExtensionTab [
+
+	icebergExtensionPage ifNotNil: [
+		notebook removePage: icebergExtensionPage.
+		icebergExtensionPage := nil ]
+]
+
 { #category : 'accessing - model' }
 ChatPharoSettingsPresenter >> setModelBeforeInitialization: anObject [
 
@@ -605,6 +650,14 @@ ChatPharoSettingsPresenter >> updateBrowserExtensionTab [
     browserExtensionCheckBox state
         ifTrue: [ self ensureBrowserExtensionTab ]
         ifFalse: [ self removeBrowserExtensionTab ]
+]
+
+{ #category : 'initialization' }
+ChatPharoSettingsPresenter >> updateIcebergExtensionTab [
+
+	icebergExtensionCheckBox state
+		ifTrue: [ self ensureIcebergExtensionTab ]
+		ifFalse: [ self removeIcebergExtensionTab ]
 ]
 
 { #category : 'initialization' }

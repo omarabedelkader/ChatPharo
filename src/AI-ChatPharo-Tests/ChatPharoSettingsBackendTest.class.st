@@ -207,6 +207,21 @@ ChatPharoSettingsBackendTest >> testFeedbackButtonsEnabledSetterUpdatesFlag [
 ]
 
 { #category : 'running' }
+ChatPharoSettingsBackendTest >> testIcebergExtensionDisabledByDefault [
+
+	self deny: settings icebergExtensionEnabled.
+]
+
+{ #category : 'running' }
+ChatPharoSettingsBackendTest >> testIcebergExtensionSetterUpdatesFlag [
+
+	settings icebergExtensionEnabled: true.
+	self assert: settings icebergExtensionEnabled.
+	settings icebergExtensionEnabled: false.
+	self deny: settings icebergExtensionEnabled.
+]
+
+{ #category : 'running' }
 ChatPharoSettingsBackendTest >> testInitializeLogsSystemEntry [
 
     | contents |
