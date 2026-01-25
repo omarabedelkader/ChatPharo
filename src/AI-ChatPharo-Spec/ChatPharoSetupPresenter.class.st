@@ -143,7 +143,7 @@ isDeveloperVerified := false.
 	levelButtons := Dictionary new
 ]
 
-{ #category : 'layout' }
+{ #category : 'initialization' }
 ChatPharoSetupPresenter >> initializePresenters [
 
 	super initializePresenters.
@@ -160,9 +160,7 @@ ChatPharoSetupPresenter >> initializePresenters [
 		label: '';
 		yourself.
 
-	contentContainer := SpBoxLayout newTopToBottom
-		spacing: 12;
-		yourself.
+	contentContainer := SpPresenter new.
 
 	self showDeveloperStep
 ]
@@ -256,10 +254,11 @@ ChatPharoSetupPresenter >> showDeveloperStep [
 		add: cancelButton expand: false;
 		yourself.
 
-	contentContainer removeAll.
-	contentContainer
+	contentContainer layout: (SpBoxLayout newTopToBottom
+		spacing: 12;
 		add: idRow expand: false;
-		add: buttonRow expand: false.
+		add: buttonRow expand: false;
+		yourself).
 
 	self layout: self defaultLayout
 ]
@@ -342,10 +341,12 @@ ChatPharoSetupPresenter >> showExperienceLevelStep [
 		add: cancelButton expand: false;
 		yourself.
 
-	contentContainer removeAll.
-	contentContainer
+	contentContainer layout: (SpBoxLayout newTopToBottom
+		spacing: 12;
 		add: levelContainer expand: true;
-		add: buttonRow expand: false.
+		add: buttonRow expand: false;
+		yourself).
+
 
 	self layout: self defaultLayout
 ]
@@ -467,12 +468,13 @@ ChatPharoSetupPresenter >> showUserInfoStep [
 		             add: cancelButton expand: false;
 		             yourself.
 
-	contentContainer removeAll.
-	contentContainer
+	contentContainer layout: (SpBoxLayout newTopToBottom
+		spacing: 12;
 		add: infoLabel expand: false;
 		add: nameRow expand: false;
 		add: orgRow expand: false;
-		add: buttonRow expand: false.
+	add: buttonRow expand: false;
+		yourself).
 
 	self layout: self defaultLayout
 ]
