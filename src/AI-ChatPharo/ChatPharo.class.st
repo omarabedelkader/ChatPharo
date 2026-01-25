@@ -35,7 +35,7 @@ ChatPharo class >> ask: text [
                 customizeAgent: nil
 ]
 
-{ #category : 'context' }
+{ #category : 'tests' }
 ChatPharo class >> askAboutMethod: aMethod [
 
         | methodClass source className selector packageName prompt details |
@@ -88,7 +88,7 @@ ChatPharo class >> code: sourceText [
 
 ]
 
-{ #category : 'context' }
+{ #category : 'tests' }
 ChatPharo class >> codeForMethod: aMethod [
 
         | methodClass source className selector packageName context details prompt |
