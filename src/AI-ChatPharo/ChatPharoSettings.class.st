@@ -30,6 +30,7 @@ Class {
 		'loggingEnabled',
 		'askFeatureEnabled',
 		'codeFeatureEnabled',
+		'debuggerFeatureEnabled',
 		'skillsEnabled',
 		'automaticSkillsEnabled',
 		'skillToolsEnabled',
@@ -91,6 +92,7 @@ ChatPharoSettings class >> loadOrNew [
 				  settings loggingEnabled.
 				  settings askFeatureEnabled ifNil: [ settings askFeatureEnabled: true ].
 				  settings codeFeatureEnabled ifNil: [ settings codeFeatureEnabled: true ].
+				 settings debuggerFeatureEnabled ifNil: [ settings debuggerFeatureEnabled: true ].
 				  settings skillsEnabled ifNil: [ settings skillsEnabled: OrderedCollection new ].
 				  settings automaticSkillsEnabled ifNil: [ settings automaticSkillsEnabled: true ].
 				  settings skillToolsEnabled ifNil: [ settings skillToolsEnabled: true ].
@@ -290,18 +292,20 @@ ChatPharoSettings >> browserExtensionEnabled: aBoolean [
 { #category : 'initialization' }
 ChatPharoSettings >> browserToolsEnabled [
 
-        ^ browserToolsEnabled
+browserToolsEnabled ifNil: [
+                browserToolsEnabled := (ChatPharoBrowserEnvironment new tools
+                        collect: [ :t | t name ]) asOrderedCollection ].
 ]
 
 { #category : 'initialization' }
 ChatPharoSettings >> browserToolsEnabled: aCollection [
 
-	browserToolsEnabled := aCollection.
+	browserToolsEnabled := aCollection ifNil: [ OrderedCollection new ].
 	self class setDefault: self.
 	self class saveDefault.
 	        ChatPharoLogger logFrontend: 'Browser tools selection updated'
                 details: (Dictionary new
-                        at: 'tools' put: aCollection asArray printString;
+                        at: 'tools' put: browserToolsEnabled asArray printString;
                         yourself)
 ]
 
@@ -339,6 +343,26 @@ ChatPharoSettings >> codeFeatureEnabled: aBoolean [
                         yourself)
 ]
 
+{ #category : 'accessing' }
+ChatPharoSettings >> debuggerFeatureEnabled [
+	"Whether the ChatPharo debugger integration is enabled"
+
+	^ debuggerFeatureEnabled ifNil: [ debuggerFeatureEnabled := true ]
+]
+
+{ #category : 'accessing' }
+ChatPharoSettings >> debuggerFeatureEnabled: aBoolean [
+	"Enable or disable the ChatPharo debugger integration"
+
+	debuggerFeatureEnabled := aBoolean.
+	self class setDefault: self.
+	self class saveDefault.
+	ChatPharoLogger logFrontend: 'Debugger feature toggled'
+		details: (Dictionary new
+			at: 'enabled' put: aBoolean;
+			yourself)
+]
+
 { #category : 'developer' }
 ChatPharoSettings >> developerId [
 
@@ -371,15 +395,14 @@ ChatPharoSettings >> disableAllBrowserTools [
 { #category : 'initialization' }
 ChatPharoSettings >> disableBrowserTool: toolName [
 
-        browserToolsEnabled remove: toolName ifAbsent: [ ].
-        self class setDefault: self.
-        self class saveDefault.
-        ChatPharoLogger logFrontend: 'Browser tool disabled'
-                details: (Dictionary new
-                        at: 'tool' put: toolName;
-                        at: 'remainingTools' put: browserToolsEnabled asArray printString;
-                        yourself)
-
+	browserToolsEnabled ifNil: [ browserToolsEnabled := OrderedCollection new ].
+	browserToolsEnabled remove: toolName ifAbsent: [ ].
+	self class setDefault: self.
+	self class saveDefault.
+	ChatPharoLogger logFrontend: 'Browser tool disabled' details: (Dictionary new
+			 at: 'tool' put: toolName;
+			 at: 'remainingTools' put: browserToolsEnabled asArray printString;
+			 yourself)
 ]
 
 { #category : 'initialization' }
@@ -411,16 +434,15 @@ ChatPharoSettings >> enableAllBrowserTools [
 
 { #category : 'initialization' }
 ChatPharoSettings >> enableBrowserTool: toolName [
-        (browserToolsEnabled includes: toolName) ifFalse: [
-                browserToolsEnabled add: toolName ].
-        self class setDefault: self.
-        self class saveDefault.
-maximumIterations := 3.
-        ChatPharoLogger logFrontend: 'Browser tool enabled'
-                details: (Dictionary new
-                        at: 'tool' put: toolName;
-                        at: 'tools' put: browserToolsEnabled asArray printString;
-                        yourself)
+
+	browserToolsEnabled ifNil: [ browserToolsEnabled := OrderedCollection new ].
+	(browserToolsEnabled includes: toolName) ifFalse: [ browserToolsEnabled add: toolName ].
+	self class setDefault: self.
+	self class saveDefault.
+	ChatPharoLogger logFrontend: 'Browser tool enabled' details: (Dictionary new
+			 at: 'tool' put: toolName;
+			 at: 'tools' put: browserToolsEnabled asArray printString;
+			 yourself)
 ]
 
 { #category : 'initialization' }
@@ -468,12 +490,13 @@ ChatPharoSettings >> initialize [
 	loggingEnabled := true.
 	askFeatureEnabled := true.
 	codeFeatureEnabled := true.
+	debuggerFeatureEnabled := true.
 	browserToolsEnabled := (ChatPharoBrowserEnvironment new tools collect: [ :t | t name ]) asOrderedCollection.
 	maximumIterations := 3.
 	skillsEnabled := OrderedCollection new.
 	automaticSkillsEnabled := true.
 	skillToolsEnabled := true.
-		userLevel := 'beginner'.
+	userLevel := 'beginner'.
 	tutorialCompleted := false.
 	wantsTutorial := false.
 	multivers := ChatPharoMultivers new.
