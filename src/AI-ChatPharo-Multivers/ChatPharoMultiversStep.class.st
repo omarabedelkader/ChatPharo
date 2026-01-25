@@ -31,13 +31,33 @@ Class {
 { #category : 'accessing' }
 ChatPharoMultiversStep >> agentClass [
 
-	^ agentClass ifNil: [ agentClass := ChatPharoNullAgent ]
+		"Return the agent class. Handle the case where agentClass was stored as
+	 a string or symbol during STON serialization by resolving it to the actual class."
+
+	agentClass ifNil: [ ^ agentClass := ChatPharoNullAgent ].
+	agentClass isClass ifTrue: [ ^ agentClass ].
+
+	"Resolve string/symbol to class (handles STON deserialization)"
+	^ agentClass := Smalltalk
+		at: agentClass asSymbol
+		ifAbsent: [ ChatPharoNullAgent ]
 ]
 
 { #category : 'accessing' }
-ChatPharoMultiversStep >> agentClass: aClass [
+ChatPharoMultiversStep >> agentClass: aClassOrName [
+	"Set the agent class. Accepts either a class object or a class name (string/symbol)."
 
-	agentClass := aClass
+	aClassOrName ifNil: [
+		agentClass := ChatPharoNullAgent.
+		^ self ].
+
+	aClassOrName isClass
+		ifTrue: [ agentClass := aClassOrName ]
+		ifFalse: [
+			"Resolve string/symbol to class"
+			agentClass := Smalltalk
+				at: aClassOrName asSymbol
+				ifAbsent: [ ChatPharoNullAgent ] ]
 ]
 
 { #category : 'accessing' }
