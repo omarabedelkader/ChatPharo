@@ -337,37 +337,63 @@ ChatPharoSettingsPresenter >> initializeWindow: aWindowPresenter [
 
 { #category : 'initialization' }
 ChatPharoSettingsPresenter >> newChatTab [
+	| agentSection toolsSection loggingSection uiSection |
+
+	"Agent Settings Section"
+	agentSection := SpBoxLayout newTopToBottom
+		spacing: 6;
+		add: (self newLabel label: '— Agent Settings —') expand: false;
+		add: (SpBoxLayout newHorizontal
+			spacing: 8;
+			add: (self newLabel label: 'System prompt:') expand: false;
+			add: systemPromptInput expand: true;
+			yourself) expand: false;
+		add: (SpBoxLayout newHorizontal
+			spacing: 8;
+			add: (self newLabel label: 'Max iterations:') expand: false;
+			add: maxIterationsInput width: 80;
+			yourself) expand: false;
+		yourself.
+
+	"Tools & Features Section"
+	toolsSection := SpBoxLayout newTopToBottom
+		spacing: 6;
+		add: (self newLabel label: '— Tools & Features —') expand: false;
+		add: playgroundToolCheckBox expand: false;
+		add: askFeatureCheckBox expand: false;
+		add: codeFeatureCheckBox expand: false;
+		yourself.
+
+	"Logging & Cache Section"
+	loggingSection := SpBoxLayout newTopToBottom
+		spacing: 6;
+		add: (self newLabel label: '— Logging & Cache —') expand: false;
+		add: cacheCheckBox expand: false;
+		add: (SpBoxLayout newHorizontal
+			spacing: 8;
+			add: loggingCheckBox expand: false;
+			add: openLogsButton expand: false;
+			yourself) expand: false;
+		yourself.
+
+	"UI Preferences Section"
+	uiSection := SpBoxLayout newTopToBottom
+		spacing: 6;
+		add: (self newLabel label: '— UI Preferences —') expand: false;
+		add: feedbackCheckBox expand: false;
+		add: welcomeMessageCheckBox expand: false;
+		yourself.
 
 	^ SpPresenter new
-		  layout: (SpBoxLayout newTopToBottom
-				   spacing: 12;
-				   "Add some vertical spacing between rows for better separation"add: (SpBoxLayout newHorizontal
-						    spacing: 8;
-						    add: 'System:' expand: false;
-						    add: systemPromptInput;
-						    yourself)
-				   expand: false;
-				   add: (SpBoxLayout newHorizontal
-						    spacing: 8;
-						    add: 'Max iterations:' expand: false;
-						    add: maxIterationsInput;
-						    yourself)
-				   expand: false;
-				   add: playgroundToolCheckBox expand: false;
-				   add: cacheCheckBox expand: false;
-				   add: loggingCheckBox expand: false;
-				add: (SpBoxLayout newHorizontal
-						    spacing: 8;
-						    add: loggingCheckBox expand: false;
-						    add: openLogsButton expand: false;
-						    yourself)
-				   expand: false;
-				   add: askFeatureCheckBox expand: false;
-				   add: codeFeatureCheckBox expand: false;
-				   add: feedbackCheckBox expand: false;
-				   add: welcomeMessageCheckBox expand: false;
-				   yourself);
-		  yourself
+		layout: (SpBoxLayout newTopToBottom
+			spacing: 16;
+			borderWidth: 10;
+			add: agentSection expand: false;
+			add: toolsSection expand: false;
+			add: loggingSection expand: false;
+			add: uiSection expand: false;
+			yourself);
+		yourself
 ]
 
 { #category : 'initialization' }
