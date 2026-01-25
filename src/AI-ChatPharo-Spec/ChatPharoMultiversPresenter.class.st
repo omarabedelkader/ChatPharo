@@ -27,7 +27,8 @@ Class {
 		'systemPromptInput',
 		'stepLabelInput',
 		'refreshModelsButton',
-		'selectedStep'
+		'selectedStep',
+		'isUpdatingUI'
 	],
 	#category : 'AI-ChatPharo-Spec-Core',
 	#package : 'AI-ChatPharo-Spec',
@@ -267,6 +268,7 @@ ChatPharoMultiversPresenter >> initializePresenters [
 		yourself.
 
 	selectedStep := nil.
+	isUpdatingUI := false.
 	self updateStepConfigPanel
 ]
 
@@ -285,10 +287,12 @@ ChatPharoMultiversPresenter >> onAddStep [
 
 { #category : 'as yet unclassified' }
 ChatPharoMultiversPresenter >> onAgentChanged: assoc [
-	"Handle agent selection change"
+	"Handle agent selection change.
+	 Skip updates if we're just restoring UI state (isUpdatingUI flag is set)."
 
 	selectedStep ifNil: [ ^ self ].
 	assoc ifNil: [ ^ self ].
+	isUpdatingUI ifTrue: [ ^ self ].
 
 	selectedStep agentClass: assoc value.
 	self refreshModelsForSelectedAgent.
@@ -299,10 +303,12 @@ ChatPharoMultiversPresenter >> onAgentChanged: assoc [
 
 { #category : 'as yet unclassified' }
 ChatPharoMultiversPresenter >> onModelChanged: modelName [
-	"Handle model selection change"
+	"Handle model selection change.
+	 Skip updates if we're just restoring UI state (isUpdatingUI flag is set)."
 
 	selectedStep ifNil: [ ^ self ].
 	modelName ifNil: [ ^ self ].
+	isUpdatingUI ifTrue: [ ^ self ].
 
 	selectedStep model: modelName.
 	self refreshStepsList.
@@ -415,7 +421,8 @@ ChatPharoMultiversPresenter >> updateChainPreview [
 
 { #category : 'as yet unclassified' }
 ChatPharoMultiversPresenter >> updateStepConfigPanel [
-	"Update the step configuration panel based on selected step"
+	"Update the step configuration panel based on selected step.
+	 Uses isUpdatingUI flag to prevent event handlers from triggering saves."
 
 	selectedStep ifNil: [
 		stepLabelInput text: ''.
@@ -424,18 +431,22 @@ ChatPharoMultiversPresenter >> updateStepConfigPanel [
 		modelDropList items: #().
 		^ self ].
 
-	stepLabelInput text: selectedStep label.
-	systemPromptInput text: selectedStep customSystemPrompt.
+	"Set guard to prevent event handlers from triggering during UI restore"
+	isUpdatingUI := true.
+	[
+		stepLabelInput text: selectedStep label.
+		systemPromptInput text: selectedStep customSystemPrompt.
 
-	"Select the correct agent in dropdown"
-	agentDropList items do: [ :assoc |
-		assoc value = selectedStep agentClass ifTrue: [
-			agentDropList selectItem: assoc ] ].
+		"Select the correct agent in dropdown"
+		agentDropList items do: [ :assoc |
+			assoc value = selectedStep agentClass ifTrue: [
+				agentDropList selectItem: assoc ] ].
 
-	self refreshModelsForSelectedAgent.
+		self refreshModelsForSelectedAgent.
 
-	"Select the correct model"
-	selectedStep model ifNotEmpty: [
-		(modelDropList items includes: selectedStep model)
-			ifTrue: [ modelDropList selectItem: selectedStep model ] ]
+		"Select the correct model"
+		selectedStep model ifNotEmpty: [
+			(modelDropList items includes: selectedStep model)
+				ifTrue: [ modelDropList selectItem: selectedStep model ] ]
+	] ensure: [ isUpdatingUI := false ]
 ]
