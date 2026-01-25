@@ -405,10 +405,11 @@ ChatPharoSetupPresenter >> showTutorialOfferStep [
 		add: cancelButton expand: false;
 		yourself.
 
-	contentContainer removeAll.
-	contentContainer
+	contentContainer layout: (SpBoxLayout newTopToBottom
+		spacing: 12;
 		add: tutorialContainer expand: true;
-		add: buttonRow expand: false.
+		add: buttonRow expand: false;
+		yourself).
 
 	self layout: self defaultLayout
 ]
