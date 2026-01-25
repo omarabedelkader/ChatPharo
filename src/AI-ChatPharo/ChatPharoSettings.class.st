@@ -52,7 +52,8 @@ Class {
 		'sandboxTimeout',
 		'userLevel',
 		'tutorialCompleted',
-		'wantsTutorial'
+		'wantsTutorial',
+		'customTools'
 	],
 	#classInstVars : [
 		'Default'
@@ -190,6 +191,21 @@ ChatPharoSettings class >> settingsDirectory [
 ChatPharoSettings class >> settingsFileReference [
 
         ^ self settingsDirectory / 'chatpharo-settings.ston'
+]
+
+{ #category : 'custom tools' }
+ChatPharoSettings >> addCustomTool: aCustomTool [
+	"Add a custom tool to the collection"
+
+	(customTools anySatisfy: [ :t | t name = aCustomTool name ]) ifTrue: [
+		self error: 'A tool with this name already exists' ].
+	customTools add: aCustomTool.
+	self class setDefault: self.
+	self class saveDefault.
+	ChatPharoLogger logFrontend: 'Custom tool added'
+		details: (Dictionary new
+			at: 'tool' put: aCustomTool name;
+			yourself)
 ]
 
 { #category : 'initialization' }
@@ -368,6 +384,33 @@ ChatPharoSettings >> cognitiveLoadBudget: aNumber [
 	self ethicsDirector cognitiveLoadBudget: aNumber.
 	self class setDefault: self.
 	self class saveDefault
+]
+
+{ #category : 'custom tools' }
+ChatPharoSettings >> customTools [
+	"Return the collection of user-defined custom tools"
+
+	^ customTools ifNil: [ customTools := OrderedCollection new ]
+]
+
+{ #category : 'custom tools' }
+ChatPharoSettings >> customTools: aCollection [
+
+	customTools := aCollection.
+	self class setDefault: self.
+	self class saveDefault.
+	ChatPharoLogger logFrontend: 'Custom tools updated'
+		details: (Dictionary new
+			at: 'count' put: aCollection size;
+			yourself)
+]
+
+{ #category : 'custom tools' }
+ChatPharoSettings >> customToolsAsClients [
+	"Return enabled custom tools converted to ChatPharoClient instances"
+
+	^ (self customTools select: [ :tool | tool enabled ])
+		collect: [ :tool | tool asChatPharoClient ]
 ]
 
 { #category : 'developer' }
@@ -551,6 +594,7 @@ ChatPharoSettings >> initialize [
 	tutorialCompleted := false.
 	wantsTutorial := false.
 	multivers := ChatPharoMultivers new.
+	customTools := OrderedCollection new.
 	ChatPharoLogger loggingEnabled: true.
 	ChatPharoLogger logSystem: 'Settings initialized' details: (Dictionary new
 			 at: 'defaultAgent' put: (ChatPharoLogger agentNameFor: agent);
@@ -799,6 +843,19 @@ ChatPharoSettings >> privateSetUserOrganization: aString [
 ChatPharoSettings >> privateSetWantsTutorial: aBoolean [
 	"Set wantsTutorial without triggering save. Used during loading."
 	wantsTutorial := aBoolean
+]
+
+{ #category : 'custom tools' }
+ChatPharoSettings >> removeCustomTool: aCustomTool [
+	"Remove a custom tool from the collection"
+
+	customTools remove: aCustomTool ifAbsent: [ ].
+	self class setDefault: self.
+	self class saveDefault.
+	ChatPharoLogger logFrontend: 'Custom tool removed'
+		details: (Dictionary new
+			at: 'tool' put: aCustomTool name;
+			yourself)
 ]
 
 { #category : 'private' }
