@@ -164,6 +164,26 @@ ChatPharoGeminiAgent >> packageName: aString [
 			 with: packageName)
 ]
 
+{ #category : 'tools support' }
+ChatPharoGeminiAgent >> supportsToolCalling [
+	"Check if the current Gemini model supports tool calling.
+	Most Gemini models support tools, except embedding and some legacy models."
+
+	| modelLower nonToolModels |
+	model ifEmpty: [ ^ false ].
+	self isConfigured ifFalse: [ ^ false ].
+
+	modelLower := model asLowercase.
+
+	"Models that don't support tool calling"
+	nonToolModels := #( 'embedding' 'text-embedding' 'aqa' ).
+	(nonToolModels anySatisfy: [ :pattern |
+		 modelLower includesSubstring: pattern ]) ifTrue: [ ^ false ].
+
+	"All other Gemini models support tool calling"
+	^ true
+]
+
 { #category : 'accessing' }
 ChatPharoGeminiAgent >> temperature [
 

@@ -48,6 +48,13 @@ ChatPharoNullAgent >> modelInformation [
     ^ 'No model selected yet'
 ]
 
+{ #category : 'tools support' }
+ChatPharoNullAgent >> supportsToolCalling [
+	"Null agent has no backend, so no tool calling support."
+
+	^ false
+]
+
 { #category : 'accessing' }
 ChatPharoNullAgent >> testConnection [ 
 

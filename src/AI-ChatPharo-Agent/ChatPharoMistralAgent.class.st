@@ -140,6 +140,26 @@ ChatPharoMistralAgent >> packageName: aString [
                          with: packageName)
 ]
 
+{ #category : 'tools support' }
+ChatPharoMistralAgent >> supportsToolCalling [
+	"Check if the current Mistral model supports tool calling.
+	Most Mistral models support function calling, except embedding models."
+
+	| modelLower nonToolModels |
+	model ifEmpty: [ ^ false ].
+	self isConfigured ifFalse: [ ^ false ].
+
+	modelLower := model asLowercase.
+
+	"Models that don't support tool calling"
+	nonToolModels := #( 'embed' 'moderation' ).
+	(nonToolModels anySatisfy: [ :pattern |
+		 modelLower includesSubstring: pattern ]) ifTrue: [ ^ false ].
+
+	"All other Mistral models support tool calling"
+	^ true
+]
+
 { #category : 'accessing' }
 ChatPharoMistralAgent >> temperature [
 

@@ -80,6 +80,13 @@ ChatPharoMockAgent >> promptPrefix: aString [
         "ignored for tests"
 ]
 
+{ #category : 'tools support' }
+ChatPharoMockAgent >> supportsToolCalling [
+	"Mock agent supports tool calling for testing purposes."
+
+	^ true
+]
+
 { #category : 'private - uffi' }
 ChatPharoMockAgent >> system: aSystemPrompt [
 
