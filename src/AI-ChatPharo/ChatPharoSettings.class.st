@@ -53,7 +53,8 @@ Class {
 		'userLevel',
 		'tutorialCompleted',
 		'wantsTutorial',
-		'customTools'
+		'customTools',
+		'advisorDefaultsConfigured'
 	],
 	#classInstVars : [
 		'Default'
@@ -108,21 +109,17 @@ ChatPharoSettings class >> loadOrNew [
 				  settings developerId ifNil: [ settings privateSetDeveloperId: '' ].
 				  settings userName ifNil: [ settings privateSetUserName: '' ].
 				  settings userOrganization ifNil: [ settings privateSetUserOrganization: '' ].
-								  settings ethicsDirector ifNil: [ settings privateSetEthicsDirector: ChatPharoEthicsDirector new ].
-				  (settings instVarNamed: 'ethicsDirectorEnabled') ifNotNil: [ :value |
-					  settings ethicsDirector enabled: value ].
-				  (settings instVarNamed: 'ethicsMandate') ifNotNil: [ :value |
-					  settings ethicsDirector mandate: value ].
-				  (settings instVarNamed: 'cognitiveLoadBudget') ifNotNil: [ :value |
-					  settings ethicsDirector cognitiveLoadBudget: value ].
-				  (settings instVarNamed: 'tokenBudget') ifNotNil: [ :value |
-					  settings ethicsDirector tokenBudget: value ].
-				  (settings instVarNamed: 'timeBudgetMinutes') ifNotNil: [ :value |
-					  settings ethicsDirector timeBudgetMinutes: value ].
+				  settings ethicsDirector ifNil: [ settings privateSetEthicsDirector: ChatPharoEthicsDirector new ].
+				  (settings instVarNamed: 'ethicsDirectorEnabled') ifNotNil: [ :value | settings ethicsDirector enabled: value ].
+				  (settings instVarNamed: 'ethicsMandate') ifNotNil: [ :value | settings ethicsDirector mandate: value ].
+				  (settings instVarNamed: 'cognitiveLoadBudget') ifNotNil: [ :value | settings ethicsDirector cognitiveLoadBudget: value ].
+				  (settings instVarNamed: 'tokenBudget') ifNotNil: [ :value | settings ethicsDirector tokenBudget: value ].
+				  (settings instVarNamed: 'timeBudgetMinutes') ifNotNil: [ :value | settings ethicsDirector timeBudgetMinutes: value ].
 				  settings multivers ifNil: [ settings multivers: ChatPharoMultivers new ].
 				  settings userLevel ifNil: [ settings privateSetUserLevel: 'beginner' ].
 				  settings tutorialCompleted ifNil: [ settings privateSetTutorialCompleted: false ].
 				  settings wantsTutorial ifNil: [ settings privateSetWantsTutorial: false ].
+				settings advisorDefaultsConfigured ifNil: [ settings privateSetAdvisorDefaultsConfigured: false ].
 				  ^ settings ]
 				  on: Error
 				  do: [ ^ self new ] ]
@@ -205,6 +202,26 @@ ChatPharoSettings >> addCustomTool: aCustomTool [
 	ChatPharoLogger logFrontend: 'Custom tool added'
 		details: (Dictionary new
 			at: 'tool' put: aCustomTool name;
+			yourself)
+]
+
+{ #category : 'advisor' }
+ChatPharoSettings >> advisorDefaultsConfigured [
+	"Returns whether the user has configured advisor defaults during setup"
+
+	^ advisorDefaultsConfigured ifNil: [ advisorDefaultsConfigured := false ]
+]
+
+{ #category : 'advisor' }
+ChatPharoSettings >> advisorDefaultsConfigured: aBoolean [
+	"Set whether advisor defaults have been configured"
+
+	advisorDefaultsConfigured := aBoolean.
+	self class setDefault: self.
+	self class saveDefault.
+	ChatPharoLogger logSystem: 'Advisor defaults configuration status updated'
+		details: (Dictionary new
+			at: 'advisorDefaultsConfigured' put: aBoolean;
 			yourself)
 ]
 
@@ -741,6 +758,12 @@ ChatPharoSettings >> newConfiguredSandbox [
 ChatPharoSettings >> presenter [
 
 	^  ChatPharoSettingsPresenter on: self
+]
+
+{ #category : 'private' }
+ChatPharoSettings >> privateSetAdvisorDefaultsConfigured: aBoolean [
+	"Set advisorDefaultsConfigured without triggering save. Used during loading."
+	advisorDefaultsConfigured := aBoolean
 ]
 
 { #category : 'private' }
