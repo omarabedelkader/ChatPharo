@@ -179,6 +179,15 @@ ChatPharoAgent >> response: anObject [
 	response := anObject
 ]
 
+{ #category : 'tools support' }
+ChatPharoAgent >> supportsToolCalling [
+	"Returns true if the current model supports tool/function calling.
+	Subclasses may override to provide backend-specific detection.
+	By default, most modern LLM backends support tool calling."
+
+	^ true
+]
+
 { #category : 'accessing' }
 ChatPharoAgent >> systemPrompt [
 

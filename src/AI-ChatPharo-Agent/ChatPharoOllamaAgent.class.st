@@ -214,6 +214,29 @@ ChatPharoOllamaAgent >> isConfigured [
         ^ host notEmpty and: [ port notEmpty and: [ model notEmpty ] ]
 ]
 
+{ #category : 'tools support' }
+ChatPharoOllamaAgent >> modelDetailsForToolSupport [
+	"Fetch model details from Ollama API to check for tool support.
+	Returns a dictionary with model info or nil on error."
+
+	| url |
+	model ifEmpty: [ ^ nil ].
+	self class isReachable ifFalse: [ ^ nil ].
+	url := 'http://' , host , ':' , port , '/api/show'.
+	^ [
+	  | response |
+	  response := ZnClient new
+		              url: url;
+		              entity: (ZnEntity with:
+					               (STONJSON toString:
+							                { (#model -> model) } asDictionary));
+		              post;
+		              contents.
+	  STONJSON fromString: response ]
+		  on: Error
+		  do: [ nil ]
+]
+
 { #category : 'initialization' }
 ChatPharoOllamaAgent >> modelInformation [
 
@@ -253,6 +276,49 @@ ChatPharoOllamaAgent >> port [
 ChatPharoOllamaAgent >> port: anObject [
 
 	port := anObject
+]
+
+{ #category : 'tools support' }
+ChatPharoOllamaAgent >> supportsToolCalling [
+	"Check if the current Ollama model supports tool calling.
+	Uses model details from /api/show endpoint to detect capabilities.
+	Falls back to checking known model families that support tools."
+
+	| details family modelNameLower toolSupportingFamilies |
+	model ifEmpty: [ ^ false ].
+
+	"Try to get model details from API"
+	details := self modelDetailsForToolSupport.
+	details ifNil: [ ^ false ].
+
+	"Check if details contains explicit capabilities (newer Ollama versions)"
+	(details includesKey: 'capabilities') ifTrue: [
+		| capabilities |
+		capabilities := details at: 'capabilities'.
+		(capabilities isCollection and: [ capabilities includes: 'tools' ])
+			ifTrue: [ ^ true ] ].
+
+	"Fall back to checking model family from details"
+	(details includesKey: 'details') ifTrue: [
+		| modelDetails |
+		modelDetails := details at: 'details'.
+		(modelDetails includesKey: 'family') ifTrue: [
+			family := (modelDetails at: 'family') asLowercase.
+			toolSupportingFamilies := #( 'llama' 'qwen2' 'qwen' 'mistral' 'mixtral'
+			                             'command-r' 'gemma2' 'phi3' 'hermes' 'firefunction' ).
+			(toolSupportingFamilies anySatisfy: [ :f | family includesSubstring: f ])
+				ifTrue: [ ^ true ] ] ].
+
+	"Last resort: check model name pattern for known tool-capable models"
+	modelNameLower := model asLowercase.
+	(#( 'llama3.1' 'llama3.2' 'llama3.3' 'qwen2' 'qwen2.5' 'mistral-nemo'
+	    'mistral-small' 'mistral-large' 'mixtral' 'command-r' 'gemma2'
+	    'phi3' 'hermes3' 'firefunction' 'smollm2' 'granite3' 'athene' 'aya-expanse' )
+		 anySatisfy: [ :pattern | modelNameLower includesSubstring: pattern ])
+		ifTrue: [ ^ true ].
+
+	"Default: assume no tool support for unknown models"
+	^ false
 ]
 
 { #category : 'accessing' }

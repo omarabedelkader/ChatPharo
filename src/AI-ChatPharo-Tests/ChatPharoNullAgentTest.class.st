@@ -55,6 +55,13 @@ ChatPharoNullAgentTest >> testSettingsPresenterShowsMessage [
 ]
 
 { #category : 'tests' }
+ChatPharoNullAgentTest >> testSupportsToolCallingReturnsFalse [
+	"Null agent has no backend, so no tool calling support"
+
+	self deny: ChatPharoNullAgent new supportsToolCalling
+]
+
+{ #category : 'tests' }
 ChatPharoNullAgentTest >> testTestConnectionReturnsTrue [ 
 
 

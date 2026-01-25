@@ -63,6 +63,12 @@ ChatPharoMockAgentTest >> testModelSetterGetter [
     self assert: agent model equals: 'advanced'
 ]
 
+{ #category : 'tests' }
+ChatPharoMockAgentTest >> testSupportsToolCalling [
+
+	self assert: agent supportsToolCalling
+]
+
 { #category : 'running' }
 ChatPharoMockAgentTest >> testSystemAddsToHistory [ 
 
