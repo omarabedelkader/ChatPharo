@@ -12,7 +12,7 @@ Usage:
 "
 Class {
 	#name : 'ChatPharoToolCreationPresenter',
-	#superclass : 'Object',
+	#superclass : 'SpPresenter',
 	#instVars : [
 		'nameInput',
 		'descriptionInput',
@@ -28,8 +28,9 @@ Class {
 		'customTool',
 		'onSaveBlock'
 	],
-	#category : 'AI-ChatPharo-Tools',
-	#package : 'AI-ChatPharo-Tools'
+	#category : 'AI-ChatPharo-Spec-Tools',
+	#package : 'AI-ChatPharo-Spec',
+	#tag : 'Tools'
 }
 
 { #category : 'instance creation' }

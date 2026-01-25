@@ -50,24 +50,25 @@ ChatPharoToolParameterEditorPresenter >> connectPresenters [
 ChatPharoToolParameterEditorPresenter >> defaultLayout [
 
 	^ SpBoxLayout newTopToBottom
-		spacing: 10;
-		borderWidth: 10;
-		add: (SpGridLayout new
-			beColumnNotHomogeneous;
-			column: 2 expand: true;
-			add: (self newLabel label: 'Name:') at: 1@1;
-			add: nameInput at: 2@1;
-			add: (self newLabel label: 'Type:') at: 1@2;
-			add: typeDropList at: 2@2;
-			add: (self newLabel label: 'Description:') at: 1@3;
-			add: descriptionInput at: 2@3;
-			yourself);
-		add: requiredCheckBox expand: false;
-		add: (SpBoxLayout newLeftToRight
-			addLast: cancelButton expand: false;
-			addLast: saveButton expand: false;
-			yourself) expand: false;
-		yourself
+		  spacing: 10;
+		  borderWidth: 10;
+		  add: (SpGridLayout new
+				   beColumnNotHomogeneous;
+				   column: 2 expand: true;
+				   add: (self newLabel label: 'Name:') atPoint: 1 @ 1;
+				   add: nameInput atPoint: 2 @ 1;
+				   add: (self newLabel label: 'Type:') at: 1 @ 2;
+				   add: typeDropList at: 2 @ 2;
+				   add: (self newLabel label: 'Description:') at: 1 @ 3;
+				   add: descriptionInput at: 2 @ 3;
+				   yourself);
+		  add: requiredCheckBox expand: false;
+		  add: (SpBoxLayout newLeftToRight
+				   addLast: cancelButton expand: false;
+				   addLast: saveButton expand: false;
+				   yourself)
+		  expand: false;
+		  yourself
 ]
 
 { #category : 'actions' }
