@@ -52,7 +52,8 @@ Class {
 		'sandboxTimeout',
 		'userLevel',
 		'tutorialCompleted',
-		'wantsTutorial'
+		'wantsTutorial',
+		'customTools'
 	],
 	#classInstVars : [
 		'Default'
@@ -192,6 +193,21 @@ ChatPharoSettings class >> settingsFileReference [
         ^ self settingsDirectory / 'chatpharo-settings.ston'
 ]
 
+{ #category : 'custom tools' }
+ChatPharoSettings >> addCustomTool: aCustomTool [
+	"Add a custom tool to the collection"
+
+	(customTools anySatisfy: [ :t | t name = aCustomTool name ]) ifTrue: [
+		self error: 'A tool with this name already exists' ].
+	customTools add: aCustomTool.
+	self class setDefault: self.
+	self class saveDefault.
+	ChatPharoLogger logFrontend: 'Custom tool added'
+		details: (Dictionary new
+			at: 'tool' put: aCustomTool name;
+			yourself)
+]
+
 { #category : 'initialization' }
 ChatPharoSettings >> agent [
 
@@ -222,6 +238,18 @@ ChatPharoSettings >> askFeatureEnabled: aBoolean [
                 details: (Dictionary new
                         at: 'enabled' put: aBoolean;
                         yourself)
+]
+
+{ #category : 'custom tools' }
+ChatPharoSettings >> assertCustomToolNameAvailable: toolName excluding: excludedTool [
+	"Validate that the tool name is not used by custom or built-in tools."
+
+	(self customTools anySatisfy: [ :tool |
+		 tool ~~ excludedTool and: [ tool name = toolName ] ]) ifTrue: [
+		self error: 'A tool with this name already exists' ].
+	((ChatPharoBrowserEnvironment new tools collect: [ :tool | tool name ])
+		includes: toolName) ifTrue: [
+		self error: 'A tool with this name already exists' ]
 ]
 
 { #category : 'skills' }
@@ -368,6 +396,33 @@ ChatPharoSettings >> cognitiveLoadBudget: aNumber [
 	self ethicsDirector cognitiveLoadBudget: aNumber.
 	self class setDefault: self.
 	self class saveDefault
+]
+
+{ #category : 'custom tools' }
+ChatPharoSettings >> customTools [
+	"Return the collection of user-defined custom tools"
+
+	^ customTools ifNil: [ customTools := OrderedCollection new ]
+]
+
+{ #category : 'custom tools' }
+ChatPharoSettings >> customTools: aCollection [
+
+	customTools := aCollection.
+	self class setDefault: self.
+	self class saveDefault.
+	ChatPharoLogger logFrontend: 'Custom tools updated'
+		details: (Dictionary new
+			at: 'count' put: aCollection size;
+			yourself)
+]
+
+{ #category : 'custom tools' }
+ChatPharoSettings >> customToolsAsClients [
+	"Return enabled custom tools converted to ChatPharoClient instances"
+
+	^ (self customTools select: [ :tool | tool enabled ])
+		collect: [ :tool | tool asChatPharoClient ]
 ]
 
 { #category : 'developer' }
@@ -551,6 +606,7 @@ ChatPharoSettings >> initialize [
 	tutorialCompleted := false.
 	wantsTutorial := false.
 	multivers := ChatPharoMultivers new.
+	customTools := OrderedCollection new.
 	ChatPharoLogger loggingEnabled: true.
 	ChatPharoLogger logSystem: 'Settings initialized' details: (Dictionary new
 			 at: 'defaultAgent' put: (ChatPharoLogger agentNameFor: agent);
@@ -799,6 +855,33 @@ ChatPharoSettings >> privateSetUserOrganization: aString [
 ChatPharoSettings >> privateSetWantsTutorial: aBoolean [
 	"Set wantsTutorial without triggering save. Used during loading."
 	wantsTutorial := aBoolean
+]
+
+{ #category : 'custom tools' }
+ChatPharoSettings >> removeCustomTool: aCustomTool [
+	"Remove a custom tool from the collection"
+
+	customTools remove: aCustomTool ifAbsent: [ ].
+	self class setDefault: self.
+	self class saveDefault.
+	ChatPharoLogger logFrontend: 'Custom tool removed'
+		details: (Dictionary new
+			at: 'tool' put: aCustomTool name;
+			yourself)
+]
+
+{ #category : 'custom tools' }
+ChatPharoSettings >> replaceCustomTool: oldTool with: newTool [
+	"Replace an existing custom tool, preserving order and preventing name collisions."
+
+	| index |
+	self assertCustomToolNameAvailable: newTool name excluding: oldTool.
+	index := self customTools indexOf: oldTool ifAbsent: [ nil ].
+	index
+		ifNil: [ customTools add: newTool ]
+		ifNotNil: [ customTools at: index put: newTool ].
+	self class setDefault: self.
+	self class saveDefault
 ]
 
 { #category : 'private' }

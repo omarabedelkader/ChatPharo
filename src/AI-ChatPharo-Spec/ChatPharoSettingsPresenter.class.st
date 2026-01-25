@@ -229,6 +229,8 @@ ChatPharoSettingsPresenter >> initializePresenters [
 	notebook addPage: (SpNotebookPage title: 'Personal' icon: (self iconNamed: #user) provider: [ self newPersonalTab ]).
 
 	notebook addPage: (SpNotebookPage title: 'Skills' icon: (self iconNamed: #smallObjects) provider: [ self newSkillsTab ]).
+	
+notebook addPage: (SpNotebookPage title: 'Custom Tools' icon: (self iconNamed: #smallObjects) provider: [ self newCustomToolsTab ]).
 
 	notebook addPage: (SpNotebookPage title: 'Multivers' icon: (self iconNamed: #branch) provider: [ self newMultiversTab ]).
 
@@ -292,7 +294,7 @@ ChatPharoSettingsPresenter >> initializePresenters [
 		                   label: 'Enable logging';
 		                   state: model loggingEnabled;
 		                   yourself.
-		
+
 	ethicsDirectorCheckBox := self newCheckBox
 		                          label: 'Enable Ethics Director';
 		                          state: model ethicsDirectorEnabled;
@@ -383,6 +385,13 @@ ChatPharoSettingsPresenter >> newConfigurationTab [
 				   add: apiSettingsContainer;
 				   yourself);
 		  yourself
+]
+
+{ #category : 'initialization' }
+ChatPharoSettingsPresenter >> newCustomToolsTab [
+	"Creates the Custom Tools configuration tab"
+
+	^ ChatPharoCustomToolsSettingsPresenter on: model
 ]
 
 { #category : 'initialization' }
