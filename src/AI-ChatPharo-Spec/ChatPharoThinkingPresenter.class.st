@@ -7,9 +7,9 @@ Class {
 		'animationProcess',
 		'currentPhase'
 	],
-	#category : 'AI-ChatPharo-Spec-Core',
+	#category : 'AI-ChatPharo-Spec-Ethics',
 	#package : 'AI-ChatPharo-Spec',
-	#tag : 'Core'
+	#tag : 'Ethics'
 }
 
 { #category : 'layout' }

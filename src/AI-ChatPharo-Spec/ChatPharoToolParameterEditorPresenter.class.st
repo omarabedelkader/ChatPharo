@@ -19,8 +19,9 @@ Class {
 		'parameterDefinition',
 		'onSaveBlock'
 	],
-	#category : 'AI-ChatPharo-Spec',
-	#package : 'AI-ChatPharo-Spec'
+	#category : 'AI-ChatPharo-Spec-Tools',
+	#package : 'AI-ChatPharo-Spec',
+	#tag : 'Tools'
 }
 
 { #category : 'instance creation' }

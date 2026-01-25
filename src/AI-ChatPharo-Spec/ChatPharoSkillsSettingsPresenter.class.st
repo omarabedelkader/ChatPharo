@@ -17,9 +17,9 @@ Class {
 		'skillDescriptionText',
 		'refreshButton'
 	],
-	#category : 'AI-ChatPharo-Spec-Core',
+	#category : 'AI-ChatPharo-Spec-Skills',
 	#package : 'AI-ChatPharo-Spec',
-	#tag : 'Core'
+	#tag : 'Skills'
 }
 
 { #category : 'as yet unclassified' }

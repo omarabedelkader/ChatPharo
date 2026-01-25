@@ -24,9 +24,9 @@ Class {
 		'toolDescriptionText',
 		'toolCodePreview'
 	],
-	#category : 'AI-ChatPharo-Spec-Agent',
+	#category : 'AI-ChatPharo-Spec-Tools',
 	#package : 'AI-ChatPharo-Spec',
-	#tag : 'Agent'
+	#tag : 'Tools'
 }
 
 { #category : 'adding' }
@@ -96,18 +96,18 @@ ChatPharoCustomToolsSettingsPresenter >> defaultLayout [
 
 { #category : 'layout' }
 ChatPharoCustomToolsSettingsPresenter >> deleteSelectedTool [
-	"Delete the selected tool after confirmation"
 
 	| selected |
 	selected := toolsTable selectedItem.
 	selected ifNil: [ ^ self ].
 
-	(self confirm: 'Delete tool "', selected name, '"?') ifTrue: [
-		model removeCustomTool: selected.
-		self refreshTable.
-		self clearPreview.
-		ChatPharoLogger logFrontend: 'Custom tool deleted'
-			details: (Dictionary new at: 'tool' put: selected name; yourself) ]
+	(self confirm: 'Delete tool "' , selected name , '"?') ifFalse: [ ^ self ].
+	model removeCustomTool: selected.
+	self refreshTable.
+	self clearPreview.
+	ChatPharoLogger logFrontend: 'Custom tool deleted' details: (Dictionary new
+			 at: 'tool' put: selected name;
+			 yourself)
 ]
 
 { #category : 'layout' }
@@ -152,7 +152,7 @@ ChatPharoCustomToolsSettingsPresenter >> editSelectedTool [
 	editor open
 ]
 
-{ #category : 'layout' }
+{ #category : 'initialization' }
 ChatPharoCustomToolsSettingsPresenter >> initializePresenters [
 
 	super initializePresenters.
@@ -228,7 +228,7 @@ ChatPharoCustomToolsSettingsPresenter >> refreshTable [
 	toolsTable items: model customTools
 ]
 
-{ #category : 'layout' }
+{ #category : 'accessing - model' }
 ChatPharoCustomToolsSettingsPresenter >> setModelBeforeInitialization: aSettings [
 
 	model := aSettings

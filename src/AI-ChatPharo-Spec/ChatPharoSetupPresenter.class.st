@@ -30,8 +30,9 @@ Class {
 		'levelButtons',
 		'tutorialCheckbox'
 	],
-	#category : 'AI-ChatPharo-Spec',
-	#package : 'AI-ChatPharo-Spec'
+	#category : 'AI-ChatPharo-Spec-Setup',
+	#package : 'AI-ChatPharo-Spec',
+	#tag : 'Setup'
 }
 
 { #category : 'instance creation' }
