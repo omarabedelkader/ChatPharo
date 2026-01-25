@@ -240,6 +240,18 @@ ChatPharoSettings >> askFeatureEnabled: aBoolean [
                         yourself)
 ]
 
+{ #category : 'custom tools' }
+ChatPharoSettings >> assertCustomToolNameAvailable: toolName excluding: excludedTool [
+	"Validate that the tool name is not used by custom or built-in tools."
+
+	(self customTools anySatisfy: [ :tool |
+		 tool ~~ excludedTool and: [ tool name = toolName ] ]) ifTrue: [
+		self error: 'A tool with this name already exists' ].
+	((ChatPharoBrowserEnvironment new tools collect: [ :tool | tool name ])
+		includes: toolName) ifTrue: [
+		self error: 'A tool with this name already exists' ]
+]
+
 { #category : 'skills' }
 ChatPharoSettings >> automaticSkillsEnabled [
 	"Whether skills can be automatically triggered based on query keywords"
@@ -856,6 +868,20 @@ ChatPharoSettings >> removeCustomTool: aCustomTool [
 		details: (Dictionary new
 			at: 'tool' put: aCustomTool name;
 			yourself)
+]
+
+{ #category : 'custom tools' }
+ChatPharoSettings >> replaceCustomTool: oldTool with: newTool [
+	"Replace an existing custom tool, preserving order and preventing name collisions."
+
+	| index |
+	self assertCustomToolNameAvailable: newTool name excluding: oldTool.
+	index := self customTools indexOf: oldTool ifAbsent: [ nil ].
+	index
+		ifNil: [ customTools add: newTool ]
+		ifNotNil: [ customTools at: index put: newTool ].
+	self class setDefault: self.
+	self class saveDefault
 ]
 
 { #category : 'private' }

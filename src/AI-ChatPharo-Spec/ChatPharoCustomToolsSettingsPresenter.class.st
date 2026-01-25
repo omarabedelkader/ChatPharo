@@ -141,14 +141,13 @@ ChatPharoCustomToolsSettingsPresenter >> editSelectedTool [
 	selected ifNil: [ ^ self ].
 
 	editor := ChatPharoToolCreationPresenter newForEditing: selected.
-	editor onSave: [ :updatedTool |
-		"Remove old and add updated"
-		model removeCustomTool: selected.
-		model addCustomTool: updatedTool.
-		self refreshTable.
-		toolsTable selectItem: updatedTool.
-		ChatPharoLogger logFrontend: 'Custom tool updated'
-			details: (Dictionary new at: 'tool' put: updatedTool name; yourself) ].
+	editor onSave: [ :updatedTool | "Remove old and add updated"
+			model replaceCustomTool: selected with: updatedTool.
+			self refreshTable.
+			toolsTable selectItem: updatedTool.
+			ChatPharoLogger logFrontend: 'Custom tool updated' details: (Dictionary new
+					 at: 'tool' put: updatedTool name;
+					 yourself) ].
 	editor open
 ]
 
