@@ -28,7 +28,8 @@ Class {
 		'isDeveloperVerified',
 		'selectedLevel',
 		'levelButtons',
-		'tutorialCheckbox'
+		'tutorialCheckbox',
+		'useAdvisorDefaults'
 	],
 	#category : 'AI-ChatPharo-Spec-Setup',
 	#package : 'AI-ChatPharo-Spec',
@@ -43,20 +44,78 @@ ChatPharoSetupPresenter class >> open [
 ]
 
 { #category : 'instance creation' }
-ChatPharoSetupPresenter class >> openIfNeeded [
-	"Open the setup wizard only if not already configured."
+ChatPharoSetupPresenter class >> openForAdvisorDefaults [
+	"Open the setup wizard directly at the advisor defaults step."
 
-	ChatPharoSettings default isConfigured ifFalse: [
-		^ self open ].
-	^ nil
+	| presenter |
+	presenter := self new.
+	presenter open.
+	presenter showAdvisorDefaultsStep.
+	^ presenter
 ]
 
 { #category : 'instance creation' }
-ChatPharoSetupPresenter >> cancelSetup [
-	"Cancel the setup without saving. Mark as configured to prevent repeated prompts."
+ChatPharoSetupPresenter class >> openIfNeeded [
+	"Open the setup wizard only if not already configured, or if advisor defaults haven't been configured."
 
 	| settings |
 	settings := ChatPharoSettings default.
+
+	"If not configured at all, show full setup wizard"
+	settings isConfigured ifFalse: [
+		^ self open ].
+
+	"If configured but advisor defaults weren't configured, show just the advisor defaults step"
+	settings advisorDefaultsConfigured ifFalse: [
+		^ self openForAdvisorDefaults ].
+
+	^ nil
+]
+
+{ #category : 'layout' }
+ChatPharoSetupPresenter >> applyAdvisorDefaults [
+	"Apply the advisor recommended defaults with progress indicator."
+
+	useAdvisorDefaults := true.
+	statusLabel label: 'Applying recommended settings...'.
+
+	"Close this window temporarily and show progress"
+	self window close.
+
+	ChatPharoDefaultsProgressPresenter openAndApplyThen: [
+		"Reopen setup wizard at the user info step"
+		| newSetup |
+		newSetup := ChatPharoSetupPresenter new.
+		newSetup
+			privateSetDeveloperVerified: isDeveloperVerified;
+			privateSetAdvisorDefaults: true;
+			privateSetSelectedLevel: selectedLevel.
+		newSetup open.
+		newSetup showUserInfoStep ]
+]
+
+{ #category : 'initialization' }
+ChatPharoSetupPresenter >> askOkToClose [
+	"Prevent closing during advisor defaults step without making a choice."
+
+	(currentStep = #advisorDefaults and: [ useAdvisorDefaults isNil ]) ifTrue: [
+		self inform: 'Please choose whether to use recommended settings or configure manually.'.
+		^ false ].
+	^ true
+]
+
+{ #category : 'layout' }
+ChatPharoSetupPresenter >> cancelSetup [
+	"Cancel the setup without saving. Only allowed if advisor defaults have been configured."
+
+	| settings |
+	settings := ChatPharoSettings default.
+
+	"Prevent canceling if advisor defaults haven't been configured"
+	settings advisorDefaultsConfigured ifFalse: [
+		self inform: 'Please complete the advisor defaults configuration before canceling.'.
+		^ self ].
+
 	settings isConfigured: true.
 	self window close
 ]
@@ -133,7 +192,7 @@ ChatPharoSetupPresenter >> finishSetup [
 		self defer: [ ChatPharoTutorial start ] ]
 ]
 
-{ #category : 'layout' }
+{ #category : 'initialization' }
 ChatPharoSetupPresenter >> initialize [
 
 	super initialize.
@@ -141,7 +200,9 @@ ChatPharoSetupPresenter >> initialize [
 	isDeveloperVerified := false.
 isDeveloperVerified := false.
 	selectedLevel := 'beginner'.
-	levelButtons := Dictionary new
+	levelButtons := Dictionary new.
+		levelButtons := Dictionary new.
+	useAdvisorDefaults := nil
 ]
 
 { #category : 'initialization' }
@@ -175,6 +236,24 @@ ChatPharoSetupPresenter >> initializeWindow: aWindowPresenter [
 		title: 'ChatPharo Setup';
 		initialExtent: 500@400;
 		centered
+]
+
+{ #category : 'private' }
+ChatPharoSetupPresenter >> privateSetAdvisorDefaults: aBoolean [
+	"Set advisor defaults choice without triggering UI update. Used when reopening wizard."
+	useAdvisorDefaults := aBoolean
+]
+
+{ #category : 'private' }
+ChatPharoSetupPresenter >> privateSetDeveloperVerified: aBoolean [
+	"Set developer verified status without triggering UI update. Used when reopening wizard."
+	isDeveloperVerified := aBoolean
+]
+
+{ #category : 'private' }
+ChatPharoSetupPresenter >> privateSetSelectedLevel: aString [
+	"Set selected level without triggering UI update. Used when reopening wizard."
+	selectedLevel := aString
 ]
 
 { #category : 'layout' }
@@ -214,6 +293,64 @@ ChatPharoSetupPresenter >> selectLevel: aLevelString [
 ]
 
 { #category : 'layout' }
+ChatPharoSetupPresenter >> showAdvisorDefaultsStep [
+	"Show the advisor defaults configuration step. User must choose to proceed."
+
+	| defaultsContainer buttonRow yesButton noButton infoLabel descriptionText settingsLabel |
+	currentStep := #advisorDefaults.
+
+	titleLabel label: 'Advisor Recommended Settings'.
+	descriptionLabel label: 'Would you like to use the recommended configuration?'.
+	statusLabel label: ''.
+
+	infoLabel := self newLabel
+		label: 'The Advisor can automatically configure ChatPharo for optimal performance.';
+		yourself.
+
+	descriptionText := self newText
+		text: ChatPharoSafetyAdvisor defaultSettingsDescription;
+		enabled: false;
+		yourself.
+
+	settingsLabel := self newLabel
+		label: 'You can customize all settings later from the Settings menu.';
+		yourself.
+
+	yesButton := self newButton
+		label: 'Yes, use recommended settings';
+		icon: (self iconNamed: #glamorousAccept);
+		action: [ self applyAdvisorDefaults ];
+		yourself.
+
+	noButton := self newButton
+		label: 'No, I will configure manually';
+		icon: (self iconNamed: #glamorousCancel);
+		action: [ self skipAdvisorDefaults ];
+		yourself.
+
+	defaultsContainer := SpBoxLayout newTopToBottom
+		spacing: 12;
+		add: infoLabel expand: false;
+		add: descriptionText expand: true;
+		add: settingsLabel expand: false;
+		yourself.
+
+	buttonRow := SpBoxLayout newHorizontal
+		spacing: 8;
+		add: yesButton expand: false;
+		add: noButton expand: false;
+		yourself.
+
+	contentContainer layout: (SpBoxLayout newTopToBottom
+		spacing: 12;
+		add: defaultsContainer expand: true;
+		add: buttonRow expand: false;
+		yourself).
+
+	self layout: self defaultLayout
+]
+
+{ #category : 'layout' }
 ChatPharoSetupPresenter >> showDeveloperStep [
 	"Show the developer verification step."
 
@@ -224,42 +361,42 @@ ChatPharoSetupPresenter >> showDeveloperStep [
 	statusLabel label: ''.
 
 	developerIdInput := self newTextInput
-		placeholder: 'Enter your Developer ID...';
-		yourself.
+		                    placeholder: 'Enter your Developer ID...';
+		                    yourself.
 
 	verifyButton := self newButton
-		label: 'Verify ID';
-		icon: (self iconNamed: #glamorousGo);
-		action: [ self verifyDeveloperId ];
-		yourself.
+		                label: 'Verify ID';
+		                icon: (self iconNamed: #glamorousGo);
+		                action: [ self verifyDeveloperId ];
+		                yourself.
 
 	skipDeveloperButton := self newButton
-		label: 'Skip (I''m not a developer)';
-		action: [ self showUserInfoStep ];
-		yourself.
+		                       label: 'Skip (I''m not a developer)';
+		                       action: [ self showAdvisorDefaultsStep ];
+		                       yourself.
 
 	cancelButton := self newButton
-		label: 'Cancel';
-		action: [ self cancelSetup ];
-		yourself.
+		                label: 'Cancel';
+		                action: [ self cancelSetup ];
+		                yourself.
 
 	idRow := SpBoxLayout newHorizontal
-		spacing: 8;
-		add: developerIdInput expand: true;
-		add: verifyButton expand: false;
-		yourself.
+		         spacing: 8;
+		         add: developerIdInput expand: true;
+		         add: verifyButton expand: false;
+		         yourself.
 
 	buttonRow := SpBoxLayout newHorizontal
-		spacing: 8;
-		add: skipDeveloperButton expand: false;
-		add: cancelButton expand: false;
-		yourself.
+		             spacing: 8;
+		             add: skipDeveloperButton expand: false;
+		             add: cancelButton expand: false;
+		             yourself.
 
 	contentContainer layout: (SpBoxLayout newTopToBottom
-		spacing: 12;
-		add: idRow expand: false;
-		add: buttonRow expand: false;
-		yourself).
+			 spacing: 12;
+			 add: idRow expand: false;
+			 add: buttonRow expand: false;
+			 yourself).
 
 	self layout: self defaultLayout
 ]
@@ -482,6 +619,17 @@ ChatPharoSetupPresenter >> showUserInfoStep [
 ]
 
 { #category : 'layout' }
+ChatPharoSetupPresenter >> skipAdvisorDefaults [
+	"User chose to configure manually."
+
+	useAdvisorDefaults := false.
+	ChatPharoSettings default advisorDefaultsConfigured: true.
+	ChatPharoLogger logSystem: 'User skipped advisor defaults'
+		details: Dictionary new.
+	self showUserInfoStep
+]
+
+{ #category : 'layout' }
 ChatPharoSetupPresenter >> updateLevelButtonStyles [
 	"Update the visual style of level buttons to show selection"
 
@@ -502,8 +650,8 @@ ChatPharoSetupPresenter >> verifyDeveloperId [
 	enteredId := developerIdInput text trimBoth.
 
 	enteredId isEmpty ifTrue: [
-		statusLabel label: 'Please enter a Developer ID.'.
-		^ self ].
+			statusLabel label: 'Please enter a Developer ID.'.
+			^ self ].
 
 	statusLabel label: 'Verifying...'.
 	verifyButton enabled: false.
@@ -513,17 +661,14 @@ ChatPharoSetupPresenter >> verifyDeveloperId [
 		isValid := ChatPharoDeveloperConfig verifyDeveloperId: enteredId.
 
 		self defer: [
-			verifyButton enabled: true.
-			isValid
-				ifTrue: [
-					isDeveloperVerified := true.
-					settings := ChatPharoSettings default.
-					settings developerId: enteredId.
-					settings isDeveloper: true.
-					statusLabel label: 'Developer ID verified successfully!'.
-					self showUserInfoStep ]
-				ifFalse: [
-					statusLabel label: 'Invalid Developer ID. Please try again or skip.' ]
-		]
-	] fork
+				verifyButton enabled: true.
+				isValid
+					ifTrue: [
+							isDeveloperVerified := true.
+							settings := ChatPharoSettings default.
+							settings developerId: enteredId.
+							settings isDeveloper: true.
+							statusLabel label: 'Developer ID verified successfully!'.
+							self showAdvisorDefaultsStep ]
+					ifFalse: [ statusLabel label: 'Invalid Developer ID. Please try again or skip.' ] ] ] fork
 ]
