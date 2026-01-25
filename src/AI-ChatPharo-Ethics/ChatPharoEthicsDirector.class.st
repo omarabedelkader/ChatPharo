@@ -12,7 +12,8 @@ Class {
 		'mandate',
 		'cognitiveLoadBudget',
 		'tokenBudget',
-		'timeBudgetMinutes'
+		'timeBudgetMinutes',
+		'messageLimit'
 	],
 	#category : 'AI-ChatPharo-Ethics',
 	#package : 'AI-ChatPharo-Ethics'
@@ -50,7 +51,7 @@ ChatPharoEthicsDirector >> enabled: aBoolean [
 			yourself)
 ]
 
-{ #category : 'accessing' }
+{ #category : 'initialization' }
 ChatPharoEthicsDirector >> initialize [
 
 	super initialize.
@@ -58,7 +59,8 @@ ChatPharoEthicsDirector >> initialize [
 	mandate := ''.
 	cognitiveLoadBudget := 120.
 	tokenBudget := 4096.
-	timeBudgetMinutes := 30
+	timeBudgetMinutes := 30.
+	messageLimit := 50
 ]
 
 { #category : 'accessing' }
@@ -74,6 +76,22 @@ ChatPharoEthicsDirector >> mandate: aString [
 	ChatPharoLogger logFrontend: 'Ethics mandate updated'
 		details: (Dictionary new
 			at: 'length' put: aString size;
+			yourself)
+]
+
+{ #category : 'initialization' }
+ChatPharoEthicsDirector >> messageLimit [
+
+	^ messageLimit ifNil: [ messageLimit := 50 ]
+]
+
+{ #category : 'initialization' }
+ChatPharoEthicsDirector >> messageLimit: aNumber [
+
+	messageLimit := aNumber.
+	ChatPharoLogger logFrontend: 'Message limit updated'
+		details: (Dictionary new
+			at: 'limit' put: (aNumber ifNil: [ 'unset' ] ifNotNil: [ aNumber ]);
 			yourself)
 ]
 

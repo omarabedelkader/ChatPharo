@@ -115,11 +115,13 @@ ChatPharoSettings class >> loadOrNew [
 				  (settings instVarNamed: 'cognitiveLoadBudget') ifNotNil: [ :value | settings ethicsDirector cognitiveLoadBudget: value ].
 				  (settings instVarNamed: 'tokenBudget') ifNotNil: [ :value | settings ethicsDirector tokenBudget: value ].
 				  (settings instVarNamed: 'timeBudgetMinutes') ifNotNil: [ :value | settings ethicsDirector timeBudgetMinutes: value ].
+				settings ethicsDirector messageLimit ifNil: [
+					  settings ethicsDirector messageLimit: 50 ].
 				  settings multivers ifNil: [ settings multivers: ChatPharoMultivers new ].
 				  settings userLevel ifNil: [ settings privateSetUserLevel: 'beginner' ].
 				  settings tutorialCompleted ifNil: [ settings privateSetTutorialCompleted: false ].
 				  settings wantsTutorial ifNil: [ settings privateSetWantsTutorial: false ].
-				settings advisorDefaultsConfigured ifNil: [ settings privateSetAdvisorDefaultsConfigured: false ].
+				  settings advisorDefaultsConfigured ifNil: [ settings privateSetAdvisorDefaultsConfigured: false ].
 				  ^ settings ]
 				  on: Error
 				  do: [ ^ self new ] ]
@@ -699,6 +701,20 @@ ChatPharoSettings >> maximumIterations: aNumber [
                         yourself)
 ]
 
+{ #category : 'ethics' }
+ChatPharoSettings >> messageLimit [
+
+	^ self ethicsDirector messageLimit
+]
+
+{ #category : 'ethics' }
+ChatPharoSettings >> messageLimit: aNumber [
+
+	self ethicsDirector messageLimit: aNumber.
+	self class setDefault: self.
+	self class saveDefault
+]
+
 { #category : 'initialization' }
 ChatPharoSettings >> models [
 
@@ -806,6 +822,12 @@ ChatPharoSettings >> privateSetIsConfigured: aBoolean [
 ChatPharoSettings >> privateSetIsDeveloper: aBoolean [
 	"Set isDeveloper without triggering save. Used during loading."
 	isDeveloper := aBoolean
+]
+
+{ #category : 'private' }
+ChatPharoSettings >> privateSetMessageLimit: aNumber [
+	"Set messageLimit without triggering save. Used during loading."
+	self ethicsDirector messageLimit: aNumber
 ]
 
 { #category : 'private' }
