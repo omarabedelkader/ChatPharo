@@ -283,9 +283,9 @@ ChatPharoSettings >> browserAutoTabEnabled: aBoolean [
 ]
 
 { #category : 'initialization' }
-ChatPharoSettings >> browserExtensionEnabled [ 
+ChatPharoSettings >> browserExtensionEnabled [
 
-        ^ browserExtensionEnabled
+	^ browserExtensionEnabled ifNil: [ browserExtensionEnabled := false ]
 ]
 
 { #category : 'initialization' }
@@ -528,7 +528,7 @@ ChatPharoSettings >> feedbackButtonsEnabled: aBoolean [
 { #category : 'accessing' }
 ChatPharoSettings >> icebergExtensionEnabled [
 
-	^ icebergExtensionEnabled
+	^ icebergExtensionEnabled ifNil: [ icebergExtensionEnabled := false ]
 ]
 
 { #category : 'accessing' }
