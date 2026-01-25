@@ -21,6 +21,7 @@ Class {
 	#instVars : [
 		'agent',
 		'browserExtensionEnabled',
+		'icebergExtensionEnabled',
 		'browserToolsEnabled',
 		'maximumIterations',
 		'browserAutoTabEnabled',
@@ -87,6 +88,7 @@ ChatPharoSettings class >> loadOrNew [
 				  | settings |
 				  settings := STON fromStream: file.
 				  settings browserExtensionEnabled ifNil: [ settings browserExtensionEnabled: false ].
+				settings icebergExtensionEnabled ifNil: [ settings icebergExtensionEnabled: false ].
 				  settings browserAutoTabEnabled ifNil: [ settings browserAutoTabEnabled: true ].
 				  settings browserToolsEnabled ifNil: [
 					  settings browserToolsEnabled: (ChatPharoBrowserEnvironment new tools collect: [ :t | t name ]) asOrderedCollection ].
@@ -107,17 +109,12 @@ ChatPharoSettings class >> loadOrNew [
 				  settings developerId ifNil: [ settings privateSetDeveloperId: '' ].
 				  settings userName ifNil: [ settings privateSetUserName: '' ].
 				  settings userOrganization ifNil: [ settings privateSetUserOrganization: '' ].
-								  settings ethicsDirector ifNil: [ settings privateSetEthicsDirector: ChatPharoEthicsDirector new ].
-				  (settings instVarNamed: 'ethicsDirectorEnabled') ifNotNil: [ :value |
-					  settings ethicsDirector enabled: value ].
-				  (settings instVarNamed: 'ethicsMandate') ifNotNil: [ :value |
-					  settings ethicsDirector mandate: value ].
-				  (settings instVarNamed: 'cognitiveLoadBudget') ifNotNil: [ :value |
-					  settings ethicsDirector cognitiveLoadBudget: value ].
-				  (settings instVarNamed: 'tokenBudget') ifNotNil: [ :value |
-					  settings ethicsDirector tokenBudget: value ].
-				  (settings instVarNamed: 'timeBudgetMinutes') ifNotNil: [ :value |
-					  settings ethicsDirector timeBudgetMinutes: value ].
+				  settings ethicsDirector ifNil: [ settings privateSetEthicsDirector: ChatPharoEthicsDirector new ].
+				  (settings instVarNamed: 'ethicsDirectorEnabled') ifNotNil: [ :value | settings ethicsDirector enabled: value ].
+				  (settings instVarNamed: 'ethicsMandate') ifNotNil: [ :value | settings ethicsDirector mandate: value ].
+				  (settings instVarNamed: 'cognitiveLoadBudget') ifNotNil: [ :value | settings ethicsDirector cognitiveLoadBudget: value ].
+				  (settings instVarNamed: 'tokenBudget') ifNotNil: [ :value | settings ethicsDirector tokenBudget: value ].
+				  (settings instVarNamed: 'timeBudgetMinutes') ifNotNil: [ :value | settings ethicsDirector timeBudgetMinutes: value ].
 				  settings multivers ifNil: [ settings multivers: ChatPharoMultivers new ].
 				  settings userLevel ifNil: [ settings privateSetUserLevel: 'beginner' ].
 				  settings tutorialCompleted ifNil: [ settings privateSetTutorialCompleted: false ].
@@ -528,12 +525,31 @@ ChatPharoSettings >> feedbackButtonsEnabled: aBoolean [
                         yourself)
 ]
 
+{ #category : 'accessing' }
+ChatPharoSettings >> icebergExtensionEnabled [
+
+	^ icebergExtensionEnabled
+]
+
+{ #category : 'accessing' }
+ChatPharoSettings >> icebergExtensionEnabled: aBoolean [
+
+	icebergExtensionEnabled := aBoolean.
+	self class setDefault: self.
+	self class saveDefault.
+	ChatPharoLogger logFrontend: 'Iceberg extension toggled'
+		details: (Dictionary new
+			at: 'enabled' put: aBoolean;
+			yourself)
+]
+
 { #category : 'initialization' }
 ChatPharoSettings >> initialize [
 
 	super initialize.
 	agent := ChatPharoNullAgent new.
 	browserExtensionEnabled := false.
+	icebergExtensionEnabled := false.
 	browserAutoTabEnabled := true.
 	cacheEnabled := true.
 	feedbackButtonsEnabled := true.
