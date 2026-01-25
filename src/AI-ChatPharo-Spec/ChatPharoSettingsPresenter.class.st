@@ -29,7 +29,12 @@ Class {
 		'userOrganizationInput',
 		'developerIdInput',
 		'developerStatusLabel',
-		'verifyDeveloperButton'
+		'verifyDeveloperButton',
+		'ethicsDirectorCheckBox',
+		'ethicsMandateInput',
+		'cognitiveLoadBudgetInput',
+		'tokenBudgetInput',
+		'timeBudgetInput'
 	],
 	#category : 'AI-ChatPharo-Spec-Core',
 	#package : 'AI-ChatPharo-Spec',
@@ -133,6 +138,27 @@ ChatPharoSettingsPresenter >> connectPresenters [
 		                          value: [ ChatPharoSettings default welcomeMessageEnabled ]
 		                          changeAction: [ :val | ChatPharoSettings default welcomeMessageEnabled: val ].
 
+	ethicsDirectorCheckBox whenChangedDo: [ :enabled |
+		model ethicsDirectorEnabled: enabled ].
+
+	ethicsMandateInput whenTextChangedDo: [ :text |
+		model ethicsMandate: text trimBoth ].
+
+	cognitiveLoadBudgetInput whenTextChangedDo: [ :text |
+		text isEmpty
+			ifTrue: [ model cognitiveLoadBudget: nil ]
+			ifFalse: [ model cognitiveLoadBudget: text asNumber ] ].
+
+	tokenBudgetInput whenTextChangedDo: [ :text |
+		text isEmpty
+			ifTrue: [ model tokenBudget: nil ]
+			ifFalse: [ model tokenBudget: text asNumber ] ].
+
+	timeBudgetInput whenTextChangedDo: [ :text |
+		text isEmpty
+			ifTrue: [ model timeBudgetMinutes: nil ]
+			ifFalse: [ model timeBudgetMinutes: text asNumber ] ].
+		
 
 	playgroundToolCheckBox whenChangedDo: [ :checked |
 			checked
@@ -198,6 +224,8 @@ ChatPharoSettingsPresenter >> initializePresenters [
 	notebook addPage:
 		(SpNotebookPage title: 'Security' icon: (self iconNamed: #lock) provider: [ ChatPharoSecuritySettingsPresenter on: model ]).
 
+	notebook addPage: (SpNotebookPage title: 'Ethics' icon: (self iconNamed: #glamorousGoal) provider: [ self newEthicsTab ]).
+
 	notebook addPage: (SpNotebookPage title: 'Personal' icon: (self iconNamed: #user) provider: [ self newPersonalTab ]).
 
 	notebook addPage: (SpNotebookPage title: 'Skills' icon: (self iconNamed: #smallObjects) provider: [ self newSkillsTab ]).
@@ -253,16 +281,41 @@ ChatPharoSettingsPresenter >> initializePresenters [
 		                 state: model cacheEnabled;
 		                 yourself.
 
-openLogsButton := self newButton
+	openLogsButton := self newButton
 		                  label: 'Open Logs';
 		                  icon: (self iconNamed: #glamorousOpen);
 		                  help: 'Open the ChatPharo log file';
 		                  action: [ self openLogs ];
 		                  yourself.
-		
+
 	loggingCheckBox := self newCheckBox
 		                   label: 'Enable logging';
 		                   state: model loggingEnabled;
+		                   yourself.
+		
+	ethicsDirectorCheckBox := self newCheckBox
+		                          label: 'Enable Ethics Director';
+		                          state: model ethicsDirectorEnabled;
+		                          yourself.
+
+	ethicsMandateInput := self newTextInput
+		                      placeholder: 'Ethics mandate...';
+		                      text: model ethicsMandate;
+		                      yourself.
+
+	cognitiveLoadBudgetInput := self newNumberInput
+		                            placeholder: 'e.g. 120';
+		                            text: model cognitiveLoadBudget asString;
+		                            yourself.
+
+	tokenBudgetInput := self newNumberInput
+		                    placeholder: 'e.g. 4096';
+		                    text: model tokenBudget asString;
+		                    yourself.
+
+	timeBudgetInput := self newNumberInput
+		                   placeholder: 'e.g. 30';
+		                   text: model timeBudgetMinutes asString;
 		                   yourself.
 
 	apiDropList selectItem:
@@ -328,6 +381,44 @@ ChatPharoSettingsPresenter >> newConfigurationTab [
 						    yourself)
 				   expand: false;
 				   add: apiSettingsContainer;
+				   yourself);
+		  yourself
+]
+
+{ #category : 'initialization' }
+ChatPharoSettingsPresenter >> newEthicsTab [
+	"Create the Ethics Director configuration tab."
+
+	^ SpPresenter new
+		  layout: (SpBoxLayout newTopToBottom
+				   spacing: 12;
+				   borderWidth: 8;
+				   add: (self newLabel label: 'Director of Ethics') expand: false;
+				   add: ethicsDirectorCheckBox expand: false;
+				   add: (SpBoxLayout newHorizontal
+						    spacing: 8;
+						    add: (self newLabel label: 'Ethics mandate:') expand: false;
+						    add: ethicsMandateInput expand: true;
+						    yourself)
+				   expand: false;
+				   add: (SpBoxLayout newHorizontal
+						    spacing: 8;
+						    add: (self newLabel label: 'Cognitive load budget:') expand: false;
+						    add: cognitiveLoadBudgetInput expand: true;
+						    yourself)
+				   expand: false;
+				   add: (SpBoxLayout newHorizontal
+						    spacing: 8;
+						    add: (self newLabel label: 'Token budget:') expand: false;
+						    add: tokenBudgetInput expand: true;
+						    yourself)
+				   expand: false;
+				   add: (SpBoxLayout newHorizontal
+						    spacing: 8;
+						    add: (self newLabel label: 'Time budget (minutes):') expand: false;
+						    add: timeBudgetInput expand: true;
+						    yourself)
+				   expand: false;
 				   yourself);
 		  yourself
 ]

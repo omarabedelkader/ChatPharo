@@ -38,6 +38,12 @@ Class {
 		'developerId',
 		'userName',
 		'userOrganization',
+		'ethicsDirector',
+		'ethicsDirectorEnabled',
+		'ethicsMandate',
+		'cognitiveLoadBudget',
+		'tokenBudget',
+		'timeBudgetMinutes',
 		'multivers',
 		'sandboxEnabled',
 		'sandboxRestrictFileSystem',
@@ -101,6 +107,17 @@ ChatPharoSettings class >> loadOrNew [
 				  settings developerId ifNil: [ settings privateSetDeveloperId: '' ].
 				  settings userName ifNil: [ settings privateSetUserName: '' ].
 				  settings userOrganization ifNil: [ settings privateSetUserOrganization: '' ].
+								  settings ethicsDirector ifNil: [ settings privateSetEthicsDirector: ChatPharoEthicsDirector new ].
+				  (settings instVarNamed: 'ethicsDirectorEnabled') ifNotNil: [ :value |
+					  settings ethicsDirector enabled: value ].
+				  (settings instVarNamed: 'ethicsMandate') ifNotNil: [ :value |
+					  settings ethicsDirector mandate: value ].
+				  (settings instVarNamed: 'cognitiveLoadBudget') ifNotNil: [ :value |
+					  settings ethicsDirector cognitiveLoadBudget: value ].
+				  (settings instVarNamed: 'tokenBudget') ifNotNil: [ :value |
+					  settings ethicsDirector tokenBudget: value ].
+				  (settings instVarNamed: 'timeBudgetMinutes') ifNotNil: [ :value |
+					  settings ethicsDirector timeBudgetMinutes: value ].
 				  settings multivers ifNil: [ settings multivers: ChatPharoMultivers new ].
 				  settings userLevel ifNil: [ settings privateSetUserLevel: 'beginner' ].
 				  settings tutorialCompleted ifNil: [ settings privateSetTutorialCompleted: false ].
@@ -339,6 +356,20 @@ ChatPharoSettings >> codeFeatureEnabled: aBoolean [
                         yourself)
 ]
 
+{ #category : 'ethics' }
+ChatPharoSettings >> cognitiveLoadBudget [
+
+	^ self ethicsDirector cognitiveLoadBudget
+]
+
+{ #category : 'ethics' }
+ChatPharoSettings >> cognitiveLoadBudget: aNumber [
+
+	self ethicsDirector cognitiveLoadBudget: aNumber.
+	self class setDefault: self.
+	self class saveDefault
+]
+
 { #category : 'developer' }
 ChatPharoSettings >> developerId [
 
@@ -438,6 +469,48 @@ ChatPharoSettings >> enableSkill: skillName [
 			yourself)
 ]
 
+{ #category : 'ethics' }
+ChatPharoSettings >> ethicsDirector [
+
+	^ ethicsDirector ifNil: [ ethicsDirector := ChatPharoEthicsDirector new ]
+]
+
+{ #category : 'ethics' }
+ChatPharoSettings >> ethicsDirector: aDirector [
+
+	ethicsDirector := aDirector.
+	self class setDefault: self.
+	self class saveDefault
+]
+
+{ #category : 'ethics' }
+ChatPharoSettings >> ethicsDirectorEnabled [
+
+	^ self ethicsDirector enabled
+]
+
+{ #category : 'ethics' }
+ChatPharoSettings >> ethicsDirectorEnabled: aBoolean [
+
+	self ethicsDirector enabled: aBoolean.
+	self class setDefault: self.
+	self class saveDefault
+]
+
+{ #category : 'ethics' }
+ChatPharoSettings >> ethicsMandate [
+
+	^ self ethicsDirector mandate
+]
+
+{ #category : 'ethics' }
+ChatPharoSettings >> ethicsMandate: aString [
+
+	self ethicsDirector mandate: aString.
+	self class setDefault: self.
+	self class saveDefault
+]
+
 { #category : 'accessing' }
 ChatPharoSettings >> feedbackButtonsEnabled [
 	^ feedbackButtonsEnabled ifNil: [ true ]
@@ -468,12 +541,13 @@ ChatPharoSettings >> initialize [
 	loggingEnabled := true.
 	askFeatureEnabled := true.
 	codeFeatureEnabled := true.
+	ethicsDirector := ChatPharoEthicsDirector new.
 	browserToolsEnabled := (ChatPharoBrowserEnvironment new tools collect: [ :t | t name ]) asOrderedCollection.
 	maximumIterations := 3.
 	skillsEnabled := OrderedCollection new.
 	automaticSkillsEnabled := true.
 	skillToolsEnabled := true.
-		userLevel := 'beginner'.
+	userLevel := 'beginner'.
 	tutorialCompleted := false.
 	wantsTutorial := false.
 	multivers := ChatPharoMultivers new.
@@ -614,9 +688,33 @@ ChatPharoSettings >> presenter [
 ]
 
 { #category : 'private' }
+ChatPharoSettings >> privateSetCognitiveLoadBudget: aNumber [
+	"Set cognitiveLoadBudget without triggering save. Used during loading."
+	cognitiveLoadBudget := aNumber
+]
+
+{ #category : 'private' }
 ChatPharoSettings >> privateSetDeveloperId: aString [
 	"Set developer ID without triggering save. Used during loading."
 	developerId := aString
+]
+
+{ #category : 'private' }
+ChatPharoSettings >> privateSetEthicsDirector: aDirector [
+	"Set ethicsDirector without triggering save. Used during loading."
+	ethicsDirector := aDirector
+]
+
+{ #category : 'private' }
+ChatPharoSettings >> privateSetEthicsDirectorEnabled: aBoolean [
+	"Set ethicsDirectorEnabled without triggering save. Used during loading."
+	ethicsDirectorEnabled := aBoolean
+]
+
+{ #category : 'private' }
+ChatPharoSettings >> privateSetEthicsMandate: aString [
+	"Set ethicsMandate without triggering save. Used during loading."
+	ethicsMandate := aString
 ]
 
 { #category : 'private' }
@@ -659,6 +757,18 @@ ChatPharoSettings >> privateSetSandboxRestrictSystemAccess: aBoolean [
 ChatPharoSettings >> privateSetSandboxTimeout: anInteger [
 	"Set sandboxTimeout without triggering save. Used during loading."
 	sandboxTimeout := anInteger
+]
+
+{ #category : 'private' }
+ChatPharoSettings >> privateSetTimeBudgetMinutes: aNumber [
+	"Set timeBudgetMinutes without triggering save. Used during loading."
+	timeBudgetMinutes := aNumber
+]
+
+{ #category : 'private' }
+ChatPharoSettings >> privateSetTokenBudget: aNumber [
+	"Set tokenBudget without triggering save. Used during loading."
+	tokenBudget := aNumber
 ]
 
 { #category : 'initialization' }
@@ -817,6 +927,34 @@ ChatPharoSettings >> skillsEnabled: aCollection [
 		details: (Dictionary new
 			at: 'skills' put: aCollection asArray printString;
 			yourself)
+]
+
+{ #category : 'ethics' }
+ChatPharoSettings >> timeBudgetMinutes [
+
+	^ self ethicsDirector timeBudgetMinutes
+]
+
+{ #category : 'ethics' }
+ChatPharoSettings >> timeBudgetMinutes: aNumber [
+
+	self ethicsDirector timeBudgetMinutes: aNumber.
+	self class setDefault: self.
+	self class saveDefault
+]
+
+{ #category : 'ethics' }
+ChatPharoSettings >> tokenBudget [
+
+	^ self ethicsDirector tokenBudget
+]
+
+{ #category : 'ethics' }
+ChatPharoSettings >> tokenBudget: aNumber [
+
+	self ethicsDirector tokenBudget: aNumber.
+	self class setDefault: self.
+	self class saveDefault
 ]
 
 { #category : 'initialization' }
