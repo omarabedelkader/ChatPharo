@@ -5,7 +5,7 @@ Class {
 	#package : 'AI-ChatPharo-Safety'
 }
 
-{ #category : 'as yet unclassified' }
+{ #category : 'settings' }
 ChatPharoSafetyAdvisor class >> applyDefaultSettingsTo: aSettings [
 	"Apply all recommended default settings to the given settings object.
 	 Returns an OrderedCollection of step descriptions for progress tracking."
@@ -84,10 +84,24 @@ ChatPharoSafetyAdvisor class >> applyDefaultSettingsTo: aSettings [
 	^ steps
 ]
 
+{ #category : 'ethics' }
+ChatPharoSafetyAdvisor class >> confirmEthicsSettingChangeOn: aPresenter [
+	"Confirm that the user wants to change ethics settings, warning about context performance impact."
+
+	^ aPresenter confirm: self ethicsSettingChangeMessage
+]
+
 { #category : 'safety' }
 ChatPharoSafetyAdvisor class >> confirmMaxIterationsOn: aPresenter [
 
     ^ aPresenter confirm: self maxIterationsMessage
+]
+
+{ #category : 'safety' }
+ChatPharoSafetyAdvisor class >> confirmMessageLimitChangeOn: aPresenter [
+	"Confirm that the user wants to change the message limit, warning about context performance impact."
+
+	^ aPresenter confirm: self messageLimitChangeMessage
 ]
 
 { #category : 'safety' }
@@ -102,7 +116,7 @@ ChatPharoSafetyAdvisor class >> confirmToolDisableOn: aPresenter [
     ^ aPresenter confirm: self toolDisableMessage
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'settings' }
 ChatPharoSafetyAdvisor class >> defaultSettingsDescription [
 	"Return a description of what the default settings include"
 
@@ -120,7 +134,7 @@ ChatPharoSafetyAdvisor class >> defaultSettingsDescription [
 			nextPutAll: 'These settings provide the best experience for most users.' ]
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'settings' }
 ChatPharoSafetyAdvisor class >> defaultsPromptMessage [
 	"Message shown when asking user about default settings"
 
@@ -133,10 +147,22 @@ This will automatically configure ChatPharo with optimal settings including:
 You can always customize these settings later.'
 ]
 
+{ #category : 'ethics' }
+ChatPharoSafetyAdvisor class >> ethicsSettingChangeMessage [
+
+	^ 'Ethics settings can only be changed by developers.\nPlease verify your developer ID in the Personal tab first.'
+]
+
 { #category : 'safety' }
 ChatPharoSafetyAdvisor class >> maxIterationsMessage [
 
     ^ 'Maximum iterations must be at least 1.\nSet value to 1?'
+]
+
+{ #category : 'safety' }
+ChatPharoSafetyAdvisor class >> messageLimitChangeMessage [ 
+
+	^ 'Changing the message limit will impact context performance and memory usage.\nHigher limits may slow down responses and increase token consumption.\nAre you sure you want to change this setting?'
 ]
 
 { #category : 'safety' }
@@ -146,12 +172,21 @@ ChatPharoSafetyAdvisor class >> promptChangeMessage [
 ]
 
 { #category : 'safety' }
+ChatPharoSafetyAdvisor class >> requireDeveloperFor: aBlock otherwiseOn: aPresenter [
+	"Execute aBlock only if the current user is a developer. Otherwise show a warning."
+
+	ChatPharoSettings default isDeveloper
+		ifTrue: [ aBlock value ]
+		ifFalse: [ aPresenter alert: self ethicsSettingChangeMessage ]
+]
+
+{ #category : 'safety' }
 ChatPharoSafetyAdvisor class >> toolDisableMessage [ 
 
     ^ 'For optimal performance we recommend keeping all tools enabled.\nAre you sure you want to disable this tool?'
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'safety' }
 ChatPharoSafetyAdvisor class >> totalDefaultSteps [
 	"Return the total number of steps for applying defaults"
 

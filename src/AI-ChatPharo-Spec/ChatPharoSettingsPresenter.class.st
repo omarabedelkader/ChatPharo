@@ -34,7 +34,8 @@ Class {
 		'ethicsMandateInput',
 		'cognitiveLoadBudgetInput',
 		'tokenBudgetInput',
-		'timeBudgetInput'
+		'timeBudgetInput',
+		'messageLimitInput'
 	],
 	#category : 'AI-ChatPharo-Spec-Core',
 	#package : 'AI-ChatPharo-Spec',
@@ -116,17 +117,17 @@ ChatPharoSettingsPresenter >> connectPresenters [
 			ChatPharoSettings saveDefault ].
 
 	loggingCheckBox whenChangedDo: [ :enabled | model loggingEnabled: enabled ].
-	
-	
-	        askFeatureCheckBox := self
-                                    addCheckboxLabeled: 'Enable Ask button in editors'
-                                    value: [ model askFeatureEnabled ]
-                                    changeAction: [ :val | model askFeatureEnabled: val ].
 
-        codeFeatureCheckBox := self
-                                        addCheckboxLabeled: 'Enable Code button in editors'
-                                        value: [ model codeFeatureEnabled ]
-                                        changeAction: [ :val | model codeFeatureEnabled: val ].
+
+	askFeatureCheckBox := self
+		                      addCheckboxLabeled: 'Enable Ask button in editors'
+		                      value: [ model askFeatureEnabled ]
+		                      changeAction: [ :val | model askFeatureEnabled: val ].
+
+	codeFeatureCheckBox := self
+		                       addCheckboxLabeled: 'Enable Code button in editors'
+		                       value: [ model codeFeatureEnabled ]
+		                       changeAction: [ :val | model codeFeatureEnabled: val ].
 
 	feedbackCheckBox := self
 		                    addCheckboxLabeled: 'Enable Feedback Buttons'
@@ -138,26 +139,38 @@ ChatPharoSettingsPresenter >> connectPresenters [
 		                          value: [ ChatPharoSettings default welcomeMessageEnabled ]
 		                          changeAction: [ :val | ChatPharoSettings default welcomeMessageEnabled: val ].
 
-	ethicsDirectorCheckBox whenChangedDo: [ :enabled |
-		model ethicsDirectorEnabled: enabled ].
+	ethicsDirectorCheckBox whenChangedDo: [ :enabled | model ethicsDirectorEnabled: enabled ].
 
-	ethicsMandateInput whenTextChangedDo: [ :text |
-		model ethicsMandate: text trimBoth ].
+	ethicsMandateInput whenTextChangedDo: [ :text | model ethicsMandate: text trimBoth ].
 
 	cognitiveLoadBudgetInput whenTextChangedDo: [ :text |
-		text isEmpty
-			ifTrue: [ model cognitiveLoadBudget: nil ]
-			ifFalse: [ model cognitiveLoadBudget: text asNumber ] ].
+			text isEmpty
+				ifTrue: [ model cognitiveLoadBudget: nil ]
+				ifFalse: [ model cognitiveLoadBudget: text asNumber ] ].
 
 	tokenBudgetInput whenTextChangedDo: [ :text |
-		text isEmpty
-			ifTrue: [ model tokenBudget: nil ]
-			ifFalse: [ model tokenBudget: text asNumber ] ].
+			text isEmpty
+				ifTrue: [ model tokenBudget: nil ]
+				ifFalse: [ model tokenBudget: text asNumber ] ].
 
 	timeBudgetInput whenTextChangedDo: [ :text |
-		text isEmpty
-			ifTrue: [ model timeBudgetMinutes: nil ]
-			ifFalse: [ model timeBudgetMinutes: text asNumber ] ].
+			text isEmpty
+				ifTrue: [ model timeBudgetMinutes: nil ]
+				ifFalse: [ model timeBudgetMinutes: text asNumber ] ].
+
+messageLimitInput whenTextChangedDo: [ :text |
+		text isEmpty ifFalse: [
+			| newValue |
+			newValue := text asNumber.
+			newValue ~= model messageLimit ifTrue: [
+				ChatPharoSettings default isDeveloper
+					ifTrue: [
+						(ChatPharoSafetyAdvisor confirmMessageLimitChangeOn: self)
+							ifTrue: [ model messageLimit: newValue ]
+							ifFalse: [ messageLimitInput text: model messageLimit asString ] ]
+					ifFalse: [
+						self alert: ChatPharoSafetyAdvisor ethicsSettingChangeMessage.
+						messageLimitInput text: model messageLimit asString ] ] ] ].
 		
 
 	playgroundToolCheckBox whenChangedDo: [ :checked |
@@ -229,8 +242,9 @@ ChatPharoSettingsPresenter >> initializePresenters [
 	notebook addPage: (SpNotebookPage title: 'Personal' icon: (self iconNamed: #user) provider: [ self newPersonalTab ]).
 
 	notebook addPage: (SpNotebookPage title: 'Skills' icon: (self iconNamed: #smallObjects) provider: [ self newSkillsTab ]).
-	
-notebook addPage: (SpNotebookPage title: 'Custom Tools' icon: (self iconNamed: #smallObjects) provider: [ self newCustomToolsTab ]).
+
+	notebook addPage:
+		(SpNotebookPage title: 'Custom Tools' icon: (self iconNamed: #smallObjects) provider: [ self newCustomToolsTab ]).
 
 	notebook addPage: (SpNotebookPage title: 'Multivers' icon: (self iconNamed: #branch) provider: [ self newMultiversTab ]).
 
@@ -320,6 +334,13 @@ notebook addPage: (SpNotebookPage title: 'Custom Tools' icon: (self iconNamed: #
 		                   text: model timeBudgetMinutes asString;
 		                   yourself.
 
+
+	messageLimitInput := self newNumberInput
+		                     placeholder: 'e.g. 50';
+		                     text: model messageLimit asString;
+		                     yourself.
+		
+		
 	apiDropList selectItem:
 		(model availableApiChoices detect: [ :assoc | assoc value = model agent class ] ifNone: [ model availableApiChoices first ]).
 
@@ -424,6 +445,10 @@ ChatPharoSettingsPresenter >> newCustomToolsTab [
 ChatPharoSettingsPresenter >> newEthicsTab [
 	"Create the Ethics Director configuration tab."
 
+| developerNote |
+	developerNote := ChatPharoSettings default isDeveloper
+		ifTrue: [ '' ]
+		ifFalse: [ ' (developer only)' ].
 	^ SpPresenter new
 		  layout: (SpBoxLayout newTopToBottom
 				   spacing: 12;
@@ -452,6 +477,12 @@ ChatPharoSettingsPresenter >> newEthicsTab [
 						    spacing: 8;
 						    add: (self newLabel label: 'Time budget (minutes):') expand: false;
 						    add: timeBudgetInput expand: true;
+						    yourself)
+				   expand: false;
+				add: (SpBoxLayout newHorizontal
+						    spacing: 8;
+						    add: (self newLabel label: 'Message limit per chat', developerNote) expand: false;
+						    add: messageLimitInput expand: true;
 						    yourself)
 				   expand: false;
 				   yourself);
