@@ -216,7 +216,7 @@ ChatPharoSettingsPresenter >> initializePresenters [
 	notebook addPage: (SpNotebookPage title: 'History' icon: (self iconNamed: #history) provider: [ self newHistoryTab ]).
 
 	notebook addPage:
-		(SpNotebookPage title: 'Configuration' icon: (self iconNamed: #smallConfiguration) provider: [ self newConfigurationTab ]).
+		(SpNotebookPage title: 'Agent' icon: (self iconNamed: #smallConfiguration) provider: [ self newConfigurationTab ]).
 
 	notebook addPage:
 		(SpNotebookPage title: 'Extensions' icon: (self iconNamed: #smallCogInitialState) provider: [ self newExtensionsTab ]).
