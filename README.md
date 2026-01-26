@@ -4,6 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/omarabedelkader/ChatPharo/blob/master/LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/omarabedelkader/ChatPharo/pulls)
 [![Status: Active](https://img.shields.io/badge/status-active-success.svg)](https://github.com/omarabedelkader/ChatPharo)
+[![CI](https://github.com/omarabedelkader/ChatPharo/actions/workflows/CI.yml/badge.svg)](https://github.com/omarabedelkader/ChatPharo/actions/workflows/CI.yml)
 
 
 ChatPharo is designed to integrate AI/chat functionality into the Pharo environment. This plugin allows you to communicate with language models directly from Pharo.
