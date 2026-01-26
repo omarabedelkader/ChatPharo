@@ -109,11 +109,12 @@ BaselineOfAIChatPharo >> baseline: spec [
 			spec package: 'AI-ChatPharo-Multivers' with: [ spec requires: #( 'AI-ChatPharo' ) ].
 			spec package: 'AI-ChatPharo-Tutorial' with: [ spec requires: #( 'AI-ChatPharo' ) ].
 			spec package: 'AI-ChatPharo-Ethics' with: [ spec requires: #( 'AI-ChatPharo' ) ].
+			spec package: 'AI-ChatPharo-Memory' with: [ spec requires: #( 'AI-ChatPharo' ) ].
 			spec package: 'AI-ChatPharo-Tests' with: [
 					spec requires:
 						#( 'AI-ChatPharo' 'AI-ChatPharo-Agent' 'AI-ChatPharo-Spec' 'AI-ChatPharo-Tools' 'AI-ChatPharo-History'
 						   'AI-ChatPharo-Env' 'AI-ChatPharo-Safety' 'AI-ChatPharo-Skills' 'AI-ChatPharo-Sandbox' 'AI-ChatPharo-Multivers'
-						   'AI-ChatPharo-Tutorial' 'AI-ChatPharo-Ethics' ) ] ]
+						   'AI-ChatPharo-Tutorial' 'AI-ChatPharo-Ethics' 'AI-ChatPharo-Memory' ) ] ]
 ]
 
 { #category : 'baselines' }
