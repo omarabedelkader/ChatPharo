@@ -12,7 +12,8 @@ Class {
 		'model',
 		'inspectButton',
 		'scrollableMessages',
-		'thinkingPresenter'
+		'thinkingPresenter',
+		'errorPresenter'
 	],
 	#category : 'AI-ChatPharo-Spec-Core',
 	#package : 'AI-ChatPharo-Spec',
@@ -63,7 +64,17 @@ ChatPharoChatPresenter >> connectPresenters [
 			ChatPharoLogger logFrontend: 'Tool execution feedback shown'
                                 details: (Dictionary new
                                         at: 'chatId' put: model identityHash;
-                                        yourself) ]
+                                        yourself) ].
+
+	model whenErrorReceivedDo: [ :errorMessage |
+			self hideThinking.
+			self showError: errorMessage.
+			submitButton enabled: true.
+			messageTextField enabled: true.
+			ChatPharoLogger logFrontend: 'Error displayed in transcript' details: (Dictionary new
+					 at: 'chatId' put: model identityHash;
+					 at: 'error' put: errorMessage;
+					 yourself) ]
 ]
 
 { #category : 'layout' }
@@ -104,11 +115,19 @@ ChatPharoChatPresenter >> exportAsJson [
 ]
 
 { #category : 'initialization' }
+ChatPharoChatPresenter >> hideError [
+	"Hide the error indicator"
+
+	messagesLayout remove: errorPresenter ifAbsent: [ "not shown" ]
+]
+
+{ #category : 'initialization' }
 ChatPharoChatPresenter >> hideThinking [
 	"Hide the thinking indicator and stop animation"
 
 	thinkingPresenter stopAnimation.
-	messagesLayout remove: thinkingPresenter ifAbsent: [ "not shown" ]
+	messagesLayout remove: thinkingPresenter ifAbsent: [ "not shown" ].
+	errorPresenter := self instantiate: ChatPharoErrorPresenter.
 ]
 
 { #category : 'initialization' }
@@ -181,6 +200,15 @@ ChatPharoChatPresenter >> sendMessage [
 ChatPharoChatPresenter >> setModelBeforeInitialization: anObject [
 
 	model := anObject
+]
+
+{ #category : 'initialization' }
+ChatPharoChatPresenter >> showError: aString [
+	"Show the error indicator with the given error message"
+
+	errorPresenter errorMessage: aString.
+	errorPresenter whenDismissedDo: [ self hideError ].
+	messagesLayout add: errorPresenter withConstraints: [ :constraints | constraints height: 40 ]
 ]
 
 { #category : 'initialization' }

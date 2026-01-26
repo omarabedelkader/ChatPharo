@@ -26,7 +26,8 @@ Class {
 		'onAnswerReceived',
 		'history',
 		'onToolExecution',
-		'cache'
+		'cache',
+		'onErrorReceived'
 	],
 	#category : 'AI-ChatPharo',
 	#package : 'AI-ChatPharo'
@@ -238,14 +239,24 @@ ChatPharoChat >> sendMessage: aText [
 
 	"Standard single-agent execution"
 	promptProcess := [
-		| backend |
-		backend := self agent.
-		backend onToolExecution: [ self triggerToolExecution ].
-		backend promptPrefix: history asPromptPrefix.
-		answer := backend getResponseForPrompt: aText.
-		cache at: aText put: answer.
-		self addAssistantMessage: answer.
-		onAnswerReceived ifNotNil: [ :blk | blk value: messages last ] ] fork
+				[
+			| backend |
+			backend := self agent.
+			backend onToolExecution: [ self triggerToolExecution ].
+			backend promptPrefix: history asPromptPrefix.
+			answer := backend getResponseForPrompt: aText.
+			cache at: aText put: answer.
+			self addAssistantMessage: answer.
+			onAnswerReceived ifNotNil: [ :blk | blk value: messages last ]
+		] on: Error do: [ :ex |
+			ChatPharoLogger logBackend: 'Error during message send'
+				details: (Dictionary new
+					at: 'chatId' put: self identityHash;
+					at: 'error' put: ex messageText;
+					yourself).
+			onErrorReceived ifNotNil: [ :blk | blk value: ex messageText ]
+		]
+	] fork
 ]
 
 { #category : 'running' }
@@ -257,23 +268,33 @@ ChatPharoChat >> sendMessageViaMultivers: aText [
 	multivers := ChatPharoSettings default multivers.
 
 	promptProcess := [
-		| answer |
-		ChatPharoLogger logBackend: 'Starting multivers chain execution'
-			details: (Dictionary new
-				at: 'prompt' put: aText;
-				at: 'stepsCount' put: multivers stepsCount;
-				yourself).
+		[
+			| answer |
+			ChatPharoLogger logBackend: 'Starting multivers chain execution'
+				details: (Dictionary new
+					at: 'prompt' put: aText;
+					at: 'stepsCount' put: multivers stepsCount;
+					yourself).
 
-		answer := multivers executeForPrompt: aText.
-		cache at: aText put: answer.
-		self addAssistantMessage: answer.
+			answer := multivers executeForPrompt: aText.
+			cache at: aText put: answer.
+			self addAssistantMessage: answer.
 
-		ChatPharoLogger logBackend: 'Multivers chain execution completed'
-			details: (Dictionary new
-				at: 'responseLength' put: answer size;
-				yourself).
+			ChatPharoLogger logBackend: 'Multivers chain execution completed'
+				details: (Dictionary new
+					at: 'responseLength' put: answer size;
+					yourself).
 
-		onAnswerReceived ifNotNil: [ :blk | blk value: messages last ] ] fork
+			onAnswerReceived ifNotNil: [ :blk | blk value: messages last ]
+		] on: Error do: [ :ex |
+			ChatPharoLogger logBackend: 'Error during multivers execution'
+				details: (Dictionary new
+					at: 'chatId' put: self identityHash;
+					at: 'error' put: ex messageText;
+					yourself).
+			onErrorReceived ifNotNil: [ :blk | blk value: ex messageText ]
+		]
+	] fork
 ]
 
 { #category : 'running' }
@@ -293,6 +314,12 @@ promptProcess ifNotNil: [ promptProcess waitUntil: [ promptProcess isTerminated 
 ChatPharoChat >> whenAnswerReceivedDo: aBlock [
 
 	onAnswerReceived := aBlock
+]
+
+{ #category : 'running' }
+ChatPharoChat >> whenErrorReceivedDo: aBlock [
+
+	onErrorReceived := aBlock
 ]
 
 { #category : 'running' }
