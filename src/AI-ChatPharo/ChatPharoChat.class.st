@@ -292,58 +292,36 @@ ChatPharoChat >> recordUserPreference: preferenceText [
 
 { #category : 'running' }
 ChatPharoChat >> sendMessage: aText [
-	| answer multivers promptWithMemory historyPrefix combinedPrefix |
 
+	| answer multivers promptWithMemory historyPrefix combinedPrefix |
 	self addUserMessage: aText.
 
 	(cache includesKey: aText) ifTrue: [
-		answer := cache at: aText.
-		self addAssistantMessage: answer.
-		onAnswerReceived ifNotNil: [ :blk | blk value: messages last ].
-		^ self
-	].
-
-	"Check if multivers mode is enabled and can execute"
-	multivers := ChatPharoSettings default multivers.
-	(multivers notNil and: [ multivers canExecute ])
-		ifTrue: [ ^ self sendMessageViaMultivers: aText ].
-
-	"Standard single-agent execution"
-	promptProcess := [
-		[
-			| backend |
-			backend := self agent.
-			backend onToolExecution: [ self triggerToolExecution ].
-
-			"Build prefixes"
-			promptWithMemory := self buildPromptPrefixWithMemoryFor: aText.
-			historyPrefix := history asPromptPrefix.
-
-			"Combine memory + history ONCE"
-			combinedPrefix :=
-				promptWithMemory
-					ifNil: [ historyPrefix ]
-					ifNotNil: [ promptWithMemory , historyPrefix ].
-
-			backend promptPrefix: combinedPrefix.
-
-			answer := backend getResponseForPrompt: aText.
-			cache at: aText put: answer.
+			answer := cache at: aText.
 			self addAssistantMessage: answer.
-			onAnswerReceived ifNotNil: [ :blk | blk value: messages last ]
-		]
-		on: Error
-		do: [ :ex |
-			ChatPharoLogger
-				logBackend: 'Error during message send'
-				details: (Dictionary new
-					at: 'chatId' put: self identityHash;
-					at: 'error' put: ex messageText;
-					yourself).
-			onErrorReceived ifNotNil: [ :blk | blk value: ex messageText ]
-		]
-	] fork
-
+			onAnswerReceived ifNotNil: [ :blk | blk value: messages last ].
+			^ self ]. "Check if multivers mode is enabled and can execute"
+	multivers := ChatPharoSettings default multivers.
+	(multivers notNil and: [ multivers canExecute ]) ifTrue: [ ^ self sendMessageViaMultivers: aText ]. "Standard single-agent execution"
+	promptProcess := [
+		                 [
+			                 | backend |
+			                 backend := self agent.
+			                 backend onToolExecution: [ self triggerToolExecution ]. "Build prefixes"
+			                 promptWithMemory := self buildPromptPrefixWithMemoryFor: aText.
+			                
+backend promptPrefix: promptWithMemory.
+			                 answer := backend getResponseForPrompt: aText.
+			                 cache at: aText put: answer.
+			                 self addAssistantMessage: answer.
+			                 onAnswerReceived ifNotNil: [ :blk | blk value: messages last ] ]
+			                 on: Error
+			                 do: [ :ex |
+					                 ChatPharoLogger logBackend: 'Error during message send' details: (Dictionary new
+							                  at: 'chatId' put: self identityHash;
+							                  at: 'error' put: ex messageText;
+							                  yourself).
+					                 onErrorReceived ifNotNil: [ :blk | blk value: ex messageText ] ] ] fork
 ]
 
 { #category : 'running' }
