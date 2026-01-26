@@ -54,7 +54,11 @@ Class {
 		'tutorialCompleted',
 		'wantsTutorial',
 		'customTools',
-		'advisorDefaultsConfigured'
+		'advisorDefaultsConfigured',
+		'memoryEnabled',
+		'memoryRetentionDays',
+		'memoryMaxItems',
+		'memoryAutoSummarize'
 	],
 	#classInstVars : [
 		'Default'
@@ -115,13 +119,16 @@ ChatPharoSettings class >> loadOrNew [
 				  (settings instVarNamed: 'cognitiveLoadBudget') ifNotNil: [ :value | settings ethicsDirector cognitiveLoadBudget: value ].
 				  (settings instVarNamed: 'tokenBudget') ifNotNil: [ :value | settings ethicsDirector tokenBudget: value ].
 				  (settings instVarNamed: 'timeBudgetMinutes') ifNotNil: [ :value | settings ethicsDirector timeBudgetMinutes: value ].
-				settings ethicsDirector messageLimit ifNil: [
-					  settings ethicsDirector messageLimit: 50 ].
+				  settings ethicsDirector messageLimit ifNil: [ settings ethicsDirector messageLimit: 50 ].
 				  settings multivers ifNil: [ settings multivers: ChatPharoMultivers new ].
 				  settings userLevel ifNil: [ settings privateSetUserLevel: 'beginner' ].
 				  settings tutorialCompleted ifNil: [ settings privateSetTutorialCompleted: false ].
 				  settings wantsTutorial ifNil: [ settings privateSetWantsTutorial: false ].
 				  settings advisorDefaultsConfigured ifNil: [ settings privateSetAdvisorDefaultsConfigured: false ].
+								  settings memoryEnabled ifNil: [ settings privateSetMemoryEnabled: true ].
+				  settings memoryRetentionDays ifNil: [ settings privateSetMemoryRetentionDays: 30 ].
+				  settings memoryMaxItems ifNil: [ settings privateSetMemoryMaxItems: 1000 ].
+				  settings memoryAutoSummarize ifNil: [ settings privateSetMemoryAutoSummarize: true ].
 				  ^ settings ]
 				  on: Error
 				  do: [ ^ self new ] ]
@@ -626,6 +633,10 @@ ChatPharoSettings >> initialize [
 	wantsTutorial := false.
 	multivers := ChatPharoMultivers new.
 	customTools := OrderedCollection new.
+		memoryEnabled := true.
+	memoryRetentionDays := 30.
+	memoryMaxItems := 1000.
+	memoryAutoSummarize := true.
 	ChatPharoLogger loggingEnabled: true.
 	ChatPharoLogger logSystem: 'Settings initialized' details: (Dictionary new
 			 at: 'defaultAgent' put: (ChatPharoLogger agentNameFor: agent);
@@ -699,6 +710,82 @@ ChatPharoSettings >> maximumIterations: aNumber [
                 details: (Dictionary new
                         at: 'value' put: maximumIterations;
                         yourself)
+]
+
+{ #category : 'memory' }
+ChatPharoSettings >> memoryAutoSummarize [
+	"Whether to automatically summarize conversations for memory"
+
+	^ memoryAutoSummarize ifNil: [ memoryAutoSummarize := true ]
+]
+
+{ #category : 'memory' }
+ChatPharoSettings >> memoryAutoSummarize: aBoolean [
+
+	memoryAutoSummarize := aBoolean.
+	self class setDefault: self.
+	self class saveDefault.
+	ChatPharoLogger logFrontend: 'Memory auto-summarize toggled'
+		details: (Dictionary new
+				 at: 'enabled' put: aBoolean;
+				 yourself)
+]
+
+{ #category : 'memory' }
+ChatPharoSettings >> memoryEnabled [
+	"Whether long-term memory tracking is enabled"
+
+	^ memoryEnabled ifNil: [ memoryEnabled := true ]
+]
+
+{ #category : 'memory' }
+ChatPharoSettings >> memoryEnabled: aBoolean [
+
+	memoryEnabled := aBoolean.
+	self class setDefault: self.
+	self class saveDefault.
+	ChatPharoLogger logFrontend: 'Memory tracking toggled'
+		details: (Dictionary new
+				 at: 'enabled' put: aBoolean;
+				 yourself)
+]
+
+{ #category : 'memory' }
+ChatPharoSettings >> memoryMaxItems [
+	"Maximum number of memory items to keep"
+
+	^ memoryMaxItems ifNil: [ memoryMaxItems := 1000 ]
+]
+
+{ #category : 'memory' }
+ChatPharoSettings >> memoryMaxItems: aNumber [
+
+	memoryMaxItems := aNumber.
+	self class setDefault: self.
+	self class saveDefault.
+	ChatPharoLogger logFrontend: 'Memory max items updated'
+		details: (Dictionary new
+				 at: 'value' put: aNumber;
+				 yourself)
+]
+
+{ #category : 'memory' }
+ChatPharoSettings >> memoryRetentionDays [
+	"Number of days to retain memories"
+
+	^ memoryRetentionDays ifNil: [ memoryRetentionDays := 30 ]
+]
+
+{ #category : 'memory' }
+ChatPharoSettings >> memoryRetentionDays: aNumber [
+
+	memoryRetentionDays := aNumber.
+	self class setDefault: self.
+	self class saveDefault.
+	ChatPharoLogger logFrontend: 'Memory retention days updated'
+		details: (Dictionary new
+				 at: 'value' put: aNumber;
+				 yourself)
 ]
 
 { #category : 'ethics' }
@@ -822,6 +909,34 @@ ChatPharoSettings >> privateSetIsConfigured: aBoolean [
 ChatPharoSettings >> privateSetIsDeveloper: aBoolean [
 	"Set isDeveloper without triggering save. Used during loading."
 	isDeveloper := aBoolean
+]
+
+{ #category : 'private' }
+ChatPharoSettings >> privateSetMemoryAutoSummarize: aBoolean [
+	"Set memoryAutoSummarize without triggering save. Used during loading."
+
+	memoryAutoSummarize := aBoolean
+]
+
+{ #category : 'private' }
+ChatPharoSettings >> privateSetMemoryEnabled: aBoolean [
+	"Set memoryEnabled without triggering save. Used during loading."
+
+	memoryEnabled := aBoolean
+]
+
+{ #category : 'private' }
+ChatPharoSettings >> privateSetMemoryMaxItems: aNumber [
+	"Set memoryMaxItems without triggering save. Used during loading."
+
+	memoryMaxItems := aNumber
+]
+
+{ #category : 'private' }
+ChatPharoSettings >> privateSetMemoryRetentionDays: aNumber [
+	"Set memoryRetentionDays without triggering save. Used during loading."
+
+	memoryRetentionDays := aNumber
 ]
 
 { #category : 'private' }

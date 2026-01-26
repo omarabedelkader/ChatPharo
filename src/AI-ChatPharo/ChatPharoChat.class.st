@@ -91,6 +91,24 @@ ChatPharoChat >> agent: anObject [
 	agent := anObject
 ]
 
+{ #category : 'private' }
+ChatPharoChat >> buildPromptPrefixWithMemoryFor: queryText [
+	"Build the prompt prefix including memory context if enabled"
+
+	| prefix memoryContext |
+	prefix := history asPromptPrefix.
+
+	"Add memory context if enabled"
+	(ChatPharoSettings default memoryEnabled and: [
+		 self class environment includesKey: #ChatPharoMemory ]) ifTrue: [
+		memoryContext := (self class environment at: #ChatPharoMemory) default
+			                 contextForQuery: queryText.
+		memoryContext ifNotEmpty: [
+			prefix := memoryContext , String cr , prefix ] ].
+
+	^ prefix
+]
+
 { #category : 'running' }
 ChatPharoChat >> cancelMessage [
 
@@ -106,6 +124,8 @@ ChatPharoChat >> clearCache [
 { #category : 'running' }
 ChatPharoChat >> clearChat [
 
+	"Save conversation summary to memory before clearing"
+	self summarizeConversationToMemory.
 	self cancelMessage.
 	history clear.
 	messages removeAll.
@@ -221,42 +241,87 @@ ChatPharoChat >> presenter [
 	^ ChatPharoChatPresenter on: self
 ]
 
+{ #category : 'memory' }
+ChatPharoChat >> recordFeedback: feedbackText positive: isPositive [
+	"Record user feedback as a memory item"
+
+	(ChatPharoSettings default memoryEnabled and: [
+		 self class environment includesKey: #ChatPharoMemory ]) ifFalse: [ ^ self ].
+
+	(self class environment at: #ChatPharoMemory) default
+		addFeedback: feedbackText
+		positive: isPositive.
+
+	ChatPharoLogger logSystem: 'Feedback recorded to memory'
+		details: (Dictionary new
+				 at: 'positive' put: isPositive;
+				 yourself)
+]
+
+{ #category : 'memory' }
+ChatPharoChat >> recordUserCorrection: correctionText [
+	"Record a user correction as a memory item"
+
+	(ChatPharoSettings default memoryEnabled and: [
+		 self class environment includesKey: #ChatPharoMemory ]) ifFalse: [ ^ self ].
+
+	(self class environment at: #ChatPharoMemory) default
+		addCorrection: correctionText.
+
+	ChatPharoLogger logSystem: 'Correction recorded to memory'
+		details: (Dictionary new
+				 at: 'correction' put: (correctionText truncateTo: 50);
+				 yourself)
+]
+
+{ #category : 'memory' }
+ChatPharoChat >> recordUserPreference: preferenceText [
+	"Record a user preference as a memory item"
+
+	(ChatPharoSettings default memoryEnabled and: [
+		 self class environment includesKey: #ChatPharoMemory ]) ifFalse: [ ^ self ].
+
+	(self class environment at: #ChatPharoMemory) default
+		addUserPreference: preferenceText.
+
+	ChatPharoLogger logSystem: 'User preference recorded to memory'
+		details: (Dictionary new
+				 at: 'preference' put: (preferenceText truncateTo: 50);
+				 yourself)
+]
+
 { #category : 'running' }
 ChatPharoChat >> sendMessage: aText [
 
-| answer multivers |
+	| answer multivers promptWithMemory |
 	self addUserMessage: aText.
 	(cache includesKey: aText) ifTrue: [
-		answer := cache at: aText.
-		self addAssistantMessage: answer.
-		onAnswerReceived ifNotNil: [ :blk | blk value: messages last ].
-		^ self ].
-
-	"Check if multivers mode is enabled and can execute"
-	multivers := ChatPharoSettings default multivers.
-	(multivers notNil and: [ multivers canExecute ]) ifTrue: [
-		^ self sendMessageViaMultivers: aText ].
-
-	"Standard single-agent execution"
-	promptProcess := [
-				[
-			| backend |
-			backend := self agent.
-			backend onToolExecution: [ self triggerToolExecution ].
-			backend promptPrefix: history asPromptPrefix.
-			answer := backend getResponseForPrompt: aText.
-			cache at: aText put: answer.
+			answer := cache at: aText.
 			self addAssistantMessage: answer.
-			onAnswerReceived ifNotNil: [ :blk | blk value: messages last ]
-		] on: Error do: [ :ex |
-			ChatPharoLogger logBackend: 'Error during message send'
-				details: (Dictionary new
-					at: 'chatId' put: self identityHash;
-					at: 'error' put: ex messageText;
-					yourself).
-			onErrorReceived ifNotNil: [ :blk | blk value: ex messageText ]
-		]
-	] fork
+			onAnswerReceived ifNotNil: [ :blk | blk value: messages last ].
+			^ self ]. "Check if multivers mode is enabled and can execute"
+	multivers := ChatPharoSettings default multivers.
+	(multivers notNil and: [ multivers canExecute ]) ifTrue: [ ^ self sendMessageViaMultivers: aText ]. "Standard single-agent execution"
+	promptProcess := [
+		                 [
+			                 | backend |
+			                 backend := self agent.
+			                 backend onToolExecution: [ self triggerToolExecution ].
+			"Build prompt prefix with memory context"
+		promptWithMemory := self buildPromptPrefixWithMemoryFor: aText.
+		backend promptPrefix: promptWithMemory.
+			                 backend promptPrefix: history asPromptPrefix.
+			                 answer := backend getResponseForPrompt: aText.
+			                 cache at: aText put: answer.
+			                 self addAssistantMessage: answer.
+			                 onAnswerReceived ifNotNil: [ :blk | blk value: messages last ] ]
+			                 on: Error
+			                 do: [ :ex |
+					                 ChatPharoLogger logBackend: 'Error during message send' details: (Dictionary new
+							                  at: 'chatId' put: self identityHash;
+							                  at: 'error' put: ex messageText;
+							                  yourself).
+					                 onErrorReceived ifNotNil: [ :blk | blk value: ex messageText ] ] ] fork
 ]
 
 { #category : 'running' }
@@ -295,6 +360,38 @@ ChatPharoChat >> sendMessageViaMultivers: aText [
 			onErrorReceived ifNotNil: [ :blk | blk value: ex messageText ]
 		]
 	] fork
+]
+
+{ #category : 'memory' }
+ChatPharoChat >> summarizeConversationToMemory [
+	"Create a summary of this conversation and store it in memory.
+	 This is typically called when the chat is closed or cleared."
+
+	| summary messageCount |
+	(ChatPharoSettings default memoryEnabled and: [
+		 ChatPharoSettings default memoryAutoSummarize and: [
+			 self class environment includesKey: #ChatPharoMemory ] ]) ifFalse: [ ^ self ].
+
+	messageCount := messages size.
+	messageCount < 2 ifTrue: [ ^ self ]. "Don't summarize trivial conversations"
+
+	summary := String streamContents: [ :stream |
+		           stream nextPutAll: 'Conversation with '.
+		           stream nextPutAll: messageCount asString.
+		           stream nextPutAll: ' exchanges. Topics discussed: '.
+		           (messages first: (3 min: messageCount)) do: [ :msg |
+			           msg content ifNotNil: [ :c |
+				           stream
+					           nextPutAll: (c truncateTo: 50);
+					           nextPutAll: '; ' ] ] ].
+
+	(self class environment at: #ChatPharoMemory) default
+		addConversationSummary: summary.
+
+	ChatPharoLogger logSystem: 'Conversation summarized to memory'
+		details: (Dictionary new
+				 at: 'messageCount' put: messageCount;
+				 yourself)
 ]
 
 { #category : 'running' }

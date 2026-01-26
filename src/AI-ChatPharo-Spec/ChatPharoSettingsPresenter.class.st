@@ -242,6 +242,8 @@ ChatPharoSettingsPresenter >> initializePresenters [
 	notebook addPage: (SpNotebookPage title: 'Personal' icon: (self iconNamed: #user) provider: [ self newPersonalTab ]).
 
 	notebook addPage: (SpNotebookPage title: 'Skills' icon: (self iconNamed: #smallObjects) provider: [ self newSkillsTab ]).
+	
+	notebook addPage: (SpNotebookPage title: 'Memory' icon: (self iconNamed: #history) provider: [ self newMemoryTab ]).
 
 	notebook addPage:
 		(SpNotebookPage title: 'Custom Tools' icon: (self iconNamed: #smallObjects) provider: [ self newCustomToolsTab ]).
@@ -524,6 +526,13 @@ history := history ifNil: [ model agent history ].
                                    add: historyView;
                                    yourself);
                   yourself
+]
+
+{ #category : 'initialization' }
+ChatPharoSettingsPresenter >> newMemoryTab [
+	"Creates the Long-Term Memory configuration tab"
+
+	^ ChatPharoMemoryPresenter on: model
 ]
 
 { #category : 'initialization' }
