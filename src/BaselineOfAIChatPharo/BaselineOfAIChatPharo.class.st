@@ -97,6 +97,7 @@ BaselineOfAIChatPharo >> baseline: spec [
 	<baseline>
 	spec for: #common do: [
 			spec postLoadDoIt: #postLoad.
+			spec baseline: 'NeoJSON' with: [ spec repository: 'github://svenvc/NeoJSON/repository' ].
 			spec package: 'AI-ChatPharo'.
 			spec package: 'AI-ChatPharo-Agent' with: [ spec requires: #( 'AI-ChatPharo' ) ].
 			spec package: 'AI-ChatPharo-Spec' with: [ spec requires: #( 'AI-ChatPharo' ) ].
