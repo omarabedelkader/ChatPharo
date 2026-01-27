@@ -242,7 +242,7 @@ ChatPharoTool >> getResponseForHistory: history [
 
 	response := self client
 		            addPath: #( 'chat' 'completions' );
-		            entity: (ZnEntity json: (STONJSON toString: data));
+		            entity: (ZnEntity json: (self jsonStringFor: (self normalizeForJson: data)));
 		            timeout: (Duration minutes: 5) asSeconds;
 		            post;
 		            response.
@@ -270,6 +270,13 @@ ChatPharoTool >> initializeWithBaseURL: initialBaseURL apiKey: initialAPIKey sys
 ]
 
 { #category : 'accessing' }
+ChatPharoTool >> jsonStringFor: anObject [
+	"Serialize JSON while ignoring shared reference warnings."
+
+	^ STONJSON toString: anObject
+]
+
+{ #category : 'accessing' }
 ChatPharoTool >> model [
 
 	^ model
@@ -288,6 +295,24 @@ ChatPharoTool >> modelNames [
 	response := self client addPathSegment:'models'; get; response.
 	response isSuccess ifFalse:[ Error signal:'Could not retrieve models' ].
 	^ ((STONJSON fromString: response contents) at:'data') collect:[:m| m at:'id' ]
+]
+
+{ #category : 'accessing' }
+ChatPharoTool >> normalizeForJson: anObject [
+	"Create a JSON-safe copy of anObject without shared references."
+
+	anObject isNil ifTrue: [ ^ nil ].
+	(anObject isString or: [ anObject isSymbol ]) ifTrue: [ ^ anObject asString copy ].
+	(anObject isNumber or: [ anObject isKindOf: Boolean ]) ifTrue: [ ^ anObject ].
+	(anObject isDictionary) ifTrue: [
+		| dict |
+		dict := Dictionary new.
+		anObject keysAndValuesDo: [ :key :value |
+			dict at: key asString copy put: (self normalizeForJson: value) ].
+		^ dict ].
+	(anObject isCollection) ifTrue: [
+		^ (anObject collect: [ :each | self normalizeForJson: each ]) as: Array ].
+	^ anObject asString copy
 ]
 
 { #category : 'accessing' }
@@ -343,8 +368,8 @@ ChatPharoTool >> toolCallsFromMessage: message [
                     on: Error do: [ Dictionary with: 'error' -> 'Invalid arguments' ] ]
             ifFalse: [ rawArgs ifNil: [ Dictionary new ] ]).
 
-        content := STONJSON toString:
-            (self applyToolFunction: fn arguments: parsedArgs).
+        content := self jsonStringFor:
+            (self normalizeForJson: (self applyToolFunction: fn arguments: parsedArgs)).
 
         callId := c at: 'id' ifAbsent: [ 'tool-', (DateAndTime now asString) ].
 

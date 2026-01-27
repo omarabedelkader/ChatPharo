@@ -158,7 +158,7 @@ ChatPharoChat >> exportAsJson [
 			(dict includesKey: 'content') ifFalse: [
 				dict at: 'content' put: '' ] ].
 		dict ].
-	^ STONJSON toString: normalized
+	^ self jsonStringFor: normalized
 ]
 
 { #category : 'running' }
@@ -229,6 +229,13 @@ ChatPharoChat >> initialize [
 	onChatReset := nil.
 	cache := Dictionary new.
 	ChatPharoSettings default welcomeMessageEnabled ifTrue: [ self addWelcomeMessage ]
+]
+
+{ #category : 'accessing' }
+ChatPharoChat >> jsonStringFor: anObject [
+	"Serialize JSON while ignoring shared reference warnings."
+
+^ STONJSON toString: anObject
 ]
 
 { #category : 'accessing' }

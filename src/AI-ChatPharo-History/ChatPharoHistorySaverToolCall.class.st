@@ -83,12 +83,12 @@ ChatPharoHistorySaverToolCall >> openAIChatToolCall [
 
     ^ Dictionary
         with: 'type' -> 'function'
-        with: 'id' -> id
+        with: 'id' -> id  asString copy
         with: 'function' -> (Dictionary
-            with: 'name' -> functionName
+            with: 'name' -> functionName  asString copy
             with: 'arguments' ->
                 (arguments isString
-                    ifTrue: [ arguments ]
+                    ifTrue: [ arguments asString copy  ]
                     ifFalse: [ STONJSON toString: (arguments ifNil: [ Dictionary new ]) ]))
 ]
 
@@ -97,6 +97,6 @@ ChatPharoHistorySaverToolCall >> openAIChatToolMessage [
 
 	^ Dictionary
 	with: 'role' -> 'tool'
-	with: 'tool_call_id' -> id
+	with: 'tool_call_id' -> id asString copy
 	with: 'content' -> (content ifNil: [ '[No tool result]' ])
 ]
