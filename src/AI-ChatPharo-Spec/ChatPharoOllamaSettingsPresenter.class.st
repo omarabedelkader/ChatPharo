@@ -11,6 +11,7 @@ Class {
 		'hostInput',
 		'portInput',
 		'temperatureInput',
+		'suggestedModelsDrop',
 		'installInput',
 		'installButton',
 		'deleteButton',
@@ -49,13 +50,19 @@ ChatPharoOllamaSettingsPresenter >> connectPresenters [
 { #category : 'layout' }
 ChatPharoOllamaSettingsPresenter >> defaultLayout [
 
-	| mainLayout rowLayout modelRow hostRow portRow tempRow installRow maxTokensRow topPRow customParamsRow |
+	| mainLayout rowLayout modelRow hostRow portRow tempRow installRow maxTokensRow topPRow customParamsRow suggestedRow |
 	modelRow := SpBoxLayout newHorizontal
 		            spacing: 8;
 		            add: (self newLabel label: 'Available models:') expand: false;
 		            add: self modelsDrop expand: true;
 		            add: self refreshButton expand: false;
 		            yourself.
+	suggestedRow := SpBoxLayout newHorizontal
+		              spacing: 8;
+		              add: (self newLabel label: 'Suggested models:')
+		              expand: false;
+		              add: suggestedModelsDrop expand: true;
+		              yourself.
 
 	installRow := SpBoxLayout newHorizontal
 		              spacing: 8;
@@ -109,6 +116,7 @@ maxTokensRow := SpBoxLayout newHorizontal
 		              borderWidth: 8;
 		              beNotHomogeneous;
 		              add: modelRow expand: false;
+		add: suggestedRow expand: false;
 		              add: installRow expand: false;
 		              add: hostRow expand: false;
 		              add: portRow expand: false;
@@ -159,6 +167,13 @@ ChatPharoOllamaSettingsPresenter >> initializePresenters [
 		                    placeholder: '0.0';
 		                    text: model temperature asString;
 		                    yourself.
+	suggestedModelsDrop := SpDropListPresenter new
+		items: (#('') , model class suggestedModels);
+		display: [ :name | name ifEmpty: [ '-- Select a model --' ] ifNotEmpty: [ name ] ];
+		whenSelectedItemChangedDo: [ :name |
+			name ifNotEmpty: [ installInput text: name ] ];
+		yourself.
+		
 	
 	maxTokensInput := self newTextInput
 		                  placeholder: 'e.g. 1024';
@@ -286,6 +301,18 @@ ChatPharoOllamaSettingsPresenter >> refreshModels [
 { #category : 'accessing - model' }
 ChatPharoOllamaSettingsPresenter >> setModelBeforeInitialization: anAgent [
 	model := anAgent
+]
+
+{ #category : 'initialization' }
+ChatPharoOllamaSettingsPresenter >> suggestedModelsDrop [
+
+	^ suggestedModelsDrop
+]
+
+{ #category : 'initialization' }
+ChatPharoOllamaSettingsPresenter >> suggestedModelsDrop: anObject [
+
+	suggestedModelsDrop := anObject
 ]
 
 { #category : 'layout' }

@@ -146,6 +146,29 @@ ChatPharoOllamaAgent class >> settingsPresenterFor: anAgent [
 ]
 
 { #category : 'api' }
+ChatPharoOllamaAgent class >> suggestedModels [
+	"Returns a list of commonly used/popular models for Ollama.
+	These are pre-defined suggestions to help users quickly pull models."
+
+	^ #(
+		'llama3.2:3b'
+		'llama3.2:1b'
+		'llama3.1:8b'
+		'mistral:7b'
+		'gemma2:9b'
+		'gemma2:2b'
+		'qwen2.5:7b'
+		'qwen2.5:3b'
+		'codellama:7b'
+		'codellama:13b'
+		'phi3:mini'
+		'deepseek-coder:6.7b'
+		'starcoder2:3b'
+		'granite3-dense:8b'
+	)
+]
+
+{ #category : 'api' }
 ChatPharoOllamaAgent class >> validateModel: aModelName [
 
     (self isValidModel: aModelName) ifFalse: [
