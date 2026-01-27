@@ -119,7 +119,9 @@ ChatPharoChatPresenter >> exportAsJson [
                         ifFalse: [ tc ] ] as: Array)
         ].
         dict ].
-    ^ STONJSON toString: (msgs as: Array)
+   ^ (model respondsTo: #jsonStringFor:)
+        ifTrue: [ model jsonStringFor: (msgs as: Array) ]
+        ifFalse: [ STONJSON toString: (msgs as: Array) ]
 ]
 
 { #category : 'initialization' }

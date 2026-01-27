@@ -158,7 +158,7 @@ ChatPharoChat >> exportAsJson [
 			(dict includesKey: 'content') ifFalse: [
 				dict at: 'content' put: '' ] ].
 		dict ].
-	^ STONJSON toString: normalized
+	^ self jsonStringFor: normalized
 ]
 
 { #category : 'running' }
@@ -229,6 +229,19 @@ ChatPharoChat >> initialize [
 	onChatReset := nil.
 	cache := Dictionary new.
 	ChatPharoSettings default welcomeMessageEnabled ifTrue: [ self addWelcomeMessage ]
+]
+
+{ #category : 'accessing' }
+ChatPharoChat >> jsonStringFor: anObject [
+	"Serialize JSON while ignoring shared reference warnings."
+
+	| stream writer |
+	stream := WriteStream on: String new.
+	writer := STONWriter on: stream.
+	(writer respondsTo: #referencePolicy:) ifTrue: [
+		writer referencePolicy: #ignore ].
+	writer nextPut: anObject.
+	^ stream contents
 ]
 
 { #category : 'accessing' }
