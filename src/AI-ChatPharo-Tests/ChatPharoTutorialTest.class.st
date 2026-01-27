@@ -125,7 +125,7 @@ ChatPharoTutorialTest >> testLessonIconDefault [
 { #category : 'tests' }
 ChatPharoTutorialTest >> testLessonsCountIsFourteen [
 
-	self assert: tutorial lessonsCount equals: 14
+	self assert: tutorial lessonsCount equals: 16
 ]
 
 { #category : 'tests' }
@@ -162,9 +162,15 @@ ChatPharoTutorialTest >> testProgressPercentAtStart [
 ]
 
 { #category : 'tests' }
+ChatPharoTutorialTest >> testProgressPercentAtStart6 [
+
+	self assert: tutorial progressPercent equals: 6
+]
+
+{ #category : 'tests' }
 ChatPharoTutorialTest >> testProgressStringFormat [
 
-	self assert: tutorial progress equals: '1/14'
+	self assert: tutorial progress equals: '1/16'
 ]
 
 { #category : 'tests' }

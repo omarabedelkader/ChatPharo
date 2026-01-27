@@ -28,8 +28,9 @@ Class {
 	#classInstVars : [
 		'tutorial'
 	],
-	#category : 'AI-ChatPharo-Tutorial',
-	#package : 'AI-ChatPharo-Tutorial'
+	#category : 'AI-ChatPharo-Spec-Tutorial',
+	#package : 'AI-ChatPharo-Spec',
+	#tag : 'Tutorial'
 }
 
 { #category : 'instance creation' }
@@ -159,65 +160,68 @@ ChatPharoTutorialPresenter >> initializePresenters [
 	super initializePresenters.
 
 	iconImage := self newImage
-		image: (self iconNamed: #announcement);
-		yourself.
+		             image: (self iconNamed: #announcement);
+		             yourself.
 
 	titleLabel := self newLabel
-		label: 'Welcome to ChatPharo!';
-		yourself.
+		              label: 'Welcome to ChatPharo!';
+		              yourself.
 
 	progressLabel := self newLabel
-		label: 'Lesson 1/14';
-		yourself.
+		                 label: 'Lesson 1/16';
+		                 yourself.
 
 	progressBar := self newProgressBar
-		fixedAt: 0;
-		yourself.
+		               fixedAt: 0;
+		               yourself.
 
 	contentText := self newText
-		beNotEditable;
-		yourself.
+		               beNotEditable;
+		               yourself.
 
 	codeText := self newCode
-		beForScripting;
-		yourself.
+		            beForScripting;
+		            yourself.
 
 	codeContainer := SpBoxLayout newTopToBottom
-		spacing: 8;
-		add: (self newLabel label: 'Try this code:') expand: false;
-		add: codeText expand: true;
-		add: (SpBoxLayout newHorizontal
-			spacing: 8;
-			add: (copyCodeButton := self newButton
-				label: 'Copy';
-				icon: (self iconNamed: #smallCopy);
-				action: [ self doCopyCode ];
-				yourself) expand: false;
-			add: (executeCodeButton := self newButton
-				label: 'Do it';
-				icon: (self iconNamed: #smallDoIt);
-				action: [ self doExecuteCode ];
-				yourself) expand: false;
-			yourself) expand: false;
-		yourself.
+		                 spacing: 8;
+		                 add: (self newLabel label: 'Try this code:') expand: false;
+		                 add: codeText height: 180;
+		                 add: (SpBoxLayout newHorizontal
+				                  spacing: 8;
+				                  add: (copyCodeButton := self newButton
+						                                     label: 'Copy';
+						                                     icon: (self iconNamed: #smallCopy);
+						                                     action: [ self doCopyCode ];
+						                                     yourself)
+				                  expand: false;
+				                  add: (executeCodeButton := self newButton
+						                                        label: 'Do it';
+						                                        icon: (self iconNamed: #smallDoIt);
+						                                        action: [ self doExecuteCode ];
+						                                        yourself)
+				                  expand: false;
+				                  yourself)
+		                 expand: false;
+		                 yourself.
 
 	previousButton := self newButton
-		label: 'Previous';
-		icon: (self iconNamed: #glamorousLeft);
-		action: [ self goPrevious ];
-		yourself.
+		                  label: 'Previous';
+		                  icon: (self iconNamed: #glamorousLeft);
+		                  action: [ self goPrevious ];
+		                  yourself.
 
 	nextButton := self newButton
-		label: 'Next';
-		icon: (self iconNamed: #glamorousRight);
-		action: [ self goNext ];
-		yourself.
+		              label: 'Next';
+		              icon: (self iconNamed: #glamorousRight);
+		              action: [ self goNext ];
+		              yourself.
 
 	closeButton := self newButton
-		label: 'Close';
-		icon: (self iconNamed: #glamorousClose);
-		action: [ self close ];
-		yourself
+		               label: 'Close';
+		               icon: (self iconNamed: #glamorousClose);
+		               action: [ self close ];
+		               yourself
 ]
 
 { #category : 'initialization' }
@@ -256,20 +260,21 @@ ChatPharoTutorialPresenter >> updateCodeSection [
 
 	hasCode
 		ifTrue: [
-			codeText text: lesson codeExample.
-			codeContainer := SpBoxLayout newTopToBottom
-				spacing: 8;
-				add: (self newLabel label: 'Try this code:') expand: false;
-				add: codeText expand: true;
-				add: (SpBoxLayout newHorizontal
-					spacing: 8;
-					add: copyCodeButton expand: false;
-					add: executeCodeButton expand: false;
-					yourself) expand: false;
-				yourself ]
+				codeText text: lesson codeExample.
+				codeContainer := SpBoxLayout newTopToBottom
+					                 spacing: 8;
+					                 add: (self newLabel label: 'Try this code:') expand: false;
+					                 add: codeText height: 180;
+					                 add: (SpBoxLayout newHorizontal
+							                  spacing: 8;
+							                  add: copyCodeButton expand: false;
+							                  add: executeCodeButton expand: false;
+							                  yourself)
+					                 expand: false;
+					                 yourself ]
 		ifFalse: [
-			codeText text: ''.
-			codeContainer := SpBoxLayout newTopToBottom yourself ]
+				codeText text: ''.
+				codeContainer := SpBoxLayout newTopToBottom yourself ]
 ]
 
 { #category : 'initialization' }

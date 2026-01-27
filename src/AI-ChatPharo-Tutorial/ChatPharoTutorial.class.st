@@ -119,7 +119,7 @@ This tutorial will guide you through the main features of ChatPharo.
 Click "Next" to continue, or "Close" to exit the tutorial at any time.'
 			 icon: #announcement). 
 			
-	"Lesson 2: Opening ChatPharo"
+			"Lesson 2: Opening ChatPharo"
 	lessons add: (ChatPharoTutorialLesson
 			 title: 'Opening ChatPharo'
 			 content: 'You can open ChatPharo in several ways:
@@ -129,7 +129,7 @@ Click "Next" to continue, or "Close" to exit the tutorial at any time.'
 			 code: 'ChatPharo new presenter open'
 			 icon: #smallWindow). 
 			
-	"Lesson 3: The Chat Interface"
+			"Lesson 3: The Chat Interface"
 	lessons add: (ChatPharoTutorialLesson
 			 title: 'The Chat Interface'
 			 content: 'The ChatPharo window has several parts:
@@ -140,8 +140,32 @@ Click "Next" to continue, or "Close" to exit the tutorial at any time.'
 The chat interface is designed to be simple and familiar.'
 			 code: 'ChatPharo new presenter open'
 			 icon: #smallTalk). 
-	
-	"Lesson 4: Sending Your First Message"
+			
+			
+	"Lesson 4: Adding Context"
+	lessons add: (ChatPharoTutorialLesson
+			 title: 'Adding Context to Questions'
+			 content: 'The AI gives better answers when it understands your context.
+Before asking, include:
+- The goal you are trying to achieve
+- The class or method you are working on
+- Any error messages or stack traces
+You can also paste a small code snippet to make your question concrete.'
+			 code: 'ChatPharo ask: ''I am working on a Spec2 presenter. How can I add a toolbar with two buttons?'''
+			 icon: #smallInfo). 
+
+	"Lesson 5: Refining Answers"
+	lessons add: (ChatPharoTutorialLesson
+			 title: 'Refining Answers'
+			 content: 'Use follow-up questions to refine the response:
+1. Ask for clarification if something is unclear
+2. Request a smaller or more focused example
+3. Ask for alternatives or trade-offs
+This back-and-forth is the fastest way to learn.'
+			 code: 'ChatPharo ask: ''Can you simplify that example to only show the toolbar layout?'''
+			 icon: #smallHelp). 
+
+	"Lesson 6: Sending Your First Message"
 	lessons add: (ChatPharoTutorialLesson
 			 title: 'Sending Your First Message'
 			 content: 'To chat with the AI:
@@ -152,10 +176,10 @@ Try asking things like:
 - "How do I create a class in Pharo?"
 - "Explain the collect: method"
 - "Write a method to reverse a string"'
-code: 'ChatPharo ask: ''How do I create a class in Pharo?'''
-			 icon: #glamorousSend).
+			 code: 'ChatPharo ask: ''How do I create a class in Pharo?'''
+			 icon: #glamorousSend). 
 			
-	"Lesson 5: Working with Code Suggestions"
+			"Lesson 7: Working with Code Suggestions"
 	lessons add: (ChatPharoTutorialLesson
 			 title: 'Working with Code Suggestions'
 			 content: 'When the AI suggests code, you have several options:
@@ -165,10 +189,10 @@ code: 'ChatPharo ask: ''How do I create a class in Pharo?'''
 - Browse: If it is a class, open the System Browser
 Code blocks in responses are highlighted and have action buttons.
 Be careful when executing code - always review it first!'
-code: 'ChatPharo code: ''Array with: 1 with: 2 with: 3 collect: [ :each | each * 2 ]'''
+			 code: 'ChatPharo code: ''Array with: 1 with: 2 with: 3 collect: [ :each | each * 2 ]'''
 			 icon: #smallDoIt). 
 			
-	"Lesson 6: Managing Chats"
+			"Lesson 8: Managing Chats"
 	lessons add: (ChatPharoTutorialLesson
 			 title: 'Managing Chats'
 			 content: 'You can have multiple conversations:
@@ -176,14 +200,14 @@ code: 'ChatPharo code: ''Array with: 1 with: 2 with: 3 collect: [ :each | each *
 - Delete Chat: Removes the current chat
 - Delete All: Clears all chats (with confirmation)
 Each chat maintains its own history, so you can work on different topics simultaneously.'
-code: '| app presenter |
+			 code: '| app presenter |
 app := ChatPharo new.
 presenter := app presenter.
 presenter open.
 presenter addNewChat.'
 			 icon: #smallDelete). 
 			
-	"Lesson 7: Saving and Loading Chats"
+			"Lesson 9: Saving and Loading Chats"
 	lessons add: (ChatPharoTutorialLesson
 			 title: 'Saving and Loading Chats'
 			 content: 'Save your conversations for later:
@@ -193,14 +217,15 @@ This is useful for:
 - Keeping a record of helpful conversations
 - Sharing chats with team members
 - Resuming work after restarting Pharo'
-code: '| presenter |
+			 code: '| presenter |
 presenter := ChatPharo new presenter.
 presenter open.
 presenter addNewChat.
 presenter saveCurrentChat.'
 			 icon: #smallSave). 
 			
-	"Lesson 8: Settings Overview"
+			
+			"Lesson 10: Settings Overview"
 	lessons add: (ChatPharoTutorialLesson
 			 title: 'ChatPharo Settings'
 			 content: 'Access settings via the gear icon or World Menu > ChatPharo Settings.
@@ -212,14 +237,14 @@ Settings are organized in tabs:
 - Personal: Your profile information
 - Skills: Enable specialized knowledge areas
 You can customize ChatPharo to fit your workflow.'
-code: '| presenter chatPage |
+			 code: '| presenter chatPage |
 presenter := ChatPharoSettings default presenter.
 presenter open.
 chatPage := presenter notebook pages detect: [ :page | page title = ''Chat'' ] ifNone: [ nil ].
 chatPage ifNotNil: [ presenter notebook selectPage: chatPage ].'
 			 icon: #smallConfiguration). 
 			
-	"Lesson 9: Choosing an AI Backend"
+			"Lesson 11: Choosing an AI Backend"
 	lessons add: (ChatPharoTutorialLesson
 			 title: 'Choosing an AI Backend'
 			 content: 'ChatPharo supports multiple AI providers:
@@ -232,14 +257,14 @@ To configure:
 3. Enter your API key or configure the connection
 4. Choose a model from the dropdown
 For beginners, Ollama is a great free option!'
-code: '| presenter chatPage |
+			 code: '| presenter chatPage |
 presenter := ChatPharoSettings default presenter.
 presenter open.
 chatPage := presenter notebook pages detect: [ :page | page title = ''Chat'' ] ifNone: [ nil ].
 chatPage ifNotNil: [ presenter notebook selectPage: chatPage ].'
 			 icon: #smallRemoteOpen). 
 			
-	"Lesson 10: Skills System"
+			"Lesson 12: Skills System"
 	lessons add: (ChatPharoTutorialLesson
 			 title: 'Skills System'
 			 content: 'Skills give the AI specialized knowledge:
@@ -251,7 +276,7 @@ Enable skills in Settings > Skills tab.
 The AI can also discover and use skills automatically based on your questions.'
 			 icon: #smallLanguage). 
 			
-	"Lesson 11: Browser Extension"
+			"Lesson 13: Browser Extension"
 	lessons add: (ChatPharoTutorialLesson
 			 title: 'Browser Extension'
 			 content: 'The Browser Extension adds AI assistance to your coding workflow:
@@ -264,14 +289,14 @@ Features include:
 - Generate code from description
 - Fix bugs with AI suggestions
 Enable it in Settings > Extensions tab.'
-code: '| presenter extensionsPage |
+			 code: '| presenter extensionsPage |
 presenter := ChatPharoSettings default presenter.
 presenter open.
 extensionsPage := presenter notebook pages detect: [ :page | page title = ''Extensions'' ] ifNone: [ nil ].
 extensionsPage ifNotNil: [ presenter notebook selectPage: extensionsPage ].'
 			 icon: #smallInspectIt). 
 			
-	"Lesson 12: Security and Sandbox"
+			"Lesson 14: Security and Sandbox"
 	lessons add: (ChatPharoTutorialLesson
 			 title: 'Security and Sandbox'
 			 content: 'ChatPharo includes safety features:
@@ -281,14 +306,14 @@ extensionsPage ifNotNil: [ presenter notebook selectPage: extensionsPage ].'
 These protect you from potentially harmful code suggestions.
 Advanced users can adjust these in Settings > Security tab.
 For beginners, we recommend keeping default protections enabled.'
-code: '| presenter securityPage |
+			 code: '| presenter securityPage |
 presenter := ChatPharoSettings default presenter.
 presenter open.
 securityPage := presenter notebook pages detect: [ :page | page title = ''Security'' ] ifNone: [ nil ].
 securityPage ifNotNil: [ presenter notebook selectPage: securityPage ].'
 			 icon: #lock). 
 			
-	"Lesson 13: Tips for Better Results"
+			"Lesson 15: Tips for Better Results"
 	lessons add: (ChatPharoTutorialLesson
 			 title: 'Tips for Better Results'
 			 content: 'Get better answers from ChatPharo:
@@ -297,10 +322,10 @@ securityPage ifNotNil: [ presenter notebook selectPage: securityPage ].'
 3. Ask follow-up questions: If something is unclear, ask for clarification
 4. Request examples: Ask for code examples to understand concepts
 5. Specify Pharo version: If relevant, mention your Pharo version'
-code: 'ChatPharo ask: ''Create a Spec2 window with a button that prints hello'''
+			 code: 'ChatPharo ask: ''Create a Spec2 window with a button that prints hello'''
 			 icon: #smallInfo). 
 			
-	"Lesson 14: Conclusion"
+			"Lesson 16: Conclusion"
 	lessons add: (ChatPharoTutorialLesson
 			 title: 'You are Ready!'
 			 content: 'Congratulations! You have completed the ChatPharo tutorial.
@@ -315,7 +340,7 @@ Start exploring! The more you use ChatPharo, the more productive you will become
 You can always restart this tutorial from:
 World Menu > ChatPharo > Tutorial
 Happy coding!'
-code: 'ChatPharoTutorial start'
+			 code: 'ChatPharoTutorial start'
 			 icon: #glamorousAccept)
 ]
 
