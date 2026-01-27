@@ -63,12 +63,14 @@ ChatPharoMistralAgent >> configurationErrorMessage [
 { #category : 'initialization' }
 ChatPharoMistralAgent >> getResponseForPrompt: userPrompt [
 
-	| api result |
+	| api result params |
 	api := ChatPharoTool mistralWithAPIKey: apiKey system: self systemPrompt tools: self tools.
 	model ifNotEmpty: [ api model: model ].
+	params := self requestParameters copy.
+	temperature ifNotNil: [ params at: 'temperature' put: temperature ].
+	api requestParameters: params.
 	self history ifNil: [ self history: ChatPharoHistory new ].
-	self history addMessage:
-		(ChatPharoHistorySaver role: 'user' content: userPrompt).
+	self history addMessage: (ChatPharoHistorySaver role: 'user' content: userPrompt).
 	result := api getResponseForHistory: self history.
 	self history addMessage: result.
 

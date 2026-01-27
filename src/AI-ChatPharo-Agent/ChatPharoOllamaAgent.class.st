@@ -161,13 +161,15 @@ ChatPharoOllamaAgent >> configurationErrorMessage [
 { #category : 'initialization' }
 ChatPharoOllamaAgent >> getResponseForPrompt: userPrompt [
 
-	| api result |
+	| api result params |
 	api := ChatPharoTool ollamaWithSystem: self systemPrompt tools: self tools.
 	self onToolExecution ifNotNil: [ api onToolExecution: self onToolExecution ].
 	model ifNotEmpty: [ api model: model ].
+	params := self requestParameters copy.
+	temperature ifNotNil: [ params at: 'temperature' put: temperature ].
+	api requestParameters: params.
 	self history ifNil: [ self history: ChatPharoHistory new ].
-	self history addMessage:
-		(ChatPharoHistorySaver role: 'user' content: userPrompt).
+	self history addMessage: (ChatPharoHistorySaver role: 'user' content: userPrompt).
 	result := api getResponseForHistory: self history.
 	self history addMessage: result.
 
