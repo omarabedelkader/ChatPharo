@@ -28,6 +28,174 @@ ChatPharoBrowserEnvironment class >> new [
 	^ self browserEnvironment: RBBrowserEnvironment default
 ]
 
+{ #category : 'class-managments' }
+ChatPharoBrowserEnvironment >> applyFunctionAddInstanceVariable: arguments [
+	"Add an instance variable to an existing class."
+
+	| className variableName theClass newInstVars |
+	className := arguments at: 'class_name'.
+	variableName := arguments at: 'variable_name'.
+
+	theClass := self classNamed: className.
+	theClass ifNil: [
+		^ Dictionary with: 'error' -> ('Class not found: ' , className) ].
+
+	"Check if variable already exists"
+	(theClass instVarNames includes: variableName asSymbol) ifTrue: [
+		^ Dictionary with: 'error' -> ('Instance variable already exists: ' , variableName) ].
+
+	"Validate variable name"
+	(variableName isEmpty or: [ variableName first isLetter not ]) ifTrue: [
+		^ Dictionary with: 'error' -> 'Variable name must start with a letter' ].
+
+	[
+		newInstVars := theClass instVarNames copyWith: variableName asSymbol.
+		theClass addInstVarNamed: variableName.
+
+		^ Dictionary
+			with: 'success' -> true
+			with: 'class' -> className
+			with: 'added_variable' -> variableName
+			with: 'all_instance_variables' -> theClass instVarNames asArray
+	] on: Error do: [ :error |
+		^ Dictionary with: 'error' -> ('Failed to add instance variable: ' , error messageText) ]
+]
+
+{ #category : 'method-managments' }
+ChatPharoBrowserEnvironment >> applyFunctionAddMethod: arguments [ 
+	"Add or update a method in a class."
+
+	| className sourceCode protocol side theClass targetClass |
+	className := arguments at: 'class_name'.
+	sourceCode := arguments at: 'source_code'.
+	protocol := arguments at: 'protocol' ifAbsent: [ 'as yet unclassified' ].
+	side := arguments at: 'side' ifAbsent: [ 'instance' ].
+
+	theClass := self classNamed: className.
+	theClass ifNil: [
+		^ Dictionary with: 'error' -> ('Class not found: ' , className) ].
+
+	"Determine which side (instance or class)"
+	targetClass := side = 'class'
+		ifTrue: [ theClass class ]
+		ifFalse: [ theClass ].
+
+	[
+		| method selector |
+		method := targetClass compile: sourceCode classified: protocol.
+		selector := method selector.
+
+		^ Dictionary
+			with: 'success' -> true
+			with: 'class' -> className
+			with: 'side' -> side
+			with: 'selector' -> selector asString
+			with: 'protocol' -> protocol
+	] on: Error do: [ :error |
+		^ Dictionary with: 'error' -> ('Failed to add method: ' , error messageText) ]
+]
+
+{ #category : 'class-managments' }
+ChatPharoBrowserEnvironment >> applyFunctionCreateClass: arguments [
+	"Create a new class in the Pharo image."
+
+	| className superclassName packageName tagName instVars classVars superclass definition newClass result |
+
+	"Extract arguments safely"
+	className := arguments at: 'class_name' ifAbsent: [ '' ].
+	superclassName := arguments at: 'superclass' ifAbsent: [ 'Object' ].
+	packageName := arguments at: 'package' ifAbsent: [ '' ].
+	tagName := arguments at: 'tag' ifAbsent: [ nil ].
+	instVars := arguments at: 'instance_variables' ifAbsent: [ #() ].
+	classVars := arguments at: 'class_variables' ifAbsent: [ #() ].
+
+	"Validate class name"
+	(className isString
+		and: [ className notEmpty
+		and: [ className first isUppercase ] ]) ifFalse: [
+		^ Dictionary new
+			at: 'error' put: 'Class name must be a non-empty String starting with an uppercase letter';
+			yourself ].
+
+	"Check if class already exists"
+	(Smalltalk globals includesKey: className asSymbol) ifTrue: [
+		^ Dictionary new
+			at: 'error' put: 'A class with this name already exists';
+			yourself ].
+
+	"Find superclass"
+	superclass := Smalltalk globals
+		at: superclassName asSymbol
+		ifAbsent: [
+			^ Dictionary new
+				at: 'error' put: 'Superclass not found';
+				yourself ].
+
+	[
+		"Create class using Fluid API"
+		definition := superclass << className asSymbol.
+
+		instVars notEmpty ifTrue: [
+			definition := definition
+				slots: (instVars collect: #asSymbol) ].
+
+		classVars notEmpty ifTrue: [
+			definition := definition
+				sharedVariables: (classVars collect: #asSymbol) ].
+
+		definition := definition package: packageName.
+
+		tagName ifNotNil: [
+			definition := definition tag: tagName ].
+
+		newClass := definition install.
+
+		result := Dictionary new.
+		result
+			at: 'success' put: true;
+			at: 'class_name' put: className;
+			at: 'superclass' put: superclassName;
+			at: 'package' put: packageName;
+			at: 'tag' put: (tagName ifNil: [ '' ]);
+			at: 'instance_variables' put: instVars;
+			at: 'class_variables' put: classVars.
+
+		^ result
+	]
+	on: Error
+	do: [ :error |
+		^ Dictionary new
+			at: 'error' put: error messageText;
+			yourself ].
+
+]
+
+{ #category : 'class-managments' }
+ChatPharoBrowserEnvironment >> applyFunctionCreatePackage: arguments [
+	"Create a new package in the Pharo image."
+
+	| packageName |
+	packageName := arguments at: 'package_name'.
+
+	"Validate package name"
+	packageName isEmpty ifTrue: [
+		^ Dictionary with: 'error' -> 'Package name cannot be empty' ].
+
+	"Check if package already exists"
+	(self packageNamed: packageName) ifNotNil: [
+		^ Dictionary with: 'error' -> ('Package already exists: ' , packageName) ].
+
+	[
+		self class environment organization ensurePackage: packageName.
+
+		^ Dictionary
+			with: 'success' -> true
+			with: 'package_name' -> packageName
+			with: 'message' -> ('Successfully created package: ' , packageName)
+	] on: Error do: [ :error |
+		^ Dictionary with: 'error' -> ('Failed to create package: ' , error messageText) ]
+]
+
 { #category : 'initialization' }
 ChatPharoBrowserEnvironment >> applyFunctionDescribePackage: arguments [
 
@@ -182,6 +350,160 @@ ChatPharoBrowserEnvironment >> applyFunctionGetPackages: arguments [
 				   package name ]) sorted
 ]
 
+{ #category : 'class-managments' }
+ChatPharoBrowserEnvironment >> applyFunctionMoveClassToPackage: arguments [
+	"Move a class to a different package."
+
+	| className packageName tagName theClass |
+	className := arguments at: 'class_name'.
+	packageName := arguments at: 'package'.
+	tagName := arguments at: 'tag' ifAbsent: [ nil ].
+
+	theClass := self classNamed: className.
+	theClass ifNil: [
+		^ Dictionary with: 'error' -> ('Class not found: ' , className) ].
+
+	[
+		tagName
+			ifNotNil: [ theClass package: packageName tag: tagName ]
+			ifNil: [ theClass package: packageName ].
+
+		^ Dictionary
+			with: 'success' -> true
+			with: 'class' -> className
+			with: 'new_package' -> packageName
+			with: 'new_tag' -> (tagName ifNil: [ '' ])
+	] on: Error do: [ :error |
+		^ Dictionary with: 'error' -> ('Failed to move class: ' , error messageText) ]
+]
+
+{ #category : 'method-managments' }
+ChatPharoBrowserEnvironment >> applyFunctionMoveMethodToProtocol: arguments [
+	"Move a method to a different protocol."
+
+	| className selector protocol side theClass targetClass |
+	className := arguments at: 'class_name'.
+	selector := arguments at: 'selector'.
+	protocol := arguments at: 'protocol'.
+	side := arguments at: 'side' ifAbsent: [ 'instance' ].
+
+	theClass := self classNamed: className.
+	theClass ifNil: [
+		^ Dictionary with: 'error' -> ('Class not found: ' , className) ].
+
+	"Determine which side (instance or class)"
+	targetClass := side = 'class'
+		ifTrue: [ theClass class ]
+		ifFalse: [ theClass ].
+
+	"Check if method exists"
+	(targetClass includesSelector: selector asSymbol) ifFalse: [
+		^ Dictionary with: 'error' -> ('Method not found: ' , selector) ].
+
+	[
+		targetClass organization classify: selector asSymbol under: protocol.
+
+		^ Dictionary
+			with: 'success' -> true
+			with: 'class' -> className
+			with: 'side' -> side
+			with: 'selector' -> selector
+			with: 'new_protocol' -> protocol
+	] on: Error do: [ :error |
+		^ Dictionary with: 'error' -> ('Failed to move method: ' , error messageText) ]
+]
+
+{ #category : 'class-managments' }
+ChatPharoBrowserEnvironment >> applyFunctionRemoveClass: arguments [
+	"Remove a class from the Pharo image."
+
+	| className theClass |
+	className := arguments at: 'class_name'.
+
+	theClass := self classNamed: className.
+	theClass ifNil: [
+		^ Dictionary with: 'error' -> ('Class not found: ' , className) ].
+
+	"Check for subclasses"
+	theClass subclasses ifNotEmpty: [ :subs |
+		^ Dictionary
+			with: 'error' -> 'Cannot remove class with subclasses'
+			with: 'subclasses' -> (subs collect: [ :s | s name ]) ].
+
+	[
+		theClass removeFromSystem.
+
+		^ Dictionary
+			with: 'success' -> true
+			with: 'removed_class' -> className
+			with: 'message' -> ('Successfully removed class: ' , className)
+	] on: Error do: [ :error |
+		^ Dictionary with: 'error' -> ('Failed to remove class: ' , error messageText) ]
+]
+
+{ #category : 'class-managments' }
+ChatPharoBrowserEnvironment >> applyFunctionRemoveInstanceVariable: arguments [
+	"Remove an instance variable from an existing class."
+
+	| className variableName theClass |
+	className := arguments at: 'class_name'.
+	variableName := arguments at: 'variable_name'.
+
+	theClass := self classNamed: className.
+	theClass ifNil: [
+		^ Dictionary with: 'error' -> ('Class not found: ' , className) ].
+
+	"Check if variable exists"
+	(theClass instVarNames includes: variableName asSymbol) ifFalse: [
+		^ Dictionary with: 'error' -> ('Instance variable not found: ' , variableName) ].
+
+	[
+		theClass removeInstVarNamed: variableName.
+
+		^ Dictionary
+			with: 'success' -> true
+			with: 'class' -> className
+			with: 'removed_variable' -> variableName
+			with: 'remaining_instance_variables' -> theClass instVarNames asArray
+	] on: Error do: [ :error |
+		^ Dictionary with: 'error' -> ('Failed to remove instance variable: ' , error messageText) ]
+
+]
+
+{ #category : 'method-managments' }
+ChatPharoBrowserEnvironment >> applyFunctionRemoveMethod: arguments [
+	"Remove a method from a class."
+
+	| className selector side theClass targetClass |
+	className := arguments at: 'class_name'.
+	selector := arguments at: 'selector'.
+	side := arguments at: 'side' ifAbsent: [ 'instance' ].
+
+	theClass := self classNamed: className.
+	theClass ifNil: [
+		^ Dictionary with: 'error' -> ('Class not found: ' , className) ].
+
+	"Determine which side (instance or class)"
+	targetClass := side = 'class'
+		ifTrue: [ theClass class ]
+		ifFalse: [ theClass ].
+
+	"Check if method exists"
+	(targetClass includesSelector: selector asSymbol) ifFalse: [
+		^ Dictionary with: 'error' -> ('Method not found: ' , selector) ].
+
+	[
+		targetClass removeSelector: selector asSymbol.
+
+		^ Dictionary
+			with: 'success' -> true
+			with: 'class' -> className
+			with: 'side' -> side
+			with: 'removed_selector' -> selector
+	] on: Error do: [ :error |
+		^ Dictionary with: 'error' -> ('Failed to remove method: ' , error messageText) ]
+]
+
 { #category : 'as yet unclassified' }
 ChatPharoBrowserEnvironment >> applyFunctionRenameClass: arguments [
 	"Rename a single class using Pharo's modern refactoring engine."
@@ -298,6 +620,75 @@ ChatPharoBrowserEnvironment >> applyFunctionRenameClassesInPackage: arguments [
 
 ]
 
+{ #category : 'method-managments' }
+ChatPharoBrowserEnvironment >> applyFunctionRenameMethod: arguments [
+	"Rename a method using refactoring."
+
+	| className oldSelector newSelector side theClass targetClass |
+	className := arguments at: 'class_name'.
+	oldSelector := arguments at: 'old_selector'.
+	newSelector := arguments at: 'new_selector'.
+	side := arguments at: 'side' ifAbsent: [ 'instance' ].
+
+	theClass := self classNamed: className.
+	theClass ifNil: [
+		^ Dictionary with: 'error' -> ('Class not found: ' , className) ].
+
+	"Determine which side (instance or class)"
+	targetClass := side = 'class'
+		ifTrue: [ theClass class ]
+		ifFalse: [ theClass ].
+
+	"Check if old method exists"
+	(targetClass includesSelector: oldSelector asSymbol) ifFalse: [
+		^ Dictionary with: 'error' -> ('Method not found: ' , oldSelector) ].
+
+	"Check if new selector is already used"
+	(targetClass includesSelector: newSelector asSymbol) ifTrue: [
+		^ Dictionary with: 'error' -> ('Selector already exists: ' , newSelector) ].
+
+	[
+		| refactoring |
+		refactoring := ReRenameMethodRefactoring
+			renameMethod: oldSelector asSymbol
+			in: targetClass
+			to: newSelector asSymbol
+			permutation: (1 to: oldSelector asSymbol numArgs).
+		refactoring execute.
+
+		^ Dictionary
+			with: 'success' -> true
+			with: 'class' -> className
+			with: 'side' -> side
+			with: 'old_selector' -> oldSelector
+			with: 'new_selector' -> newSelector
+	] on: Error do: [ :error |
+		^ Dictionary with: 'error' -> ('Failed to rename method: ' , error messageText) ]
+]
+
+{ #category : 'class-managments' }
+ChatPharoBrowserEnvironment >> applyFunctionSetClassComment: arguments [
+	"Set or update the comment of a class."
+
+	| className comment theClass |
+	className := arguments at: 'class_name'.
+	comment := arguments at: 'comment'.
+
+	theClass := self classNamed: className.
+	theClass ifNil: [
+		^ Dictionary with: 'error' -> ('Class not found: ' , className) ].
+
+	[
+		theClass comment: comment.
+
+		^ Dictionary
+			with: 'success' -> true
+			with: 'class' -> className
+			with: 'comment' -> comment
+	] on: Error do: [ :error |
+		^ Dictionary with: 'error' -> ('Failed to set class comment: ' , error messageText) ]
+]
+
 { #category : 'accessing' }
 ChatPharoBrowserEnvironment >> browserEnvironment [
 
@@ -336,6 +727,108 @@ ChatPharoBrowserEnvironment >> classesInPackageNamed: packageName [
 	^ (self packageNamed: packageName) ifNotNil: [ :package |
 			  package definedClasses select: [ :class |
 				  self browserEnvironment includesClass: class ] ]
+]
+
+{ #category : 'class-managments' }
+ChatPharoBrowserEnvironment >> functionAddInstanceVariable [
+	"Tool to add an instance variable to a class."
+
+	^ ChatPharoClient
+		name: 'add_instance_variable'
+		description: 'Adds an instance variable to an existing class. This modifies the live system.'
+		parameters: (Dictionary
+			with: 'type' -> 'object'
+			with: 'properties' -> (Dictionary
+				with: 'class_name' -> (Dictionary
+					with: 'type' -> 'string'
+					with: 'description' -> 'The name of the class to modify')
+				with: 'variable_name' -> (Dictionary
+					with: 'type' -> 'string'
+					with: 'description' -> 'The name of the instance variable to add (must start with a letter)'))
+			with: 'required' -> #( 'class_name' 'variable_name' ))
+		block: [ :arguments |
+			self applyFunctionAddInstanceVariable: arguments ]
+]
+
+{ #category : 'method-managments' }
+ChatPharoBrowserEnvironment >> functionAddMethod [
+	"Tool to add or update a method in a class."
+
+	^ ChatPharoClient
+		name: 'add_method'
+		description: 'Adds or updates a method in a class. If the method already exists, it will be replaced. The source_code should be complete Smalltalk method source including the method signature. This modifies the live system.'
+		parameters: (Dictionary
+			with: 'type' -> 'object'
+			with: 'properties' -> (Dictionary
+				with: 'class_name' -> (Dictionary
+					with: 'type' -> 'string'
+					with: 'description' -> 'The name of the class to add the method to')
+				with: 'source_code' -> (Dictionary
+					with: 'type' -> 'string'
+					with: 'description' -> 'The complete Smalltalk method source code, including the method signature (e.g., "methodName: arg\n\t^ arg * 2")')
+				with: 'protocol' -> (Dictionary
+					with: 'type' -> 'string'
+					with: 'description' -> 'The protocol (category) to place the method in (default: "as yet unclassified")')
+				with: 'side' -> (Dictionary
+					with: 'type' -> 'string'
+					with: 'enum' -> #( 'instance' 'class' )
+					with: 'description' -> 'Whether to add an instance method or class method (default: "instance")'))
+			with: 'required' -> #( 'class_name' 'source_code' ))
+		block: [ :arguments |
+			self applyFunctionAddMethod: arguments ]
+]
+
+{ #category : 'class-managments' }
+ChatPharoBrowserEnvironment >> functionCreateClass [
+	"Tool to create a new class."
+
+	^ ChatPharoClient
+		name: 'create_class'
+		description: 'Creates a new class in the Pharo image. You can specify the superclass, instance variables, class variables, package, and tag. This modifies the live system.'
+		parameters: (Dictionary
+			with: 'type' -> 'object'
+			with: 'properties' -> (Dictionary
+				with: 'class_name' -> (Dictionary
+					with: 'type' -> 'string'
+					with: 'description' -> 'The name for the new class (must start with uppercase)')
+				with: 'superclass' -> (Dictionary
+					with: 'type' -> 'string'
+					with: 'description' -> 'The name of the superclass (default: "Object")')
+				with: 'package' -> (Dictionary
+					with: 'type' -> 'string'
+					with: 'description' -> 'The package to place the class in')
+				with: 'tag' -> (Dictionary
+					with: 'type' -> 'string'
+					with: 'description' -> 'Optional tag (subcategory) within the package')
+				with: 'instance_variables' -> (Dictionary
+					with: 'type' -> 'array'
+					with: 'items' -> (Dictionary with: 'type' -> 'string')
+					with: 'description' -> 'Array of instance variable names')
+				with: 'class_variables' -> (Dictionary
+					with: 'type' -> 'array'
+					with: 'items' -> (Dictionary with: 'type' -> 'string')
+					with: 'description' -> 'Array of class variable names'))
+			with: 'required' -> #( 'class_name' 'package' ))
+		block: [ :arguments |
+			self applyFunctionCreateClass: arguments ]
+]
+
+{ #category : 'class-managments' }
+ChatPharoBrowserEnvironment >> functionCreatePackage [
+	"Tool to create a new package."
+
+	^ ChatPharoClient
+		name: 'create_package'
+		description: 'Creates a new package in the Pharo image. This modifies the live system.'
+		parameters: (Dictionary
+			with: 'type' -> 'object'
+			with: 'properties' -> (Dictionary
+				with: 'package_name' -> (Dictionary
+					with: 'type' -> 'string'
+					with: 'description' -> 'The name for the new package'))
+			with: 'required' -> #( 'package_name' ))
+		block: [ :arguments |
+			self applyFunctionCreatePackage: arguments ]
 ]
 
 { #category : 'accessing' }
@@ -509,6 +1002,122 @@ ChatPharoBrowserEnvironment >> functionGetSandboxStatus [
 					  with: 'restrict_system_access' -> settings sandboxRestrictSystemAccess ]
 ]
 
+{ #category : 'class-managments' }
+ChatPharoBrowserEnvironment >> functionMoveClassToPackage [
+	"Tool to move a class to a different package."
+
+	^ ChatPharoClient
+		name: 'move_class_to_package'
+		description: 'Moves an existing class to a different package. You can optionally specify a tag within the package. This modifies the live system.'
+		parameters: (Dictionary
+			with: 'type' -> 'object'
+			with: 'properties' -> (Dictionary
+				with: 'class_name' -> (Dictionary
+					with: 'type' -> 'string'
+					with: 'description' -> 'The name of the class to move')
+				with: 'package' -> (Dictionary
+					with: 'type' -> 'string'
+					with: 'description' -> 'The target package name')
+				with: 'tag' -> (Dictionary
+					with: 'type' -> 'string'
+					with: 'description' -> 'Optional tag (subcategory) within the target package'))
+			with: 'required' -> #( 'class_name' 'package' ))
+		block: [ :arguments |
+			self applyFunctionMoveClassToPackage: arguments ]
+]
+
+{ #category : 'method-managments' }
+ChatPharoBrowserEnvironment >> functionMoveMethodToProtocol [
+	"Tool to move a method to a different protocol."
+
+	^ ChatPharoClient
+		name: 'move_method_to_protocol'
+		description: 'Moves a method to a different protocol (category) within its class. This modifies the live system.'
+		parameters: (Dictionary
+			with: 'type' -> 'object'
+			with: 'properties' -> (Dictionary
+				with: 'class_name' -> (Dictionary
+					with: 'type' -> 'string'
+					with: 'description' -> 'The name of the class containing the method')
+				with: 'selector' -> (Dictionary
+					with: 'type' -> 'string'
+					with: 'description' -> 'The method selector to move')
+				with: 'protocol' -> (Dictionary
+					with: 'type' -> 'string'
+					with: 'description' -> 'The target protocol name')
+				with: 'side' -> (Dictionary
+					with: 'type' -> 'string'
+					with: 'enum' -> #( 'instance' 'class' )
+					with: 'description' -> 'Whether this is an instance or class method (default: "instance")'))
+			with: 'required' -> #( 'class_name' 'selector' 'protocol' ))
+		block: [ :arguments |
+			self applyFunctionMoveMethodToProtocol: arguments ]
+]
+
+{ #category : 'class-managments' }
+ChatPharoBrowserEnvironment >> functionRemoveClass [
+	"Tool to remove a class from the system."
+
+	^ ChatPharoClient
+		name: 'remove_class'
+		description: 'Removes a class from the Pharo image. The class must not have any subclasses. This permanently deletes the class and all its methods from the live system.'
+		parameters: (Dictionary
+			with: 'type' -> 'object'
+			with: 'properties' -> (Dictionary
+				with: 'class_name' -> (Dictionary
+					with: 'type' -> 'string'
+					with: 'description' -> 'The name of the class to remove'))
+			with: 'required' -> #( 'class_name' ))
+		block: [ :arguments |
+			self applyFunctionRemoveClass: arguments ]
+]
+
+{ #category : 'class-managments' }
+ChatPharoBrowserEnvironment >> functionRemoveInstanceVariable [
+	"Tool to remove an instance variable from a class."
+
+	^ ChatPharoClient
+		name: 'remove_instance_variable'
+		description: 'Removes an instance variable from an existing class. Make sure the variable is not used by any methods before removing. This modifies the live system.'
+		parameters: (Dictionary
+			with: 'type' -> 'object'
+			with: 'properties' -> (Dictionary
+				with: 'class_name' -> (Dictionary
+					with: 'type' -> 'string'
+					with: 'description' -> 'The name of the class to modify')
+				with: 'variable_name' -> (Dictionary
+					with: 'type' -> 'string'
+					with: 'description' -> 'The name of the instance variable to remove'))
+			with: 'required' -> #( 'class_name' 'variable_name' ))
+		block: [ :arguments |
+			self applyFunctionRemoveInstanceVariable: arguments ]
+]
+
+{ #category : 'method-managments' }
+ChatPharoBrowserEnvironment >> functionRemoveMethod [
+	"Tool to remove a method from a class."
+
+	^ ChatPharoClient
+		name: 'remove_method'
+		description: 'Removes a method from a class. This permanently deletes the method from the live system.'
+		parameters: (Dictionary
+			with: 'type' -> 'object'
+			with: 'properties' -> (Dictionary
+				with: 'class_name' -> (Dictionary
+					with: 'type' -> 'string'
+					with: 'description' -> 'The name of the class containing the method')
+				with: 'selector' -> (Dictionary
+					with: 'type' -> 'string'
+					with: 'description' -> 'The selector of the method to remove')
+				with: 'side' -> (Dictionary
+					with: 'type' -> 'string'
+					with: 'enum' -> #( 'instance' 'class' )
+					with: 'description' -> 'Whether this is an instance or class method (default: "instance")'))
+			with: 'required' -> #( 'class_name' 'selector' ))
+		block: [ :arguments |
+			self applyFunctionRemoveMethod: arguments ]
+]
+
 { #category : 'initialization' }
 ChatPharoBrowserEnvironment >> functionRenameClass [
 	"Tool to rename a single class using Pharo's Refactoring Browser."
@@ -555,6 +1164,34 @@ ChatPharoBrowserEnvironment >> functionRenameClassesInPackage [
 			with: 'required' -> #( 'package' 'search_pattern' 'replace_pattern' ))
 		block: [ :arguments |
 			self applyFunctionRenameClassesInPackage: arguments ]
+]
+
+{ #category : 'method-managments' }
+ChatPharoBrowserEnvironment >> functionRenameMethod [
+	"Tool to rename a method using refactoring."
+
+	^ ChatPharoClient
+		name: 'rename_method'
+		description: 'Renames a method using Pharo''s refactoring engine. This will update all senders of the method throughout the codebase. This modifies the live system.'
+		parameters: (Dictionary
+			with: 'type' -> 'object'
+			with: 'properties' -> (Dictionary
+				with: 'class_name' -> (Dictionary
+					with: 'type' -> 'string'
+					with: 'description' -> 'The name of the class containing the method')
+				with: 'old_selector' -> (Dictionary
+					with: 'type' -> 'string'
+					with: 'description' -> 'The current selector of the method')
+				with: 'new_selector' -> (Dictionary
+					with: 'type' -> 'string'
+					with: 'description' -> 'The new selector for the method')
+				with: 'side' -> (Dictionary
+					with: 'type' -> 'string'
+					with: 'enum' -> #( 'instance' 'class' )
+					with: 'description' -> 'Whether this is an instance or class method (default: "instance")'))
+			with: 'required' -> #( 'class_name' 'old_selector' 'new_selector' ))
+		block: [ :arguments |
+			self applyFunctionRenameMethod: arguments ]
 ]
 
 { #category : 'initialization' }
@@ -608,6 +1245,27 @@ ChatPharoBrowserEnvironment >> functionSandboxEvaluate [
 										  with: 'error' -> result errorMessage ] ] ]
 ]
 
+{ #category : 'class-managments' }
+ChatPharoBrowserEnvironment >> functionSetClassComment [
+	"Tool to set or update a class comment."
+
+	^ ChatPharoClient
+		name: 'set_class_comment'
+		description: 'Sets or updates the comment (documentation) of a class. This modifies the live system.'
+		parameters: (Dictionary
+			with: 'type' -> 'object'
+			with: 'properties' -> (Dictionary
+				with: 'class_name' -> (Dictionary
+					with: 'type' -> 'string'
+					with: 'description' -> 'The name of the class to document')
+				with: 'comment' -> (Dictionary
+					with: 'type' -> 'string'
+					with: 'description' -> 'The comment text for the class'))
+			with: 'required' -> #( 'class_name' 'comment' ))
+		block: [ :arguments |
+			self applyFunctionSetClassComment: arguments ]
+]
+
 { #category : 'initialization' }
 ChatPharoBrowserEnvironment >> initializeWithEnvironment: env [
 
@@ -620,15 +1278,39 @@ ChatPharoBrowserEnvironment >> initializeWithEnvironment: env [
 		         self functionGetClassMethods.
 		         self functionGetClassSubclasses.
 		         self functionFindMethodsWithSubstring.
-		         self functionDescribePackage.
-		         "Refactoring tools"
+		         self functionDescribePackage. 
+		
+					"Refactoring tools"
 		         self functionRenameClass.
 		         self functionRenameClassesInPackage.
+		
+					"Package management tools"
+		         self functionCreatePackage.
+		
+		         "Class management tools"
+		         self functionCreateClass.
+		         self functionRemoveClass.
+		         self functionRenameClass.
+		
+				   self functionMoveClassToPackage.
+		         self functionAddInstanceVariable.
+		         self functionRemoveInstanceVariable.
+		         self functionSetClassComment.
+
+		         "Method management tools"
+		         self functionAddMethod.
+		         self functionRemoveMethod.
+		         self functionRenameMethod.
+		         self functionMoveMethodToProtocol.
+		
 		         ChatPharoClient toolCheckSyntax.
 		         ChatPharoClient toolCheckSyntax.
 		         ChatPharoClient toolOpenPlayground.
 		         self functionGetSandboxStatus.
-		         self functionSandboxEvaluate } asOrderedCollection. "Add skill tools if enabled and the Skills package is loaded"
+		         self functionSandboxEvaluate } asOrderedCollection. 
+		
+		
+		"Add skill tools if enabled and the Skills package is loaded"
 	(Smalltalk hasClassNamed: #ChatPharoSkillEnvironment) ifTrue: [
 		tools addAll: (Smalltalk at: #ChatPharoSkillEnvironment) new tools ]
 ]
