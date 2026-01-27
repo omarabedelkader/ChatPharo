@@ -229,7 +229,6 @@ ChatPharoTool >> extraHeaders: aDictionary [
 ChatPharoTool >> getResponseForHistory: history [
 
 	| messages data response message |
-	self halt.
 	messages := Array streamContents: [ :stream |
 			            systemPrompt ifNotNil: [ stream nextPut: (Dictionary with: 'role' -> 'system' with: 'content' -> systemPrompt) ].
 			            history putOpenAIChatMessagesOn: stream ].
@@ -274,13 +273,7 @@ ChatPharoTool >> initializeWithBaseURL: initialBaseURL apiKey: initialAPIKey sys
 ChatPharoTool >> jsonStringFor: anObject [
 	"Serialize JSON while ignoring shared reference warnings."
 
-	| stream writer |
-	stream := WriteStream on: String new.
-	writer := STONWriter on: stream.
-	(writer respondsTo: #referencePolicy:) ifTrue: [
-		writer referencePolicy: #ignore ].
-	writer nextPut: anObject.
-	^ stream contents
+	^ STONJSON toString: anObject
 ]
 
 { #category : 'accessing' }

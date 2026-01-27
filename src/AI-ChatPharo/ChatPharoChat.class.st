@@ -235,13 +235,7 @@ ChatPharoChat >> initialize [
 ChatPharoChat >> jsonStringFor: anObject [
 	"Serialize JSON while ignoring shared reference warnings."
 
-	| stream writer |
-	stream := WriteStream on: String new.
-	writer := STONWriter on: stream.
-	(writer respondsTo: #referencePolicy:) ifTrue: [
-		writer referencePolicy: #ignore ].
-	writer nextPut: anObject.
-	^ stream contents
+^ STONJSON toString: anObject
 ]
 
 { #category : 'accessing' }
