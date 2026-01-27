@@ -22,7 +22,8 @@ Class {
 		'tools',
 		'systemPrompt',
 		'onToolExecution',
-		'extraParameters'
+		'extraParameters',
+		'extraHeaders'
 	],
 	#category : 'AI-ChatPharo-Tools-Core',
 	#package : 'AI-ChatPharo-Tools',
@@ -64,6 +65,44 @@ ChatPharoTool class >> baseURL: baseURL system: system tools: tools [
 		  apiKey: nil
 		  system: system
 		  tools: tools
+]
+
+{ #category : 'instance creation' }
+ChatPharoTool class >> claudeWithAPIKey: apiKey system: system [
+
+	^ self claudeWithAPIKey: apiKey system: system tools: nil
+]
+
+{ #category : 'instance creation' }
+ChatPharoTool class >> claudeWithAPIKey: apiKey system: system tools: tools [
+
+	| tool |
+	tool := self
+		baseURL: (ZnUrl fromString: 'https://api.anthropic.com/v1')
+		apiKey: apiKey
+		system: system
+		tools: tools.
+	tool extraHeaders: (Dictionary new
+		at: 'x-api-key' put: apiKey;
+		at: 'anthropic-version' put: '2023-06-01';
+		yourself).
+	^ tool
+]
+
+{ #category : 'instance creation' }
+ChatPharoTool class >> deepSeekWithAPIKey: apiKey system: system [
+
+	^ self deepSeekWithAPIKey: apiKey system: system tools: nil
+]
+
+{ #category : 'instance creation' }
+ChatPharoTool class >> deepSeekWithAPIKey: apiKey system: system tools: tools [
+
+	^ self
+		baseURL: (ZnUrl fromString: 'https://api.deepseek.com/v1')
+		apiKey: apiKey
+		system: system
+		tools: tools
 ]
 
 { #category : 'instance creation' }
@@ -160,12 +199,30 @@ ChatPharoTool >> baseURL: anObject [
 ]
 
 { #category : 'initialization' }
-ChatPharoTool >> client [ 
+ChatPharoTool >> client [
 
-	^ ZnClient new
+	| client |
+	client := ZnClient new
 		url: baseURL;
-		setBearerAuthentication: apiKey;
-		yourself
+		yourself.
+	extraHeaders ifNotNil: [
+		extraHeaders keysAndValuesDo: [ :key :value |
+			client headerAt: key put: value ] ]
+	ifNil: [
+		apiKey ifNotNil: [ client setBearerAuthentication: apiKey ] ].
+	^ client
+]
+
+{ #category : 'accessing' }
+ChatPharoTool >> extraHeaders [
+
+	^ extraHeaders
+]
+
+{ #category : 'accessing' }
+ChatPharoTool >> extraHeaders: aDictionary [
+
+	extraHeaders := aDictionary
 ]
 
 { #category : 'initialization' }

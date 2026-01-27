@@ -309,9 +309,11 @@ ChatPharoSettings >> availableApis [
 
 	^ {
 		  ChatPharoNullAgent.
-		  ChatPharoGeminiAgent .
-		ChatPharoOllamaAgent .
-		ChatPharoMistralAgent}
+		  ChatPharoGeminiAgent.
+		  ChatPharoOllamaAgent.
+		  ChatPharoMistralAgent.
+		ChatPharoClaudeAgent.
+		  ChatPharoDeepSeekAgent }
 ]
 
 { #category : 'initialization' }
