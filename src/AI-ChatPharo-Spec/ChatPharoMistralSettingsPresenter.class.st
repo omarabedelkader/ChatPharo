@@ -10,7 +10,10 @@ Class {
 		'modelDrop',
 		'model',
 		'temperatureInput',
-		'testButton'
+		'testButton',
+		'maxTokensInput',
+		'topPInput',
+		'customParametersInput'
 	],
 	#category : 'AI-ChatPharo-Spec-Agent',
 	#package : 'AI-ChatPharo-Spec',
@@ -32,7 +35,7 @@ ChatPharoMistralSettingsPresenter >> apiKeyField: anObject [
 { #category : 'layout' }
 ChatPharoMistralSettingsPresenter >> defaultLayout [
 
-	| mainLayout hostRow keyRow modelRow tempRow |
+	| mainLayout hostRow keyRow modelRow tempRow maxTokensRow topPRow customParamsRow |
 	hostRow := SpBoxLayout newHorizontal
 		           spacing: 8;
 		           add: (self newLabel label: 'Host') expand: false;
@@ -56,6 +59,24 @@ ChatPharoMistralSettingsPresenter >> defaultLayout [
 		           add: (self newLabel label: 'Temperature (0.0 – 1.0):') expand: false;
 		           add: temperatureInput expand: true;
 		           yourself.
+		
+	maxTokensRow := SpBoxLayout newHorizontal
+		           spacing: 8;
+		           add: (self newLabel label: 'Max tokens (optional):') expand: false;
+		           add: maxTokensInput expand: true;
+		           yourself.
+
+	topPRow := SpBoxLayout newHorizontal
+		           spacing: 8;
+		           add: (self newLabel label: 'Top P (0.0 – 1.0, optional):') expand: false;
+		           add: topPInput expand: true;
+		           yourself.
+
+	customParamsRow := SpBoxLayout newHorizontal
+		           spacing: 8;
+		           add: (self newLabel label: 'Custom parameters (JSON):') expand: false;
+		           add: customParametersInput expand: true;
+		           yourself.
 
 	mainLayout := SpBoxLayout newTopToBottom
 		              spacing: 8;
@@ -65,6 +86,9 @@ ChatPharoMistralSettingsPresenter >> defaultLayout [
 		              add: keyRow expand: false;
 		              add: modelRow expand: false;
 		              add: tempRow expand: false;
+		 add: maxTokensRow expand: false;
+		              add: topPRow expand: false;
+		              add: customParamsRow expand: false;
 		              add: testButton expand: false;
 		              yourself.
 
@@ -90,31 +114,56 @@ ChatPharoMistralSettingsPresenter >> initializePresenters [
 	hostField := self newTextInput
 		             placeholder: 'api.mistral.ai';
 		             text: model host.
-		
-		apiKeyField := self newTextInput 
-							bePassword 
+
+	apiKeyField := self newTextInput bePassword
 		               placeholder: 'API-KEY';
 		               text: (model apiKey isEmpty
 				                ifTrue: ''
-				                ifFalse:
-					                (String new: model apiKey size withAll: $*)).
-	
+				                ifFalse: (String new: model apiKey size withAll: $*)).
+
 	modelDrop := SpDropListPresenter new.
 	self refreshModels.
 	hostField whenTextChangedDo: [ :t | model host: t ].
 	apiKeyField whenTextChangedDo: [ :t |
 			model apiKey: t.
 			self refreshModels ].
-		
-	modelDrop whenSelectedItemChangedDo: [ :m | model model: m ].
-	
-	temperatureInput := self newTextInput
-		placeholder: '0.0 (leave empty for default)';
-		text: (model temperature ifNil: [''] ifNotNil: [model temperature asString]);
-		yourself.
 
-	temperatureInput whenTextChangedDo: [ :text |
-		self updateTemperatureFrom: text
+	modelDrop whenSelectedItemChangedDo: [ :m | model model: m ].
+
+	temperatureInput := self newTextInput
+		                    placeholder: '0.0 (leave empty for default)';
+		                    text: (model temperature ifNil: [ '' ] ifNotNil: [ model temperature asString ]);
+		                    yourself.
+
+	temperatureInput whenTextChangedDo: [ :text | self updateTemperatureFrom: text ].
+	maxTokensInput := self newTextInput
+		placeholder: 'e.g. 1024';
+		text: (model maxTokens
+			ifNil: [ '' ]
+			ifNotNil: [ model maxTokens asString ]);
+		yourself.
+	maxTokensInput whenTextChangedDo: [ :text |
+		self updateMaxTokensFrom: text
+	].
+
+	topPInput := self newTextInput
+		placeholder: 'e.g. 0.9';
+		text: (model topP
+			ifNil: [ '' ]
+			ifNotNil: [ model topP asString ]);
+		yourself.
+	topPInput whenTextChangedDo: [ :text |
+		self updateTopPFrom: text
+	].
+
+	customParametersInput := self newTextInput
+		placeholder: '{"frequency_penalty":0.1}';
+		text: (model customParameters isEmpty
+			ifTrue: [ '' ]
+			ifFalse: [ STONJSON toString: model customParameters ]);
+		yourself.
+	customParametersInput whenTextChangedDo: [ :text |
+		self updateCustomParametersFrom: text
 	].
 
 	testButton := self newButton
@@ -197,6 +246,48 @@ ChatPharoMistralSettingsPresenter >> testConnection [
                 ifFalse: [ self inform: 'Connection failed.' ]
 ]
 
+{ #category : 'initialization' }
+ChatPharoMistralSettingsPresenter >> updateCustomParametersFrom: text [
+
+	| parsed trimmed |
+	trimmed := (text ifNil: [ '' ]) asString trimBoth.
+	trimmed isEmpty ifTrue: [
+		model customParameters: Dictionary new.
+		^ self
+	].
+
+	[ parsed := STONJSON fromString: trimmed ]
+		on: Error do: [
+			self inform: 'Custom parameters must be valid JSON.'.
+			^ self
+		].
+
+	(parsed isDictionary)
+		ifTrue: [ model customParameters: parsed ]
+		ifFalse: [ self inform: 'Custom parameters must be a JSON object.' ]
+]
+
+{ #category : 'initialization' }
+ChatPharoMistralSettingsPresenter >> updateMaxTokensFrom: text [
+
+	| trimmed number |
+	trimmed := (text ifNil: [ '' ]) asString trimBoth.
+	trimmed isEmpty ifTrue: [
+		model maxTokens: nil.
+		^ self
+	].
+
+	[ number := Number readFrom: trimmed readStream ]
+		on: Error do: [
+			self inform: 'Max tokens must be a whole number.'.
+			^ self
+		].
+
+	number isInteger
+		ifFalse: [ self inform: 'Max tokens must be a whole number.' ]
+		ifTrue: [ model maxTokens: number ]
+]
+
 { #category : 'helper' }
 ChatPharoMistralSettingsPresenter >> updateTemperatureFrom: text [
 
@@ -217,4 +308,25 @@ ChatPharoMistralSettingsPresenter >> updateTemperatureFrom: text [
 	(num < 0.0 or: [ num > 1.0 ])
 		ifTrue: [ self inform: 'Temperature must be between 0.0 and 1.0 (or leave empty).' ]
 		ifFalse: [ model temperature: num asFloat ].
+]
+
+{ #category : 'initialization' }
+ChatPharoMistralSettingsPresenter >> updateTopPFrom: text [
+
+	| trimmed number |
+	trimmed := (text ifNil: [ '' ]) asString trimBoth.
+	trimmed isEmpty ifTrue: [
+		model topP: nil.
+		^ self
+	].
+
+	[ number := Number readFrom: trimmed readStream ]
+		on: Error do: [
+			self inform: 'Top P must be a number between 0.0 and 1.0.'.
+			^ self
+		].
+
+	(number < 0.0 or: [ number > 1.0 ])
+		ifTrue: [ self inform: 'Top P must be between 0.0 and 1.0.' ]
+		ifFalse: [ model topP: number asFloat ]
 ]

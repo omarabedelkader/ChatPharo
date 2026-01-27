@@ -15,7 +15,10 @@ Class {
 		'installInput',
 		'installButton',
 		'deleteButton',
-		'testButton'
+		'testButton',
+		'maxTokensInput',
+		'topPInput',
+		'customParametersInput'
 	],
 	#category : 'AI-ChatPharo-Spec-Agent',
 	#package : 'AI-ChatPharo-Spec',
@@ -35,12 +38,19 @@ ChatPharoOllamaSettingsPresenter >> connectPresenters [
 				on: Error
 				do: [ :ex | num := model temperature ].
 			model temperature: num ].
+	
+	maxTokensInput whenTextChangedDo: [ :text |
+		self updateMaxTokensFrom: text ].
+	topPInput whenTextChangedDo: [ :text |
+		self updateTopPFrom: text ].
+	customParametersInput whenTextChangedDo: [ :text |
+		self updateCustomParametersFrom: text ].
 ]
 
 { #category : 'layout' }
 ChatPharoOllamaSettingsPresenter >> defaultLayout [
 
-	| mainLayout rowLayout modelRow hostRow portRow tempRow installRow suggestedRow |
+	| mainLayout rowLayout modelRow hostRow portRow tempRow installRow maxTokensRow topPRow customParamsRow suggestedRow |
 	modelRow := SpBoxLayout newHorizontal
 		            spacing: 8;
 		            add: (self newLabel label: 'Available models:') expand: false;
@@ -79,6 +89,28 @@ ChatPharoOllamaSettingsPresenter >> defaultLayout [
 		           add: temperatureInput expand: true;
 		           yourself.
 
+maxTokensRow := SpBoxLayout newHorizontal
+		           spacing: 8;
+		           add: (self newLabel label: 'Max tokens (optional):')
+		           expand: false;
+		           add: maxTokensInput expand: true;
+		           yourself.
+
+	topPRow := SpBoxLayout newHorizontal
+		           spacing: 8;
+		           add: (self newLabel label: 'Top P (0.0 – 1.0, optional):')
+		           expand: false;
+		           add: topPInput expand: true;
+		           yourself.
+
+	customParamsRow := SpBoxLayout newHorizontal
+		           spacing: 8;
+		           add: (self newLabel label: 'Custom parameters (JSON):')
+		           expand: false;
+		           add: customParametersInput expand: true;
+		           yourself.
+		
+		
 	mainLayout := SpBoxLayout newTopToBottom
 		              spacing: 8;
 		              borderWidth: 8;
@@ -89,6 +121,9 @@ ChatPharoOllamaSettingsPresenter >> defaultLayout [
 		              add: hostRow expand: false;
 		              add: portRow expand: false;
 		              add: tempRow expand: false;
+		add: maxTokensRow expand: false;
+		              add: topPRow expand: false;
+		              add: customParamsRow expand: false;
 		              add: testButton expand: false;
 		              yourself.
 
@@ -139,6 +174,27 @@ ChatPharoOllamaSettingsPresenter >> initializePresenters [
 			name ifNotEmpty: [ installInput text: name ] ];
 		yourself.
 		
+	
+	maxTokensInput := self newTextInput
+		                  placeholder: 'e.g. 1024';
+		                  text: (model maxTokens
+			                   ifNil: [ '' ]
+			                   ifNotNil: [ model maxTokens asString ]);
+		                  yourself.
+
+	topPInput := self newTextInput
+		             placeholder: 'e.g. 0.9';
+		             text: (model topP
+			              ifNil: [ '' ]
+			              ifNotNil: [ model topP asString ]);
+		             yourself.
+
+	customParametersInput := self newTextInput
+		                         placeholder: '{"frequency_penalty":0.1}';
+		                         text: (model customParameters isEmpty
+			                          ifTrue: [ '' ]
+			                          ifFalse: [ STONJSON toString: model customParameters ]);
+		                         yourself.
 	installInput := self newTextInput
 		                placeholder: 'model name (e.g. codellama:7b)';
 		                yourself.
@@ -277,4 +333,67 @@ ChatPharoOllamaSettingsPresenter >> testConnection [
         (model testConnection)
                 ifTrue: [ self inform: 'Connection successful.' ]
                 ifFalse: [ self inform: 'Connection failed.' ]
+]
+
+{ #category : 'initialization' }
+ChatPharoOllamaSettingsPresenter >> updateCustomParametersFrom: text [
+
+	| parsed trimmed |
+	trimmed := (text ifNil: [ '' ]) asString trimBoth.
+	trimmed isEmpty ifTrue: [
+		model customParameters: Dictionary new.
+		^ self
+	].
+
+	[ parsed := STONJSON fromString: trimmed ]
+		on: Error do: [
+			self inform: 'Custom parameters must be valid JSON.'.
+			^ self
+		].
+
+	(parsed isDictionary)
+		ifTrue: [ model customParameters: parsed ]
+		ifFalse: [ self inform: 'Custom parameters must be a JSON object.' ]
+]
+
+{ #category : 'initialization' }
+ChatPharoOllamaSettingsPresenter >> updateMaxTokensFrom: text [
+
+	| trimmed number |
+	trimmed := (text ifNil: [ '' ]) asString trimBoth.
+	trimmed isEmpty ifTrue: [
+		model maxTokens: nil.
+		^ self
+	].
+
+	[ number := Number readFrom: trimmed readStream ]
+		on: Error do: [
+			self inform: 'Max tokens must be a whole number.'.
+			^ self
+		].
+
+	number isInteger
+		ifFalse: [ self inform: 'Max tokens must be a whole number.' ]
+		ifTrue: [ model maxTokens: number ]
+]
+
+{ #category : 'initialization' }
+ChatPharoOllamaSettingsPresenter >> updateTopPFrom: text [
+
+	| trimmed number |
+	trimmed := (text ifNil: [ '' ]) asString trimBoth.
+	trimmed isEmpty ifTrue: [
+		model topP: nil.
+		^ self
+	].
+
+	[ number := Number readFrom: trimmed readStream ]
+		on: Error do: [
+			self inform: 'Top P must be a number between 0.0 and 1.0.'.
+			^ self
+		].
+
+	(number < 0.0 or: [ number > 1.0 ])
+		ifTrue: [ self inform: 'Top P must be between 0.0 and 1.0.' ]
+		ifFalse: [ model topP: number asFloat ]
 ]

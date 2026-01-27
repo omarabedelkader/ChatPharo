@@ -21,7 +21,8 @@ Class {
 		'model',
 		'tools',
 		'systemPrompt',
-		'onToolExecution'
+		'onToolExecution',
+		'extraParameters'
 	],
 	#category : 'AI-ChatPharo-Tools-Core',
 	#package : 'AI-ChatPharo-Tools',
@@ -168,33 +169,34 @@ ChatPharoTool >> client [
 ]
 
 { #category : 'initialization' }
-ChatPharoTool >> getResponseForHistory: history [ 
+ChatPharoTool >> getResponseForHistory: history [
 
 	| messages data response message |
 	messages := Array streamContents: [ :stream |
-		systemPrompt ifNotNil: [
-			stream nextPut: (Dictionary with: 'role'->'system' with: 'content'->systemPrompt) ].
-		history putOpenAIChatMessagesOn: stream ].
+			            systemPrompt ifNotNil: [ stream nextPut: (Dictionary with: 'role' -> 'system' with: 'content' -> systemPrompt) ].
+			            history putOpenAIChatMessagesOn: stream ].
 
-	data := Dictionary with:'model'->model with:'messages'->messages.
-	tools ifNotNil:[
-		data add:'tools'->(tools collect:[:t| t openAIChatTool ] as:Array);
-		add:'tool_choice'->'auto'].
+	data := Dictionary with: 'model' -> model with: 'messages' -> messages.
+	extraParameters ifNotNil: [ data addAll: extraParameters ].
+	tools ifNotNil: [
+			data
+				add: 'tools' -> (tools collect: [ :t | t openAIChatTool ] as: Array);
+				add: 'tool_choice' -> 'auto' ].
 
-	response := self client addPath: #('chat' 'completions');
-		entity:(ZnEntity json:(STONJSON toString:data));
-		timeout:(Duration minutes:5) asSeconds;
-		post;
-		response.
+	response := self client
+		            addPath: #( 'chat' 'completions' );
+		            entity: (ZnEntity json: (STONJSON toString: data));
+		            timeout: (Duration minutes: 5) asSeconds;
+		            post;
+		            response.
 
-	response isSuccess ifFalse:[ Error signal:'Could not get chat completion' ].
+	response isSuccess ifFalse: [ Error signal: 'Could not get chat completion' ].
 
-	message := ((STONJSON fromString: response contents) at:'choices') first at:'message'.
+	message := ((STONJSON fromString: response contents) at: 'choices') first at: 'message'.
 	^ ChatPharoHistorySaver
-		role:'assistant'
-		content:(message at:'content' ifAbsent:[ nil ])
-		toolCalls:(self toolCallsFromMessage: message)
-
+		  role: 'assistant'
+		  content: (message at: 'content' ifAbsent: [ nil ])
+		  toolCalls: (self toolCallsFromMessage: message)
 ]
 
 { #category : 'initialization' }
@@ -206,6 +208,7 @@ ChatPharoTool >> initializeWithBaseURL: initialBaseURL apiKey: initialAPIKey sys
 	systemPrompt := initialSystem.
 	tools := initialTools.
 	onToolExecution := nil.
+	extraParameters := Dictionary new.
 	self model: self modelNames first
 ]
 
@@ -240,6 +243,18 @@ ChatPharoTool >> onToolExecution [
 ChatPharoTool >> onToolExecution: aBlock [ 
 
         onToolExecution := aBlock
+]
+
+{ #category : 'initialization' }
+ChatPharoTool >> requestParameters [
+
+	^ extraParameters ifNil: [ extraParameters := Dictionary new ]
+]
+
+{ #category : 'initialization' }
+ChatPharoTool >> requestParameters: aDictionary [
+
+	extraParameters := aDictionary ifNil: [ Dictionary new ]
 ]
 
 { #category : 'accessing' }

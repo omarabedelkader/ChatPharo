@@ -23,7 +23,10 @@ Class {
 		'history',
 		'systemPrompt',
 		'browserSystemPrompt',
-		'onToolExecution'
+		'onToolExecution',
+		'maxTokens',
+		'topP',
+		'customParameters'
 	],
 	#category : 'AI-ChatPharo-Agent',
 	#package : 'AI-ChatPharo-Agent'
@@ -94,6 +97,18 @@ ChatPharoAgent >> copyForChat [
 ]
 
 { #category : 'initialization' }
+ChatPharoAgent >> customParameters [
+
+	^ customParameters ifNil: [ customParameters := Dictionary new ]
+]
+
+{ #category : 'initialization' }
+ChatPharoAgent >> customParameters: aDictionary [
+
+	customParameters := aDictionary ifNil: [ Dictionary new ]
+]
+
+{ #category : 'initialization' }
 ChatPharoAgent >> getResponseForPrompt: prompt [
 
 	self subclassResponsibility
@@ -116,13 +131,28 @@ ChatPharoAgent >> initialize [
 	browserSystemPrompt := self class defaultBrowserSystemPrompt.
 	promptPrefix := ''.
 	response := ''.
-	onToolExecution := nil
+	onToolExecution := nil.
+	maxTokens := nil.
+	topP := nil.
+	customParameters := Dictionary new
 ]
 
 { #category : 'accessing' }
 ChatPharoAgent >> isConfigured [ 
 
     ^ true
+]
+
+{ #category : 'initialization' }
+ChatPharoAgent >> maxTokens [
+
+	^ maxTokens
+]
+
+{ #category : 'initialization' }
+ChatPharoAgent >> maxTokens: anObject [
+
+	maxTokens := anObject
 ]
 
 { #category : 'accessing' }
@@ -167,6 +197,16 @@ ChatPharoAgent >> promptPrefix: anObject [
 	promptPrefix := anObject
 ]
 
+{ #category : 'initialization' }
+ChatPharoAgent >> requestParameters [
+
+	| params |
+	params := self customParameters copy.
+	maxTokens ifNotNil: [ params at: 'max_tokens' put: maxTokens ].
+	topP ifNotNil: [ params at: 'top_p' put: topP ].
+	^ params
+]
+
 { #category : 'accessing' }
 ChatPharoAgent >> response [
 
@@ -204,6 +244,18 @@ ChatPharoAgent >> systemPrompt: anObject [
 ChatPharoAgent >> testConnection [ 
 
         self subclassResponsibility
+]
+
+{ #category : 'initialization' }
+ChatPharoAgent >> topP [
+
+	^ topP
+]
+
+{ #category : 'initialization' }
+ChatPharoAgent >> topP: anObject [
+
+	topP := anObject
 ]
 
 { #category : 'accessing' }
