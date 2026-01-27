@@ -10,6 +10,7 @@ Class {
 		'submitButton',
 		'cancelButton',
 		'newChatButton',
+		'popOutButton',
 		'model',
 		'inspectButton',
 		'scrollableMessages',
@@ -40,12 +41,18 @@ ChatPharoChatPresenter >> connectPresenters [
 			messageTextField text: ''.
 			submitButton enabled: true.
 			messageTextField enabled: true ].
-		
+
 	newChatButton action: [
 			ChatPharoLogger logFrontend: 'New chat requested from chat tab' details: (Dictionary new
 					 at: 'chatId' put: model identityHash;
 					 yourself).
 			model requestNewChat ].
+		
+	popOutButton action: [
+			ChatPharoLogger logFrontend: 'Pop out chat requested' details: (Dictionary new
+					 at: 'chatId' put: model identityHash;
+					 yourself).
+			model presenter open ].
 
 	inspectButton action: [
 			ChatPharoLogger logFrontend: 'Inspect chat requested' details: (Dictionary new
@@ -80,7 +87,7 @@ ChatPharoChatPresenter >> connectPresenters [
 					 at: 'chatId' put: model identityHash;
 					 at: 'error' put: errorMessage;
 					 yourself) ].
-			model whenChatResetDo: [ self reloadMessages ]
+	model whenChatResetDo: [ self reloadMessages ]
 ]
 
 { #category : 'layout' }
@@ -94,7 +101,8 @@ ChatPharoChatPresenter >> defaultLayout [
 				   add: messageTextField;
 				   add: submitButton expand: false;
 				   add: cancelButton expand: false;
-				 add: newChatButton expand: false;
+				   add: newChatButton expand: false;
+				   add: popOutButton expand: false;
 				   add: inspectButton expand: false;
 				   yourself)
 		  expand: false;
@@ -162,11 +170,18 @@ ChatPharoChatPresenter >> initializePresenters [
 		                help: 'Cancel prompt';
 		                yourself.
 
-newChatButton := self newButton
-		                label: 'New chat';
-		                icon: (self iconNamed: #add);
-		                help: 'Start a new chat in this pane';
+	newChatButton := self newButton
+		                 label: 'New chat';
+		                 icon: (self iconNamed: #add);
+		                 help: 'Start a new chat in this pane';
+		                 yourself.
+		
+	popOutButton := self newButton
+		                label: 'Pop out';
+		                icon: (self iconNamed: #glamorousUp);
+		                help: 'Open this chat in its own window';
 		                yourself.
+
 
 
 	inspectButton := self newButton
