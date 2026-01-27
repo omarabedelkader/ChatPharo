@@ -11,6 +11,7 @@ Class {
 		'hostInput',
 		'portInput',
 		'temperatureInput',
+		'suggestedModelsDrop',
 		'installInput',
 		'installButton',
 		'deleteButton',
@@ -39,42 +40,42 @@ ChatPharoOllamaSettingsPresenter >> connectPresenters [
 { #category : 'layout' }
 ChatPharoOllamaSettingsPresenter >> defaultLayout [
 
-	| mainLayout rowLayout modelRow hostRow portRow tempRow installRow |
+	| mainLayout rowLayout modelRow hostRow portRow tempRow installRow suggestedRow |
 	modelRow := SpBoxLayout newHorizontal
 		            spacing: 8;
-		            add: (self newLabel label: 'Available models:')
-		            expand: false;
+		            add: (self newLabel label: 'Available models:') expand: false;
 		            add: self modelsDrop expand: true;
 		            add: self refreshButton expand: false;
 		            yourself.
+	suggestedRow := SpBoxLayout newHorizontal
+		              spacing: 8;
+		              add: (self newLabel label: 'Suggested models:')
+		              expand: false;
+		              add: suggestedModelsDrop expand: true;
+		              yourself.
 
 	installRow := SpBoxLayout newHorizontal
 		              spacing: 8;
-		              add: (self newLabel label: 'Pull model:')
-		              expand: false;
+		              add: (self newLabel label: 'Pull model:') expand: false;
 		              add: installInput expand: true;
 		              add: installButton expand: false;
-		              "add: deleteButton expand: false;"
-		              yourself.
+		              "add: deleteButton expand: false;"yourself.
 
 	hostRow := SpBoxLayout newHorizontal
 		           spacing: 8;
-		           add: (self newLabel label: 'Host (e.g. localhost):')
-		           expand: false;
+		           add: (self newLabel label: 'Host (e.g. localhost):') expand: false;
 		           add: hostInput expand: true;
 		           yourself.
 
 	portRow := SpBoxLayout newHorizontal
 		           spacing: 8;
-		           add: (self newLabel label: 'Port (e.g. 11434):')
-		           expand: false;
+		           add: (self newLabel label: 'Port (e.g. 11434):') expand: false;
 		           add: portInput expand: true;
 		           yourself.
 
 	tempRow := SpBoxLayout newHorizontal
 		           spacing: 8;
-		           add: (self newLabel label: 'Temperature (0.0 – 1.0):')
-		           expand: false;
+		           add: (self newLabel label: 'Temperature (0.0 – 1.0):') expand: false;
 		           add: temperatureInput expand: true;
 		           yourself.
 
@@ -83,6 +84,7 @@ ChatPharoOllamaSettingsPresenter >> defaultLayout [
 		              borderWidth: 8;
 		              beNotHomogeneous;
 		              add: modelRow expand: false;
+		add: suggestedRow expand: false;
 		              add: installRow expand: false;
 		              add: hostRow expand: false;
 		              add: portRow expand: false;
@@ -130,6 +132,13 @@ ChatPharoOllamaSettingsPresenter >> initializePresenters [
 		                    placeholder: '0.0';
 		                    text: model temperature asString;
 		                    yourself.
+	suggestedModelsDrop := SpDropListPresenter new
+		items: (#('') , model class suggestedModels);
+		display: [ :name | name ifEmpty: [ '-- Select a model --' ] ifNotEmpty: [ name ] ];
+		whenSelectedItemChangedDo: [ :name |
+			name ifNotEmpty: [ installInput text: name ] ];
+		yourself.
+		
 	installInput := self newTextInput
 		                placeholder: 'model name (e.g. codellama:7b)';
 		                yourself.
@@ -142,26 +151,23 @@ ChatPharoOllamaSettingsPresenter >> initializePresenters [
 					                 ifTrue: [
 							                 model class pullModel: installInput text.
 							                 self refreshModels ]
-					                 ifFalse: [
-						                 self inform:
-								                 'Model ' , installInput text , ' not found.' ] ];
+					                 ifFalse: [ self inform: 'Model ' , installInput text , ' not found.' ] ];
 		                 yourself.
 	deleteButton := self newButton
 		                label: 'Delete';
 		                icon: (self iconNamed: #delete);
 		                action: [
-						(model class isValidModel: installInput text)
-							ifTrue: [
-								model class deleteModel: installInput text.
-								self refreshModels ]
-							ifFalse: [
-								self inform: 'Model ' , installInput text , ' not found.' ] ];
+				                (model class isValidModel: installInput text)
+					                ifTrue: [
+							                model class deleteModel: installInput text.
+							                self refreshModels ]
+					                ifFalse: [ self inform: 'Model ' , installInput text , ' not found.' ] ];
 		                yourself.
-	        testButton := self newButton
-                               label: 'Test Connection';
-                               icon: (self iconNamed: #glamorousGo);
-                               action: [ self testConnection ];
-                               yourself
+	testButton := self newButton
+		              label: 'Test Connection';
+		              icon: (self iconNamed: #glamorousGo);
+		              action: [ self testConnection ];
+		              yourself
 ]
 
 { #category : 'accessing' }
@@ -239,6 +245,18 @@ ChatPharoOllamaSettingsPresenter >> refreshModels [
 { #category : 'accessing - model' }
 ChatPharoOllamaSettingsPresenter >> setModelBeforeInitialization: anAgent [
 	model := anAgent
+]
+
+{ #category : 'initialization' }
+ChatPharoOllamaSettingsPresenter >> suggestedModelsDrop [
+
+	^ suggestedModelsDrop
+]
+
+{ #category : 'initialization' }
+ChatPharoOllamaSettingsPresenter >> suggestedModelsDrop: anObject [
+
+	suggestedModelsDrop := anObject
 ]
 
 { #category : 'layout' }
