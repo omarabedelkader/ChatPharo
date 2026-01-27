@@ -192,6 +192,17 @@ ChatPharoSetupPresenter >> finishSetup [
 		self defer: [ ChatPharoTutorial start ] ]
 ]
 
+{ #category : 'layout' }
+ChatPharoSetupPresenter >> generateLocalDeveloperId [
+	"Generate a local developer ID for testing."
+
+	| token |
+	token := ChatPharoDeveloperConfig generateLocalDeveloperId.
+	developerIdInput text: token.
+	statusLabel label: 'Local Developer ID generated. Click Verify to continue.'.
+	verifyButton enabled: true
+]
+
 { #category : 'initialization' }
 ChatPharoSetupPresenter >> initialize [
 
@@ -354,12 +365,17 @@ ChatPharoSetupPresenter >> showAdvisorDefaultsStep [
 ChatPharoSetupPresenter >> showDeveloperStep [
 	"Show the developer verification step."
 
-	| idRow buttonRow |
+	| idRow buttonRow infoLabel localTokenButton localTokenRow |
 	currentStep := #developer.
 
 	descriptionLabel label: 'Do you have a ChatPharo Developer ID?'.
 	statusLabel label: ''.
 
+	infoLabel := self newLabel
+		label: 'If you are verified, ChatPharo Advisor will be able to recommend the best configuration.';
+		yourself.
+		
+		
 	developerIdInput := self newTextInput
 		                    placeholder: 'Enter your Developer ID...';
 		                    yourself.
@@ -370,6 +386,12 @@ ChatPharoSetupPresenter >> showDeveloperStep [
 		                action: [ self verifyDeveloperId ];
 		                yourself.
 
+	localTokenButton := self newButton
+		label: 'Generate local token';
+		icon: (self iconNamed: #smallNew);
+		action: [ self generateLocalDeveloperId ];
+		yourself.
+		
 	skipDeveloperButton := self newButton
 		                       label: 'Skip (I''m not a developer)';
 		                       action: [ self showAdvisorDefaultsStep ];
@@ -385,6 +407,11 @@ ChatPharoSetupPresenter >> showDeveloperStep [
 		         add: developerIdInput expand: true;
 		         add: verifyButton expand: false;
 		         yourself.
+		
+			localTokenRow := SpBoxLayout newHorizontal
+		spacing: 8;
+		add: localTokenButton expand: false;
+		yourself.
 
 	buttonRow := SpBoxLayout newHorizontal
 		             spacing: 8;
@@ -394,7 +421,9 @@ ChatPharoSetupPresenter >> showDeveloperStep [
 
 	contentContainer layout: (SpBoxLayout newTopToBottom
 			 spacing: 12;
+			add: infoLabel expand: false;
 			 add: idRow expand: false;
+			add: localTokenRow expand: false;
 			 add: buttonRow expand: false;
 			 yourself).
 

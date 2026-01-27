@@ -81,6 +81,16 @@ ChatPharoDeveloperConfig class >> fetchDeveloperIds [
 ]
 
 { #category : 'accessing' }
+ChatPharoDeveloperConfig class >> generateLocalDeveloperId [
+	"Generate and store a local developer ID for testing."
+
+	| token |
+	token := UUID new asString.
+	self saveLocalDeveloperId: token.
+	^ token
+]
+
+{ #category : 'accessing' }
 ChatPharoDeveloperConfig class >> getDeveloperIds [
 	"Get developer IDs, either from cache or by fetching if cache is stale."
 
@@ -107,6 +117,28 @@ ChatPharoDeveloperConfig class >> loadCachedDeveloperIds [
 		content := cacheFile readStreamDo: [ :stream | stream contents ].
 		self parseDeveloperIds: content
 	] on: Error do: [ OrderedCollection new ]
+]
+
+{ #category : 'accessing' }
+ChatPharoDeveloperConfig class >> loadLocalDeveloperIds [
+	"Load locally generated developer IDs from disk."
+
+	| localFile |
+	localFile := self localTokensFileReference.
+	localFile exists ifFalse: [ ^ OrderedCollection new ].
+
+	^ [
+		| content |
+		content := localFile readStreamDo: [ :stream | stream contents ].
+		self parseDeveloperIds: content
+	] on: Error do: [ OrderedCollection new ]
+]
+
+{ #category : 'accessing' }
+ChatPharoDeveloperConfig class >> localTokensFileReference [
+	"Return the file reference for locally generated developer IDs."
+
+	^ ChatPharoSettings settingsDirectory / 'developer-ids-local.txt'
 ]
 
 { #category : 'accessing' }
@@ -147,18 +179,39 @@ ChatPharoDeveloperConfig class >> saveCacheLocally: ids [
 ]
 
 { #category : 'accessing' }
+ChatPharoDeveloperConfig class >> saveLocalDeveloperId: aString [
+	"Persist a locally generated developer ID."
+
+	| localFile cleaned |
+	cleaned := self cleanToken: aString.
+	cleaned ifEmpty: [ ^ self ].
+
+	localFile := self localTokensFileReference.
+	localFile parent ensureCreateDirectory.
+
+	[ localFile exists
+		ifTrue: [
+			localFile appendStreamDo: [ :stream |
+				stream nextPutAll: cleaned; cr ] ]
+		ifFalse: [
+			localFile writeStreamDo: [ :stream |
+				stream nextPutAll: cleaned; cr ] ] ]
+		on: Error do: [ "Ignore local token write errors" ]
+]
+
+{ #category : 'accessing' }
 ChatPharoDeveloperConfig class >> verifyDeveloperId: aString [
 	"Verify if the given developer ID is in the list of authorized developers.
 	Returns true if authorized, false otherwise."
 
-	| cleanedInput ids |
+	| cleanedInput ids localIds |
 	aString ifNil: [ ^ false ].
 	aString isEmpty ifTrue: [ ^ false ].
 
 	cleanedInput := self cleanToken: aString.
 	ids := self getDeveloperIds.
 
-	^ ids anySatisfy: [ :id | id = cleanedInput ]
+	^ (ids , localIds) anySatisfy: [ :id | id = cleanedInput ]
 ]
 
 { #category : 'accessing' }
