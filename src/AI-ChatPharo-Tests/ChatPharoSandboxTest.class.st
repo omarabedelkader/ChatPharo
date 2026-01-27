@@ -98,6 +98,19 @@ ChatPharoSandboxTest >> testInitializeDefaults [
 ]
 
 { #category : 'running' }
+ChatPharoSandboxTest >> testTimeoutReturnsFailure [
+
+	| result |
+	sandbox restrictFileSystem: false.
+	sandbox restrictNetwork: false.
+	sandbox restrictSystemAccess: false.
+	sandbox timeout: 1.
+	result := sandbox evaluate: '(Delay forMilliseconds: 50) wait'.
+	self assert: result isFailure.
+	self assert: (result errorMessage includesSubstring: 'Execution timed out')
+]
+
+{ #category : 'running' }
 ChatPharoSandboxTest >> testUseDefaultsCopiesBlockedLists [
 
 	sandbox useDefaults.
