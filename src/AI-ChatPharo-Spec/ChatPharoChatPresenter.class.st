@@ -127,7 +127,6 @@ ChatPharoChatPresenter >> hideThinking [
 
 	thinkingPresenter stopAnimation.
 	messagesLayout remove: thinkingPresenter ifAbsent: [ "not shown" ].
-	errorPresenter := self instantiate: ChatPharoErrorPresenter.
 ]
 
 { #category : 'initialization' }
@@ -156,6 +155,7 @@ ChatPharoChatPresenter >> initializePresenters [
 		                 yourself.
 
 	thinkingPresenter := self instantiate: ChatPharoThinkingPresenter.
+	errorPresenter := self instantiate: ChatPharoErrorPresenter.
 
 	messagesLayout := SpBoxLayout newVertical.
 	scrollableMessages := SpPresenter new.
@@ -205,7 +205,8 @@ ChatPharoChatPresenter >> setModelBeforeInitialization: anObject [
 { #category : 'initialization' }
 ChatPharoChatPresenter >> showError: aString [
 	"Show the error indicator with the given error message"
-
+errorPresenter ifNil: [ errorPresenter := self instantiate: ChatPharoErrorPresenter ].
+	self hideError.
 	errorPresenter errorMessage: aString.
 	errorPresenter whenDismissedDo: [ self hideError ].
 	messagesLayout add: errorPresenter withConstraints: [ :constraints | constraints height: 40 ]
