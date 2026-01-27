@@ -378,6 +378,7 @@ ChatPharoMultiversPresenter >> refreshModelsForSelectedAgent [
 	| agentClass models |
 	selectedStep ifNil: [
 		modelDropList items: #().
+		modelDropList resetSelection.
 		^ self ].
 
 	agentClass := selectedStep agentClass.
@@ -385,10 +386,19 @@ ChatPharoMultiversPresenter >> refreshModelsForSelectedAgent [
 
 	modelDropList items: models.
 
-	selectedStep model ifNotEmpty: [
+	isUpdatingUI := true.
+	[
+		models isEmpty ifTrue: [
+			modelDropList resetSelection.
+			selectedStep model: ''.
+			^ self ].
+
 		(models includes: selectedStep model)
 			ifTrue: [ modelDropList selectItem: selectedStep model ]
-			ifFalse: [ models ifNotEmpty: [ modelDropList selectFirst ] ] ]
+						ifFalse: [
+				modelDropList selectFirst.
+				selectedStep model: modelDropList selectedItem ]
+	] ensure: [ isUpdatingUI := false ]
 ]
 
 { #category : 'as yet unclassified' }
