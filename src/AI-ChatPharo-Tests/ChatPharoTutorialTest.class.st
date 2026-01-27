@@ -158,7 +158,7 @@ ChatPharoTutorialTest >> testProgressPercentAtEnd [
 { #category : 'tests' }
 ChatPharoTutorialTest >> testProgressPercentAtStart [
 
-	self assert: tutorial progressPercent equals: 7
+	self assert: tutorial progressPercent equals: 6
 ]
 
 { #category : 'tests' }
