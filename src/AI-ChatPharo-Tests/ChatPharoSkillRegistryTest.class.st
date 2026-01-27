@@ -66,6 +66,13 @@ ChatPharoSkillRegistryTest >> testContextForQueryIncludesDetectedKeywords [
 ]
 
 { #category : 'running' }
+ChatPharoSkillRegistryTest >> testContextForQueryRespectsAutomaticEnabled [
+
+	registry setAutomaticEnabled: false forSkillNamed: 'TestSkill'.
+	self assert: (registry contextForQuery: 'Use AlphaBeta tooling') equals: ''
+]
+
+{ #category : 'running' }
 ChatPharoSkillRegistryTest >> testContextForSkillNamedMissingReturnsMessage [
 
 	self assert: (registry contextForSkillNamed: 'MissingSkill') equals: 'Skill not found: MissingSkill'
