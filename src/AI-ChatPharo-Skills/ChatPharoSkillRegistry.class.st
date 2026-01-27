@@ -167,14 +167,15 @@ ChatPharoSkillRegistry >> extractKeywordsFrom: queryString [
 	"Extracts potential keywords from a query string.
 	 Looks for capitalized words, class-like names, and known patterns."
 
-	| words |
+	| words stopWords |
 	words := queryString substrings.
-
+stopWords := #('use' 'uses' 'using').
 	"Return words that look like identifiers (capitalized or camelCase)"
 	^ words select: [ :word |
 		word size > 2 and: [
-			(word first isUppercase) or: [
-				word anySatisfy: [ :c | c isUppercase ] ] ] ]
+			(stopWords includes: word asLowercase) not and: [
+				(word first isUppercase) or: [
+					word anySatisfy: [ :c | c isUppercase ] ] ] ] ]
 ]
 
 { #category : 'as yet unclassified' }

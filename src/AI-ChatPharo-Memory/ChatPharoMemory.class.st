@@ -330,9 +330,7 @@ ChatPharoMemory >> extractKeywordsFrom: queryString [
 
 	| words |
 	words := queryString substrings.
-	^ words select: [ :word |
-		  word size > 2 and: [
-			  word first isUppercase or: [ word anySatisfy: [ :c | c isUppercase ] ] ] ]
+	^ words select: [ :word | word size > 2 and: [ word first isUppercase or: [ word anySatisfy: [ :c | c isUppercase ] ] ] ]
 ]
 
 { #category : 'initialization' }
