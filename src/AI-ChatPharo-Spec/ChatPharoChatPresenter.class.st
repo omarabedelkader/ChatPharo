@@ -135,8 +135,12 @@ ChatPharoChatPresenter >> hideError [
 ChatPharoChatPresenter >> hideThinking [
 	"Hide the thinking indicator and stop animation"
 
+thinkingPresenter phase: #finished.
 	thinkingPresenter stopAnimation.
-	messagesLayout remove: thinkingPresenter ifAbsent: [ "not shown" ].
+	[
+		(Delay forMilliseconds: 600) wait.
+		thinkingPresenter isFinished ifTrue: [
+			messagesLayout remove: thinkingPresenter ifAbsent: [ "not shown" ] ] ] fork
 ]
 
 { #category : 'initialization' }
@@ -246,7 +250,7 @@ errorPresenter ifNil: [ errorPresenter := self instantiate: ChatPharoErrorPresen
 { #category : 'initialization' }
 ChatPharoChatPresenter >> showThinking [
 	"Show the thinking indicator with animation"
-
+messagesLayout remove: thinkingPresenter ifAbsent: [ "not shown" ].
 	thinkingPresenter phase: #thinking.
 	thinkingPresenter startAnimation.
 	messagesLayout add: thinkingPresenter withConstraints: [ :constraints | constraints height: 40 ]

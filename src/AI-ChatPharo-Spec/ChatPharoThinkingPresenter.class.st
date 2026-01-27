@@ -34,17 +34,23 @@ ChatPharoThinkingPresenter >> initialize [
 ChatPharoThinkingPresenter >> initializePresenters [
 
 	statusLabel := self newLabel
-		label: 'Thinking...';
-		yourself.
+		               label: 'Thinking';
+		               yourself.
 	dotsLabel := self newLabel
-		label: '';
-		yourself
+		             label: '';
+		             yourself
+]
+
+{ #category : 'initialization' }
+ChatPharoThinkingPresenter >> isFinished [
+
+	^ currentPhase = #finished
 ]
 
 { #category : 'initialization' }
 ChatPharoThinkingPresenter >> phase: aSymbol [
 	"Set the current phase and update display.
-	Valid phases: #thinking, #executing, #analyzing, #searching"
+	Valid phases: #thinking, #executing, #analyzing, #searching, #finished"
 
 	currentPhase := aSymbol.
 	self updateStatusLabel
@@ -79,11 +85,13 @@ ChatPharoThinkingPresenter >> updateStatusLabel [
 	"Update the status label based on current phase"
 
 	| text |
-	text := currentPhase caseOf: {
-		[ #thinking ] -> [ 'Thinking...' ].
-		[ #executing ] -> [ 'Executing tools...' ].
-		[ #analyzing ] -> [ 'Analyzing...' ].
-		[ #searching ] -> [ 'Searching code...' ] }
-		otherwise: [ '🤔 Thinking' ].
+	text := currentPhase
+		        caseOf: {
+		[ #thinking ] -> [ 'Thinking' ].
+		[ #executing ] -> [ 'Executing tools' ].
+		[ #analyzing ] -> [ 'Analyzing' ].
+		[ #searching ] -> [ 'Searching code' ].
+		[ #finished ] -> [ 'End of thinking' ] }
+		        otherwise: [ 'Thinking' ].
 	statusLabel label: text
 ]
