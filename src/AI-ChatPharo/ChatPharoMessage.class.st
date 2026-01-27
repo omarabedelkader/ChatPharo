@@ -78,7 +78,8 @@ ChatPharoMessage >> feedback: aBoolean [
 
 { #category : 'accessing' }
 ChatPharoMessage >> height [
-	^ 140.
+
+	^ self presenter height
 ]
 
 { #category : 'initialization' }

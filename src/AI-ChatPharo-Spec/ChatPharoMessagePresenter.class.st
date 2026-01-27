@@ -66,9 +66,23 @@ ChatPharoMessagePresenter >> defaultLayout [
 ]
 
 { #category : 'accessing' }
+ChatPharoMessagePresenter >> estimatedLineCountFor: aString [
+	| text wrapWidth |
+	text := aString ifNil: [ '' ].
+	wrapWidth := 80.
+	^ (text lines ifEmpty: [ #('') ]) inject: 0 into: [ :sum :line |
+		  sum + (((line size / wrapWidth) ceiling) max: 1) ]
+]
+
+{ #category : 'accessing' }
 ChatPharoMessagePresenter >> height [
-	"64 is User: and Model: labels, then height of content and answer."
-	^ 64 + ((model content lines size) * 42 ) + ((model answer lines size) * 42)
+	"Base height for labels plus adaptive line heights for content/answer."
+	| baseHeight lineHeight contentLines answerLines |
+	baseHeight := 64.
+	lineHeight := 24.
+	contentLines := 1.
+	answerLines := self estimatedLineCountFor: model answer.
+	^ baseHeight + ((contentLines + answerLines) * lineHeight)
 ]
 
 { #category : 'initialization' }

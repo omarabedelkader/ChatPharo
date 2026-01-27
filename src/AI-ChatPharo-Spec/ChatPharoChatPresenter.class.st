@@ -26,7 +26,7 @@ Class {
 ChatPharoChatPresenter >> connectPresenters [
 
 	model messages do: [ :each |
-		messagesLayout add: each presenter withConstraints: [ :constraints | constraints height: each height * 2 ] ].
+		messagesLayout add: each presenter withConstraints: [ :constraints | constraints height: each height ] ].
 
 	messageTextField whenSubmitDo: [ :text | self sendMessage ].
 
@@ -47,7 +47,7 @@ ChatPharoChatPresenter >> connectPresenters [
 					 at: 'chatId' put: model identityHash;
 					 yourself).
 			model requestNewChat ].
-		
+
 	popOutButton action: [
 			ChatPharoLogger logFrontend: 'Pop out chat requested' details: (Dictionary new
 					 at: 'chatId' put: model identityHash;
@@ -62,7 +62,7 @@ ChatPharoChatPresenter >> connectPresenters [
 
 	model whenAnswerReceivedDo: [ :message |
 			self hideThinking.
-			messagesLayout add: message presenter withConstraints: [ :constraints | constraints height: message height * 2 ].
+			messagesLayout add: message presenter withConstraints: [ :constraints | constraints height: message height ].
 			messageTextField text: ''.
 			submitButton enabled: true.
 			messageTextField enabled: true.
@@ -216,7 +216,7 @@ ChatPharoChatPresenter >> reloadMessages [
 	messagesLayout := SpBoxLayout newVertical.
 	scrollableMessages layout: messagesLayout.
 	model messages do: [ :each |
-		messagesLayout add: each presenter withConstraints: [ :constraints | constraints height: each height * 2 ] ].
+		messagesLayout add: each presenter withConstraints: [ :constraints | constraints height: each height ] ].
 	messageTextField text: ''.
 	submitButton enabled: true.
 	messageTextField enabled: true
