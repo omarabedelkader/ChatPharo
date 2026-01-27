@@ -2,6 +2,7 @@ Class {
 	#name : 'ChatPharoMethodBrowser',
 	#superclass : 'ChatPharoPackageBrowser',
 	#instVars : [
+		'className',
 		'methodName'
 	],
 	#category : 'AI-ChatPharo-Env-System Browser',
@@ -19,6 +20,25 @@ ChatPharoMethodBrowser class >> shouldBeActivatedInContext: aBrowserContext [
 ChatPharoMethodBrowser class >> tabOrder [
 
 	^ -12
+]
+
+{ #category : 'update' }
+ChatPharoMethodBrowser >> chatContextKey [ 
+
+	methodName ifNil: [ ^ super chatContextKey ].
+	^ { #method . packageName . className . methodName }
+]
+
+{ #category : 'introspection' }
+ChatPharoMethodBrowser >> className [
+
+	^ className
+]
+
+{ #category : 'introspection' }
+ChatPharoMethodBrowser >> className: anObject [
+
+	className := anObject
 ]
 
 { #category : 'initialization' }
@@ -42,14 +62,24 @@ ChatPharoMethodBrowser >> methodName: anObject [
 { #category : 'initialization' }
 ChatPharoMethodBrowser >> setUpModelFromContext [
 
+		| methodClass |
+	self storeChatForCurrentContext.
+	methodClass := context lastSelectedMethod methodClass.
+	className := methodClass name.
+	packageName := (methodClass respondsTo: #package)
+		               ifTrue: [ methodClass package name ]
+		               ifFalse: [ nil ].
 	methodName := context lastSelectedMethod selector.
-	self updateAgentMethodName
+		self updateAgentPackageName.
+	self updateAgentMethodName.
+	self updateChatForContext
 
 ]
 
 { #category : 'update' }
 ChatPharoMethodBrowser >> updateAgent [ 
 
+super updateAgent.
 	self updateAgentMethodName 
 ]
 

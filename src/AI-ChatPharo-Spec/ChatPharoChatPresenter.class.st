@@ -9,6 +9,7 @@ Class {
 		'messageTextField',
 		'submitButton',
 		'cancelButton',
+		'newChatButton',
 		'model',
 		'inspectButton',
 		'scrollableMessages',
@@ -39,7 +40,12 @@ ChatPharoChatPresenter >> connectPresenters [
 			messageTextField text: ''.
 			submitButton enabled: true.
 			messageTextField enabled: true ].
-
+		
+	newChatButton action: [
+			ChatPharoLogger logFrontend: 'New chat requested from chat tab' details: (Dictionary new
+					 at: 'chatId' put: model identityHash;
+					 yourself).
+			model requestNewChat ].
 
 	inspectButton action: [
 			ChatPharoLogger logFrontend: 'Inspect chat requested' details: (Dictionary new
@@ -61,10 +67,9 @@ ChatPharoChatPresenter >> connectPresenters [
 
 	model whenToolExecutionDo: [
 			thinkingPresenter phase: #executing.
-			ChatPharoLogger logFrontend: 'Tool execution feedback shown'
-                                details: (Dictionary new
-                                        at: 'chatId' put: model identityHash;
-                                        yourself) ].
+			ChatPharoLogger logFrontend: 'Tool execution feedback shown' details: (Dictionary new
+					 at: 'chatId' put: model identityHash;
+					 yourself) ].
 
 	model whenErrorReceivedDo: [ :errorMessage |
 			self hideThinking.
@@ -74,23 +79,26 @@ ChatPharoChatPresenter >> connectPresenters [
 			ChatPharoLogger logFrontend: 'Error displayed in transcript' details: (Dictionary new
 					 at: 'chatId' put: model identityHash;
 					 at: 'error' put: errorMessage;
-					 yourself) ]
+					 yourself) ].
+			model whenChatResetDo: [ self reloadMessages ]
 ]
 
 { #category : 'layout' }
 ChatPharoChatPresenter >> defaultLayout [
-    ^ SpBoxLayout newVertical
-          spacing: 10;
-          add: (SpScrollableLayout with: scrollableMessages);
-          add: (SpBoxLayout newHorizontal
-                   spacing: 5;
-                   add: messageTextField;
-                   add: submitButton expand: false;
-                   add: cancelButton expand: false;
-						 add: inspectButton expand: false;
-                   yourself)
-          expand: false;
-          yourself
+
+	^ SpBoxLayout newVertical
+		  spacing: 10;
+		  add: (SpScrollableLayout with: scrollableMessages);
+		  add: (SpBoxLayout newHorizontal
+				   spacing: 5;
+				   add: messageTextField;
+				   add: submitButton expand: false;
+				   add: cancelButton expand: false;
+				 add: newChatButton expand: false;
+				   add: inspectButton expand: false;
+				   yourself)
+		  expand: false;
+		  yourself
 ]
 
 { #category : 'accessing' }
@@ -148,6 +156,13 @@ ChatPharoChatPresenter >> initializePresenters [
 		                help: 'Cancel prompt';
 		                yourself.
 
+newChatButton := self newButton
+		                label: 'New chat';
+		                icon: (self iconNamed: #add);
+		                help: 'Start a new chat in this pane';
+		                yourself.
+
+
 	inspectButton := self newButton
 		                 label: 'Inspect';
 		                 icon: (self iconNamed: #inspect);
@@ -170,6 +185,20 @@ ChatPharoChatPresenter >> initializeWindow: aWindowPresenter [
 	aWindowPresenter
 		title: 'Pharo chat';
 		initialExtent: 800@500
+]
+
+{ #category : 'initialization' }
+ChatPharoChatPresenter >> reloadMessages [
+
+	self hideThinking.
+	self hideError.
+	messagesLayout := SpBoxLayout newVertical.
+	scrollableMessages layout: messagesLayout.
+	model messages do: [ :each |
+		messagesLayout add: each presenter withConstraints: [ :constraints | constraints height: each height * 2 ] ].
+	messageTextField text: ''.
+	submitButton enabled: true.
+	messageTextField enabled: true
 ]
 
 { #category : 'initialization' }

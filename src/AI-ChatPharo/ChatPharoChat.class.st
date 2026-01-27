@@ -24,14 +24,27 @@ Class {
 		'agent',
 		'promptProcess',
 		'onAnswerReceived',
+		'onChatReset',
 		'history',
 		'onToolExecution',
 		'cache',
-		'onErrorReceived'
+		'onErrorReceived',
+		'onNewChatRequested'
 	],
 	#category : 'AI-ChatPharo',
 	#package : 'AI-ChatPharo'
 }
+
+{ #category : 'running' }
+ChatPharoChat >> addAnswerReceivedHandler: aBlock [
+
+	| existing |
+	aBlock ifNil: [ ^ self ].
+	existing := onAnswerReceived.
+	onAnswerReceived := [ :message |
+		existing ifNotNil: [ :blk | blk value: message ].
+		aBlock value: message ]
+]
 
 { #category : 'running' }
 ChatPharoChat >> addAssistantMessage: answerText [
@@ -165,50 +178,45 @@ ChatPharoChat >> historyPromptPrefix [
 
 { #category : 'accessing' }
 ChatPharoChat >> importFromJson: aJsonString [
-    "Import a chat from a JSON string. The JSON should be an array of message objects
+	"Import a chat from a JSON string. The JSON should be an array of message objects
     with 'role' and 'content' keys, optionally with 'tool_calls' for assistant messages."
 
-    | parsedMessages currentUserContent |
-    self clearChat.
-    parsedMessages := STONJSON fromString: aJsonString.
-    currentUserContent := nil.
+	| parsedMessages currentUserContent |
+	self clearChat.
+	parsedMessages := STONJSON fromString: aJsonString.
+	currentUserContent := nil.
 
-    parsedMessages do: [ :msgDict |
-        | role content toolCalls historyMsg |
-        role := msgDict at: 'role'.
-        content := msgDict at: 'content' ifAbsent: [ '' ].
-        toolCalls := msgDict at: 'tool_calls' ifAbsent: [ nil ].
+	parsedMessages do: [ :msgDict |
+			| role content toolCalls historyMsg |
+			role := msgDict at: 'role'.
+			content := msgDict at: 'content' ifAbsent: [ '' ].
+			toolCalls := msgDict at: 'tool_calls' ifAbsent: [ nil ]. "Create tool calls if present"
+			toolCalls ifNotNil: [
+					toolCalls := toolCalls collect: [ :tcDict |
+							             | funcDict |
+							             funcDict := tcDict at: 'function' ifAbsent: [ Dictionary new ].
+							             ChatPharoHistorySaverToolCall
+								             id: (tcDict at: 'id' ifAbsent: [ '' ])
+								             functionName: (funcDict at: 'name' ifAbsent: [ '' ])
+								             arguments: (funcDict at: 'arguments' ifAbsent: [ '' ])
+								             content: nil ] ]. "Add to history"
+			historyMsg := ChatPharoHistoryMessage role: role content: content toolCalls: toolCalls.
+			history addMessage: historyMsg. "Build UI messages - pair user with assistant"
+			role = 'user' ifTrue: [ currentUserContent := content ].
+			role = 'assistant' ifTrue: [
+					messages add: (ChatPharoMessage new
+							 content: (currentUserContent ifNil: [ '' ]);
+							 answer: (content ifNil: [ '' ]);
+							 assistantLabel: 'Assistant';
+							 yourself).
+					currentUserContent := nil ] ].
 
-        "Create tool calls if present"
-        toolCalls ifNotNil: [
-            toolCalls := toolCalls collect: [ :tcDict |
-                | funcDict |
-                funcDict := tcDict at: 'function' ifAbsent: [ Dictionary new ].
-                ChatPharoHistorySaverToolCall
-                    id: (tcDict at: 'id' ifAbsent: [ '' ])
-                    functionName: (funcDict at: 'name' ifAbsent: [ '' ])
-                    arguments: (funcDict at: 'arguments' ifAbsent: [ '' ])
-                    content: nil ] ].
-
-        "Add to history"
-        historyMsg := ChatPharoHistoryMessage role: role content: content toolCalls: toolCalls.
-        history addMessage: historyMsg.
-
-        "Build UI messages - pair user with assistant"
-        role = 'user' ifTrue: [ currentUserContent := content ].
-        role = 'assistant' ifTrue: [
-            messages add: (ChatPharoMessage new
-                content: (currentUserContent ifNil: [ '' ]);
-                answer: (content ifNil: [ '' ]);
-                assistantLabel: 'Assistant';
-                yourself).
-            currentUserContent := nil ] ].
-
-    ChatPharoLogger logBackend: 'Chat imported from JSON'
-        details: (Dictionary new
-            at: 'chatId' put: self identityHash;
-            at: 'messagesImported' put: parsedMessages size;
-            yourself)
+	ChatPharoLogger logBackend: 'Chat imported from JSON' details: (Dictionary new
+			 at: 'chatId' put: self identityHash;
+			 at: 'messagesImported' put: parsedMessages size;
+			 yourself).
+		
+	self notifyChatReset
 ]
 
 { #category : 'initialization' }
@@ -218,9 +226,9 @@ ChatPharoChat >> initialize [
 	history := ChatPharoHistory new.
 	messages := OrderedCollection new.
 	onToolExecution := nil.
+	onChatReset := nil.
 	cache := Dictionary new.
-	        (ChatPharoSettings default welcomeMessageEnabled)
-                ifTrue: [ self addWelcomeMessage ]
+	ChatPharoSettings default welcomeMessageEnabled ifTrue: [ self addWelcomeMessage ]
 ]
 
 { #category : 'accessing' }
@@ -233,6 +241,12 @@ ChatPharoChat >> messages [
 ChatPharoChat >> messages: anObject [
 
 	messages := anObject
+]
+
+{ #category : 'initialization' }
+ChatPharoChat >> notifyChatReset [ 
+
+	onChatReset ifNotNil: [ :blk | blk value ]
 ]
 
 { #category : 'presenters' }
@@ -288,6 +302,26 @@ ChatPharoChat >> recordUserPreference: preferenceText [
 		details: (Dictionary new
 				 at: 'preference' put: (preferenceText truncateTo: 50);
 				 yourself)
+]
+
+{ #category : 'initialization' }
+ChatPharoChat >> requestNewChat [ 
+
+	onNewChatRequested
+		ifNotNil: [ :blk | blk value ]
+		ifNil: [ self resetConversation ]
+]
+
+{ #category : 'initialization' }
+ChatPharoChat >> resetConversation [
+
+	self cancelMessage.
+	history clear.
+	messages removeAll.
+	self clearCache.
+	(ChatPharoSettings default welcomeMessageEnabled)
+		ifTrue: [ self addWelcomeMessage ].
+	self notifyChatReset
 ]
 
 { #category : 'running' }
@@ -413,10 +447,22 @@ ChatPharoChat >> whenAnswerReceivedDo: aBlock [
 	onAnswerReceived := aBlock
 ]
 
+{ #category : 'initialization' }
+ChatPharoChat >> whenChatResetDo: aBlock [
+
+	onChatReset := aBlock
+]
+
 { #category : 'running' }
 ChatPharoChat >> whenErrorReceivedDo: aBlock [
 
 	onErrorReceived := aBlock
+]
+
+{ #category : 'initialization' }
+ChatPharoChat >> whenNewChatRequestedDo: aBlock [ 
+
+	onNewChatRequested := aBlock
 ]
 
 { #category : 'running' }

@@ -21,6 +21,13 @@ ChatPharoClassBrowser class >> tabOrder [
 	^ -15
 ]
 
+{ #category : 'update' }
+ChatPharoClassBrowser >> chatContextKey [
+
+	className ifNil: [ ^ super chatContextKey ].
+	^ { #class . packageName . className }
+]
+
 { #category : 'introspection' }
 ChatPharoClassBrowser >> className [ 
 
@@ -42,14 +49,19 @@ ChatPharoClassBrowser >> defaultTitle [
 { #category : 'initialization' }
 ChatPharoClassBrowser >> setUpModelFromContext [
 
+self storeChatForCurrentContext.
+	packageName := context lastSelectedClassGroup name.
 	className := context lastSelectedClass name.
-	self updateAgentClassName
+	self updateAgentPackageName.
+	self updateAgentClassName.
+	self updateChatForContext
 
 ]
 
 { #category : 'update' }
 ChatPharoClassBrowser >> updateAgent [ 
 
+super updateAgent.
 	self updateAgentClassName 
 ]
 

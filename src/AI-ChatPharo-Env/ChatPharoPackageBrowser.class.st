@@ -6,7 +6,8 @@ Class {
 	#superclass : 'ClyBrowserToolMorph',
 	#instVars : [
 		'packageName',
-		'chat'
+		'chat',
+		'chatContextKey'
 	],
 	#category : 'AI-ChatPharo-Env-System Browser',
 	#package : 'AI-ChatPharo-Env',
@@ -43,7 +44,16 @@ ChatPharoPackageBrowser >> build [
                 agent: agentCopy;
                 yourself.
         self addMorph: chat presenter build fullFrame: LayoutFrame identity.
+ chat addAnswerReceivedHandler: [ self storeChatForCurrentContext ].
+        chat whenNewChatRequestedDo: [ self startNewChatForCurrentContext ].
         self updateAgent
+]
+
+{ #category : 'initialization' }
+ChatPharoPackageBrowser >> chatContextKey [
+
+	packageName ifNil: [ ^ nil ].
+	^ { #package . packageName }
 ]
 
 { #category : 'initialization' }
@@ -56,6 +66,14 @@ ChatPharoPackageBrowser >> defaultIconName [
 ChatPharoPackageBrowser >> defaultTitle [
 
 	^ packageName
+]
+
+{ #category : 'history' }
+ChatPharoPackageBrowser >> loadChatForCurrentContext [
+
+	(chat isNil or: [ chatContextKey isNil ]) ifTrue: [ ^ self ].
+	(ChatPharoBrowserChatStore loadChatForKey: chatContextKey into: chat)
+		ifFalse: [ chat resetConversation ]
 ]
 
 { #category : 'accessing' }
@@ -73,9 +91,27 @@ ChatPharoPackageBrowser >> packageName: anObject [
 { #category : 'initialization' }
 ChatPharoPackageBrowser >> setUpModelFromContext [
 
+self storeChatForCurrentContext.
 	packageName := context lastSelectedClassGroup name.
-	self updateAgentPackageName
+	self updateAgentPackageName.
+	self updateChatForContext
 
+]
+
+{ #category : 'initialization' }
+ChatPharoPackageBrowser >> startNewChatForCurrentContext [
+
+	chatContextKey ifNotNil: [
+		ChatPharoBrowserChatStore removeHistoryForKey: chatContextKey ].
+	chat resetConversation.
+	self storeChatForCurrentContext
+]
+
+{ #category : 'initialization' }
+ChatPharoPackageBrowser >> storeChatForCurrentContext [
+
+	(chat isNil or: [ chatContextKey isNil ]) ifTrue: [ ^ self ].
+	ChatPharoBrowserChatStore storeChat: chat forKey: chatContextKey
 ]
 
 { #category : 'as yet unclassified' }
@@ -89,4 +125,14 @@ ChatPharoPackageBrowser >> updateAgentPackageName [
 
 	(chat notNil and: [ chat agent respondsTo: #packageName: ]) ifTrue: [
 		chat agent packageName: packageName ].
+]
+
+{ #category : 'initialization' }
+ChatPharoPackageBrowser >> updateChatForContext [
+
+	| newKey |
+	newKey := self chatContextKey.
+	newKey = chatContextKey ifTrue: [ ^ self ].
+	chatContextKey := newKey.
+	self loadChatForCurrentContext
 ]
