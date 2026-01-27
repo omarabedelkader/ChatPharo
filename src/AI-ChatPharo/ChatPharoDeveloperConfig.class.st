@@ -209,7 +209,8 @@ ChatPharoDeveloperConfig class >> verifyDeveloperId: aString [
 	aString isEmpty ifTrue: [ ^ false ].
 
 	cleanedInput := self cleanToken: aString.
-	ids := self getDeveloperIds.
+	ids := self getDeveloperIds ifNil: [ OrderedCollection new ].
+	localIds := self loadLocalDeveloperIds.
 
 	^ (ids , localIds) anySatisfy: [ :id | id = cleanedInput ]
 ]
