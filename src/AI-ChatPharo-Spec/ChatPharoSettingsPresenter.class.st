@@ -216,6 +216,35 @@ ChatPharoSettingsPresenter >> ensureBrowserExtensionTab [
 			notebook addPage: browserExtensionPage ]
 ]
 
+{ #category : 'as yet unclassified' }
+ChatPharoSettingsPresenter >> historyTextForChats [
+
+	| chats history |
+	chats := chatPharo
+		         ifNotNil: [ chatPharo chats ]
+		         ifNil: [ #() ].
+	chats isEmpty ifTrue: [
+		history := model agent history.
+		^ history
+			  ifNotNil: [ history asPromptPrefix ]
+			  ifNil: [ 'No history available.' ] ].
+
+	^ String streamContents: [ :stream |
+		  chats withIndexDo: [ :chat :index |
+			  | prefix |
+			  stream
+				  nextPutAll: 'Chat ' , index asString;
+				  cr.
+			  prefix := chat historyPromptPrefix.
+			  prefix isEmpty
+				  ifTrue: [ stream nextPutAll: 'No history available.' ]
+				  ifFalse: [ stream nextPutAll: prefix ].
+			  index < chats size ifTrue: [
+				  stream
+					  cr;
+					  cr ] ] ]
+]
+
 { #category : 'initialization' }
 ChatPharoSettingsPresenter >> initializePresenters [
 
@@ -505,27 +534,17 @@ ChatPharoSettingsPresenter >> newExtensionsTab [
 { #category : 'initialization' }
 ChatPharoSettingsPresenter >> newHistoryTab [
 
-        | history historyText historyView |
-        history := chatPharo
-                               ifNotNil: [
-                                               chatPharo activeAgent
-                                                       ifNotNil: [ chatPharo activeAgent history ]
-                                                       ifNil: [ nil ] ]
-                               ifNil: [ nil ].
+ | historyText historyView |
+        historyText := self historyTextForChats.
 
-history := history ifNil: [ model agent history ].
-        historyText := history
-                               ifNotNil: [ history asPromptPrefix ]
-                               ifNil: [ 'No history available.' ].
+	historyView := self newText.
+	historyView text: historyText asText.
 
-        historyView := self newText.
-        historyView text: historyText asText.
-
-        ^ SpPresenter new
-                  layout: (SpBoxLayout newTopToBottom
-                                   add: historyView;
-                                   yourself);
-                  yourself
+	^ SpPresenter new
+		  layout: (SpBoxLayout newTopToBottom
+				   add: historyView;
+				   yourself);
+		  yourself
 ]
 
 { #category : 'initialization' }
