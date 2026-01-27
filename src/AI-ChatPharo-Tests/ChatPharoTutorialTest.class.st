@@ -148,6 +148,13 @@ ChatPharoTutorialTest >> testPreviousDoesNotGoBeforeStart [
 	self assert: tutorial currentIndex equals: 1
 ]
 
+{ #category : 'running' }
+ChatPharoTutorialTest >> testProgressPercentAtEnd [
+
+	tutorial last.
+	self assert: tutorial progressPercent equals: 100
+]
+
 { #category : 'tests' }
 ChatPharoTutorialTest >> testProgressPercentAtStart [
 
