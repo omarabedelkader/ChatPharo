@@ -80,7 +80,7 @@ ChatPharoMessagePresenter >> height [
 	| baseHeight lineHeight contentLines answerLines |
 	baseHeight := 64.
 	lineHeight := 24.
-	contentLines := 1.
+	contentLines := self estimatedLineCountFor: model content.
 	answerLines := self estimatedLineCountFor: model answer.
 	^ baseHeight + ((contentLines + answerLines) * lineHeight)
 ]
