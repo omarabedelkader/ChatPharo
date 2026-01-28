@@ -65,49 +65,41 @@ ChatPharoFeedbackAnalyzer >> acceptanceRate [
 ChatPharoFeedbackAnalyzer >> analyzeFeedbackPatterns [
 	"Analyze feedback patterns and return insights"
 
-	| patterns positiveFeedback negativeFeedback corrections preferences |
+	| patterns positiveFeedback negativeFeedback corrections preferences totalFeedback |
 	patterns := OrderedCollection new.
-
+totalFeedback := self feedbackMemories.
 	positiveFeedback := self positiveFeedbackMemories.
 	negativeFeedback := self negativeFeedbackMemories.
 	corrections := self correctionMemories.
-	preferences := self preferenceMemories.
-
-	"Add pattern: High rejection rate"
-	self acceptanceRate < 0.5 ifTrue: [
-		patterns add: (Dictionary new
-				 at: 'pattern' put: 'Low acceptance rate';
-				 at: 'severity' put: 'high';
-				 at: 'description' put: 'More than 50% of suggestions are rejected';
-				 at: 'recommendation' put: 'Review and adjust suggestion quality';
-				 yourself) ].
-
-	"Add pattern: Many corrections"
+	preferences := self preferenceMemories. "Add pattern: High rejection rate"
+	(totalFeedback isEmpty not and: [ self acceptanceRate < 0.5 ]) ifTrue: [
+			patterns add: (Dictionary new
+					 at: 'pattern' put: 'Low acceptance rate';
+					 at: 'severity' put: 'high';
+					 at: 'description' put: 'More than 50% of suggestions are rejected';
+					 at: 'recommendation' put: 'Review and adjust suggestion quality';
+					 yourself) ]. "Add pattern: Many corrections"
 	corrections size > 5 ifTrue: [
-		patterns add: (Dictionary new
-				 at: 'pattern' put: 'Frequent corrections';
-				 at: 'severity' put: 'medium';
-				 at: 'description' put: corrections size asString , ' corrections recorded';
-				 at: 'recommendation' put: 'Analyze correction patterns to improve accuracy';
-				 yourself) ].
-
-	"Add pattern: Strong preferences"
+			patterns add: (Dictionary new
+					 at: 'pattern' put: 'Frequent corrections';
+					 at: 'severity' put: 'medium';
+					 at: 'description' put: corrections size asString , ' corrections recorded';
+					 at: 'recommendation' put: 'Analyze correction patterns to improve accuracy';
+					 yourself) ]. "Add pattern: Strong preferences"
 	preferences size > 3 ifTrue: [
-		patterns add: (Dictionary new
-				 at: 'pattern' put: 'Strong user preferences';
-				 at: 'severity' put: 'info';
-				 at: 'description' put: preferences size asString , ' preferences recorded';
-				 at: 'recommendation' put: 'Ensure preferences are consistently applied';
-				 yourself) ].
-
-	"Add pattern: Recent negative trend"
-	(self recentNegativeTrend) ifTrue: [
-		patterns add: (Dictionary new
-				 at: 'pattern' put: 'Recent negative trend';
-				 at: 'severity' put: 'high';
-				 at: 'description' put: 'Increasing negative feedback in recent interactions';
-				 at: 'recommendation' put: 'Review recent changes and adjust approach';
-				 yourself) ].
+			patterns add: (Dictionary new
+					 at: 'pattern' put: 'Strong user preferences';
+					 at: 'severity' put: 'info';
+					 at: 'description' put: preferences size asString , ' preferences recorded';
+					 at: 'recommendation' put: 'Ensure preferences are consistently applied';
+					 yourself) ]. "Add pattern: Recent negative trend"
+	self recentNegativeTrend ifTrue: [
+			patterns add: (Dictionary new
+					 at: 'pattern' put: 'Recent negative trend';
+					 at: 'severity' put: 'high';
+					 at: 'description' put: 'Increasing negative feedback in recent interactions';
+					 at: 'recommendation' put: 'Review recent changes and adjust approach';
+					 yourself) ].
 
 	^ patterns
 ]
@@ -169,63 +161,62 @@ ChatPharoFeedbackAnalyzer >> generateReport [
 
 	| report |
 	report := String streamContents: [ :stream |
-		          | summary patterns recommendations |
-		          stream
-			          nextPutAll: '=== ChatPharo Feedback Analysis Report ===';
-			          cr;
-			          cr. "Summary statistics"
-		          summary := self feedbackSummary.
-		          stream
-			          nextPutAll: '## Statistics';
-			          cr;
-			          nextPutAll: 'Total feedback: ' , (summary at: 'totalFeedback') asString;
-			          cr;
-			          nextPutAll: 'Positive: ' , (summary at: 'positiveFeedback') asString;
-			          cr;
-			          nextPutAll: 'Negative: ' , (summary at: 'negativeFeedback') asString;
-			          cr;
-			          nextPutAll: 'Acceptance rate: '
-				          , ((summary at: 'acceptanceRate') * 100) printShowingDecimalPlaces: 1;
-			          nextPutAll: '%';
-			          cr;
-			          nextPutAll: 'Corrections: ' , (summary at: 'corrections') asString;
-			          cr;
-			          nextPutAll: 'Preferences: ' , (summary at: 'preferences') asString;
-			          cr;
-			          cr. "Patterns"
-		          patterns := self analyzeFeedbackPatterns.
-		          stream
-			          nextPutAll: '## Patterns Detected';
-			          cr.
-		          patterns ifEmpty: [
+			          | summary patterns recommendations |
 			          stream
-				          nextPutAll: 'No significant patterns detected.';
-				          cr ].
-		          patterns do: [ :pattern |
-			          stream
-				          nextPutAll: '- [' , (pattern at: 'severity') asUppercase , '] ';
-				          nextPutAll: (pattern at: 'pattern');
+				          nextPutAll: '=== ChatPharo Feedback Analysis Report ===';
 				          cr;
-				          nextPutAll: '  ' , (pattern at: 'description');
-				          cr ].
-		          stream cr. "Recommendations"
-		          recommendations := self improvementRecommendations.
-		          stream
-			          nextPutAll: '## Recommendations';
-			          cr.
-		          recommendations ifEmpty: [
+				          cr. "Summary statistics"
+			          summary := self feedbackSummary.
 			          stream
-				          nextPutAll: 'No specific recommendations at this time.';
-				          cr ].
-		          recommendations do: [ :rec |
+				          nextPutAll: '## Statistics';
+				          cr;
+				          nextPutAll: 'Total feedback: ' , (summary at: 'totalFeedback') asString;
+				          cr;
+				          nextPutAll: 'Positive: ' , (summary at: 'positiveFeedback') asString;
+				          cr;
+				          nextPutAll: 'Negative: ' , (summary at: 'negativeFeedback') asString;
+				          cr;
+				          nextPutAll: 'Acceptance rate: ' , (((summary at: 'acceptanceRate') * 100) printShowingDecimalPlaces: 1);
+				          nextPutAll: '%';
+				          cr;
+				          nextPutAll: 'Corrections: ' , (summary at: 'corrections') asString;
+				          cr;
+				          nextPutAll: 'Preferences: ' , (summary at: 'preferences') asString;
+				          cr;
+				          cr. "Patterns"
+			          patterns := self analyzeFeedbackPatterns.
 			          stream
-				          nextPutAll: '• ';
-				          nextPutAll: rec;
+				          nextPutAll: '## Patterns Detected';
+				          cr.
+			          patterns ifEmpty: [
+					          stream
+						          nextPutAll: 'No significant patterns detected.';
+						          cr ].
+			          patterns do: [ :pattern |
+					          stream
+						          nextPutAll: '- [' , (pattern at: 'severity') asUppercase , '] ';
+						          nextPutAll: (pattern at: 'pattern');
+						          cr;
+						          nextPutAll: '  ' , (pattern at: 'description');
+						          cr ].
+			          stream cr. "Recommendations"
+			          recommendations := self improvementRecommendations.
+			          stream
+				          nextPutAll: '## Recommendations';
+				          cr.
+			          recommendations ifEmpty: [
+					          stream
+						          nextPutAll: 'No specific recommendations at this time.';
+						          cr ].
+			          recommendations do: [ :rec |
+					          stream
+						          nextPutAll: '• ';
+						          nextPutAll: rec;
+						          cr ].
+			          stream cr.
+			          stream
+				          nextPutAll: '=== End of Report ===';
 				          cr ].
-		          stream cr.
-		          stream
-			          nextPutAll: '=== End of Report ===';
-			          cr ].
 
 	^ report
 ]

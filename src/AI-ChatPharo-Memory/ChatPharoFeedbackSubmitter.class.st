@@ -97,12 +97,8 @@ ChatPharoFeedbackSubmitter class >> enabled: aBoolean [
 ChatPharoFeedbackSubmitter class >> submitFeedback: feedbackDict [
 	"Submit feedback to the backend asynchronously"
 
-	| aChatPharoFeedbackSubmitter |
-	aChatPharoFeedbackSubmitter := self new.
-
-	aChatPharoFeedbackSubmitter enabled ifFalse: [ ^ aChatPharoFeedbackSubmitter ].
-
-	[ aChatPharoFeedbackSubmitter submitFeedbackSync: feedbackDict ]
+	self enabled ifFalse: [ ^ self ].
+[ self submitFeedbackSync: feedbackDict ]
 		forkAt: Processor userBackgroundPriority
 		named: 'Feedback Submission'
 ]
@@ -119,11 +115,11 @@ ChatPharoFeedbackSubmitter class >> submitFeedbackSync: feedbackDict [
 
 	[ success not and: [ retryCount < maxRetries ] ] whileTrue: [
 			[
-				payload := aChatPharoFeedbackSubmitter buildRequestPayload: feedbackDict.
+				payload := self buildRequestPayload: feedbackDict.
 				response := ZnClient new
-					            url: aChatPharoFeedbackSubmitter backendUrl;
+					            url: self backendUrl;
 					            entity: (ZnEntity json: payload);
-					            headerAt: 'Authorization' put: 'Bearer ' , aChatPharoFeedbackSubmitter apiKey;
+					            headerAt: 'Authorization' put: 'Bearer ' , self apiKey;
 					            post;
 					            response.
 
@@ -156,8 +152,7 @@ ChatPharoFeedbackSubmitter class >> submitFeedbackSync: feedbackDict [
 ChatPharoFeedbackSubmitter class >> submitMessageFeedback: aMessage positive: isPositive [
 	"Submit feedback for a specific message"
 
-	| feedbackDict aChatPharoFeedbackSubmitter |
-	aChatPharoFeedbackSubmitter := self new.
+	| feedbackDict |
 	feedbackDict := Dictionary new
 		                at: 'type' put: (isPositive
 				                 ifTrue: [ 'positive' ]
@@ -167,31 +162,29 @@ ChatPharoFeedbackSubmitter class >> submitMessageFeedback: aMessage positive: is
 		                at: 'messageId' put: aMessage identityHash;
 		                at: 'agentLabel' put: (aMessage assistantLabel ifNil: [ 'Assistant' ]);
 		                yourself.
-	aChatPharoFeedbackSubmitter submitFeedback: feedbackDict
+	self submitFeedback: feedbackDict
 ]
 
 { #category : 'submit' }
 ChatPharoFeedbackSubmitter class >> submitSuggestionAccepted: suggestionDict [
 	"Submit feedback when a suggestion is accepted"
 
-	| feedbackDict aChatPharoFeedbackSubmitter |
-	aChatPharoFeedbackSubmitter := self new.
+	| feedbackDict |
 	feedbackDict := Dictionary new
 		                at: 'type' put: 'suggestion_accepted';
 		                at: 'suggestion' put: suggestionDict;
 		                yourself.
-	aChatPharoFeedbackSubmitter submitFeedback: feedbackDict
+	self submitFeedback: feedbackDict
 ]
 
 { #category : 'submit' }
 ChatPharoFeedbackSubmitter class >> submitSuggestionRejected: suggestionDict [
 	"Submit feedback when a suggestion is rejected"
 
-	| feedbackDict aChatPharoFeedbackSubmitter |
-	aChatPharoFeedbackSubmitter := self new.
+	| feedbackDict |
 	feedbackDict := Dictionary new
 		                at: 'type' put: 'suggestion_rejected';
 		                at: 'suggestion' put: suggestionDict;
 		                yourself.
-	aChatPharoFeedbackSubmitter submitFeedback: feedbackDict
+	self submitFeedback: feedbackDict
 ]

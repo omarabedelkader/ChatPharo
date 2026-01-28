@@ -64,19 +64,21 @@ ChatPharoFeedbackAnalyzerTest >> testAcceptanceRateWithOnlyPositive [
 
 { #category : 'running' }
 ChatPharoFeedbackAnalyzerTest >> testAnalyzeFeedbackPatternsWithCorrections [
-
-
 	"Add many corrections"
+
 	| patterns |
 	1 to: 6 do: [ :i |
-		memory addCorrection: 'Correction ' , i asString ].
+		memory addCorrection: 'Correction ', i asString
+	].
 
+	patterns := analyzer analyzeFeedbackPatterns. "Should detect frequent corrections pattern"
 
-	patterns := analyzer analyzeFeedbackPatterns.
+	self assert: (
+		patterns anySatisfy: [ :p |
+			(p at: 'pattern') = 'Frequent corrections'
+		]
+	)
 
-	"Should detect frequent corrections pattern"
-	self assert: (patterns anySatisfy: [ :p |
-			 p at: 'pattern' equals: 'Frequent corrections' ])
 ]
 
 { #category : 'running' }
