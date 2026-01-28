@@ -311,8 +311,9 @@ ChatPharoSettings >> availableApis [
 		  ChatPharoNullAgent.
 		  ChatPharoGeminiAgent.
 		  ChatPharoOllamaAgent.
+		ChatPharoLMStudioAgent.
 		  ChatPharoMistralAgent.
-		ChatPharoClaudeAgent.
+		  ChatPharoClaudeAgent.
 		  ChatPharoDeepSeekAgent }
 ]
 

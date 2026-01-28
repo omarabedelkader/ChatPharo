@@ -122,6 +122,14 @@ ChatPharoTool class >> geminiWithAPIKey: apiKey system: system tools: tools [
 		  tools: tools
 ]
 
+{ #category : 'instance creation' }
+ChatPharoTool class >> lmStudioWithHost: host port: port system: system tools: tools [
+
+	| url |
+	url := 'http://' , host , ':' , port , '/v1'.
+	^ self baseURL: (ZnUrl fromString: url) system: system tools: tools
+]
+
 { #category : 'as yet unclassified' }
 ChatPharoTool class >> mistralWithAPIKey: apiKey system: system [ 
 
