@@ -396,6 +396,7 @@ ChatPharoSetupPresenter >> showDeveloperStep [
 
 	developerIdInput := self newTextInput
 		                    placeholder: 'Enter your Developer ID...';
+		text: (ChatPharoSettings default developerId ifEmpty: [ '12345' ]);
 		                    yourself.
 
 	verifyButton := self newButton
