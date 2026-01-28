@@ -200,12 +200,19 @@ ChatPharoChatPresenter >> initializePresenters [
 
 { #category : 'initialization' }
 ChatPharoChatPresenter >> initializeWindow: aWindowPresenter [
-	
+
 	super initializeWindow: aWindowPresenter.
-	
+
 	aWindowPresenter
 		title: 'Pharo chat';
 		initialExtent: 800@500
+]
+
+{ #category : 'accessing' }
+ChatPharoChatPresenter >> messageText [
+	"Returns the current text in the message input field"
+
+	^ messageTextField text
 ]
 
 { #category : 'initialization' }
