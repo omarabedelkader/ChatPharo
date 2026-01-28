@@ -15,12 +15,47 @@ Class {
 		'inspectButton',
 		'scrollableMessages',
 		'thinkingPresenter',
-		'errorPresenter'
+		'errorPresenter',
+		'moreMenuButton',
+		'attachButton',
+		'attachedFiles',
+		'attachedFilesLayout',
+		'attachedFilesPresenter'
 	],
 	#category : 'AI-ChatPharo-Spec-Core',
 	#package : 'AI-ChatPharo-Spec',
 	#tag : 'Core'
 }
+
+{ #category : 'initialization' }
+ChatPharoChatPresenter >> attachFile [
+	"Allow user to select and attach files"
+
+	| fileReference |
+	fileReference := UIManager default
+		                 chooseExistingFileReference: 'Select file to attach'
+		                 extensions: nil
+		                 path: FileLocator home.
+
+	fileReference ifNil: [ ^ self ].
+
+	ChatPharoLogger logFrontend: 'File attached' details: (Dictionary new
+			 at: 'chatId' put: model identityHash;
+			 at: 'fileName' put: fileReference basename;
+			 at: 'fileSize' put: fileReference size;
+			 yourself).
+
+	attachedFiles add: fileReference.
+	self updateAttachedFilesDisplay
+]
+
+{ #category : 'initialization' }
+ChatPharoChatPresenter >> clearAttachments [
+	"Clear all attached files"
+
+	attachedFiles removeAll.
+	self updateAttachedFilesDisplay
+]
 
 { #category : 'initialization' }
 ChatPharoChatPresenter >> connectPresenters [
@@ -59,6 +94,10 @@ ChatPharoChatPresenter >> connectPresenters [
 					 at: 'chatId' put: model identityHash;
 					 yourself).
 			model inspect ].
+		
+		moreMenuButton action: [ self showMoreMenu ].
+
+	attachButton action: [ self attachFile ].
 
 	model whenAnswerReceivedDo: [ :message |
 			self hideThinking.
@@ -96,14 +135,15 @@ ChatPharoChatPresenter >> defaultLayout [
 	^ SpBoxLayout newVertical
 		  spacing: 10;
 		  add: (SpScrollableLayout with: scrollableMessages);
+		  add: attachedFilesPresenter expand: false;
 		  add: (SpBoxLayout newHorizontal
 				   spacing: 5;
+				   add: attachButton expand: false;
 				   add: messageTextField;
 				   add: submitButton expand: false;
 				   add: cancelButton expand: false;
 				   add: newChatButton expand: false;
-				   add: popOutButton expand: false;
-				   add: inspectButton expand: false;
+				  add: moreMenuButton expand: false;
 				   yourself)
 		  expand: false;
 		  yourself
@@ -130,6 +170,15 @@ ChatPharoChatPresenter >> exportAsJson [
    ^ (model respondsTo: #jsonStringFor:)
         ifTrue: [ model jsonStringFor: (msgs as: Array) ]
         ifFalse: [ STONJSON toString: (msgs as: Array) ]
+]
+
+{ #category : 'initialization' }
+ChatPharoChatPresenter >> formatFileSize: bytes [
+	"Format file size in human readable format"
+
+	bytes < 1024 ifTrue: [ ^ bytes asString , ' B' ].
+	bytes < 1048576 ifTrue: [ ^ (bytes / 1024) asFloat printShowingDecimalPlaces: 1 , ' KB' ].
+	^ (bytes / 1048576) asFloat printShowingDecimalPlaces: 1 , ' MB'
 ]
 
 { #category : 'initialization' }
@@ -175,7 +224,7 @@ ChatPharoChatPresenter >> initializePresenters [
 		                 icon: (self iconNamed: #add);
 		                 help: 'Start a new chat in this pane';
 		                 yourself.
-		
+
 	popOutButton := self newButton
 		                label: 'Pop out';
 		                icon: (self iconNamed: #glamorousUp);
@@ -190,8 +239,25 @@ ChatPharoChatPresenter >> initializePresenters [
 		                 help: 'Inspect the chat object';
 		                 yourself.
 
+	moreMenuButton := self newButton
+		                  label: 'More';
+		                  icon: (self iconNamed: #smallDoIt);
+		                  help: 'More options';
+		                  yourself.
+
+	attachButton := self newButton
+		                label: '';
+		                icon: (self iconNamed: #smallOpen);
+		                help: 'Attach files';
+		                yourself.
+
 	thinkingPresenter := self instantiate: ChatPharoThinkingPresenter.
 	errorPresenter := self instantiate: ChatPharoErrorPresenter.
+
+	attachedFiles := OrderedCollection new.
+	attachedFilesLayout := SpBoxLayout newVertical.
+	attachedFilesPresenter := SpPresenter new.
+	attachedFilesPresenter layout: attachedFilesLayout.
 
 	messagesLayout := SpBoxLayout newVertical.
 	scrollableMessages := SpPresenter new.
@@ -225,12 +291,13 @@ ChatPharoChatPresenter >> reloadMessages [
 { #category : 'initialization' }
 ChatPharoChatPresenter >> sendMessage [
 
-	| text |
+	| text attachmentsCopy |
 	text := messageTextField text.
 	model agent isConfigured ifFalse: [
 			ChatPharoLogger logFrontend: 'Send blocked - agent not configured' details: (Dictionary new
 					 at: 'chatId' put: model identityHash;
 					 at: 'agent' put: (ChatPharoLogger agentNameFor: model agent);
+					 at: 'attachments' put: attachedFiles size;
 					 yourself).
 			self inform: model agent configurationErrorMessage.
 			^ self ].
@@ -239,11 +306,13 @@ ChatPharoChatPresenter >> sendMessage [
 			 at: 'text' put: text;
 			 at: 'agent' put: (ChatPharoLogger agentNameFor: model agent);
 			 yourself).
+	attachmentsCopy := attachedFiles copy.
 	submitButton enabled: false.
 	messageTextField enabled: false.
 	messageTextField text: ''.
+	self clearAttachments.
 	self showThinking.
-	model sendMessage: text
+	model sendMessage: text withAttachments: attachmentsCopy
 ]
 
 { #category : 'accessing - model' }
@@ -263,10 +332,78 @@ errorPresenter ifNil: [ errorPresenter := self instantiate: ChatPharoErrorPresen
 ]
 
 { #category : 'initialization' }
+ChatPharoChatPresenter >> showMoreMenu [
+	"Show a context menu with more options"
+
+	| menu |
+	menu := self newMenu.
+	menu
+		addItem: [ :item |
+			item
+				name: 'Pop out';
+				icon: (self iconNamed: #glamorousUp);
+				action: [
+					ChatPharoLogger
+						logFrontend: 'Pop out chat requested'
+						details: (Dictionary new
+							at: 'chatId' put: model identityHash;
+							yourself).
+					model presenter open ] ];
+		addItem: [ :item |
+			item
+				name: 'Inspect';
+				icon: (self iconNamed: #inspect);
+				action: [
+					ChatPharoLogger
+						logFrontend: 'Inspect chat requested'
+						details: (Dictionary new
+							at: 'chatId' put: model identityHash;
+							yourself).
+					model inspect ] ].
+
+	menu openWithSpecAt:
+		(moreMenuButton adapter widget bounds bottomLeft)
+
+]
+
+{ #category : 'initialization' }
 ChatPharoChatPresenter >> showThinking [
 	"Show the thinking indicator with animation"
 messagesLayout remove: thinkingPresenter ifAbsent: [ "not shown" ].
 	thinkingPresenter phase: #thinking.
 	thinkingPresenter startAnimation.
 	messagesLayout add: thinkingPresenter withConstraints: [ :constraints | constraints height: 40 ]
+]
+
+{ #category : 'initialization' }
+ChatPharoChatPresenter >> updateAttachedFilesDisplay [
+	"Update the display of attached files"
+
+	attachedFilesLayout := SpBoxLayout newVertical spacing: 2.
+	attachedFilesPresenter layout: attachedFilesLayout.
+
+	attachedFiles ifEmpty: [ ^ self ].
+
+	attachedFiles do: [ :fileRef |
+		| fileLayout nameLabel removeButton |
+		nameLabel := self newLabel
+			             label: fileRef basename , ' (' , (self formatFileSize: fileRef size) , ')';
+			             yourself.
+
+		removeButton := self newButton
+			                label: '';
+			                icon: (self iconNamed: #smallDelete);
+			                help: 'Remove attachment';
+			                action: [
+				                attachedFiles remove: fileRef.
+				                self updateAttachedFilesDisplay ];
+			                yourself.
+
+		fileLayout := SpBoxLayout newHorizontal
+			              spacing: 5;
+			              add: nameLabel;
+			              add: removeButton expand: false;
+			              yourself.
+
+		attachedFilesLayout add: fileLayout expand: false ]
 ]
