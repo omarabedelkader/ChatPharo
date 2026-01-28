@@ -189,6 +189,13 @@ ChatPharoMemory >> allMemories [
 	^ memories
 ]
 
+{ #category : 'analyzing' }
+ChatPharoMemory >> analyzePatterns [
+	"Analyze feedback patterns using the feedback analyzer"
+
+	^ ChatPharoFeedbackAnalyzer default analyzeFeedbackPatterns
+]
+
 { #category : 'adding' }
 ChatPharoMemory >> autoSummarize [
 
@@ -331,6 +338,27 @@ ChatPharoMemory >> extractKeywordsFrom: queryString [
 	| words |
 	words := queryString substrings.
 	^ words select: [ :word | word size > 2 and: [ word first isUppercase or: [ word anySatisfy: [ :c | c isUppercase ] ] ] ]
+]
+
+{ #category : 'analyzing' }
+ChatPharoMemory >> feedbackSummary [
+	"Get a summary of feedback statistics"
+
+	^ ChatPharoFeedbackAnalyzer default feedbackSummary
+]
+
+{ #category : 'analyzing' }
+ChatPharoMemory >> generateFeedbackReport [
+	"Generate a comprehensive feedback analysis report"
+
+	^ ChatPharoFeedbackAnalyzer default generateReport
+]
+
+{ #category : 'analyzing' }
+ChatPharoMemory >> improvementRecommendations [
+	"Get improvement recommendations based on feedback analysis"
+
+	^ ChatPharoFeedbackAnalyzer default improvementRecommendations
 ]
 
 { #category : 'initialization' }

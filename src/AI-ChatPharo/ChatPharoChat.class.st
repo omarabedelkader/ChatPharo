@@ -272,6 +272,14 @@ ChatPharoChat >> recordFeedback: feedbackText positive: isPositive [
 	(self class environment at: #ChatPharoMemory) default
 		addFeedback: feedbackText
 		positive: isPositive.
+		
+	"Submit feedback to backend if enabled"
+	(self class environment includesKey: #ChatPharoFeedbackSubmitter) ifTrue: [
+		(self class environment at: #ChatPharoFeedbackSubmitter) submitFeedback: (Dictionary new
+				 at: 'type' put: (isPositive ifTrue: [ 'positive' ] ifFalse: [ 'negative' ]);
+				 at: 'content' put: feedbackText;
+				 at: 'chatId' put: self identityHash;
+				 yourself) ].
 
 	ChatPharoLogger logSystem: 'Feedback recorded to memory'
 		details: (Dictionary new

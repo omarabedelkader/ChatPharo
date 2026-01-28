@@ -63,3 +63,71 @@ ChatPharoMessageTest >> testPresenterIsLazyInitialized [
 	presenter := msg presenter.
 	self assert: presenter1 == presenter.
 ]
+
+{ #category : 'tests' }
+ChatPharoMessageTest >> testSuggestionAcceptance [
+
+	| msg originalEnabled |
+	originalEnabled := ChatPharoFeedbackSubmitter enabled.
+
+	[
+	ChatPharoFeedbackSubmitter enabled: false. "Disable for testing"
+	msg := ChatPharoMessage new
+		       content: 'Test question';
+		       answer: 'Test answer'.
+
+	self deny: msg suggestionAccepted.
+	self deny: msg suggestionRejected.
+	self assert: msg feedbackTimestamp isNil.
+
+	msg acceptSuggestion.
+
+	self assert: msg suggestionAccepted.
+	self deny: msg suggestionRejected.
+	self assert: msg feedbackTimestamp notNil ]
+		ensure: [ ChatPharoFeedbackSubmitter enabled: originalEnabled ]
+]
+
+{ #category : 'tests' }
+ChatPharoMessageTest >> testSuggestionRejection [
+
+	| msg originalEnabled |
+	originalEnabled := ChatPharoFeedbackSubmitter enabled.
+
+	[
+	ChatPharoFeedbackSubmitter enabled: false. "Disable for testing"
+	msg := ChatPharoMessage new
+		       content: 'Test question';
+		       answer: 'Test answer'.
+
+	self deny: msg suggestionRejected.
+	self deny: msg suggestionAccepted.
+
+	msg rejectSuggestion.
+
+	self assert: msg suggestionRejected.
+	self deny: msg suggestionAccepted.
+	self assert: msg feedbackTimestamp notNil ]
+		ensure: [ ChatPharoFeedbackSubmitter enabled: originalEnabled ]
+]
+
+{ #category : 'tests' }
+ChatPharoMessageTest >> testSuggestionToggle [
+	"Test that accepting a suggestion after rejecting it updates the state correctly"
+
+	| msg originalEnabled |
+	originalEnabled := ChatPharoFeedbackSubmitter enabled.
+
+	[
+	ChatPharoFeedbackSubmitter enabled: false. "Disable for testing"
+	msg := ChatPharoMessage new.
+
+	msg rejectSuggestion.
+	self assert: msg suggestionRejected.
+	self deny: msg suggestionAccepted.
+
+	msg acceptSuggestion.
+	self assert: msg suggestionAccepted.
+	self deny: msg suggestionRejected ]
+		ensure: [ ChatPharoFeedbackSubmitter enabled: originalEnabled ]
+]

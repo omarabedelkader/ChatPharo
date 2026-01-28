@@ -22,11 +22,31 @@ Class {
 		'answer',
 		'presenter',
 		'assistantLabel',
-		'feedback'
+		'feedback',
+		'suggestionAccepted',
+		'suggestionRejected',
+		'feedbackTimestamp'
 	],
 	#category : 'AI-ChatPharo',
 	#package : 'AI-ChatPharo'
 }
+
+{ #category : 'feedback' }
+ChatPharoMessage >> acceptSuggestion [
+	"Mark this message's suggestion as accepted"
+
+	suggestionAccepted := true.
+	suggestionRejected := false.
+	feedbackTimestamp := DateAndTime now.
+
+	"Submit to backend if enabled"
+	ChatPharoFeedbackSubmitter submitSuggestionAccepted: (Dictionary new
+			 at: 'messageId' put: self identityHash;
+			 at: 'content' put: content;
+			 at: 'answer' put: answer;
+			 at: 'timestamp' put: feedbackTimestamp asString;
+			 yourself)
+]
 
 { #category : 'accessing' }
 ChatPharoMessage >> answer [
@@ -76,6 +96,18 @@ ChatPharoMessage >> feedback: aBoolean [
         feedback := aBoolean
 ]
 
+{ #category : 'feedback' }
+ChatPharoMessage >> feedbackTimestamp [
+
+	^ feedbackTimestamp
+]
+
+{ #category : 'feedback' }
+ChatPharoMessage >> feedbackTimestamp: aDateAndTime [
+
+	feedbackTimestamp := aDateAndTime
+]
+
 { #category : 'accessing' }
 ChatPharoMessage >> height [
 
@@ -89,11 +121,55 @@ ChatPharoMessage >> initialize [
 	content := String empty.
 	answer := String empty.
 	assistantLabel := 'Assistant'.
-feedback := nil
+	feedback := nil.
+	suggestionAccepted := false.
+	suggestionRejected := false.
+	feedbackTimestamp := nil
 ]
 
 { #category : 'accessing' }
 ChatPharoMessage >> presenter [
 
 	^ presenter ifNil:[ presenter := ChatPharoMessagePresenter on: self ]
+]
+
+{ #category : 'feedback' }
+ChatPharoMessage >> rejectSuggestion [
+	"Mark this message's suggestion as rejected"
+
+	suggestionRejected := true.
+	suggestionAccepted := false.
+	feedbackTimestamp := DateAndTime now.
+
+	"Submit to backend if enabled"
+	ChatPharoFeedbackSubmitter submitSuggestionRejected: (Dictionary new
+			 at: 'messageId' put: self identityHash;
+			 at: 'content' put: content;
+			 at: 'answer' put: answer;
+			 at: 'timestamp' put: feedbackTimestamp asString;
+			 yourself)
+]
+
+{ #category : 'feedback' }
+ChatPharoMessage >> suggestionAccepted [
+
+	^ suggestionAccepted
+]
+
+{ #category : 'feedback' }
+ChatPharoMessage >> suggestionAccepted: aBoolean [
+
+	suggestionAccepted := aBoolean
+]
+
+{ #category : 'feedback' }
+ChatPharoMessage >> suggestionRejected [
+
+	^ suggestionRejected
+]
+
+{ #category : 'feedback' }
+ChatPharoMessage >> suggestionRejected: aBoolean [
+
+	suggestionRejected := aBoolean
 ]
