@@ -414,12 +414,12 @@ ChatPharoSetupPresenter >> showDeveloperStep [
 		                       label: 'Skip (I''m not a developer)';
 		                       action: [ self showAdvisorDefaultsStep ];
 		                       yourself.
-	
-		configureLaterButton := self newButton
-		label: 'Configure later';
-		action: [ self configureLater ];
-		yourself.
-		
+
+	configureLaterButton := self newButton
+		                        label: 'Configure later';
+		                        action: [ self configureLater ];
+		                        yourself.
+
 
 	cancelButton := self newButton
 		                label: 'Cancel';
@@ -434,13 +434,13 @@ ChatPharoSetupPresenter >> showDeveloperStep [
 
 	localTokenRow := SpBoxLayout newHorizontal
 		                 spacing: 8;
-		                 add: localTokenButton expand: false;
+		                 add: localTokenButton expand: true;
 		                 yourself.
 
 	buttonRow := SpBoxLayout newHorizontal
 		             spacing: 8;
-		             add: skipDeveloperButton expand: false;
-		add: configureLaterButton expand: false;
+		             add: skipDeveloperButton expand: true;
+		             add: configureLaterButton expand: true;
 		             add: cancelButton expand: false;
 		             yourself.
 
