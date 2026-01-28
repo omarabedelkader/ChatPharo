@@ -121,6 +121,24 @@ ChatPharoSetupPresenter >> cancelSetup [
 ]
 
 { #category : 'layout' }
+ChatPharoSetupPresenter >> configureLater [
+	"Skip setup for now and mark configuration as deferred."
+
+	| settings |
+	settings := ChatPharoSettings default.
+	settings isConfigured: true.
+	settings advisorDefaultsConfigured: true.
+
+	ChatPharoLogger logSystem: 'User deferred configuration'
+		details: (Dictionary new
+			at: 'isConfigured' put: true;
+			at: 'advisorDefaultsConfigured' put: true;
+			yourself).
+
+	self window close
+]
+
+{ #category : 'layout' }
 ChatPharoSetupPresenter >> createLevelOptionRow: aButton title: aTitle description: aDescription [
 	"Create a styled row for a level option with button and description"
 
@@ -365,17 +383,17 @@ ChatPharoSetupPresenter >> showAdvisorDefaultsStep [
 ChatPharoSetupPresenter >> showDeveloperStep [
 	"Show the developer verification step."
 
-	| idRow buttonRow infoLabel localTokenButton localTokenRow |
+	| idRow buttonRow infoLabel localTokenButton localTokenRow configureLaterButton |
 	currentStep := #developer.
 
 	descriptionLabel label: 'Do you have a ChatPharo Developer ID?'.
 	statusLabel label: ''.
 
 	infoLabel := self newLabel
-		label: 'If you are verified, ChatPharo Advisor will be able to recommend the best configuration.';
-		yourself.
-		
-		
+		             label: 'If you are verified, ChatPharo Advisor will be able to recommend the best configuration.';
+		             yourself.
+
+
 	developerIdInput := self newTextInput
 		                    placeholder: 'Enter your Developer ID...';
 		                    yourself.
@@ -387,15 +405,21 @@ ChatPharoSetupPresenter >> showDeveloperStep [
 		                yourself.
 
 	localTokenButton := self newButton
-		label: 'Generate local token';
-		icon: (self iconNamed: #smallNew);
-		action: [ self generateLocalDeveloperId ];
-		yourself.
-		
+		                    label: 'Generate local token';
+		                    icon: (self iconNamed: #smallNew);
+		                    action: [ self generateLocalDeveloperId ];
+		                    yourself.
+
 	skipDeveloperButton := self newButton
 		                       label: 'Skip (I''m not a developer)';
 		                       action: [ self showAdvisorDefaultsStep ];
 		                       yourself.
+	
+		configureLaterButton := self newButton
+		label: 'Configure later';
+		action: [ self configureLater ];
+		yourself.
+		
 
 	cancelButton := self newButton
 		                label: 'Cancel';
@@ -407,23 +431,24 @@ ChatPharoSetupPresenter >> showDeveloperStep [
 		         add: developerIdInput expand: true;
 		         add: verifyButton expand: false;
 		         yourself.
-		
-			localTokenRow := SpBoxLayout newHorizontal
-		spacing: 8;
-		add: localTokenButton expand: false;
-		yourself.
+
+	localTokenRow := SpBoxLayout newHorizontal
+		                 spacing: 8;
+		                 add: localTokenButton expand: false;
+		                 yourself.
 
 	buttonRow := SpBoxLayout newHorizontal
 		             spacing: 8;
 		             add: skipDeveloperButton expand: false;
+		add: configureLaterButton expand: false;
 		             add: cancelButton expand: false;
 		             yourself.
 
 	contentContainer layout: (SpBoxLayout newTopToBottom
 			 spacing: 12;
-			add: infoLabel expand: false;
+			 add: infoLabel expand: false;
 			 add: idRow expand: false;
-			add: localTokenRow expand: false;
+			 add: localTokenRow expand: false;
 			 add: buttonRow expand: false;
 			 yourself).
 
