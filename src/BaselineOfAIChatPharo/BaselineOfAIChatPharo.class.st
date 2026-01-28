@@ -98,6 +98,11 @@ BaselineOfAIChatPharo >> baseline: spec [
 	spec for: #common do: [
 			spec postLoadDoIt: #postLoad.
 			spec baseline: 'NeoJSON' with: [ spec repository: 'github://svenvc/NeoJSON/repository' ].
+			spec baseline: 'OSSubprocess'
+    with: [
+        spec repository: 'github://pharo-contributions/OSSubprocess:master/repository'
+    ].
+
 			spec package: 'AI-ChatPharo'.
 			spec package: 'AI-ChatPharo-Agent' with: [ spec requires: #( 'AI-ChatPharo' ) ].
 			spec package: 'AI-ChatPharo-Spec' with: [ spec requires: #( 'AI-ChatPharo' ) ].
@@ -112,11 +117,12 @@ BaselineOfAIChatPharo >> baseline: spec [
 			spec package: 'AI-ChatPharo-Ethics' with: [ spec requires: #( 'AI-ChatPharo' ) ].
 			spec package: 'AI-ChatPharo-Memory' with: [ spec requires: #( 'AI-ChatPharo' ) ].
 			spec package: 'AI-ChatPharo-Director' with: [ spec requires: #( 'AI-ChatPharo' ) ].
+			spec package: 'AI-ChatPharo-MCP' with: [ spec requires: #( 'AI-ChatPharo' ) ].
 			spec package: 'AI-ChatPharo-Tests' with: [
 					spec requires:
 						#( 'AI-ChatPharo' 'AI-ChatPharo-Agent' 'AI-ChatPharo-Spec' 'AI-ChatPharo-Tools' 'AI-ChatPharo-History'
 						   'AI-ChatPharo-Env' 'AI-ChatPharo-Safety' 'AI-ChatPharo-Skills' 'AI-ChatPharo-Sandbox' 'AI-ChatPharo-Multivers'
-						   'AI-ChatPharo-Tutorial' 'AI-ChatPharo-Ethics' 'AI-ChatPharo-Memory' 'AI-ChatPharo-Director' ) ] ]
+						   'AI-ChatPharo-Tutorial' 'AI-ChatPharo-Ethics' 'AI-ChatPharo-Memory' 'AI-ChatPharo-Director' 'AI-ChatPharo-MCP' ) ] ]
 ]
 
 { #category : 'baselines' }

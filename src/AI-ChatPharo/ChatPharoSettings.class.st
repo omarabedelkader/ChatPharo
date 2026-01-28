@@ -58,7 +58,9 @@ Class {
 		'memoryEnabled',
 		'memoryRetentionDays',
 		'memoryMaxItems',
-		'memoryAutoSummarize'
+		'memoryAutoSummarize',
+		'mcpEnabled',
+		'mcpRegistry'
 	],
 	#classInstVars : [
 		'Default'
@@ -125,10 +127,12 @@ ChatPharoSettings class >> loadOrNew [
 				  settings tutorialCompleted ifNil: [ settings privateSetTutorialCompleted: false ].
 				  settings wantsTutorial ifNil: [ settings privateSetWantsTutorial: false ].
 				  settings advisorDefaultsConfigured ifNil: [ settings privateSetAdvisorDefaultsConfigured: false ].
-								  settings memoryEnabled ifNil: [ settings privateSetMemoryEnabled: true ].
+				  settings memoryEnabled ifNil: [ settings privateSetMemoryEnabled: true ].
 				  settings memoryRetentionDays ifNil: [ settings privateSetMemoryRetentionDays: 30 ].
 				  settings memoryMaxItems ifNil: [ settings privateSetMemoryMaxItems: 1000 ].
 				  settings memoryAutoSummarize ifNil: [ settings privateSetMemoryAutoSummarize: true ].
+				settings mcpEnabled ifNil: [ settings privateSetMcpEnabled: false ].
+				  settings mcpRegistry ifNil: [ settings privateSetMcpRegistry: ChatPharoMCPRegistry new ].
 				  ^ settings ]
 				  on: Error
 				  do: [ ^ self new ] ]
@@ -636,10 +640,13 @@ ChatPharoSettings >> initialize [
 	wantsTutorial := false.
 	multivers := ChatPharoMultivers new.
 	customTools := OrderedCollection new.
-		memoryEnabled := true.
+	memoryEnabled := true.
+	memoryEnabled := true.
 	memoryRetentionDays := 30.
 	memoryMaxItems := 1000.
 	memoryAutoSummarize := true.
+		mcpEnabled := false.
+	mcpRegistry := ChatPharoMCPRegistry new.
 	ChatPharoLogger loggingEnabled: true.
 	ChatPharoLogger logSystem: 'Settings initialized' details: (Dictionary new
 			 at: 'defaultAgent' put: (ChatPharoLogger agentNameFor: agent);
@@ -713,6 +720,57 @@ ChatPharoSettings >> maximumIterations: aNumber [
                 details: (Dictionary new
                         at: 'value' put: maximumIterations;
                         yourself)
+]
+
+{ #category : 'mcp' }
+ChatPharoSettings >> mcpEnabled [
+	"Whether MCP (Model Context Protocol) support is enabled"
+
+	^ mcpEnabled ifNil: [ mcpEnabled := false ]
+]
+
+{ #category : 'mcp' }
+ChatPharoSettings >> mcpEnabled: aBoolean [
+	"Enable or disable MCP support"
+
+	| wasEnabled |
+	wasEnabled := self mcpEnabled.
+	mcpEnabled := aBoolean.
+	self class setDefault: self.
+	self class saveDefault.
+
+	"Connect or disconnect servers based on enabled state"
+	(wasEnabled not and: [ aBoolean ]) ifTrue: [ self mcpRegistry connectAll ].
+	(wasEnabled and: [ aBoolean not ]) ifTrue: [ self mcpRegistry disconnectAll ].
+
+	ChatPharoLogger logFrontend: 'MCP support toggled'
+		details: (Dictionary new
+			at: 'enabled' put: aBoolean;
+			yourself)
+]
+
+{ #category : 'mcp' }
+ChatPharoSettings >> mcpRegistry [
+	"Return the MCP registry that manages all MCP servers"
+
+	^ mcpRegistry ifNil: [ mcpRegistry := ChatPharoMCPRegistry new ]
+]
+
+{ #category : 'mcp' }
+ChatPharoSettings >> mcpRegistry: aRegistry [
+	"Set the MCP registry"
+
+	mcpRegistry := aRegistry.
+	self class setDefault: self.
+	self class saveDefault
+]
+
+{ #category : 'mcp' }
+ChatPharoSettings >> mcpToolsAsClients [
+	"Return all MCP tools as ChatPharoClient instances if MCP is enabled"
+
+	self mcpEnabled ifFalse: [ ^ OrderedCollection new ].
+	^ self mcpRegistry allToolsAsClients
 ]
 
 { #category : 'memory' }
@@ -912,6 +970,18 @@ ChatPharoSettings >> privateSetIsConfigured: aBoolean [
 ChatPharoSettings >> privateSetIsDeveloper: aBoolean [
 	"Set isDeveloper without triggering save. Used during loading."
 	isDeveloper := aBoolean
+]
+
+{ #category : 'private' }
+ChatPharoSettings >> privateSetMcpEnabled: aBoolean [
+	"Set mcpEnabled without triggering save. Used during loading."
+	mcpEnabled := aBoolean
+]
+
+{ #category : 'private' }
+ChatPharoSettings >> privateSetMcpRegistry: aRegistry [
+	"Set mcpRegistry without triggering save. Used during loading."
+	mcpRegistry := aRegistry
 ]
 
 { #category : 'private' }

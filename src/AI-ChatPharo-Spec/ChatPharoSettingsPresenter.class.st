@@ -271,11 +271,13 @@ ChatPharoSettingsPresenter >> initializePresenters [
 	notebook addPage: (SpNotebookPage title: 'Personal' icon: (self iconNamed: #user) provider: [ self newPersonalTab ]).
 
 	notebook addPage: (SpNotebookPage title: 'Skills' icon: (self iconNamed: #smallObjects) provider: [ self newSkillsTab ]).
-	
+
 	notebook addPage: (SpNotebookPage title: 'Memory' icon: (self iconNamed: #history) provider: [ self newMemoryTab ]).
 
 	notebook addPage:
 		(SpNotebookPage title: 'Custom Tools' icon: (self iconNamed: #smallObjects) provider: [ self newCustomToolsTab ]).
+		
+		notebook addPage: (SpNotebookPage title: 'MCP' icon: (self iconNamed: #network) provider: [ self newMCPTab ]).
 
 	notebook addPage: (SpNotebookPage title: 'Multivers' icon: (self iconNamed: #branch) provider: [ self newMultiversTab ]).
 
@@ -370,8 +372,8 @@ ChatPharoSettingsPresenter >> initializePresenters [
 		                     placeholder: 'e.g. 50';
 		                     text: model messageLimit asString;
 		                     yourself.
-		
-		
+
+
 	apiDropList selectItem:
 		(model availableApiChoices detect: [ :assoc | assoc value = model agent class ] ifNone: [ model availableApiChoices first ]).
 
@@ -545,6 +547,13 @@ ChatPharoSettingsPresenter >> newHistoryTab [
 				   add: historyView;
 				   yourself);
 		  yourself
+]
+
+{ #category : 'initialization' }
+ChatPharoSettingsPresenter >> newMCPTab [
+	"Creates the MCP (Model Context Protocol) configuration tab"
+
+	^ ChatPharoMCPSettingsPresenter on: model
 ]
 
 { #category : 'initialization' }
