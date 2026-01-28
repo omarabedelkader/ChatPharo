@@ -1,0 +1,69 @@
+name: Auto Release on Main (SemVer + Release + Major Branch)
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout (full history + tags)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Correct semantic-release config with proper breaking-change detection
+      - name: Write semantic-release config (FINAL FIX)
+        run: |
+          cat > .releaserc.json << 'JSON'
+          {
+            "branches": ["main"],
+            "tagFormat": "v${version}",
+            "plugins": [
+              ["@semantic-release/commit-analyzer", {
+                "preset": "conventionalcommits",
+                "releaseRules": [
+                  { "breaking": true, "release": "major" },
+                  { "type": "feat", "release": "minor" },
+                  { "type": "fix",  "release": "patch" }
+                ]
+              }],
+              "@semantic-release/release-notes-generator",
+              ["@semantic-release/github", {
+                "successComment": false,
+                "failComment": false
+              }]
+            ]
+          }
+          JSON
+
+      - name: Semantic Release (tag + GitHub release)
+        id: semantic
+        uses: cycjimmy/semantic-release-action@v6
+        with:
+          semantic_version: 24
+          repository_url: https://github.com/${{ github.repository }}
+          extra_plugins: |
+            @semantic-release/commit-analyzer@^13
+            conventional-changelog-conventionalcommits@^7
+            @semantic-release/release-notes-generator@^14
+            @semantic-release/github@^11
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Create branch when version is X.0.0 (major release)
+      - name: Create branch for major releases (vX.0.0)
+        if: >
+          steps.semantic.outputs.new_release_published == 'true' &&
+          steps.semantic.outputs.new_release_minor_version == '0' &&
+          steps.semantic.outputs.new_release_patch_version == '0'
+        run: |
+          TAG="${{ steps.semantic.outputs.new_release_git_tag }}"
+          echo "Major release detected: $TAG"
+          git fetch --tags --force
+          git push origin "refs/tags/$TAG:refs/heads/$TAG"
