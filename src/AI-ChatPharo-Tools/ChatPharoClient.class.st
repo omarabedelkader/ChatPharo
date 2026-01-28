@@ -213,6 +213,18 @@ ChatPharoClient >> initializeWithName: n description: d parameters: p block: b [
 ]
 
 { #category : 'accessing' }
+ChatPharoClient >> inputSchema [
+
+	^ self parameters
+]
+
+{ #category : 'accessing' }
+ChatPharoClient >> inputSchema: anObject [
+
+	self parameters: anObject
+]
+
+{ #category : 'accessing' }
 ChatPharoClient >> name [
 
 	^ name
