@@ -25,7 +25,8 @@ Class {
 		'feedback',
 		'suggestionAccepted',
 		'suggestionRejected',
-		'feedbackTimestamp'
+		'feedbackTimestamp',
+		'attachments'
 	],
 	#category : 'AI-ChatPharo',
 	#package : 'AI-ChatPharo'
@@ -46,6 +47,12 @@ ChatPharoMessage >> acceptSuggestion [
 			 at: 'answer' put: answer;
 			 at: 'timestamp' put: feedbackTimestamp asString;
 			 yourself)
+]
+
+{ #category : 'accessing' }
+ChatPharoMessage >> addAttachment: aFileReference [
+
+	attachments add: aFileReference
 ]
 
 { #category : 'accessing' }
@@ -70,6 +77,18 @@ ChatPharoMessage >> assistantLabel [
 ChatPharoMessage >> assistantLabel: aString [
 
         assistantLabel := aString
+]
+
+{ #category : 'accessing' }
+ChatPharoMessage >> attachments [
+
+	^ attachments
+]
+
+{ #category : 'accessing' }
+ChatPharoMessage >> attachments: aCollection [
+
+	attachments := aCollection
 ]
 
 { #category : 'accessing' }
@@ -124,7 +143,8 @@ ChatPharoMessage >> initialize [
 	feedback := nil.
 	suggestionAccepted := false.
 	suggestionRejected := false.
-	feedbackTimestamp := nil
+	feedbackTimestamp := nil.
+	attachments := OrderedCollection new
 ]
 
 { #category : 'accessing' }
@@ -148,6 +168,12 @@ ChatPharoMessage >> rejectSuggestion [
 			 at: 'answer' put: answer;
 			 at: 'timestamp' put: feedbackTimestamp asString;
 			 yourself)
+]
+
+{ #category : 'accessing' }
+ChatPharoMessage >> removeAttachment: aFileReference [
+
+	attachments remove: aFileReference ifAbsent: [  ]
 ]
 
 { #category : 'feedback' }

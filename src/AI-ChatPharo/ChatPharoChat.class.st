@@ -80,6 +80,18 @@ ChatPharoChat >> addUserMessage: text [
 			 yourself)
 ]
 
+{ #category : 'running' }
+ChatPharoChat >> addUserMessage: text withAttachments: attachmentCollection [
+
+	| message |
+	history addUser: text.
+	message := ChatPharoMessage new
+		           content: text;
+		           attachments: attachmentCollection;
+		           yourself.
+	messages add: message
+]
+
 { #category : 'initialization' }
 ChatPharoChat >> addWelcomeMessage [ 
 
@@ -362,6 +374,63 @@ ChatPharoChat >> sendMessage: aText [
 backend promptPrefix: promptWithMemory.
 			                 answer := backend getResponseForPrompt: aText.
 			                 cache at: aText put: answer.
+			                 self addAssistantMessage: answer.
+			                 onAnswerReceived ifNotNil: [ :blk | blk value: messages last ] ]
+			                 on: Error
+			                 do: [ :ex |
+					                 ChatPharoLogger logBackend: 'Error during message send' details: (Dictionary new
+							                  at: 'chatId' put: self identityHash;
+							                  at: 'error' put: ex messageText;
+							                  yourself).
+					                 onErrorReceived ifNotNil: [ :blk | blk value: ex messageText ] ] ] fork
+]
+
+{ #category : 'running' }
+ChatPharoChat >> sendMessage: aText withAttachments: attachmentCollection [
+
+	| answer multivers promptWithMemory textWithAttachments |
+	self addUserMessage: aText withAttachments: attachmentCollection.
+
+	"Build the message text including attachment information"
+	textWithAttachments := aText.
+	attachmentCollection ifNotEmpty: [
+		textWithAttachments := String streamContents: [ :stream |
+			stream nextPutAll: aText.
+			stream cr; cr.
+			stream nextPutAll: 'Attached files:'.
+			stream cr.
+			attachmentCollection do: [ :fileRef |
+				stream nextPutAll: '- '.
+				stream nextPutAll: fileRef basename.
+				stream nextPutAll: ' ('.
+				stream nextPutAll: fileRef size asString.
+				stream nextPutAll: ' bytes)'.
+				stream cr.
+				"Optionally include file content for text files"
+				(fileRef mimeTypes anySatisfy: [ :mime | mime beginsWith: 'text/' ])
+					ifTrue: [
+						stream nextPutAll: '  Content: '.
+						stream cr.
+						stream nextPutAll: fileRef contents.
+						stream cr ] ] ] ].
+
+	(cache includesKey: textWithAttachments) ifTrue: [
+			answer := cache at: textWithAttachments.
+			self addAssistantMessage: answer.
+			onAnswerReceived ifNotNil: [ :blk | blk value: messages last ].
+			^ self ]. "Check if multivers mode is enabled and can execute"
+	multivers := ChatPharoSettings default multivers.
+	(multivers notNil and: [ multivers canExecute ]) ifTrue: [ ^ self sendMessageViaMultivers: textWithAttachments ]. "Standard single-agent execution"
+	promptProcess := [
+		                 [
+			                 | backend |
+			                 backend := self agent.
+			                 backend onToolExecution: [ self triggerToolExecution ]. "Build prefixes"
+			                 promptWithMemory := self buildPromptPrefixWithMemoryFor: textWithAttachments.
+
+backend promptPrefix: promptWithMemory.
+			                 answer := backend getResponseForPrompt: textWithAttachments.
+			                 cache at: textWithAttachments put: answer.
 			                 self addAssistantMessage: answer.
 			                 onAnswerReceived ifNotNil: [ :blk | blk value: messages last ] ]
 			                 on: Error
