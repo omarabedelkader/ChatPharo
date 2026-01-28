@@ -67,11 +67,11 @@ ChatPharoState class >> chatPharoWikiWorldMenuOn: aBuilder [
 		order: 5;
 		action: [
 			WebBrowser openOn:
-					'https://github.com/omarabedelkader/ChatPharo/blob/main/doc/ChatPharo-Wiki.md' ];
+					'https://omarabedelkader.github.io/ChatPharo/' ];
 		label: 'ChatPharo Wiki';
 		icon: (self iconNamed: #smallHelp);
 		help:
-			'Will open the webpage https://github.com/omarabedelkader/ChatPharo/blob/main/doc/ChatPharo-Wiki.md'
+			'Will open the webpage https://omarabedelkader.github.io/ChatPharo/'
 ]
 
 { #category : 'world state' }
