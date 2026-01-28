@@ -247,13 +247,13 @@ ChatPharoChatPresenter >> initializePresenters [
 
 	attachButton := self newButton
 		                label: '';
-		                icon: (self iconNamed: #attachment);
+		                icon: (self iconNamed: #smallOpen);
 		                help: 'Attach files';
 		                yourself.
 
 	thinkingPresenter := self instantiate: ChatPharoThinkingPresenter.
 	errorPresenter := self instantiate: ChatPharoErrorPresenter.
-	
+
 	attachedFiles := OrderedCollection new.
 	attachedFilesLayout := SpBoxLayout newVertical.
 	attachedFilesPresenter := SpPresenter new.
