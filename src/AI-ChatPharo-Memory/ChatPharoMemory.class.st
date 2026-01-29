@@ -335,9 +335,17 @@ ChatPharoMemory >> enforceMemoryLimit [
 ChatPharoMemory >> extractKeywordsFrom: queryString [
 	"Extract potential keywords from a query string"
 
-	| words |
+	| stopwords words |
+	stopwords := #(
+		'a' 'an' 'and' 'are' 'as' 'at' 'be' 'but' 'by' 'for' 'from' 'has' 'have'
+		'he' 'her' 'hers' 'him' 'his' 'how' 'i' 'if' 'in' 'into' 'is' 'it'
+		'its' 'me' 'my' 'of' 'on' 'or' 'our' 'she' 'so' 'that' 'the' 'their'
+		'them' 'then' 'they' 'this' 'to' 'us' 'was' 'we' 'were' 'what' 'when'
+		'where' 'which' 'who' 'why' 'with' 'you' 'your').
 	words := queryString substrings.
-	^ words select: [ :word | word size > 2 and: [ word first isUppercase or: [ word anySatisfy: [ :c | c isUppercase ] ] ] ]
+	^ (words collect: [ :word |
+		(word select: [ :char | char isLetter or: [ char isDigit ] ]) asLowercase ])
+		select: [ :word | word size > 2 and: [ (stopwords includes: word) not ] ]
 ]
 
 { #category : 'analyzing' }
