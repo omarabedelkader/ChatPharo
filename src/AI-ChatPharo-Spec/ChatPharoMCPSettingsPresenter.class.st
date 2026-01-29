@@ -52,14 +52,16 @@ ChatPharoMCPSettingsPresenter >> addNewServer [
 ChatPharoMCPSettingsPresenter >> allServers [
 	"Return all configured MCP servers"
 
-	^ model mcpRegistry servers
+	^ model mcpRegistry
+		  ifNil: [ #() ]
+		  ifNotNil: [ :registry | registry servers ]
 ]
 
 { #category : 'actions' }
 ChatPharoMCPSettingsPresenter >> connectAllServers [
 	"Connect to all enabled servers"
 
-	model mcpRegistry connectAll.
+	model mcpRegistry ifNotNil: [ :registry | registry connectAll ].
 	self refreshServersList.
 	self inform: 'Connecting to all enabled servers...'
 ]
@@ -167,7 +169,7 @@ ChatPharoMCPSettingsPresenter >> deleteSelectedServer [
 ChatPharoMCPSettingsPresenter >> disconnectAllServers [
 	"Disconnect from all servers"
 
-	model mcpRegistry disconnectAll.
+	model mcpRegistry ifNotNil: [ :registry | registry disconnectAll ].
 	self refreshServersList.
 	self inform: 'Disconnecting from all servers...'
 ]
@@ -224,96 +226,118 @@ ChatPharoMCPSettingsPresenter >> iconForStatus: statusSymbol [
 	^ self iconNamed: #testGray
 ]
 
-{ #category : 'actions' }
+{ #category : 'initialization' }
 ChatPharoMCPSettingsPresenter >> initializePresenters [
+	| supportAvailable |
 
 	super initializePresenters.
 
+	supportAvailable := model mcpRegistry notNil.
+
 	mcpEnabledCheckBox := self newCheckBox
-		                      label: 'Enable MCP (Model Context Protocol) support';
-		                      state: model mcpEnabled;
-		                      help:
-			                      'MCP allows ChatPharo to connect to external servers that provide tools, resources, and prompts';
-		                      yourself.
+		label: 'Enable MCP (Model Context Protocol) support';
+		state: model mcpEnabled;
+		help: 'MCP allows ChatPharo to connect to external servers that provide tools, resources, and prompts';
+		yourself.
 
 	serversList := self newTable
-		               addColumn: (SpImageTableColumn
-				                title: ''
-				                evaluated: [ :server |
-					                self iconForStatus: server status ]);
-		               addColumn: (SpStringTableColumn
-				                title: 'Name'
-				                evaluated: [ :server | server name ]);
-		               addColumn: (SpStringTableColumn
-				                title: 'Command'
-				                evaluated: [ :server |
-					                server command , ' ' , (' ' join: server arguments first: (server arguments size min: 2)) ]);
-		               addColumn: (SpStringTableColumn
-				                title: 'Status'
-				                evaluated: [ :server | server statusText ]);
-		               addColumn: (SpStringTableColumn
-				                title: 'Tools'
-				                evaluated: [ :server |
-					                server tools size asString ]);
-		               addColumn: (SpStringTableColumn
-				                title: 'Resources'
-				                evaluated: [ :server |
-					                server resources size asString ]);
-		               items: self allServers;
-		               yourself.
+		addColumn: (SpImageTableColumn
+			title: '';
+			evaluated: [ :server | self iconForStatus: server status ]);
+		addColumn: (SpStringTableColumn
+			title: 'Name';
+			evaluated: [ :server | server name ]);
+		addColumn: (SpStringTableColumn
+			title: 'Command';
+			evaluated: [ :server |
+				| args shownArgs argsString |
+				args := server arguments ifNil: [ #() ].
+				shownArgs := args copyFrom: 1 to: (args size min: 2).
+				argsString := String streamContents: [ :stream |
+					shownArgs
+						do: [ :each | stream nextPutAll: each asString ]
+						separatedBy: [ stream space ] ].
+				argsString isEmpty
+					ifTrue: [ server command ]
+					ifFalse: [ server command , ' ' , argsString ] ]);
+		addColumn: (SpStringTableColumn
+			title: 'Status';
+			evaluated: [ :server | server statusText ]);
+		addColumn: (SpStringTableColumn
+			title: 'Tools';
+			evaluated: [ :server | server tools size asString ]);
+		addColumn: (SpStringTableColumn
+			title: 'Resources';
+			evaluated: [ :server | server resources size asString ]);
+		items: self allServers;
+		yourself.
 
 	serverDetailText := self newText
-		                    beNotEditable;
-		                    text: 'Select a server to see its details.';
-		                    yourself.
+		beNotEditable;
+		text: (supportAvailable
+			ifTrue: [ 'Select a server to see its details.' ]
+			ifFalse: [ 'MCP support is not loaded. Load the AI-ChatPharo-MCP package to manage MCP servers.' ]);
+		yourself.
 
 	addServerButton := self newButton
-		                   label: 'Add Server';
-		                   icon: (self iconNamed: #add);
-		                   help: 'Add a new MCP server';
-		                   yourself.
+		label: 'Add Server';
+		icon: (self iconNamed: #add);
+		help: 'Add a new MCP server';
+		yourself.
 
 	editServerButton := self newButton
-		                    label: 'Edit';
-		                    icon: (self iconNamed: #edit);
-		                    help: 'Edit the selected server';
-		                    yourself.
+		label: 'Edit';
+		icon: (self iconNamed: #edit);
+		help: 'Edit the selected server';
+		yourself.
 
 	deleteServerButton := self newButton
-		                      label: 'Delete';
-		                      icon: (self iconNamed: #delete);
-		                      help: 'Delete the selected server';
-		                      yourself.
+		label: 'Delete';
+		icon: (self iconNamed: #delete);
+		help: 'Delete the selected server';
+		yourself.
 
 	connectButton := self newButton
-		                 label: 'Connect';
-		                 icon: (self iconNamed: #smallDoIt);
-		                 help: 'Connect to the selected server';
-		                 yourself.
+		label: 'Connect';
+		icon: (self iconNamed: #smallDoIt);
+		help: 'Connect to the selected server';
+		yourself.
 
 	disconnectButton := self newButton
-		                    label: 'Disconnect';
-		                    icon: (self iconNamed: #smallCancel);
-		                    help: 'Disconnect from the selected server';
-		                    yourself.
+		label: 'Disconnect';
+		icon: (self iconNamed: #smallCancel);
+		help: 'Disconnect from the selected server';
+		yourself.
 
 	refreshButton := self newButton
-		                 label: 'Refresh';
-		                 icon: (self iconNamed: #refresh);
-		                 help: 'Refresh the server list';
-		                 yourself.
+		label: 'Refresh';
+		icon: (self iconNamed: #refresh);
+		help: 'Refresh the server list';
+		yourself.
 
 	connectAllButton := self newButton
-		                    label: 'Connect All';
-		                    icon: (self iconNamed: #glamorousGo);
-		                    help: 'Connect to all enabled servers';
-		                    yourself.
+		label: 'Connect All';
+		icon: (self iconNamed: #glamorousGo);
+		help: 'Connect to all enabled servers';
+		yourself.
 
 	disconnectAllButton := self newButton
-		                       label: 'Disconnect All';
-		                       icon: (self iconNamed: #glamorousClose);
-		                       help: 'Disconnect from all servers';
-		                       yourself
+		label: 'Disconnect All';
+		icon: (self iconNamed: #glamorousClose);
+		help: 'Disconnect from all servers';
+		yourself.
+
+	mcpEnabledCheckBox enabled: supportAvailable.
+	serversList enabled: supportAvailable.
+	addServerButton enabled: supportAvailable.
+	editServerButton enabled: supportAvailable.
+	deleteServerButton enabled: supportAvailable.
+	connectButton enabled: supportAvailable.
+	disconnectButton enabled: supportAvailable.
+	refreshButton enabled: supportAvailable.
+	connectAllButton enabled: supportAvailable.
+	disconnectAllButton enabled: supportAvailable.
+
 ]
 
 { #category : 'actions' }
