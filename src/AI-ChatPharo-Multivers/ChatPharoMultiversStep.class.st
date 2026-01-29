@@ -135,10 +135,11 @@ ChatPharoMultiversStep >> initialize [
 ChatPharoMultiversStep >> isConfigured [
 	"Return true if this step has valid configuration"
 
-^ (self agentClass notNil
-	and: [ self agentClass ~= ChatPharoNullAgent ])
-	and: [ self model isNotNil and: [ self model isNotEmpty ] ]
-
+	| resolvedAgentClass |
+	resolvedAgentClass := self agentClass.
+	resolvedAgentClass ifNil: [ ^ false ].
+	resolvedAgentClass = ChatPharoNullAgent ifTrue: [ ^ true ].
+	^ self model notEmpty
 ]
 
 { #category : 'accessing' }
