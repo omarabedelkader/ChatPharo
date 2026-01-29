@@ -75,6 +75,7 @@ ChatPharoChat >> addAssistantMessage: answerText [
 ChatPharoChat >> addUserMessage: text [
 
 	history addUser: text.
+	self recordUserNameIfPresentIn: text.
 	messages add: (ChatPharoMessage new
 			 content: text;
 			 yourself)
@@ -85,6 +86,7 @@ ChatPharoChat >> addUserMessage: text withAttachments: attachmentCollection [
 
 	| message |
 	history addUser: text.
+	self recordUserNameIfPresentIn: text.
 	message := ChatPharoMessage new
 		           content: text;
 		           attachments: attachmentCollection;
@@ -171,6 +173,33 @@ ChatPharoChat >> exportAsJson [
 				dict at: 'content' put: '' ] ].
 		dict ].
 	^ self jsonStringFor: normalized
+]
+
+{ #category : 'running' }
+ChatPharoChat >> extractNameFrom: text startingAfter: startIndex [
+	"Extract a reasonable name candidate from text starting at startIndex."
+
+	| remainder candidate splitters |
+	remainder := (text copyFrom: startIndex + 1 to: text size) trimBoth.
+	[ remainder notEmpty and: [ '.,!?;' includes: remainder last ] ] whileTrue: [
+		remainder := remainder allButLast ].
+	remainder ifEmpty: [ ^ nil ].
+
+	splitters := #(' and ' ' but ' ' so ' ' because ' ' that ').
+	candidate := remainder.
+	splitters do: [ :splitter |
+		| index |
+		index := candidate findString: splitter startingAt: 1.
+		index > 0 ifTrue: [
+			candidate := (candidate copyFrom: 1 to: index - 1) trimBoth ] ].
+
+	candidate ifEmpty: [ ^ nil ].
+	(candidate first isLetter) ifFalse: [ ^ nil ].
+	(candidate allSatisfy: [ :char |
+		char isLetter or: [ char = $  or: [ char = $- or: [ char = $' ] ] ] ])
+		ifFalse: [ ^ nil ].
+
+	^ candidate
 ]
 
 { #category : 'running' }
@@ -313,6 +342,27 @@ ChatPharoChat >> recordUserCorrection: correctionText [
 		details: (Dictionary new
 				 at: 'correction' put: (correctionText truncateTo: 50);
 				 yourself)
+]
+
+{ #category : 'running' }
+ChatPharoChat >> recordUserNameIfPresentIn: text [
+	"Detect and record the user's name from common phrases (e.g., 'my name is Omar')."
+
+	| lowerText prefixes name |
+	text ifNil: [ ^ self ].
+	lowerText := text asLowercase.
+	prefixes := #('my name is ' 'i am ' 'i''m ' 'im ' 'call me ' 'you can call me ').
+
+	name := nil.
+	prefixes do: [ :prefix |
+		name ifNil: [
+			| startIndex |
+			startIndex := lowerText findString: prefix startingAt: 1.
+			startIndex > 0 ifTrue: [
+				name := self extractNameFrom: text startingAfter: startIndex + prefix size - 1 ] ] ].
+
+	name ifNil: [ ^ self ].
+	self recordUserPreference: 'User''s name is ', name
 ]
 
 { #category : 'memory' }
