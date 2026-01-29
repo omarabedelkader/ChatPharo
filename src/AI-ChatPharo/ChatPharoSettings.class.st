@@ -55,6 +55,7 @@ Class {
 		'wantsTutorial',
 		'customTools',
 		'advisorDefaultsConfigured',
+		'memory',
 		'memoryEnabled',
 		'memoryRetentionDays',
 		'memoryMaxItems',
@@ -777,6 +778,20 @@ ChatPharoSettings >> mcpToolsAsClients [
 	^ self mcpRegistry
 		  ifNil: [ OrderedCollection new ]
 		  ifNotNil: [ :registry | registry allToolsAsClients ]
+]
+
+{ #category : 'memory' }
+ChatPharoSettings >> memory [
+	"Return the memory manager instance, if any."
+
+	^ memory
+]
+
+{ #category : 'memory' }
+ChatPharoSettings >> memory: aMemory [
+	"Set a memory manager instance for this settings object."
+
+	memory := aMemory
 ]
 
 { #category : 'memory' }

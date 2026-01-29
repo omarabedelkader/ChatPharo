@@ -9,9 +9,9 @@ Class {
 		'ShouldFail',
 		'ResponseString'
 	],
-	#category : 'AI-ChatPharo-Tests-Config',
+	#category : 'AI-ChatPharo-Tests-Mock',
 	#package : 'AI-ChatPharo-Tests',
-	#tag : 'Config'
+	#tag : 'Mock'
 }
 
 { #category : 'as yet unclassified' }

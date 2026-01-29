@@ -74,6 +74,18 @@ ChatPharoChat >> addAssistantMessage: answerText [
 { #category : 'running' }
 ChatPharoChat >> addUserMessage: text [
 
+
+	| message content attachments |
+	(text isKindOf: ChatPharoMessage) ifTrue: [
+		message := text.
+		content := message content.
+		attachments := message attachments.
+		history addUser: (content ifNil: [ '' ]).
+		self recordUserNameIfPresentIn: content.
+		attachments ifNotNil: [ message attachments: attachments ].
+		messages add: message.
+		^ self ].
+	
 	history addUser: text.
 	self recordUserNameIfPresentIn: text.
 	messages add: (ChatPharoMessage new
@@ -350,19 +362,19 @@ ChatPharoChat >> recordUserNameIfPresentIn: text [
 
 	| lowerText prefixes name |
 	text ifNil: [ ^ self ].
-	lowerText := text asLowercase.
-	prefixes := #('my name is ' 'i am ' 'i''m ' 'im ' 'call me ' 'you can call me ').
+	(text respondsTo: #content) ifTrue: [ ^ self recordUserNameIfPresentIn: text content ].
+	lowerText := text asString asLowercase.
+	prefixes := #( 'my name is ' 'i am ' 'i''m ' 'im ' 'call me ' 'you can call me ' ).
 
 	name := nil.
 	prefixes do: [ :prefix |
-		name ifNil: [
-			| startIndex |
-			startIndex := lowerText findString: prefix startingAt: 1.
-			startIndex > 0 ifTrue: [
-				name := self extractNameFrom: text startingAfter: startIndex + prefix size - 1 ] ] ].
+			name ifNil: [
+					| startIndex |
+					startIndex := lowerText findString: prefix startingAt: 1.
+					startIndex > 0 ifTrue: [ name := self extractNameFrom: text startingAfter: startIndex + prefix size - 1 ] ] ].
 
 	name ifNil: [ ^ self ].
-	self recordUserPreference: 'User''s name is ', name
+	self recordUserPreference: 'User''s name is ' , name
 ]
 
 { #category : 'memory' }

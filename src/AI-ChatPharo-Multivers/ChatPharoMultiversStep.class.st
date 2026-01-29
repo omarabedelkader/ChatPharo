@@ -133,13 +133,13 @@ ChatPharoMultiversStep >> initialize [
 
 { #category : 'accessing' }
 ChatPharoMultiversStep >> isConfigured [
-
 	"Return true if this step has valid configuration"
 
-	^ self agentClass notNil and: [
-		self agentClass ~= ChatPharoNullAgent or: [
-			"Allow null agent if intentional - check model is set for others"
-			true ] ]
+	| resolvedAgentClass |
+	resolvedAgentClass := self agentClass.
+	resolvedAgentClass ifNil: [ ^ false ].
+	resolvedAgentClass = ChatPharoNullAgent ifTrue: [ ^ true ].
+	^ self model notEmpty
 ]
 
 { #category : 'accessing' }

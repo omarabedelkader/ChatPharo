@@ -110,11 +110,18 @@ ChatPharoSkill >> keywords [
 ChatPharoSkill >> matchesKeywords: searchTerms [
 	"Returns true if any of the searchTerms match this skill's keywords"
 
-	| normalizedKeywords |
-	normalizedKeywords := self keywords collect: [ :k | k asLowercase ].
-	^ searchTerms anySatisfy: [ :term |
-		normalizedKeywords anySatisfy: [ :kw |
-			kw includesSubstring: term asLowercase ] ]
+	| normalizedKeywords normalizedTerms |
+	normalizedKeywords := OrderedCollection new.
+	normalizedKeywords add: self name asString.
+	normalizedKeywords add: self description asString.
+	self keywords ifNotNil: [ :keywordList |
+		normalizedKeywords addAll: (keywordList collect: [ :k | k asString ]) ].
+	normalizedKeywords := normalizedKeywords collect: [ :k | k asLowercase ].
+	normalizedTerms := (searchTerms ifNil: [ #() ])
+		collect: [ :term | term asString asLowercase ].
+	^ normalizedTerms anySatisfy: [ :term |
+		  normalizedKeywords anySatisfy: [ :kw |
+			  kw includesSubstring: term ] ]
 ]
 
 { #category : 'accessing' }

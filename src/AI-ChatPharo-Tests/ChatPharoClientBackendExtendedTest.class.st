@@ -4,9 +4,9 @@ Class {
 	#instVars : [
 		'client'
 	],
-	#category : 'AI-ChatPharo-Tests-Core',
+	#category : 'AI-ChatPharo-Tests-Spec',
 	#package : 'AI-ChatPharo-Tests',
-	#tag : 'Core'
+	#tag : 'Spec'
 }
 
 { #category : 'running' }

@@ -4,9 +4,9 @@ Class {
 	#instVars : [
 		'registry'
 	],
-	#category : 'AI-ChatPharo-Tests-Skills',
+	#category : 'AI-ChatPharo-Tests-Mock',
 	#package : 'AI-ChatPharo-Tests',
-	#tag : 'Skills'
+	#tag : 'Mock'
 }
 
 { #category : 'accessing' }
