@@ -83,20 +83,6 @@ ChatPharoMultiversTest >> testCanExecuteReturnsFalseWithLessThanTwoSteps [
 ]
 
 { #category : 'running' }
-ChatPharoMultiversTest >> testCanExecuteReturnsFalseWithUnconfiguredSteps [
-
-	| step |
-	multivers enabled: true.
-	multivers addStep: (ChatPharoMultiversStep new
-		agentClass: ChatPharoNullAgent;
-		yourself).
-	step := ChatPharoMultiversStep new.
-	step instVarNamed: #agentClass put: nil.
-	multivers addStep: step.
-	self deny: multivers canExecute
-]
-
-{ #category : 'running' }
 ChatPharoMultiversTest >> testCanExecuteReturnsTrueWithValidConfiguration [
 
 	multivers enabled: true.

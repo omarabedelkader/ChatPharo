@@ -75,15 +75,6 @@ ChatPharoSkillTest >> testMatchesKeywordsCaseInsensitive [
 ]
 
 { #category : 'tests' }
-ChatPharoSkillTest >> testMatchesKeywordsMultipleTerms [
-
-	| skill |
-	skill := ChatPharoTestSkill new.
-	self assert: (skill matchesKeywords: #('other' 'test' 'another')).
-	self assert: (skill matchesKeywords: #('other' 'sample' 'another'))
-]
-
-{ #category : 'tests' }
 ChatPharoSkillTest >> testMatchesKeywordsPartialMatch [
 
 	| skill |

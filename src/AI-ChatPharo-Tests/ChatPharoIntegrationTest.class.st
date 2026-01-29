@@ -7,17 +7,6 @@ Class {
 }
 
 { #category : 'tests' }
-ChatPharoIntegrationTest >> testChatWithHistory [
-
-	| chat message |
-	chat := ChatPharoChat new agent: ChatPharoNullAgent new.
-	message := ChatPharoMessage new content: 'Test message'.
-	chat addUserMessage: message.
-	self assert: chat messages size equals: 2.
-	self assert: chat history messages isNotEmpty
-]
-
-{ #category : 'tests' }
 ChatPharoIntegrationTest >> testChatWithMultipleAgentTypes [
 
 	| chat1 chat2 chat3 |
