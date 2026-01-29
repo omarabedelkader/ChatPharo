@@ -342,6 +342,9 @@ ChatPharoChat >> requestNewChat [
 { #category : 'initialization' }
 ChatPharoChat >> resetConversation [
 
+"Save conversation summary to memory before resetting"
+	self summarizeConversationToMemory.
+	
 	self cancelMessage.
 	history clear.
 	messages removeAll.
