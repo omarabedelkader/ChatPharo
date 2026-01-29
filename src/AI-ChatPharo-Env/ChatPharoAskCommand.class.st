@@ -20,10 +20,7 @@ ChatPharoAskCommand class >> canBeExecutedInContext: aContext [
 ChatPharoAskCommand class >> chatPharoActivation [
 
     <classAnnotation>
-    ^ CmdShortcutActivation
-        by: $p
-        meta
-        for: ClyFullBrowserMethodContext
+   ^ (CmdShortcutActivation by: $p meta for: ClyFullBrowserMethodContext)
 ]
 
 { #category : 'as yet unclassified' }
