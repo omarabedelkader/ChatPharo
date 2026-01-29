@@ -199,6 +199,21 @@ ChatPharoSkillRegistry >> refresh [
 ]
 
 { #category : 'as yet unclassified' }
+ChatPharoSkillRegistry >> registerSkill: aSkillOrClass [
+	"Register a skill instance or class in the registry."
+
+	| skill |
+	skill := aSkillOrClass isBehavior
+		         ifTrue: [ aSkillOrClass new ]
+		         ifFalse: [ aSkillOrClass ].
+	skill ifNil: [ ^ self ].
+	skills ifNil: [ skills := OrderedCollection new ].
+	skills removeAllSuchThat: [ :existing | existing name = skill name ].
+	skills add: skill.
+	^ skill
+]
+
+{ #category : 'as yet unclassified' }
 ChatPharoSkillRegistry >> setAutomaticEnabled: aBoolean forSkillNamed: skillName [
 	"Set automatic mode for a skill by name"
 

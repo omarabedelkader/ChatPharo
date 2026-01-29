@@ -231,7 +231,8 @@ ChatPharoMultivers >> removeStep: aStep [
 ChatPharoMultivers >> removeStepAt: anIndex [
 	"Remove step at given index"
 
-	steps removeAt: anIndex ifAbsent: [ ].
+	(anIndex between: 1 and: steps size) ifTrue: [
+		steps removeAt: anIndex ].
 	self reorderSteps
 ]
 

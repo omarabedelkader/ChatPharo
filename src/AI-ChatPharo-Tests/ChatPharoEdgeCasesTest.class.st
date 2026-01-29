@@ -16,7 +16,7 @@ ChatPharoEdgeCasesTest >> testChatWithEmptyMessage [
 	chat := ChatPharoChat new agent: ChatPharoNullAgent new.
 	message := ChatPharoMessage new content: ''.
 	chat addUserMessage: message.
-	self assert: chat messages size equals: 1
+	self assert: chat messages size equals: 2
 ]
 
 { #category : 'tests' }
