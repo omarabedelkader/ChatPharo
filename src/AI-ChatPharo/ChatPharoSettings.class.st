@@ -733,15 +733,17 @@ ChatPharoSettings >> mcpEnabled [
 ChatPharoSettings >> mcpEnabled: aBoolean [
 	"Enable or disable MCP support"
 
-	| wasEnabled |
+	| wasEnabled registry |
 	wasEnabled := self mcpEnabled.
 	mcpEnabled := aBoolean.
 	self class setDefault: self.
 	self class saveDefault.
 
 	"Connect or disconnect servers based on enabled state"
-	(wasEnabled not and: [ aBoolean ]) ifTrue: [ self mcpRegistry connectAll ].
-	(wasEnabled and: [ aBoolean not ]) ifTrue: [ self mcpRegistry disconnectAll ].
+		registry := self mcpRegistry.
+	registry ifNotNil: [
+		(wasEnabled not and: [ aBoolean ]) ifTrue: [ registry connectAll ].
+		(wasEnabled and: [ aBoolean not ]) ifTrue: [ registry disconnectAll ] ].
 
 	ChatPharoLogger logFrontend: 'MCP support toggled'
 		details: (Dictionary new
@@ -753,7 +755,9 @@ ChatPharoSettings >> mcpEnabled: aBoolean [
 ChatPharoSettings >> mcpRegistry [
 	"Return the MCP registry that manages all MCP servers"
 
-	^ mcpRegistry ifNil: [ mcpRegistry := ChatPharoMCPRegistry new ]
+	| registryClass |
+	registryClass := Smalltalk at: #ChatPharoMCPRegistry ifAbsent: [ ^ nil ].
+	^ mcpRegistry ifNil: [ mcpRegistry := registryClass new ]
 ]
 
 { #category : 'mcp' }
@@ -770,7 +774,9 @@ ChatPharoSettings >> mcpToolsAsClients [
 	"Return all MCP tools as ChatPharoClient instances if MCP is enabled"
 
 	self mcpEnabled ifFalse: [ ^ OrderedCollection new ].
-	^ self mcpRegistry allToolsAsClients
+	^ self mcpRegistry
+		  ifNil: [ OrderedCollection new ]
+		  ifNotNil: [ :registry | registry allToolsAsClients ]
 ]
 
 { #category : 'memory' }
