@@ -136,7 +136,7 @@ ChatPharoModelPullProgressPresenter >> modelName [
 { #category : 'initialization' }
 ChatPharoModelPullProgressPresenter >> modelName: aString [
 
-	modelName := aString
+	modelName := aString ifNil: [ '' ] ifNotNil: [ aString trimBoth ]
 ]
 
 { #category : 'initialization' }
@@ -192,6 +192,20 @@ ChatPharoModelPullProgressPresenter >> pullModel [
             statusLabel label: 'Connecting to Ollama server...'.
             progressBar progress: 0.0
         ].
+
+        modelName ifEmpty: [
+            self defer: [
+                isComplete := true.
+                statusLabel label: 'Error: missing model name.'.
+                detailsLabel label: 'Please enter a model name and try again.'.
+                progressBar progress: 0.
+                1 second wait.
+                self window close.
+                onError ifNotNil: [ onError value: Error new ].
+            ].
+            ^ self
+        ].
+
 
         url := 'http://', ChatPharoOllamaAgent defaultHost, ':',
                ChatPharoOllamaAgent defaultPort, '/api/pull'.
