@@ -258,10 +258,12 @@ ChatPharoTool >> getResponseForHistory: history [
 	response isSuccess ifFalse: [ Error signal: 'Could not get chat completion' ].
 
 	message := ((STONJSON fromString: response contents) at: 'choices') first at: 'message'.
-	^ ChatPharoHistorySaver
+	^ (ChatPharoHistorySaver
 		  role: 'assistant'
 		  content: (message at: 'content' ifAbsent: [ nil ])
-		  toolCalls: (self toolCallsFromMessage: message)
+		  toolCalls: (self toolCallsFromMessage: message))
+		  thinking: (message at: 'thinking' ifAbsent: [ nil ]);
+		  yourself
 ]
 
 { #category : 'initialization' }

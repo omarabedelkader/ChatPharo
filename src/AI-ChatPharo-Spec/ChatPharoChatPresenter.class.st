@@ -100,6 +100,7 @@ ChatPharoChatPresenter >> connectPresenters [
 	attachButton action: [ self attachFile ].
 
 	model whenAnswerReceivedDo: [ :message |
+		thinkingPresenter thinkingContent: (message thinking ifNil: [ '' ]).
 			self hideThinking.
 			messagesLayout add: message presenter withConstraints: [ :constraints | constraints height: message height ].
 			messageTextField text: ''.

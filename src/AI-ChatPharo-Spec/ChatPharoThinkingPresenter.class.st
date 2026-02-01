@@ -5,7 +5,9 @@ Class {
 		'statusLabel',
 		'dotsLabel',
 		'animationProcess',
-		'currentPhase'
+		'currentPhase',
+		'showDetailsButton',
+		'thinkingContent'
 	],
 	#category : 'AI-ChatPharo-Spec-Ethics',
 	#package : 'AI-ChatPharo-Spec',
@@ -20,6 +22,7 @@ ChatPharoThinkingPresenter >> defaultLayout [
 		vAlignCenter;
 		add: statusLabel expand: false;
 		add: dotsLabel expand: false;
+		add: showDetailsButton expand: false;
 		yourself
 ]
 
@@ -38,13 +41,27 @@ ChatPharoThinkingPresenter >> initializePresenters [
 		               yourself.
 	dotsLabel := self newLabel
 		             label: '';
-		             yourself
+		             yourself.
+		showDetailsButton := self newButton
+		                     label: 'Show Details';
+		                     action: [ self openThinkingDetails ];
+		                     yourself
 ]
 
 { #category : 'initialization' }
 ChatPharoThinkingPresenter >> isFinished [
 
 	^ currentPhase = #finished
+]
+
+{ #category : 'initialization' }
+ChatPharoThinkingPresenter >> openThinkingDetails [
+	"Open a new window to display the detailed thinking content"
+
+	| detailPresenter |
+	detailPresenter := ChatPharoThinkingDetailPresenter new.
+	detailPresenter thinkingContent: self thinkingContent.
+	detailPresenter open
 ]
 
 { #category : 'initialization' }
@@ -78,6 +95,20 @@ ChatPharoThinkingPresenter >> stopAnimation [
 		animationProcess terminate.
 		animationProcess := nil ].
 	dotsLabel label: ''
+]
+
+{ #category : 'initialization' }
+ChatPharoThinkingPresenter >> thinkingContent [
+	"Return the current thinking content"
+
+	^ thinkingContent ifNil: [ '' ]
+]
+
+{ #category : 'initialization' }
+ChatPharoThinkingPresenter >> thinkingContent: aString [
+	"Set the thinking content"
+
+	thinkingContent := aString
 ]
 
 { #category : 'initialization' }

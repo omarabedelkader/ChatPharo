@@ -93,7 +93,7 @@ ChatPharoClaudeAgent >> getResponseForPrompt: userPrompt [
 			self history addMessage: result.
 			count := count + 1 ].
 
-	^ result content
+	^ result
 ]
 
 { #category : 'accessing' }

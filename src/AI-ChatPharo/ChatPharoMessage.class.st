@@ -26,7 +26,8 @@ Class {
 		'suggestionAccepted',
 		'suggestionRejected',
 		'feedbackTimestamp',
-		'attachments'
+		'attachments',
+		'thinking'
 	],
 	#category : 'AI-ChatPharo',
 	#package : 'AI-ChatPharo'
@@ -144,7 +145,8 @@ ChatPharoMessage >> initialize [
 	suggestionAccepted := false.
 	suggestionRejected := false.
 	feedbackTimestamp := nil.
-	attachments := OrderedCollection new
+	attachments := OrderedCollection new.
+	thinking := String empty
 ]
 
 { #category : 'accessing' }
@@ -198,4 +200,18 @@ ChatPharoMessage >> suggestionRejected [
 ChatPharoMessage >> suggestionRejected: aBoolean [
 
 	suggestionRejected := aBoolean
+]
+
+{ #category : 'initialization' }
+ChatPharoMessage >> thinking [
+	"Return the thinking content from Claude"
+
+	^ thinking
+]
+
+{ #category : 'initialization' }
+ChatPharoMessage >> thinking: aString [
+	"Set the thinking content from Claude"
+
+	thinking := aString
 ]

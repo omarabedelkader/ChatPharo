@@ -47,28 +47,44 @@ ChatPharoChat >> addAnswerReceivedHandler: aBlock [
 ]
 
 { #category : 'running' }
-ChatPharoChat >> addAssistantMessage: answerText [
-
-	| label multivers |
+ChatPharoChat >> addAssistantMessage: anAnswer [
+	| label multivers thinking answerText |
 	"Note: history is already updated by the agent's getResponseForPrompt: method
 	Determine label based on mode"
+
+	thinking := nil.
+	answerText := anAnswer.
+
+	"Handle both string and result object"
+	(answerText respondsTo: #content) ifTrue: [
+		thinking := answerText thinking.
+		answerText := answerText content
+	].
+
 	history addAssistant: answerText.
 	multivers := ChatPharoSettings default multivers.
 	label := (multivers notNil and: [ multivers canExecute ])
-		         ifTrue: [ 'Multivers (' , multivers stepsCount asString , ' agents)' ]
-		         ifFalse: [
-				         (self agent isKindOf: ChatPharoNullAgent)
-					         ifTrue: [ 'Assistant bot' ]
-					         ifFalse: [ 'Assistant' ] ].
+		ifTrue: [ 'Multivers (' , multivers stepsCount asString , ' agents)' ]
+		ifFalse: [
+			(self agent isKindOf: ChatPharoNullAgent)
+				ifTrue: [ 'Assistant bot' ]
+				ifFalse: [ 'Assistant' ]
+		].
+
 	messages last
 		answer: answerText;
-		assistantLabel: label.
-	ChatPharoLogger logBackend: 'Assistant response recorded' details: (Dictionary new
-			 at: 'chatId' put: self identityHash;
-			 at: 'agent' put: (ChatPharoLogger agentNameFor: self agent);
-			 at: 'assistantLabel' put: label;
-			 at: 'response' put: answerText;
-			 yourself)
+		assistantLabel: label;
+		thinking: (thinking ifNil: [ '' ]).
+
+	ChatPharoLogger
+		logBackend: 'Assistant response recorded'
+		details: (Dictionary new
+			at: 'chatId' put: self identityHash;
+			at: 'agent' put: (ChatPharoLogger agentNameFor: self agent);
+			at: 'assistantLabel' put: label;
+			at: 'response' put: answerText;
+			yourself)
+
 ]
 
 { #category : 'running' }
