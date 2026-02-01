@@ -206,7 +206,9 @@ ChatPharoModelPullProgressPresenter >> pullModel [
 
         [
             response := client post.
-            progressStream := response readStream.
+            progressStream := (response respondsTo: #readStream)
+                ifTrue: [ response readStream ]
+                ifFalse: [ response ].
 
             totalBytes := nil.
             completedBytes := 0.
