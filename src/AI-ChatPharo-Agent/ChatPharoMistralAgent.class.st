@@ -77,7 +77,7 @@ ChatPharoMistralAgent >> getResponseForPrompt: userPrompt [
 	[ result toolCalls notNil ] whileTrue: [
 			result := api getResponseForHistory: self history.
 			self history addMessage: result ].
-
+self response: result.
 	^ result content
 ]
 

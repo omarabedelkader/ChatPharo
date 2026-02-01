@@ -204,14 +204,14 @@ ChatPharoMessage >> suggestionRejected: aBoolean [
 
 { #category : 'initialization' }
 ChatPharoMessage >> thinking [
-	"Return the thinking content from Claude"
+	"Return the thinking content from the agent response"
 
 	^ thinking
 ]
 
 { #category : 'initialization' }
 ChatPharoMessage >> thinking: aString [
-	"Set the thinking content from Claude"
+	"Set the thinking content from the agent response"
 
 	thinking := aString
 ]

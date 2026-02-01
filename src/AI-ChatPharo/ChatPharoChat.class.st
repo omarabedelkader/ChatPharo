@@ -48,43 +48,43 @@ ChatPharoChat >> addAnswerReceivedHandler: aBlock [
 
 { #category : 'running' }
 ChatPharoChat >> addAssistantMessage: anAnswer [
+
 	| label multivers thinking answerText |
 	"Note: history is already updated by the agent's getResponseForPrompt: method
 	Determine label based on mode"
-
 	thinking := nil.
-	answerText := anAnswer.
-
-	"Handle both string and result object"
+	answerText := anAnswer. "Handle both string and result object"
 	(answerText respondsTo: #content) ifTrue: [
-		thinking := answerText thinking.
-		answerText := answerText content
-	].
+			thinking := answerText thinking.
+			answerText := answerText content ].
+
+(thinking isNil and: [ self agent respondsTo: #response ]) ifTrue: [
+		| agentResponse |
+		agentResponse := self agent response.
+		(agentResponse respondsTo: #thinking) ifTrue: [
+			thinking := agentResponse thinking ] ].
+
 
 	history addAssistant: answerText.
 	multivers := ChatPharoSettings default multivers.
 	label := (multivers notNil and: [ multivers canExecute ])
-		ifTrue: [ 'Multivers (' , multivers stepsCount asString , ' agents)' ]
-		ifFalse: [
-			(self agent isKindOf: ChatPharoNullAgent)
-				ifTrue: [ 'Assistant bot' ]
-				ifFalse: [ 'Assistant' ]
-		].
+		         ifTrue: [ 'Multivers (' , multivers stepsCount asString , ' agents)' ]
+		         ifFalse: [
+				         (self agent isKindOf: ChatPharoNullAgent)
+					         ifTrue: [ 'Assistant bot' ]
+					         ifFalse: [ 'Assistant' ] ].
 
 	messages last
 		answer: answerText;
 		assistantLabel: label;
 		thinking: (thinking ifNil: [ '' ]).
 
-	ChatPharoLogger
-		logBackend: 'Assistant response recorded'
-		details: (Dictionary new
-			at: 'chatId' put: self identityHash;
-			at: 'agent' put: (ChatPharoLogger agentNameFor: self agent);
-			at: 'assistantLabel' put: label;
-			at: 'response' put: answerText;
-			yourself)
-
+	ChatPharoLogger logBackend: 'Assistant response recorded' details: (Dictionary new
+			 at: 'chatId' put: self identityHash;
+			 at: 'agent' put: (ChatPharoLogger agentNameFor: self agent);
+			 at: 'assistantLabel' put: label;
+			 at: 'response' put: answerText;
+			 yourself)
 ]
 
 { #category : 'running' }

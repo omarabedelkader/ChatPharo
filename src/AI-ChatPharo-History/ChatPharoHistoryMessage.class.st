@@ -94,14 +94,14 @@ ChatPharoHistoryMessage >> role: anObject [
 
 { #category : 'accessing' }
 ChatPharoHistoryMessage >> thinking [
-	"Return the thinking content from Claude API"
+	"Return the thinking content from the agent response"
 
 	^ thinking
 ]
 
 { #category : 'accessing' }
 ChatPharoHistoryMessage >> thinking: aString [
-	"Set the thinking content from Claude API"
+	"Set the thinking content from the agent response"
 
 	thinking := aString
 ]

@@ -99,6 +99,7 @@ ChatPharoGeminiAgent >> getResponseForPrompt: userPrompt [
 	api requestParameters: params.
 	self history ifNil: [ self history: ChatPharoHistory new ].
 	self history addMessage: (ChatPharoHistorySaver role: 'user' content: userPrompt).
+	result := api getResponseForHistory: self history.
 	self history addMessage: result.
 
 
@@ -108,6 +109,8 @@ ChatPharoGeminiAgent >> getResponseForPrompt: userPrompt [
 			result := api getResponseForHistory: self history.
 			self history addMessage: result.
 			count := count + 1 ].
+
+self response: result.
 
 	^ result content
 ]

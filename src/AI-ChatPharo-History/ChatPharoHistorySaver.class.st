@@ -83,7 +83,7 @@ ChatPharoHistorySaver >> thinking [
 
 { #category : 'accessing' }
 ChatPharoHistorySaver >> thinking: aString [
-	"Set the thinking content from Claude API"
+	"Set the thinking content from the agent response"
 
 	thinking := aString
 ]
