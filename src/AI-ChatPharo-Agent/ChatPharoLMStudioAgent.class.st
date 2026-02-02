@@ -80,7 +80,11 @@ ChatPharoLMStudioAgent >> configurationErrorMessage [
 ChatPharoLMStudioAgent >> getResponseForPrompt: userPrompt [
 
 	| api result params |
-	api := ChatPharoTool lmStudioWithHost: host port: port system: self systemPrompt tools: self tools.
+	api := ChatPharoTool
+		       lmStudioWithHost: host
+		       port: port
+		       system: self systemPrompt
+		       tools: self tools.
 	self onToolExecution ifNotNil: [ api onToolExecution: self onToolExecution ].
 	model ifNotEmpty: [ api model: model ].
 	params := self requestParameters copy.
@@ -94,6 +98,7 @@ ChatPharoLMStudioAgent >> getResponseForPrompt: userPrompt [
 	[ result toolCalls notNil ] whileTrue: [
 			result := api getResponseForHistory: self history.
 			self history addMessage: result ].
+		self response: result.
 	^ result content
 ]
 

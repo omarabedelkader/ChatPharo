@@ -81,8 +81,7 @@ ChatPharoClaudeAgent >> getResponseForPrompt: userPrompt [
 	self onToolExecution ifNotNil: [ api onToolExecution: self onToolExecution ].
 	model ifNotEmpty: [ api model: model ].
 	self history ifNil: [ self history: ChatPharoHistory new ].
-	self history addMessage:
-		(ChatPharoHistorySaver role: 'user' content: userPrompt).
+	self history addMessage: (ChatPharoHistorySaver role: 'user' content: userPrompt).
 	result := api getResponseForHistory: self history.
 	self history addMessage: result.
 
@@ -92,8 +91,8 @@ ChatPharoClaudeAgent >> getResponseForPrompt: userPrompt [
 			result := api getResponseForHistory: self history.
 			self history addMessage: result.
 			count := count + 1 ].
-
-	^ result content
+self response: result.
+	^ result
 ]
 
 { #category : 'accessing' }

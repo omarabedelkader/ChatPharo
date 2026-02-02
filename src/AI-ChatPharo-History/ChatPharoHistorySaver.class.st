@@ -7,7 +7,8 @@ Class {
 	#instVars : [
 		'role',
 		'content',
-		'toolCalls'
+		'toolCalls',
+		'thinking'
 	],
 	#category : 'AI-ChatPharo-History',
 	#package : 'AI-ChatPharo-History'
@@ -71,6 +72,20 @@ ChatPharoHistorySaver >> role [
 ChatPharoHistorySaver >> role: anObject [
 
 	role := anObject
+]
+
+{ #category : 'accessing' }
+ChatPharoHistorySaver >> thinking [
+	"Return the thinking content from Claude API"
+
+	^ thinking
+]
+
+{ #category : 'accessing' }
+ChatPharoHistorySaver >> thinking: aString [
+	"Set the thinking content from the agent response"
+
+	thinking := aString
 ]
 
 { #category : 'accessing' }
