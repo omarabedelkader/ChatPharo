@@ -10,7 +10,8 @@ Class {
 		'notebook',
 		'toolbar',
 		'connectionStatusLabel',
-		'multiversStatusLabel'
+		'multiversStatusLabel',
+		'disclaimerLabel'
 	],
 	#category : 'AI-ChatPharo-Spec-Core',
 	#package : 'AI-ChatPharo-Spec',
@@ -39,6 +40,7 @@ ChatPharoPresenter >> defaultLayout [
 	^ SpBoxLayout newTopToBottom
 		  add: toolbar expand: false;
 		  add: notebook;
+		  add: disclaimerLabel expand: false;
 		  yourself
 ]
 
@@ -94,7 +96,9 @@ ChatPharoPresenter >> initializePresenters [
 
 	notebook := self newNotebook.
 	toolbar := self newToolbar.
-
+disclaimerLabel := self newLabel
+		label: 'ChatPharo may make mistakes. Check important info.';
+		yourself.
 	toolbar add: (SpToolbarButtonPresenter new
 			 label: 'New Chat';
 			 icon: (self iconNamed: #add);
@@ -121,8 +125,8 @@ ChatPharoPresenter >> initializePresenters [
 			 icon: (self iconNamed: #smallSave);
 			 help: 'Save current chat';
 			 action: [ self saveCurrentChat ];
-			 yourself). 
-			
+			 yourself).
+
 	toolbar add: (SpToolbarButtonPresenter new
 			 label: 'Load Chat';
 			 icon: (self iconNamed: #smallOpen);
@@ -144,14 +148,14 @@ ChatPharoPresenter >> initializePresenters [
 		                         yourself.
 
 	toolbar add: connectionStatusLabel.
-	
+
 	multiversStatusLabel := SpToolbarButtonPresenter new
-		label: '';
-		icon: (self iconNamed: #branch);
-		help: 'Multivers mode status';
-		enabled: false;
-		action: [ self openSettings ];
-		yourself.
+		                        label: '';
+		                        icon: (self iconNamed: #branch);
+		                        help: 'Multivers mode status';
+		                        enabled: false;
+		                        action: [ self openSettings ];
+		                        yourself.
 
 	toolbar add: multiversStatusLabel.
 	self updateMultiversStatus.
@@ -164,10 +168,9 @@ ChatPharoPresenter >> initializePresenters [
 			 yourself).
 
 	self updateConnectionStatus.
-        ChatPharoLogger logFrontend: 'Main presenter initialized'
-                details: (Dictionary new
-                        at: 'initialTabs' put: notebook pages size;
-                        yourself)
+	ChatPharoLogger logFrontend: 'Main presenter initialized' details: (Dictionary new
+			 at: 'initialTabs' put: notebook pages size;
+			 yourself)
 ]
 
 { #category : 'initialization' }
