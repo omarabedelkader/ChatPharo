@@ -203,11 +203,12 @@ ChatPharoOllamaSettingsPresenter >> initializePresenters [
 		                 label: 'Install';
 		                 icon: (self iconNamed: #add);
 		                 action: [
-				                 (model class isValidModel: installInput text)
-					                 ifTrue: [
-							                 model class pullModel: installInput text.
-							                 self refreshModels ]
-					                 ifFalse: [ self inform: 'Model ' , installInput text , ' not found.' ] ];
+				                 ChatPharoModelPullProgressPresenter
+					                 pullModel: installInput text
+					                 onComplete: [ self refreshModels ]
+					                 onError: [ :ex |
+						                 self inform: 'Error pulling model: ' , ex messageText ,
+							                 '. Please verify the model name.' ] ];
 		                 yourself.
 	deleteButton := self newButton
 		                label: 'Delete';
