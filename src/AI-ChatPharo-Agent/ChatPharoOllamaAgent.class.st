@@ -235,9 +235,9 @@ ChatPharoOllamaAgent >> initialize [
 ]
 
 { #category : 'accessing' }
-ChatPharoOllamaAgent >> isConfigured [ 
+ChatPharoOllamaAgent >> isConfigured [
 
-        ^ host notEmpty and: [ port notEmpty and: [ model notEmpty ] ]
+	^ host notEmpty and: [ port notEmpty and: [ model notNil and: [ model notEmpty ] ] ]
 ]
 
 { #category : 'tools support' }
