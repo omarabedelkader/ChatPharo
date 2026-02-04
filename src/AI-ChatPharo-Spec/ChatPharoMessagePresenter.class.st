@@ -107,24 +107,38 @@ ChatPharoMessagePresenter >> initializePresenters [
 	contentPresenter := MicrodownPresenter new.
 	thinkingPresenter := MicrodownPresenter new.
 	answerPresenter := MicrodownPresenter new.
-	goodFeedbackButton := self newButton
-		                      label: 'Good';
-		                      help: 'Mark code as valid';
-		                      yourself.
-	badFeedbackButton := self newButton
-		                     label: 'Bad';
-		                     help: 'Mark code as invalid';
-		                     yourself.
-	copyButton := self newButton
-		              icon: (self iconNamed: #smallCopy);
-		              label: '';
-		              help: 'Copy answer to clipboard';
-		              action: [
-				              Clipboard clipboardText: (model answer ifNil: [ '' ]).
-				              UIManager default inform: 'Copied to clipboard' ];
-		              yourself.
 
-	copyButton visible: false
+	goodFeedbackButton := self newButton
+		label: 'Good';
+		help: 'Mark code as valid';
+		action: [
+			model feedback: true.
+			self updateFeedbackButtons
+		];
+		yourself.
+
+	badFeedbackButton := self newButton
+		label: 'Bad';
+		help: 'Mark code as invalid';
+		action: [
+			model feedback: false.
+			self updateFeedbackButtons
+		];
+		yourself.
+
+	copyButton := self newButton
+		icon: (self iconNamed: #smallCopy);
+		label: '';
+		help: 'Copy answer to clipboard';
+		action: [
+			Clipboard clipboardText: (model answer ifNil: [ '' ]).
+			UIManager default inform: 'Copied to clipboard'
+		];
+		yourself.
+
+	copyButton visible: true.
+	self updateFeedbackButtons.
+
 ]
 
 { #category : 'layout' }
@@ -141,4 +155,14 @@ ChatPharoMessagePresenter >> initializeWindow: aWindowPresenter [
 ChatPharoMessagePresenter >> setModelBeforeInitialization: anObject [
 
 	model := anObject
+]
+
+{ #category : 'updating' }
+ChatPharoMessagePresenter >> updateFeedbackButtons [
+
+	| feedback |
+	feedback := model feedback.
+
+	goodFeedbackButton enabled: (feedback isNil or: [ feedback not ]).
+	badFeedbackButton enabled: (feedback isNil or: [ feedback ]).
 ]
