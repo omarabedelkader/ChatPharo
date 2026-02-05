@@ -196,10 +196,12 @@ ChatPharoOllamaAgent >> getResponseForPrompt: userPrompt [
 	result := api getResponseForHistory: self history.
 	self history addMessage: result.
 
-	[ result toolCalls notNil ] whileTrue: [
+	[ result toolCalls notNil ] whileTrue: [ 
+			result toolCalls do: [ :toolCall |
+				self history addMessage: (ChatPharoHistorySaver role: 'tool' content: toolCall content toolCallId: toolCall id) ]. 
 			result := api getResponseForHistory: self history.
 			self history addMessage: result ].
-		self response: result.
+	self response: result.
 	^ result content
 ]
 
