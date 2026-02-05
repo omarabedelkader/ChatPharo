@@ -8,6 +8,7 @@ Class {
 		'role',
 		'content',
 		'toolCalls',
+		'toolCallId',
 		'thinking'
 	],
 	#category : 'AI-ChatPharo-History',
@@ -17,6 +18,16 @@ Class {
 { #category : 'contents' }
 ChatPharoHistorySaver class >> role: r content: c [
 	^ self role: r content: c toolCalls: nil
+]
+
+{ #category : 'instance creation' }
+ChatPharoHistorySaver class >> role: aRole content: aContent toolCallId: anId [
+
+	^ self new
+		  role: aRole;
+		  content: aContent;
+		  toolCallId: anId;
+		  yourself
 ]
 
 { #category : 'contents' }
@@ -86,6 +97,17 @@ ChatPharoHistorySaver >> thinking: aString [
 	"Set the thinking content from the agent response"
 
 	thinking := aString
+]
+
+{ #category : 'accessing' }
+ChatPharoHistorySaver >> toolCallId [ 
+	^ toolCallId 
+]
+
+{ #category : 'accessing' }
+ChatPharoHistorySaver >> toolCallId: anObject [
+
+	toolCallId := anObject
 ]
 
 { #category : 'accessing' }

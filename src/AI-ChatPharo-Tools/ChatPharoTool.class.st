@@ -236,33 +236,52 @@ ChatPharoTool >> extraHeaders: aDictionary [
 { #category : 'initialization' }
 ChatPharoTool >> getResponseForHistory: history [
 
-	| messages data response message |
+	| messages data response message toolCalls thinkingText |
 	messages := Array streamContents: [ :stream |
 			            systemPrompt ifNotNil: [ stream nextPut: (Dictionary with: 'role' -> 'system' with: 'content' -> systemPrompt) ].
 			            history putOpenAIChatMessagesOn: stream ].
-
 	data := Dictionary with: 'model' -> model with: 'messages' -> messages.
 	extraParameters ifNotNil: [ data addAll: extraParameters ].
 	tools ifNotNil: [
 			data
 				add: 'tools' -> (tools collect: [ :t | t openAIChatTool ] as: Array);
 				add: 'tool_choice' -> 'auto' ].
-
 	response := self client
 		            addPath: #( 'chat' 'completions' );
 		            entity: (ZnEntity json: (self jsonStringFor: (self normalizeForJson: data)));
 		            timeout: (Duration minutes: 5) asSeconds;
 		            post;
 		            response.
-
 	response isSuccess ifFalse: [ Error signal: 'Could not get chat completion' ].
+	message := ((STONJSON fromString: response contents) at: 'choices') first at: 'message'. "Extract tool calls"
+	toolCalls := self toolCallsFromMessage: message. "Build thinking text from tool calls"
+	thinkingText := nil.
+	toolCalls ifNotNil: [
+			toolCalls ifNotEmpty: [
+					thinkingText := String streamContents: [ :stream |
+							                stream
+								                nextPutAll: 'Tool calls made:';
+								                cr;
+								                cr.
+							                toolCalls do: [ :tc |
+									                stream
+										                nextPutAll: 'Function: ';
+										                nextPutAll: tc functionName;
+										                cr.
+									                stream
+										                nextPutAll: 'Arguments: ';
+										                nextPutAll: tc arguments asString;
+										                cr.
+									                tc content ifNotNil: [ :content |
+											                stream
+												                nextPutAll: 'Result: ';
+												                nextPutAll: (content copyFrom: 1 to: (content size min: 200));
+												                nextPutAll: '...';
+												                cr ].
+									                stream cr ] ] ] ].
 
-	message := ((STONJSON fromString: response contents) at: 'choices') first at: 'message'.
-	^ (ChatPharoHistorySaver
-		  role: 'assistant'
-		  content: (message at: 'content' ifAbsent: [ nil ])
-		  toolCalls: (self toolCallsFromMessage: message))
-		  thinking: (message at: 'thinking' ifAbsent: [ nil ]);
+	^ (ChatPharoHistorySaver role: 'assistant' content: (message at: 'content' ifAbsent: [ nil ]) toolCalls: toolCalls)
+		  thinking: thinkingText;
 		  yourself
 ]
 
