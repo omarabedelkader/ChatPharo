@@ -37,8 +37,12 @@ ChatPharoMessagePresenter >> connectPresenters [
 
 { #category : 'layout' }
 ChatPharoMessagePresenter >> defaultLayout [
-
-	| layout answerContainer thinkingContainer |
+	| layout answerContainer thinkingContainer contentHeight answerHeight |
+	
+	"Calculate heights based on content"
+	contentHeight := self estimatedHeightFor: model content.
+	answerHeight := self estimatedHeightFor: model answer.
+	
 	answerContainer := SpOverlayLayout new.
 	answerContainer
 		child: answerPresenter;
@@ -46,24 +50,19 @@ ChatPharoMessagePresenter >> defaultLayout [
 				c
 					vAlignStart;
 					hAlignEnd ].
-
 	answerPresenter eventHandler
 		whenMouseEnterDo: [ :evt | copyButton visible: true ];
 		whenMouseLeaveDo: [ :evt | copyButton visible: false ].
-
 	thinkingContainer := SpBoxLayout newVertical
 		                     add: 'Thinking' expand: false;
 		                     add: thinkingPresenter expand: true.
-
 	layout := SpBoxLayout newVertical
 		          add: 'User' expand: false;
-		          add: contentPresenter expand: true;
+		          add: contentPresenter 
+		          	withConstraints: [ :c | c height: contentHeight ];
 		          add: model assistantLabel expand: false.
-
-	"model thinking isEmpty ifFalse: [ layout add: thinkingContainer expand: true ]."
-
-	layout add: answerContainer expand: true.
-
+	layout add: answerContainer 
+		withConstraints: [ :c | c height: answerHeight ].
 	ChatPharoSettings default feedbackButtonsEnabled ifTrue: [
 			layout
 				add: (SpBoxLayout newHorizontal
@@ -72,8 +71,21 @@ ChatPharoMessagePresenter >> defaultLayout [
 						 add: badFeedbackButton;
 						 yourself)
 				expand: false ].
-
 	^ layout yourself
+]
+
+{ #category : 'accessing' }
+ChatPharoMessagePresenter >> estimatedHeightFor: aString [
+	"Calculate height needed for text content"
+
+	| text lineCount lineHeight minHeight maxHeight |
+	text := aString ifNil: [ '' ].
+	lineHeight := 20.
+	minHeight := 30.
+	maxHeight := 500.
+
+	lineCount := self estimatedLineCountFor: text.
+	^ (minHeight max: lineCount * lineHeight) min: maxHeight
 ]
 
 { #category : 'accessing' }
@@ -94,8 +106,8 @@ ChatPharoMessagePresenter >> height [
 	lineHeight := 24.
 	contentLines := self estimatedLineCountFor: model content.
 	thinkingLines := model thinking isEmpty
-		ifTrue: [ 0 ]
-		ifFalse: [ self estimatedLineCountFor: model thinking ].
+		                 ifTrue: [ 0 ]
+		                 ifFalse: [ self estimatedLineCountFor: model thinking ].
 	answerLines := self estimatedLineCountFor: model answer.
 	^ baseHeight + ((contentLines + thinkingLines + answerLines) * lineHeight)
 ]

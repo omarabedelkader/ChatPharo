@@ -277,13 +277,12 @@ ChatPharoChatPresenter >> initializeWindow: aWindowPresenter [
 
 { #category : 'initialization' }
 ChatPharoChatPresenter >> reloadMessages [
-
 	self hideThinking.
 	self hideError.
 	messagesLayout := SpBoxLayout newVertical.
 	scrollableMessages layout: messagesLayout.
 	model messages do: [ :each |
-		messagesLayout add: each presenter withConstraints: [ :constraints | constraints height: each height ] ].
+		messagesLayout add: each presenter ].
 	messageTextField text: ''.
 	submitButton enabled: true.
 	messageTextField enabled: true
