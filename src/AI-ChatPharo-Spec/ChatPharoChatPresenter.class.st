@@ -94,14 +94,23 @@ ChatPharoChatPresenter >> connectPresenters [
 					 at: 'chatId' put: model identityHash;
 					 yourself).
 			model inspect ].
-		
-		moreMenuButton action: [ self showMoreMenu ].
+
+	moreMenuButton action: [ self showMoreMenu ].
 
 	attachButton action: [ self attachFile ].
+	
+		model whenUserMessageSentDo: [ :message |
+			messagesLayout add: message presenter withConstraints: [ :constraints | constraints height: message height ].
+			ChatPharoLogger logFrontend: 'User message displayed' details: (Dictionary new
+					 at: 'chatId' put: model identityHash;
+					 yourself) ].
 
 	model whenAnswerReceivedDo: [ :message |
-		thinkingPresenter thinkingContent: (message thinking ifNil: [ '' ]).
+			thinkingPresenter thinkingContent: (message thinking ifNil: [ '' ]).
 			self hideThinking.
+			"Remove the content-only presenter, rebuild with answer included"
+			messagesLayout remove: message presenter ifAbsent: [].
+			message resetPresenter.
 			messagesLayout add: message presenter withConstraints: [ :constraints | constraints height: message height ].
 			messageTextField text: ''.
 			submitButton enabled: true.

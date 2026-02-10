@@ -29,7 +29,8 @@ Class {
 		'onToolExecution',
 		'cache',
 		'onErrorReceived',
-		'onNewChatRequested'
+		'onNewChatRequested',
+		'onUserMessageSent'
 	],
 	#category : 'AI-ChatPharo',
 	#package : 'AI-ChatPharo'
@@ -90,23 +91,23 @@ ChatPharoChat >> addAssistantMessage: anAnswer [
 { #category : 'running' }
 ChatPharoChat >> addUserMessage: text [
 
-
 	| message content attachments |
 	(text isKindOf: ChatPharoMessage) ifTrue: [
-		message := text.
-		content := message content.
-		attachments := message attachments.
-		history addUser: (content ifNil: [ '' ]).
-		self recordUserNameIfPresentIn: content.
-		attachments ifNotNil: [ message attachments: attachments ].
-		messages add: message.
-		^ self ].
-	
+			message := text.
+			content := message content.
+			attachments := message attachments.
+			history addUser: (content ifNil: [ '' ]).
+			self recordUserNameIfPresentIn: content.
+			attachments ifNotNil: [ message attachments: attachments ].
+			messages add: message.
+			^ self ].
+
 	history addUser: text.
 	self recordUserNameIfPresentIn: text.
 	messages add: (ChatPharoMessage new
 			 content: text;
-			 yourself)
+			 yourself).
+			onUserMessageSent ifNotNil: [ :blk | blk value: messages last ]
 ]
 
 { #category : 'running' }
@@ -119,7 +120,8 @@ ChatPharoChat >> addUserMessage: text withAttachments: attachmentCollection [
 		           content: text;
 		           attachments: attachmentCollection;
 		           yourself.
-	messages add: message
+	messages add: message.
+	onUserMessageSent ifNotNil: [ :blk | blk value: message ]
 ]
 
 { #category : 'initialization' }
@@ -634,4 +636,10 @@ ChatPharoChat >> whenNewChatRequestedDo: aBlock [
 ChatPharoChat >> whenToolExecutionDo: aBlock [ 
 
         onToolExecution := aBlock
+]
+
+{ #category : 'running' }
+ChatPharoChat >> whenUserMessageSentDo: aBlock [
+
+	onUserMessageSent := aBlock
 ]

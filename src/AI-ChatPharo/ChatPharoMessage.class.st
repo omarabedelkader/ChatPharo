@@ -178,6 +178,12 @@ ChatPharoMessage >> removeAttachment: aFileReference [
 	attachments remove: aFileReference ifAbsent: [  ]
 ]
 
+{ #category : 'accessing' }
+ChatPharoMessage >> resetPresenter [
+
+	presenter := nil
+]
+
 { #category : 'feedback' }
 ChatPharoMessage >> suggestionAccepted [
 
