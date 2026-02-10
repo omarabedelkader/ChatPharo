@@ -61,7 +61,8 @@ Class {
 		'memoryMaxItems',
 		'memoryAutoSummarize',
 		'mcpEnabled',
-		'mcpRegistry'
+		'mcpRegistry',
+		'externalApiWarningDismissed'
 	],
 	#classInstVars : [
 		'Default'
@@ -132,8 +133,9 @@ ChatPharoSettings class >> loadOrNew [
 				  settings memoryRetentionDays ifNil: [ settings privateSetMemoryRetentionDays: 30 ].
 				  settings memoryMaxItems ifNil: [ settings privateSetMemoryMaxItems: 1000 ].
 				  settings memoryAutoSummarize ifNil: [ settings privateSetMemoryAutoSummarize: true ].
-				settings mcpEnabled ifNil: [ settings privateSetMcpEnabled: false ].
+				  settings mcpEnabled ifNil: [ settings privateSetMcpEnabled: false ].
 				  settings mcpRegistry ifNil: [ settings privateSetMcpRegistry: ChatPharoMCPRegistry new ].
+				settings externalApiWarningDismissed ifNil: [ settings privateSetExternalApiWarningDismissed: false ].
 				  ^ settings ]
 				  on: Error
 				  do: [ ^ self new ] ]
@@ -600,6 +602,26 @@ ChatPharoSettings >> ethicsMandate: aString [
 	self class saveDefault
 ]
 
+{ #category : 'safety' }
+ChatPharoSettings >> externalApiWarningDismissed [
+	"Whether the user has dismissed the external API data warning"
+
+	^ externalApiWarningDismissed ifNil: [ externalApiWarningDismissed := false ]
+]
+
+{ #category : 'safety' }
+ChatPharoSettings >> externalApiWarningDismissed: aBoolean [
+	"Set whether the external API data warning has been dismissed"
+
+	externalApiWarningDismissed := aBoolean.
+	self class setDefault: self.
+	self class saveDefault.
+	ChatPharoLogger logFrontend: 'External API warning dismissed status updated'
+		details: (Dictionary new
+			at: 'dismissed' put: aBoolean;
+			yourself)
+]
+
 { #category : 'accessing' }
 ChatPharoSettings >> feedbackButtonsEnabled [
 	^ feedbackButtonsEnabled ifNil: [ true ]
@@ -979,6 +1001,12 @@ ChatPharoSettings >> privateSetEthicsDirectorEnabled: aBoolean [
 ChatPharoSettings >> privateSetEthicsMandate: aString [
 	"Set ethicsMandate without triggering save. Used during loading."
 	ethicsMandate := aString
+]
+
+{ #category : 'private' }
+ChatPharoSettings >> privateSetExternalApiWarningDismissed: aBoolean [
+	"Set externalApiWarningDismissed without triggering save. Used during loading."
+	externalApiWarningDismissed := aBoolean
 ]
 
 { #category : 'private' }

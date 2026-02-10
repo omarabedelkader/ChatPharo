@@ -51,6 +51,14 @@ ChatPharoAgent class >> displayName [
 ]
 
 { #category : 'api' }
+ChatPharoAgent class >> isExternalApi [
+	"Return true if this agent sends data to an external (non-local) API provider.
+	Subclasses running locally (e.g. Ollama, LM Studio) should override to return false."
+
+	^ true
+]
+
+{ #category : 'api' }
 ChatPharoAgent class >> isReachable [          
 self subclassResponsibility.
 ]

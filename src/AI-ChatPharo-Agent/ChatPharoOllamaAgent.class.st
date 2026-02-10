@@ -60,6 +60,12 @@ ChatPharoOllamaAgent class >> displayName [
 ]
 
 { #category : 'api' }
+ChatPharoOllamaAgent class >> isExternalApi [
+
+	^ false
+]
+
+{ #category : 'api' }
 ChatPharoOllamaAgent class >> isReachable [
 	[
 		ZnClient new get:

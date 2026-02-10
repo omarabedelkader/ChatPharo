@@ -37,6 +37,12 @@ ChatPharoLMStudioAgent class >> displayName [
 ]
 
 { #category : 'api' }
+ChatPharoLMStudioAgent class >> isExternalApi [
+
+	^ false
+]
+
+{ #category : 'api' }
 ChatPharoLMStudioAgent class >> isReachable [
 	[
 		ZnClient new get:

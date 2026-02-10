@@ -80,6 +80,13 @@ ChatPharoSettingsPresenter >> connectPresenters [
 	apiDropList whenSelectedItemChangedDo: [ :assoc |
 			| apiClass newPresenter |
 			apiClass := assoc value.
+						"Show external API data warning if applicable"
+			(ChatPharoSafetyAdvisor confirmExternalApiUsageOn: self forAgent: apiClass)
+				ifFalse: [
+					"User declined — revert to the current agent"
+					apiDropList selectItem:
+						(model availableApiChoices detect: [ :a | a value = model agent class ] ifNone: [ model availableApiChoices first ]).
+					^ self ].
 			model useApi: apiClass. "Clear old settings and install new presenter"
 			apiSettingsContainer removeAll.
 			newPresenter := apiClass settingsPresenterFor: model agent.

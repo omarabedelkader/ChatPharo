@@ -92,6 +92,25 @@ ChatPharoSafetyAdvisor class >> confirmEthicsSettingChangeOn: aPresenter [
 ]
 
 { #category : 'safety' }
+ChatPharoSafetyAdvisor class >> confirmExternalApiUsageOn: aPresenter forAgent: anAgentClass [
+	"Show a warning when the user selects an external API agent.
+	Returns true if the user agrees to proceed, false otherwise.
+	If the warning was previously dismissed by a verified developer, skip showing it."
+
+	| settings |
+	settings := ChatPharoSettings default.
+
+	"Skip warning for non-external (local) agents"
+	anAgentClass isExternalApi ifFalse: [ ^ true ].
+
+	"Skip warning if previously dismissed by a verified developer"
+	(settings externalApiWarningDismissed and: [ settings isDeveloper ])
+		ifTrue: [ ^ true ].
+
+	^ self showExternalApiWarningOn: aPresenter
+]
+
+{ #category : 'safety' }
 ChatPharoSafetyAdvisor class >> confirmMaxIterationsOn: aPresenter [
 
     ^ aPresenter confirm: self maxIterationsMessage
@@ -154,6 +173,17 @@ ChatPharoSafetyAdvisor class >> ethicsSettingChangeMessage [
 ]
 
 { #category : 'safety' }
+ChatPharoSafetyAdvisor class >> externalApiWarningMessage [
+	"Warning message shown when selecting an external API agent"
+
+	^ 'WARNING: External API Provider
+By selecting this agent, your data (including chat messages and code) will be sent to an external third-party provider. This data may be stored, processed, or retained by the provider according to their terms of service.
+Please ensure you are not sharing sensitive, confidential, or proprietary information.
+Do you agree to proceed?
+(If you are a verified developer and do not want to see this warning again, please verify your Developer ID in the Personal settings tab.)'
+]
+
+{ #category : 'safety' }
 ChatPharoSafetyAdvisor class >> maxIterationsMessage [
 
     ^ 'Maximum iterations must be at least 1.\nSet value to 1?'
@@ -178,6 +208,24 @@ ChatPharoSafetyAdvisor class >> requireDeveloperFor: aBlock otherwiseOn: aPresen
 	ChatPharoSettings default isDeveloper
 		ifTrue: [ aBlock value ]
 		ifFalse: [ aPresenter alert: self ethicsSettingChangeMessage ]
+]
+
+{ #category : 'safety' }
+ChatPharoSafetyAdvisor class >> showExternalApiWarningOn: aPresenter [
+	"Display the external API data warning dialog.
+	If the user is a verified developer, offer to dismiss the warning permanently.
+	Returns true if user agrees, false if user declines."
+
+	| userAgreed settings |
+	userAgreed := aPresenter confirm: self externalApiWarningMessage.
+
+	userAgreed ifTrue: [
+		settings := ChatPharoSettings default.
+		(settings isDeveloper and: [ settings externalApiWarningDismissed not ]) ifTrue: [
+			(aPresenter confirm: 'As a verified developer, would you like to stop showing this warning in the future?')
+				ifTrue: [ settings externalApiWarningDismissed: true ] ] ].
+
+	^ userAgreed
 ]
 
 { #category : 'safety' }

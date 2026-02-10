@@ -19,6 +19,12 @@ ChatPharoNullAgent class >> displayName [
 ]
 
 { #category : 'api' }
+ChatPharoNullAgent class >> isExternalApi [
+
+	^ false
+]
+
+{ #category : 'api' }
 ChatPharoNullAgent class >> isReachable [
 
 	^ false
