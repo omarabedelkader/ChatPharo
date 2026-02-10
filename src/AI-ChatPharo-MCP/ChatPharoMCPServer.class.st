@@ -325,13 +325,6 @@ ChatPharoMCPServer >> name: aString [
 	name := aString
 ]
 
-{ #category : 'tool execution' }
-ChatPharoMCPServer >> oolsAsChatPharoClients [
-	"Convert MCP tools to ChatPharoClient instances for use with agents"
-
-	^ self tools collect: [ :tool | tool asChatPharoClient ]
-]
-
 { #category : 'private' }
 ChatPharoMCPServer >> prompts [
 
@@ -425,4 +418,11 @@ ChatPharoMCPServer >> statusText [
 ChatPharoMCPServer >> tools [
 
 	^ tools ifNil: [ tools := OrderedCollection new ]
+]
+
+{ #category : 'tool execution' }
+ChatPharoMCPServer >> toolsAsChatPharoClients [
+	"Convert MCP tools to ChatPharoClient instances for use with agents"
+
+	^ self tools collect: [ :tool | tool asChatPharoClient ]
 ]
