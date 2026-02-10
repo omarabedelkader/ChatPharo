@@ -306,6 +306,12 @@ ChatPharoOllamaAgent >> port: anObject [
 	port := anObject
 ]
 
+{ #category : 'accessing' }
+ChatPharoOllamaAgent >> supportsThinkingContent [
+
+	^ false
+]
+
 { #category : 'tools support' }
 ChatPharoOllamaAgent >> supportsToolCalling [
 	"Check if the current Ollama model supports tool calling.

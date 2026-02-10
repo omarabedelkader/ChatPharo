@@ -219,6 +219,14 @@ ChatPharoAgent >> response: anObject [
 	response := anObject
 ]
 
+{ #category : 'accessing' }
+ChatPharoAgent >> supportsThinkingContent [
+	"Default: agents do not provide thinking content.
+	Subclasses should override if they support it."
+	
+	^ false
+]
+
 { #category : 'tools support' }
 ChatPharoAgent >> supportsToolCalling [
 	"Returns true if the current model supports tool/function calling.

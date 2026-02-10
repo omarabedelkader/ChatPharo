@@ -149,6 +149,12 @@ ChatPharoClaudeAgent >> packageName: aString [
 			 with: packageName)
 ]
 
+{ #category : 'accessing' }
+ChatPharoClaudeAgent >> supportsThinkingContent [
+
+	^ true
+]
+
 { #category : 'tools support' }
 ChatPharoClaudeAgent >> supportsToolCalling [
 	"Check if the current Claude model supports tool calling.

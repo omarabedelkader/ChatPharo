@@ -142,6 +142,12 @@ ChatPharoMistralAgent >> packageName: aString [
                          with: packageName)
 ]
 
+{ #category : 'accessing' }
+ChatPharoMistralAgent >> supportsThinkingContent [
+
+	^ false
+]
+
 { #category : 'tools support' }
 ChatPharoMistralAgent >> supportsToolCalling [
 	"Check if the current Mistral model supports tool calling.

@@ -149,6 +149,12 @@ ChatPharoDeepSeekAgent >> packageName: aString [
 			 with: packageName)
 ]
 
+{ #category : 'accessing' }
+ChatPharoDeepSeekAgent >> supportsThinkingContent [
+
+	^ false
+]
+
 { #category : 'tools support' }
 ChatPharoDeepSeekAgent >> supportsToolCalling [
 	"Check if the current DeepSeek model supports tool calling.
