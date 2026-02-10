@@ -276,6 +276,13 @@ ChatPharoChatPresenter >> initializeWindow: aWindowPresenter [
 ]
 
 { #category : 'initialization' }
+ChatPharoChatPresenter >> messageText [
+	"Returns the current text in the message input field"
+
+	^ messageTextField text
+]
+
+{ #category : 'initialization' }
 ChatPharoChatPresenter >> reloadMessages [
 	self hideThinking.
 	self hideError.

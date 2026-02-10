@@ -156,6 +156,20 @@ disclaimerLabel := self newLabel
 		                        enabled: false;
 		                        action: [ self openSettings ];
 		                        yourself.
+		
+		toolbar add: (SpToolbarButtonPresenter new
+			 label: 'Help';
+			 icon: (self iconNamed: #smallQuestion);
+			 help: 'Get help with ChatPharo - context-aware assistance';
+			 action: [ self openHelp ];
+			 yourself).
+
+	toolbar add: (SpToolbarButtonPresenter new
+			 label: 'Tutorial';
+			 icon: (self iconNamed: #help);
+			 help: 'Start interactive tutorial';
+			 action: [ self openTutorial ];
+			 yourself).
 
 	toolbar add: multiversStatusLabel.
 	self updateMultiversStatus.
@@ -240,6 +254,32 @@ ChatPharoPresenter >> notebook: anObject [
 ]
 
 { #category : 'initialization' }
+ChatPharoPresenter >> openHelp [ 
+	"Open the help presenter with context-aware assistance"
+
+	| currentChatPresenter currentText helpPresenter |
+	"Get the current chat context if available"
+	currentChatPresenter := notebook selectedPage
+		ifNotNil: [ :page | page presenterProvider value ]
+		ifNil: [ nil ].
+
+	currentText := currentChatPresenter
+		ifNotNil: [ currentChatPresenter messageText ]
+		ifNil: [ '' ].
+
+	"Create and open help presenter with context"
+	helpPresenter := ChatPharoHelpPresenter new.
+	helpPresenter currentContext: currentText.
+	helpPresenter chatPharo: model.
+	helpPresenter open.
+
+	ChatPharoLogger logFrontend: 'Help dialog opened'
+		details: (Dictionary new
+			at: 'hasContext' put: currentText isNotEmpty;
+			yourself)
+]
+
+{ #category : 'initialization' }
 ChatPharoPresenter >> openSettings [
 
 	| settingsWindow |
@@ -250,6 +290,21 @@ ChatPharoPresenter >> openSettings [
                 details: (Dictionary new
                         at: 'activeAgent' put: (ChatPharoLogger agentNameFor: model settings agent);
                         yourself)
+]
+
+{ #category : 'initialization' }
+ChatPharoPresenter >> openTutorial [
+	"Launch the interactive tutorial system"
+
+	[
+		"Try to resume if available, otherwise start fresh"
+		ChatPharoTutorial resume
+	] on: Error do: [ :ex |
+		"If resume fails, just start from beginning"
+		ChatPharoTutorial start ].
+
+	ChatPharoLogger logFrontend: 'Tutorial launched'
+		details: (Dictionary new yourself)
 ]
 
 { #category : 'initialization' }
