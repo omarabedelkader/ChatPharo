@@ -14,16 +14,40 @@ Class {
 	#tag : 'Ethics'
 }
 
+{ #category : 'initialization' }
+ChatPharoThinkingPresenter >> agent [
+	"Get the agent from the owner chat presenter's model"
+	| chatPresenter chatModel |
+	
+	chatPresenter := self owner.
+	
+	"Navigate up the presenter hierarchy to find ChatPharoChatPresenter"
+	[ chatPresenter isNotNil and: [ chatPresenter class name ~= #ChatPharoChatPresenter ] ] 
+		whileTrue: [ chatPresenter := chatPresenter owner ].
+	
+	chatPresenter ifNil: [ ^ nil ].
+	
+	"Access the model slot directly since there's no public getter"
+	chatModel := chatPresenter instVarNamed: 'model'.
+	
+	^ chatModel ifNotNil: [ chatModel agent ]
+]
+
 { #category : 'layout' }
 ChatPharoThinkingPresenter >> defaultLayout [
-
-	^ SpBoxLayout newHorizontal
+	| layout |
+	layout := SpBoxLayout newHorizontal
 		spacing: 5;
 		vAlignCenter;
 		add: statusLabel expand: false;
 		add: dotsLabel expand: false;
-		add: showDetailsButton expand: false;
-		yourself
+		yourself.
+	
+	"Only add details button if agent supports thinking"
+	self shouldShowThinkingUI ifTrue: [
+		layout add: showDetailsButton expand: false ].
+	
+	^ layout
 ]
 
 { #category : 'layout' }
@@ -57,8 +81,11 @@ ChatPharoThinkingPresenter >> isFinished [
 { #category : 'initialization' }
 ChatPharoThinkingPresenter >> openThinkingDetails [
 	"Open a new window to display the detailed thinking content"
-
 	| detailPresenter |
+	
+	"Don't open if agent doesn't support thinking"
+	self shouldShowThinkingUI ifFalse: [ ^ self ].
+	
 	detailPresenter := ChatPharoThinkingDetailPresenter new.
 	detailPresenter thinkingContent: self thinkingContent.
 	detailPresenter open
@@ -71,6 +98,13 @@ ChatPharoThinkingPresenter >> phase: aSymbol [
 
 	currentPhase := aSymbol.
 	self updateStatusLabel
+]
+
+{ #category : 'asserting' }
+ChatPharoThinkingPresenter >> shouldShowThinkingUI [
+	"Only show thinking UI if we have an agent that supports it"
+	
+	^ self agent isNotNil and: [ self agent supportsThinkingContent ]
 ]
 
 { #category : 'initialization' }

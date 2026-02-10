@@ -51,19 +51,18 @@ ChatPharoMessagePresenter >> defaultLayout [
 		whenMouseEnterDo: [ :evt | copyButton visible: true ];
 		whenMouseLeaveDo: [ :evt | copyButton visible: false ].
 
-    thinkingContainer := SpBoxLayout newVertical
-        add: 'Thinking' expand: false;
-        add: thinkingPresenter expand: true.
+	thinkingContainer := SpBoxLayout newVertical
+		                     add: 'Thinking' expand: false;
+		                     add: thinkingPresenter expand: true.
 
 	layout := SpBoxLayout newVertical
 		          add: 'User' expand: false;
 		          add: contentPresenter expand: true;
-		            add: model assistantLabel expand: false.
+		          add: model assistantLabel expand: false.
 
-    model thinking isEmpty ifFalse: [
-        layout add: thinkingContainer expand: true ].
+	"model thinking isEmpty ifFalse: [ layout add: thinkingContainer expand: true ]."
 
-    layout add: answerContainer expand: true.
+	layout add: answerContainer expand: true.
 
 	ChatPharoSettings default feedbackButtonsEnabled ifTrue: [
 			layout

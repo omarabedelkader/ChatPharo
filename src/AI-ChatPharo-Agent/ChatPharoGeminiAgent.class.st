@@ -169,6 +169,12 @@ ChatPharoGeminiAgent >> packageName: aString [
 			 with: packageName)
 ]
 
+{ #category : 'accessing' }
+ChatPharoGeminiAgent >> supportsThinkingContent [
+
+	^ false
+]
+
 { #category : 'tools support' }
 ChatPharoGeminiAgent >> supportsToolCalling [
 	"Check if the current Gemini model supports tool calling.

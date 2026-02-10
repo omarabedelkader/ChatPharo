@@ -178,6 +178,12 @@ ChatPharoLMStudioAgent >> port: anObject [
 	port := anObject
 ]
 
+{ #category : 'accessing' }
+ChatPharoLMStudioAgent >> supportsThinkingContent [
+
+	^ false
+]
+
 { #category : 'tools support' }
 ChatPharoLMStudioAgent >> supportsToolCalling [
 
