@@ -19,8 +19,9 @@ Class {
 		'codeString',
 		'enabled'
 	],
-	#category : 'AI-ChatPharo-Tools',
-	#package : 'AI-ChatPharo-Tools'
+	#category : 'AI-ChatPharo-Tools-Core',
+	#package : 'AI-ChatPharo-Tools',
+	#tag : 'Core'
 }
 
 { #category : 'instance creation' }

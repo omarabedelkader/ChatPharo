@@ -831,6 +831,71 @@ ChatPharoBrowserEnvironment >> functionCreatePackage [
 			self applyFunctionCreatePackage: arguments ]
 ]
 
+{ #category : 'temporal-tools' }
+ChatPharoBrowserEnvironment >> functionCreateTemporalTool [
+	"Meta-tool that lets the model create a new temporal tool at runtime."
+
+	^ ChatPharoClient
+		name: 'create_temporal_tool'
+		description: 'Creates a new temporal tool that you (the AI model) can use during this conversation. The tool will be available for calling in subsequent interactions. Use this when you need a reusable helper function for the current task. The code receives an "arguments" dictionary. Remember to delete temporal tools when you no longer need them.'
+		parameters: (Dictionary
+			with: 'type' -> 'object'
+			with: 'properties' -> (Dictionary
+				with: 'tool_name' -> (Dictionary
+					with: 'type' -> 'string'
+					with: 'description' -> 'Unique name for the tool (alphanumeric and underscores only)')
+				with: 'description' -> (Dictionary
+					with: 'type' -> 'string'
+					with: 'description' -> 'Human-readable description of what the tool does')
+				with: 'parameters_schema' -> (Dictionary
+					with: 'type' -> 'object'
+					with: 'description' -> 'JSON Schema for the tool parameters (with type, properties, required fields). If omitted, the tool takes no parameters.')
+				with: 'code' -> (Dictionary
+					with: 'type' -> 'string'
+					with: 'description' -> 'Smalltalk code for the tool body. It receives an "arguments" dictionary variable. Must return a value (preferably a Dictionary for structured results).'))
+			with: 'required' -> #( 'tool_name' 'description' 'code' ))
+		block: [ :arguments |
+			ChatPharoTemporalToolRegistry current
+				createToolNamed: (arguments at: 'tool_name')
+				description: (arguments at: 'description')
+				parameters: (arguments at: 'parameters_schema' ifAbsent: [ nil ])
+				code: (arguments at: 'code') ]
+]
+
+{ #category : 'temporal-tools' }
+ChatPharoBrowserEnvironment >> functionDeleteAllTemporalTools [
+	"Meta-tool that lets the model delete all temporal tools at once."
+
+	^ ChatPharoClient
+		name: 'delete_all_temporal_tools'
+		description: 'Deletes all temporal tools that were created during this conversation. Use this for cleanup when your task is complete.'
+		parameters: (Dictionary
+			with: 'type' -> 'object'
+			with: 'properties' -> Dictionary new
+			with: 'required' -> #())
+		block: [ :arguments |
+			ChatPharoTemporalToolRegistry current deleteAllTools ]
+]
+
+{ #category : 'temporal-tools' }
+ChatPharoBrowserEnvironment >> functionDeleteTemporalTool [
+	"Meta-tool that lets the model delete a specific temporal tool."
+
+	^ ChatPharoClient
+		name: 'delete_temporal_tool'
+		description: 'Deletes a temporal tool by name. Use this to clean up tools you no longer need.'
+		parameters: (Dictionary
+			with: 'type' -> 'object'
+			with: 'properties' -> (Dictionary
+				with: 'tool_name' -> (Dictionary
+					with: 'type' -> 'string'
+					with: 'description' -> 'The name of the temporal tool to delete'))
+			with: 'required' -> #( 'tool_name' ))
+		block: [ :arguments |
+			ChatPharoTemporalToolRegistry current
+				deleteToolNamed: (arguments at: 'tool_name') ]
+]
+
 { #category : 'accessing' }
 ChatPharoBrowserEnvironment >> functionDescribePackage [
 
@@ -1000,6 +1065,21 @@ ChatPharoBrowserEnvironment >> functionGetSandboxStatus [
 					  with: 'restrict_file_system' -> settings sandboxRestrictFileSystem
 					  with: 'restrict_network' -> settings sandboxRestrictNetwork
 					  with: 'restrict_system_access' -> settings sandboxRestrictSystemAccess ]
+]
+
+{ #category : 'temporal-tools' }
+ChatPharoBrowserEnvironment >> functionListTemporalTools [
+	"Meta-tool that lets the model see which temporal tools currently exist."
+
+	^ ChatPharoClient
+		name: 'list_temporal_tools'
+		description: 'Lists all temporal tools currently registered in this session, with their names, descriptions, and creation times.'
+		parameters: (Dictionary
+			with: 'type' -> 'object'
+			with: 'properties' -> Dictionary new
+			with: 'required' -> #())
+		block: [ :arguments |
+			ChatPharoTemporalToolRegistry current listTools ]
 ]
 
 { #category : 'class-managments' }
@@ -1278,39 +1358,37 @@ ChatPharoBrowserEnvironment >> initializeWithEnvironment: env [
 		         self functionGetClassMethods.
 		         self functionGetClassSubclasses.
 		         self functionFindMethodsWithSubstring.
-		         self functionDescribePackage. 
-		
-					"Refactoring tools"
+		         self functionDescribePackage. "Refactoring tools"
 		         self functionRenameClass.
-		         self functionRenameClassesInPackage.
-		
-					"Package management tools"
-		         self functionCreatePackage.
-		
-		         "Class management tools"
+		         self functionRenameClassesInPackage. "Package management tools"
+		         self functionCreatePackage. "Class management tools"
 		         self functionCreateClass.
 		         self functionRemoveClass.
 		         self functionRenameClass.
-		
-				   self functionMoveClassToPackage.
+
+		         self functionMoveClassToPackage.
 		         self functionAddInstanceVariable.
 		         self functionRemoveInstanceVariable.
-		         self functionSetClassComment.
-
-		         "Method management tools"
+		         self functionSetClassComment. "Method management tools"
 		         self functionAddMethod.
 		         self functionRemoveMethod.
 		         self functionRenameMethod.
 		         self functionMoveMethodToProtocol.
-		
+
 		         ChatPharoClient toolCheckSyntax.
 		         ChatPharoClient toolCheckSyntax.
 		         ChatPharoClient toolOpenPlayground.
 		         self functionGetSandboxStatus.
-		         self functionSandboxEvaluate } asOrderedCollection. 
+		         self functionSandboxEvaluate.
 		
 		
-		"Add skill tools if enabled and the Skills package is loaded"
+		 "Temporal tool management"
+		         self functionCreateTemporalTool.
+		         self functionDeleteTemporalTool.
+		         self functionDeleteAllTemporalTools.
+		         self functionListTemporalTools } asOrderedCollection.
+		
+		 "Add skill tools if enabled and the Skills package is loaded"
 	(Smalltalk hasClassNamed: #ChatPharoSkillEnvironment) ifTrue: [
 		tools addAll: (Smalltalk at: #ChatPharoSkillEnvironment) new tools ]
 ]

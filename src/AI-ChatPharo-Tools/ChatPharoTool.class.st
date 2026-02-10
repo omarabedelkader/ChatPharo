@@ -181,17 +181,30 @@ ChatPharoTool >> apiKey: anObject [
 { #category : 'initialization' }
 ChatPharoTool >> applyToolFunction: functionName arguments: arguments [
 
-onToolExecution ifNotNil: [ :blk | blk value ].
+	| temporalTool |
+	onToolExecution ifNotNil: [ :blk | blk value ].
 	tools ifNil: [
-			^ Dictionary with: 'error'
-				  -> ('There is no function named "{1}"' format: { functionName }) ].
+		"Check temporal tools before giving up"
+		temporalTool := ChatPharoTemporalToolRegistry current toolNamed: functionName.
+		temporalTool ifNotNil: [
+			^ [ temporalTool applyTo: arguments ]
+				on: Error
+				do: [ :e | Dictionary with: 'error' -> e messageText ] ].
+		^ Dictionary with: 'error'
+			-> ('There is no function named "{1}"' format: { functionName }) ].
 	tools do: [ :tool |
-			tool name = functionName ifTrue: [
-					^ [ tool applyTo: arguments ]
-						  on: Error
-						  do: [ :e | Dictionary with: 'error' -> e messageText ] ] ].
+		tool name = functionName ifTrue: [
+			^ [ tool applyTo: arguments ]
+				on: Error
+				do: [ :e | Dictionary with: 'error' -> e messageText ] ] ].
+	"Fall back to temporal tool registry"
+	temporalTool := ChatPharoTemporalToolRegistry current toolNamed: functionName.
+	temporalTool ifNotNil: [
+		^ [ temporalTool applyTo: arguments ]
+			on: Error
+			do: [ :e | Dictionary with: 'error' -> e messageText ] ].
 	^ Dictionary with: 'error'
-		  -> ('There is no function named "{1}"' format: { functionName })
+		-> ('There is no function named "{1}"' format: { functionName })
 ]
 
 { #category : 'accessing' }
@@ -236,15 +249,20 @@ ChatPharoTool >> extraHeaders: aDictionary [
 { #category : 'initialization' }
 ChatPharoTool >> getResponseForHistory: history [
 
-	| messages data response message toolCalls thinkingText |
+	| messages data response message toolCalls thinkingText allTools |
 	messages := Array streamContents: [ :stream |
 			            systemPrompt ifNotNil: [ stream nextPut: (Dictionary with: 'role' -> 'system' with: 'content' -> systemPrompt) ].
 			            history putOpenAIChatMessagesOn: stream ].
 	data := Dictionary with: 'model' -> model with: 'messages' -> messages.
 	extraParameters ifNotNil: [ data addAll: extraParameters ].
-	tools ifNotNil: [
+	
+	
+"Merge static tools with any temporal tools the model has created"
+	allTools := tools ifNil: [ OrderedCollection new ] ifNotNil: [ tools asOrderedCollection copy ].
+	allTools addAll: ChatPharoTemporalToolRegistry current tools.
+	allTools ifNotEmpty: [
 			data
-				add: 'tools' -> (tools collect: [ :t | t openAIChatTool ] as: Array);
+				add: 'tools' -> (allTools collect: [ :t | t openAIChatTool ] as: Array);
 				add: 'tool_choice' -> 'auto' ].
 	response := self client
 		            addPath: #( 'chat' 'completions' );
