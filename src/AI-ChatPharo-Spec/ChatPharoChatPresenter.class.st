@@ -291,8 +291,27 @@ ChatPharoChatPresenter >> reloadMessages [
 { #category : 'initialization' }
 ChatPharoChatPresenter >> sendMessage [
 
-	| text attachmentsCopy |
+	| text attachmentsCopy parser result commandResponse |
 	text := messageTextField text.
+	
+	"Check if the text is a command (starts with / or @)"
+	parser := ChatPharoCommandParser default.
+	result := parser parse: text.
+
+	result isCommand ifTrue: [
+		"Handle command execution"
+		ChatPharoLogger logFrontend: 'Command detected' details: (Dictionary new
+			at: 'chatId' put: model identityHash;
+			at: 'command' put: result commandName;
+			yourself).
+		messageTextField text: ''.
+		commandResponse := result execute: model.
+		"Show command response as a system message"
+		self showCommandResponse: commandResponse.
+		^ self ].
+
+	"Regular message handling"
+	
 	model agent isConfigured ifFalse: [
 			ChatPharoLogger logFrontend: 'Send blocked - agent not configured' details: (Dictionary new
 					 at: 'chatId' put: model identityHash;
@@ -319,6 +338,25 @@ ChatPharoChatPresenter >> sendMessage [
 ChatPharoChatPresenter >> setModelBeforeInitialization: anObject [
 
 	model := anObject
+]
+
+{ #category : 'initialization' }
+ChatPharoChatPresenter >> showCommandResponse: aString [
+
+	"Show a command response message to the user"
+
+	| responseMessage |
+	responseMessage := ChatPharoMessage new
+		answer: aString;
+		assistantLabel: 'System';
+		yourself.
+	model messages add: responseMessage.
+	messagesLayout add: responseMessage presenter withConstraints: [ :constraints | constraints height: responseMessage height ].
+
+	ChatPharoLogger logFrontend: 'Command response displayed' details: (Dictionary new
+		at: 'chatId' put: model identityHash;
+		at: 'response' put: aString;
+		yourself)
 ]
 
 { #category : 'initialization' }
