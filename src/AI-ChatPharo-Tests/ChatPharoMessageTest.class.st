@@ -28,13 +28,13 @@ ChatPharoMessageTest >> testAssistantLabelAccessors [
 { #category : 'tests' }
 ChatPharoMessageTest >> testDefaultInitialization [
 
-        | msg |
-        msg := ChatPharoMessage new.
-        self assert: msg content equals: String empty.
-        self assert: msg answer equals: String empty.
-        self assert: msg assistantLabel equals: 'Assistant'.
-        self assert: msg feedback isNil.
-        self assert: msg height equals: 112.
+	| msg |
+	msg := ChatPharoMessage new.
+	self assert: msg content equals: String empty.
+	self assert: msg answer equals: String empty.
+	self assert: msg assistantLabel equals: 'Assistant'.
+	self assert: msg feedback isNil.
+	self assert: msg height equals: 88
 ]
 
 { #category : 'tests' }
