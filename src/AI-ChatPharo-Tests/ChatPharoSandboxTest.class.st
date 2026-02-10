@@ -4,9 +4,9 @@ Class {
 	#instVars : [
 		'sandbox'
 	],
-	#category : 'AI-ChatPharo-Tests-Security',
+	#category : 'AI-ChatPharo-Tests-Sandbox',
 	#package : 'AI-ChatPharo-Tests',
-	#tag : 'Security'
+	#tag : 'Sandbox'
 }
 
 { #category : 'running' }

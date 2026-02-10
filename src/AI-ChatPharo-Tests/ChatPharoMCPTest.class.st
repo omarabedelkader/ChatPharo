@@ -60,6 +60,40 @@ ChatPharoMCPTest >> testMCPRegistryAddServer [
 ]
 
 { #category : 'running' }
+ChatPharoMCPTest >> testMCPRegistryAllPromptsEmpty [
+
+	self assert: registry allPrompts isEmpty
+]
+
+{ #category : 'running' }
+ChatPharoMCPTest >> testMCPRegistryAllResourcesEmpty [
+
+	self assert: registry allResources isEmpty
+]
+
+{ #category : 'running' }
+ChatPharoMCPTest >> testMCPRegistryAllToolsAsClientsEmpty [
+
+	self assert: registry allToolsAsClients isEmpty
+]
+
+{ #category : 'running' }
+ChatPharoMCPTest >> testMCPRegistryAllToolsEmpty [
+
+	self assert: registry allTools isEmpty
+]
+
+{ #category : 'running' }
+ChatPharoMCPTest >> testMCPRegistryConnectedServersEmpty [
+
+	| s1 |
+	s1 := ChatPharoMCPServer new name: 'Server1'; enabled: false; yourself.
+	registry addServer: s1.
+
+	self assert: registry connectedServers isEmpty
+]
+
+{ #category : 'running' }
 ChatPharoMCPTest >> testMCPRegistryCreation [
 
 	self assert: registry servers isEmpty
@@ -84,6 +118,20 @@ ChatPharoMCPTest >> testMCPRegistryDuplicateServerNames [
 		should: [ registry addServer: server2 ]
 		raise: Error
 		description: 'Should raise error for duplicate server names'
+]
+
+{ #category : 'running' }
+ChatPharoMCPTest >> testMCPRegistryEnabledServers [
+
+	| s1 s2 |
+	s1 := ChatPharoMCPServer new name: 'Server1'; enabled: false; yourself.
+	s2 := ChatPharoMCPServer new name: 'Server2'; enabled: false; yourself.
+
+	registry addServer: s1.
+	registry addServer: s2.
+
+	"Both are disabled (enabled: false was set before adding)"
+	self assert: registry enabledServers isEmpty
 ]
 
 { #category : 'running' }
@@ -120,6 +168,17 @@ ChatPharoMCPTest >> testMCPRegistryRemoveServer [
 ]
 
 { #category : 'running' }
+ChatPharoMCPTest >> testMCPRegistryServersSette [
+
+	| servers |
+	servers := OrderedCollection
+		with: (ChatPharoMCPServer new name: 'S1'; enabled: false; yourself).
+	registry servers: servers.
+
+	self assert: registry servers size equals: 1
+]
+
+{ #category : 'running' }
 ChatPharoMCPTest >> testMCPResourceCreation [
 
 	| resource |
@@ -134,6 +193,37 @@ ChatPharoMCPTest >> testMCPResourceCreation [
 	self assert: resource name equals: 'Test File'.
 	self assert: resource description equals: 'A test file'.
 	self assert: resource mimeType equals: 'text/plain'
+]
+
+{ #category : 'running' }
+ChatPharoMCPTest >> testMCPResourceDefaults [
+
+	| resource |
+	resource := ChatPharoMCPResource new.
+	self assert: resource uri equals: ''.
+	self assert: resource name equals: ''.
+	self assert: resource description equals: ''.
+	self assert: resource mimeType equals: 'text/plain'.
+	self assert: resource server isNil
+]
+
+{ #category : 'running' }
+ChatPharoMCPTest >> testMCPResourceFetchWithDisconnectedServerRaisesError [
+
+	| resource |
+	resource := ChatPharoMCPResource new
+		uri: 'file:///test.txt';
+		server: server;
+		yourself.
+
+	self should: [ resource fetch ] raise: Error
+]
+
+{ #category : 'running' }
+ChatPharoMCPTest >> testMCPServerCommandDefaults [
+
+	self assert: server command equals: ''.
+	self assert: server arguments isEmpty
 ]
 
 { #category : 'running' }
@@ -152,6 +242,22 @@ ChatPharoMCPTest >> testMCPServerConfiguration [
 ]
 
 { #category : 'running' }
+ChatPharoMCPTest >> testMCPServerConnectWhenAlreadyConnected [
+
+	"Simulate already connected state to test guard clause"
+	server status: #connected.
+	server connect.
+	"Should return immediately without error"
+	self assert: server isConnected
+]
+
+{ #category : 'running' }
+ChatPharoMCPTest >> testMCPServerConnectionTimeNilByDefault [
+
+	self assert: server connectionTime isNil
+]
+
+{ #category : 'running' }
 ChatPharoMCPTest >> testMCPServerCreation [
 
 	self assert: server name equals: 'Unnamed Server'.
@@ -160,6 +266,13 @@ ChatPharoMCPTest >> testMCPServerCreation [
 	self assert: server tools isEmpty.
 	self assert: server resources isEmpty.
 	self assert: server prompts isEmpty
+]
+
+{ #category : 'running' }
+ChatPharoMCPTest >> testMCPServerDisconnectWhenNotConnected [
+
+	"Should not fail when disconnecting a non-connected server"
+	server disconnect
 ]
 
 { #category : 'running' }
@@ -174,12 +287,33 @@ ChatPharoMCPTest >> testMCPServerEnvironmentVariables [
 ]
 
 { #category : 'running' }
+ChatPharoMCPTest >> testMCPServerLastError [
+
+	self assert: server lastError equals: ''
+]
+
+{ #category : 'running' }
 ChatPharoMCPTest >> testMCPServerStatus [
 
 	self assert: server isDisconnected.
 	self deny: server isConnected.
 	self deny: server isConnecting.
 	self deny: server isError
+]
+
+{ #category : 'running' }
+ChatPharoMCPTest >> testMCPServerStatusText [
+
+	self assert: server statusText equals: 'Disconnected'.
+
+	server status: #connecting.
+	self assert: server statusText equals: 'Connecting...'.
+
+	server status: #connected.
+	self assert: server statusText equals: 'Connected'.
+
+	server status: #error.
+	self assert: (server statusText includesSubstring: 'Error')
 ]
 
 { #category : 'running' }
@@ -242,4 +376,36 @@ ChatPharoMCPTest >> testMCPToolCreation [
 	self assert: tool name equals: 'test_tool'.
 	self assert: tool description equals: 'A test tool'.
 	self assert: (tool inputSchema at: 'type') equals: 'object'
+]
+
+{ #category : 'running' }
+ChatPharoMCPTest >> testMCPToolDefaults [
+
+	| tool |
+	tool := ChatPharoMCPTool new.
+	self assert: tool name equals: ''.
+	self assert: tool description equals: ''.
+	self assert: tool inputSchema isDictionary.
+	self assert: tool server isNil
+]
+
+{ #category : 'running' }
+ChatPharoMCPTest >> testMCPToolExecuteWithDisconnectedServerRaisesError [
+
+	| tool |
+	tool := ChatPharoMCPTool new
+		name: 'test_tool';
+		server: server;
+		yourself.
+
+	self should: [ tool executeWithArguments: Dictionary new ] raise: Error
+]
+
+{ #category : 'running' }
+ChatPharoMCPTest >> testMCPToolServerAssignment [
+
+	| tool |
+	tool := ChatPharoMCPTool new.
+	tool server: server.
+	self assert: tool server equals: server
 ]

@@ -33,6 +33,20 @@ ChatPharoEthicsDirectorTest >> testEnabledSetAndGet [
 ]
 
 { #category : 'running' }
+ChatPharoEthicsDirectorTest >> testGeneraltests [
+
+	self assert: ethics cognitiveLoadBudget equals: 120.
+
+	ethics cognitiveLoadBudget: 150.
+	self assert: ethics cognitiveLoadBudget equals: 150.
+
+	ethics cognitiveLoadBudget: 0.
+	self assert: ethics cognitiveLoadBudget equals: 0.
+
+	self assert: ethics enabled
+]
+
+{ #category : 'running' }
 ChatPharoEthicsDirectorTest >> testInitializeDefaults [
 
 	self assert: ethics enabled.
@@ -145,18 +159,4 @@ ChatPharoEthicsDirectorTest >> testTokenBudgetSmallValue [
 
 	ethics tokenBudget: 100.
 	self assert: ethics tokenBudget equals: 100
-]
-
-{ #category : 'running' }
-ChatPharoEthicsDirectorTest >> testgeneraltests [
-
-	self assert: ethics cognitiveLoadBudget equals: 120.
-
-	ethics cognitiveLoadBudget: 150.
-	self assert: ethics cognitiveLoadBudget equals: 150.
-
-	ethics cognitiveLoadBudget: 0.
-	self assert: ethics cognitiveLoadBudget equals: 0.
-
-	self assert: ethics enabled
 ]
