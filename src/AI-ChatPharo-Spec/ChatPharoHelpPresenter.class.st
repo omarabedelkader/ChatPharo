@@ -112,6 +112,7 @@ ChatPharoHelpPresenter >> generateHelpContent [
 	"Generate helpful content based on current context and state"
 
 	| content registry enabledSkills suggestedSkills hasAgent |
+	currentContext ifNil: [ currentContext := '' ].
 	registry := ChatPharoSkillRegistry default.
 	enabledSkills := registry enabledSkills.
 	hasAgent := chatPharo notNil and: [ chatPharo settings agent notNil ].
