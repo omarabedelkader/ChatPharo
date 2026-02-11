@@ -101,7 +101,7 @@ ChatPharoLMStudioAgent >> getResponseForPrompt: userPrompt [
 	result := api getResponseForHistory: self history.
 	self history addMessage: result.
 
-	[ result toolCalls notNil ] whileTrue: [
+	[ result toolCalls isEmptyOrNil not ] whileTrue: [
 			result := api getResponseForHistory: self history.
 			self history addMessage: result ].
 		self response: result.
