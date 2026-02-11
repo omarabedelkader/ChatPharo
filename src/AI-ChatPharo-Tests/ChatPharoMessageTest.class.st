@@ -34,7 +34,7 @@ ChatPharoMessageTest >> testDefaultInitialization [
 	self assert: msg answer equals: String empty.
 	self assert: msg assistantLabel equals: 'Assistant'.
 	self assert: msg feedback isNil.
-	self assert: msg height equals: 88
+	self assert: msg height equals: 112
 ]
 
 { #category : 'tests' }

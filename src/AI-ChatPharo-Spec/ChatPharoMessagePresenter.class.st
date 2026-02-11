@@ -29,9 +29,8 @@ Class {
 ChatPharoMessagePresenter >> connectPresenters [
 
 	contentPresenter document: (Microdown parse: model content).
-	model answer isEmptyOrNil ifFalse: [
-		thinkingPresenter document: (Microdown parse: model thinking).
-		answerPresenter document: (Microdown parse: model answer) ].
+thinkingPresenter document: (Microdown parse: model thinking).
+	answerPresenter document: (Microdown parse: model answer).
 	goodFeedbackButton action: [ model feedback: true ].
 	badFeedbackButton action: [ model feedback: false ]
 ]
@@ -106,13 +105,11 @@ ChatPharoMessagePresenter >> height [
 	baseHeight := 64.
 	lineHeight := 24.
 	contentLines := self estimatedLineCountFor: model content.
-	model answer isEmptyOrNil ifTrue: [
-		^ baseHeight + (contentLines * lineHeight) ].
 	thinkingLines := model thinking isEmpty
 		                 ifTrue: [ 0 ]
 		                 ifFalse: [ self estimatedLineCountFor: model thinking ].
 	answerLines := self estimatedLineCountFor: model answer.
-	^ baseHeight + (contentLines + thinkingLines + answerLines * lineHeight)
+	^ baseHeight + ((contentLines + thinkingLines + answerLines) * lineHeight)
 ]
 
 { #category : 'initialization' }

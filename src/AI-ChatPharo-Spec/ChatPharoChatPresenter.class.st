@@ -99,18 +99,9 @@ ChatPharoChatPresenter >> connectPresenters [
 
 	attachButton action: [ self attachFile ].
 
-	model whenUserMessageSentDo: [ :message |
-			messagesLayout add: message presenter withConstraints: [ :constraints | constraints height: message height ].
-			self showThinking.
-			ChatPharoLogger logFrontend: 'User message displayed' details: (Dictionary new
-					 at: 'chatId' put: model identityHash;
-					 yourself) ].
-
 	model whenAnswerReceivedDo: [ :message |
 			thinkingPresenter thinkingContent: (message thinking ifNil: [ '' ]).
-			self hideThinking. "Remove the content-only presenter, rebuild with answer included"
-			messagesLayout remove: message presenter ifAbsent: [ ].
-			message resetPresenter.
+			self hideThinking.
 			messagesLayout add: message presenter withConstraints: [ :constraints | constraints height: message height ].
 			messageTextField text: ''.
 			submitButton enabled: true.
@@ -312,16 +303,20 @@ ChatPharoChatPresenter >> sendMessage [
 	parser := ChatPharoCommandParser default.
 	result := parser parse: text.
 
-	result isCommand ifTrue: [ "Handle command execution"
-			ChatPharoLogger logFrontend: 'Command detected' details: (Dictionary new
-					 at: 'chatId' put: model identityHash;
-					 at: 'command' put: result commandName;
-					 yourself).
-			messageTextField text: ''.
-			commandResponse := result execute: model. "Show command response as a system message"
-			self showCommandResponse: commandResponse.
-			^ self ]. "Regular message handling"
+	result isCommand ifTrue: [
+		"Handle command execution"
+		ChatPharoLogger logFrontend: 'Command detected' details: (Dictionary new
+			at: 'chatId' put: model identityHash;
+			at: 'command' put: result commandName;
+			yourself).
+		messageTextField text: ''.
+		commandResponse := result execute: model.
+		"Show command response as a system message"
+		self showCommandResponse: commandResponse.
+		^ self ].
 
+	"Regular message handling"
+	
 	model agent isConfigured ifFalse: [
 			ChatPharoLogger logFrontend: 'Send blocked - agent not configured' details: (Dictionary new
 					 at: 'chatId' put: model identityHash;
@@ -340,6 +335,7 @@ ChatPharoChatPresenter >> sendMessage [
 	messageTextField enabled: false.
 	messageTextField text: ''.
 	self clearAttachments.
+	self showThinking.
 	model sendMessage: text withAttachments: attachmentsCopy
 ]
 

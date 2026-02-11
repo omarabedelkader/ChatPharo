@@ -29,8 +29,7 @@ Class {
 		'onToolExecution',
 		'cache',
 		'onErrorReceived',
-		'onNewChatRequested',
-		'onUserMessageSent'
+		'onNewChatRequested'
 	],
 	#category : 'AI-ChatPharo',
 	#package : 'AI-ChatPharo'
@@ -107,7 +106,6 @@ ChatPharoChat >> addUserMessage: text [
 	messages add: (ChatPharoMessage new
 			 content: text;
 			 yourself).
-			onUserMessageSent ifNotNil: [ :blk | blk value: messages last ]
 ]
 
 { #category : 'running' }
@@ -121,7 +119,6 @@ ChatPharoChat >> addUserMessage: text withAttachments: attachmentCollection [
 		           attachments: attachmentCollection;
 		           yourself.
 	messages add: message.
-	onUserMessageSent ifNotNil: [ :blk | blk value: message ]
 ]
 
 { #category : 'initialization' }
