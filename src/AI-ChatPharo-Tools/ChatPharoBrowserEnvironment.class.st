@@ -78,9 +78,10 @@ ChatPharoBrowserEnvironment >> applyFunctionAddMethod: arguments [
 		               ifFalse: [ theClass ].
 
 	[
-		| method selector |
-		method := targetClass compile: sourceCode classified: protocol.
-		selector := method selector.
+		| selector compiledMethod |
+		selector := targetClass compile: sourceCode classified: protocol.
+		selector ifNil: [ ^ Dictionary with: 'error' -> 'Failed to add method (compile returned nil)' ].
+compiledMethod := targetClass compiledMethodAt: selector.
 
 		^ Dictionary
 			  with: 'success' -> true
