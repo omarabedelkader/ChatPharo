@@ -52,36 +52,34 @@ ChatPharoTemporalToolRegistry >> createToolNamed: aName description: aDescriptio
 	"Create a temporal tool, compile its code, and register it.
 	 Returns a Dictionary with success/error status."
 
-	| nameError codeError client compiledBlock |
-
+	| nameError codeError client compiledBlock normalizedCode |
 	"Validate name"
-	aName isEmptyOrNil ifTrue: [
-		^ Dictionary with: 'error' -> 'Tool name is required' ].
+	aName isEmptyOrNil ifTrue: [ ^ Dictionary with: 'error' -> 'Tool name is required' ].
 	(aName allSatisfy: [ :c | c isAlphaNumeric or: [ c = $_ ] ]) ifFalse: [
-		^ Dictionary with: 'error' -> 'Tool name must contain only letters, numbers, and underscores' ].
-
-	"Check for name conflicts with existing temporal tools"
+		^ Dictionary with: 'error' -> 'Tool name must contain only letters, numbers, and underscores' ]. "Check for name conflicts with existing temporal tools"
 	(self hasToolNamed: aName) ifTrue: [
-		^ Dictionary with: 'error' -> ('A temporal tool named "' , aName , '" already exists. Delete it first or choose a different name.') ].
-
-	"Validate code syntax"
-	[ OCParser parseExpression: '[ :arguments | ', aCodeString, ' ]' ]
+			^ Dictionary with:
+				  'error' -> ('A temporal tool named "' , aName , '" already exists. Delete it first or choose a different name.') ]. "Validate code syntax"
+			
+			normalizedCode := self normalizeLineEndingsToCr: aCodeString.
+	[ OCParser parseExpression: '[ :arguments | ' , normalizedCode , ' ]' ]
 		on: OCCodeError
 		do: [ :error |
-			^ Dictionary
-				with: 'error' -> ('Syntax error in tool code at position {1}: {2}' format: { error position. error messageText }) ].
-
-	"Compile and build the tool"
+				^ Dictionary with: 'error' -> ('Syntax error in tool code at position {1}: {2}' format: {
+							   error position.
+							   error messageText }) ]. "Compile and build the tool"
 	[
-		compiledBlock := Smalltalk compiler evaluate: '[ :arguments | ', aCodeString, ' ]'.
+		compiledBlock := Smalltalk compiler evaluate: '[ :arguments | ' , normalizedCode , ' ]'.
 		client := ChatPharoClient
-			name: aName
-			description: aDescription
-			parameters: (aParametersSchema ifNil: [ Dictionary with: 'type' -> 'object' with: 'properties' -> Dictionary new with: 'required' -> #() ])
-			block: [ :arguments |
-				[ compiledBlock value: arguments ]
-					on: Error
-					do: [ :e | Dictionary with: 'error' -> e messageText ] ].
+			          name: aName
+			          description: aDescription
+			          parameters:
+			          (aParametersSchema ifNil: [
+				           Dictionary with: 'type' -> 'object' with: 'properties' -> Dictionary new with: 'required' -> #(  ) ])
+			          block: [ :arguments |
+					          [ compiledBlock value: arguments ]
+						          on: Error
+						          do: [ :e | Dictionary with: 'error' -> e messageText ] ].
 
 		temporalTools at: aName put: client.
 		creationTimestamps at: aName put: DateAndTime now.
@@ -89,9 +87,10 @@ ChatPharoTemporalToolRegistry >> createToolNamed: aName description: aDescriptio
 		Dictionary
 			with: 'success' -> true
 			with: 'tool_name' -> aName
-			with: 'message' -> ('Temporal tool "' , aName , '" created successfully. It is now available for use in subsequent tool calls.')
-	] on: Error do: [ :e |
-		Dictionary with: 'error' -> ('Failed to compile tool: ' , e messageText) ]
+			with:
+			'message' -> ('Temporal tool "' , aName , '" created successfully. It is now available for use in subsequent tool calls.') ]
+		on: Error
+		do: [ :e | Dictionary with: 'error' -> ('Failed to compile tool: ' , e messageText) ]
 ]
 
 { #category : 'as yet unclassified' }
@@ -149,6 +148,15 @@ ChatPharoTemporalToolRegistry >> listTools [
 				with: 'description' -> assoc value description
 				with: 'created_at' -> (creationTimestamps at: assoc key ifAbsent: [ 'unknown' ]) asString ])
 		with: 'count' -> temporalTools size
+]
+
+{ #category : 'as yet unclassified' }
+ChatPharoTemporalToolRegistry >> normalizeLineEndingsToCr: aString [
+	"Normalize incoming code to Pharo-style CR line endings."
+
+	| normalized |
+	normalized := aString copyReplaceAll: String crlf with: String cr.
+	^ normalized copyReplaceAll: String lf with: String cr
 ]
 
 { #category : 'as yet unclassified' }

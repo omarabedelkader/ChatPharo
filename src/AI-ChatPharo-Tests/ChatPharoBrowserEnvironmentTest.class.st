@@ -105,6 +105,16 @@ ChatPharoBrowserEnvironmentTest >> testGetPackagesIncludesSelfPackage [
 ]
 
 { #category : 'running' }
+ChatPharoBrowserEnvironmentTest >> testNormalizeLineEndingsToCrConvertsLfAndCrlf [
+
+    | source normalized |
+    source := 'first', String lf, 'second', String crlf, 'third'.
+    normalized := env normalizeLineEndingsToCr: source.
+
+    self assert: normalized equals: 'first', String cr, 'second', String cr, 'third'.
+]
+
+{ #category : 'running' }
 ChatPharoBrowserEnvironmentTest >> testPackageNamedCaseInsensitive [ 
 
     self assert: (env packageNamed: 'ai-chatpharo') notNil.

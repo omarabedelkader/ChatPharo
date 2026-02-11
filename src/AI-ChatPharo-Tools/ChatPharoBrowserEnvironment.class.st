@@ -62,37 +62,35 @@ ChatPharoBrowserEnvironment >> applyFunctionAddInstanceVariable: arguments [
 ]
 
 { #category : 'method-managments' }
-ChatPharoBrowserEnvironment >> applyFunctionAddMethod: arguments [ 
+ChatPharoBrowserEnvironment >> applyFunctionAddMethod: arguments [
 	"Add or update a method in a class."
 
 	| className sourceCode protocol side theClass targetClass |
 	className := arguments at: 'class_name'.
-	sourceCode := arguments at: 'source_code'.
+	sourceCode := self normalizeLineEndingsToCr: (arguments at: 'source_code').
 	protocol := arguments at: 'protocol' ifAbsent: [ 'as yet unclassified' ].
 	side := arguments at: 'side' ifAbsent: [ 'instance' ].
 
 	theClass := self classNamed: className.
-	theClass ifNil: [
-		^ Dictionary with: 'error' -> ('Class not found: ' , className) ].
-
-	"Determine which side (instance or class)"
+	theClass ifNil: [ ^ Dictionary with: 'error' -> ('Class not found: ' , className) ]. "Determine which side (instance or class)"
 	targetClass := side = 'class'
-		ifTrue: [ theClass class ]
-		ifFalse: [ theClass ].
+		               ifTrue: [ theClass class ]
+		               ifFalse: [ theClass ].
 
 	[
-		| method selector |
-		method := targetClass compile: sourceCode classified: protocol.
-		selector := method selector.
+		| selector compiledMethod |
+		selector := targetClass compile: sourceCode classified: protocol.
+		selector ifNil: [ ^ Dictionary with: 'error' -> 'Failed to add method (compile returned nil)' ].
+compiledMethod := targetClass compiledMethodAt: selector.
 
 		^ Dictionary
-			with: 'success' -> true
-			with: 'class' -> className
-			with: 'side' -> side
-			with: 'selector' -> selector asString
-			with: 'protocol' -> protocol
-	] on: Error do: [ :error |
-		^ Dictionary with: 'error' -> ('Failed to add method: ' , error messageText) ]
+			  with: 'success' -> true
+			  with: 'class' -> className
+			  with: 'side' -> side
+			  with: 'selector' -> selector asString
+			  with: 'protocol' -> protocol ]
+		on: Error
+		do: [ :error | ^ Dictionary with: 'error' -> ('Failed to add method: ' , error messageText) ]
 ]
 
 { #category : 'class-managments' }
@@ -1403,6 +1401,15 @@ ChatPharoBrowserEnvironment >> methodsWithSubstring: substring cappedAt: maximum
 					methods add: method.
 					methods size = maximumNumberOfMethods ifTrue: [ ^ methods ] ] ].
 	^ methods
+]
+
+{ #category : 'method-managments' }
+ChatPharoBrowserEnvironment >> normalizeLineEndingsToCr: aString [
+	"Normalize incoming code to Pharo-style CR line endings."
+
+	| normalized |
+	normalized := aString copyReplaceAll: String crlf with: String cr.
+	^ normalized copyReplaceAll: String lf with: String cr
 ]
 
 { #category : 'initialization' }
