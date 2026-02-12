@@ -7,7 +7,9 @@ Class {
 		'animationProcess',
 		'currentPhase',
 		'showDetailsButton',
-		'thinkingContent'
+		'thinkingContent',
+		'thinkingStartedAt',
+		'thinkingElapsedSeconds'
 	],
 	#category : 'AI-ChatPharo-Spec-Ethics',
 	#package : 'AI-ChatPharo-Spec',
@@ -50,11 +52,32 @@ ChatPharoThinkingPresenter >> defaultLayout [
 	^ layout
 ]
 
-{ #category : 'layout' }
+{ #category : 'initialization' }
+ChatPharoThinkingPresenter >> formattedElapsedThinkingTime [
+	"Format elapsed thinking time in minutes and seconds"
+
+	| minutes secondsLabel totalSeconds |
+	totalSeconds := thinkingElapsedSeconds.
+	minutes := totalSeconds // 60.
+	secondsLabel := totalSeconds \\ 60.
+
+	^ String streamContents: [ :stream |
+		stream
+			nextPutAll: minutes asString;
+			nextPutAll: ' min ';
+			nextPutAll: secondsLabel asString;
+			nextPutAll: ' sec (';
+			nextPutAll: totalSeconds asString;
+			nextPutAll: 's total)' ]
+]
+
+{ #category : 'initialization' }
 ChatPharoThinkingPresenter >> initialize [
 
 	super initialize.
-	currentPhase := #thinking
+	currentPhase := #thinking.
+	thinkingStartedAt := nil.
+	thinkingElapsedSeconds := 0
 ]
 
 { #category : 'initialization' }
@@ -97,6 +120,7 @@ ChatPharoThinkingPresenter >> phase: aSymbol [
 	Valid phases: #thinking, #executing, #analyzing, #searching, #finished"
 
 	currentPhase := aSymbol.
+	aSymbol = #finished ifTrue: [ self updateElapsedThinkingTime ].
 	self updateStatusLabel
 ]
 
@@ -112,13 +136,15 @@ ChatPharoThinkingPresenter >> startAnimation [
 	"Start the animated dots"
 
 	animationProcess ifNotNil: [ animationProcess terminate ].
+	thinkingStartedAt := DateAndTime now.
+	thinkingElapsedSeconds := 0.
 	animationProcess := [
-		| dots |
-		dots := 0.
-		[ true ] whileTrue: [
-			dots := (dots + 1) \\ 4.
-			dotsLabel label: ('.' repeat: dots).
-			(Delay forMilliseconds: 400) wait ] ] fork
+		                    | dots |
+		                    dots := 0.
+		                    [ true ] whileTrue: [
+				                    dots := dots + 1 \\ 4.
+				                    dotsLabel label: ('.' repeat: dots).
+				                    (Delay forMilliseconds: 400) wait ] ] fork
 ]
 
 { #category : 'initialization' }
@@ -146,17 +172,28 @@ ChatPharoThinkingPresenter >> thinkingContent: aString [
 ]
 
 { #category : 'initialization' }
+ChatPharoThinkingPresenter >> updateElapsedThinkingTime [
+	"Capture how long thinking took so we can show it when finished"
+
+	thinkingStartedAt ifNil: [
+		thinkingElapsedSeconds := 0.
+		^ self ].
+
+	thinkingElapsedSeconds := (((DateAndTime now - thinkingStartedAt) asSeconds rounded) max: 0)
+]
+
+{ #category : 'initialization' }
 ChatPharoThinkingPresenter >> updateStatusLabel [
 	"Update the status label based on current phase"
 
 	| text |
 	text := currentPhase
 		        caseOf: {
-		[ #thinking ] -> [ 'Thinking' ].
-		[ #executing ] -> [ 'Executing tools' ].
-		[ #analyzing ] -> [ 'Analyzing' ].
-		[ #searching ] -> [ 'Searching code' ].
-		[ #finished ] -> [ 'End of thinking' ] }
+				        ([ #thinking ] -> [ 'Thinking' ]).
+				        ([ #executing ] -> [ 'Executing tools' ]).
+				        ([ #analyzing ] -> [ 'Analyzing' ]).
+				        ([ #searching ] -> [ 'Searching code' ]).
+				        ([ #finished ] -> [ 'End of thinking (' , self formattedElapsedThinkingTime , ')' ]) }
 		        otherwise: [ 'Thinking' ].
 	statusLabel label: text
 ]
