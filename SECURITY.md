@@ -1,42 +1,33 @@
 # Security Policy
 
-<!--
-## 📦 Supported Versions
+## Reporting a Vulnerability
 
-The following table lists the versions of this project currently receiving security updates:
+If you believe you have found a security vulnerability, please report it privately and do not disclose it publicly until it has been reviewed.
 
-| Version | Supported    |
-| ------- | ------------ |
-| 5.1.x   | ✅ Yes        |
-| 5.0.x   | ❌ No         |
-| 4.0.x   | ✅ Yes        |
-| < 4.0   | ❌ No         |
+- Do not open a public issue, pull request, or discussion for security reports.
+- Share a clear description of the issue and why it matters.
+- Include steps to reproduce (or a minimal proof of concept) when possible.
+- Note the affected version(s), configuration, and environment details.
+- Attach relevant logs or error output if available.
 
-Please upgrade to a supported version to ensure you receive important security patches.
--->
+## What to Expect
 
-## 🛡️ Reporting a Vulnerability
+- We will review reports as soon as possible.
+- If the report is confirmed, we will work on a fix and plan a release.
+- We may ask for additional details to reproduce or validate the impact.
+- Please allow time for a coordinated fix before sharing details publicly.
 
-We take the security of this project seriously.
+## Supported Versions
 
-If you discover a security vulnerability, please **do not open a public issue**. Instead, report it responsibly by following these steps:
+Security fixes are provided for currently supported versions. If you are using an older version, you may be asked to upgrade to a supported release to receive a fix.
 
-1. **Email us at:** `chatpharo@inria.fr`
-2. Include as much detail as possible:
-   - A clear description of the issue
-   - Steps to reproduce
-   - Potential impact
-   - Any suggested fixes
-3. We will acknowledge your report within **72 hours**.
-4. Once triaged, you can expect:
-   - A status update every 5–7 days until resolution
-   - Coordination with you (if needed) on any fix or disclosure
+| Version    | Supported          |
+| ---------- | ------------------ |
+| Pharo 14-dev | ✅ Yes           |
+| Pharo 13     | ✅ Yes           |
 
-We greatly appreciate responsible disclosure and will credit your contribution if desired.
+## Thank You
 
----
+Thank you for helping keep the project and its users safe.
 
-## 🙏 Thanks
-
-Thanks for helping us keep this community and project safe for everyone.
 

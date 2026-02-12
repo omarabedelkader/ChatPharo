@@ -1,32 +1,32 @@
 # Contributing to ChatPharo
 
-Thank you for taking the time to contribute to **ChatPharo**! The following guidelines help us maintain a welcoming and consistent workflow.
+Thank you for contributing to **ChatPharo**! These guidelines are here to keep collaboration smooth, consistent, and welcoming.
 
 ## Getting Started
 
-1. **Fork the repository** and create a feature branch from `main`.
-2. Install the prerequisites listed in the [README](README.md) so you can build and run the project locally.
-3. Before making changes, please search the [issues](https://github.com/omarabedelkader/ChatPharo/issues) to see if your idea or bug has already been reported. If not, open a new issue using the appropriate template.
+1. **Fork the repository** and create a new branch from `main`.
+2. Follow the setup instructions in the project documentation so you can run and test things locally.
+3. Before starting work, check existing issues and discussions to avoid duplicates. If needed, open a new issue describing what you want to change and why.
 
 ## Development Guidelines
 
-- Follow the existing Smalltalk coding style used in the project.
-- Write tests for new features or bug fixes under `src/AI-ChatPharo-Tests`.
-- Run the test suite locally with **smalltalkCI**. For example:
-  ```bash
-  smalltalkci -s Pharo64-14
-  ```
-  Adjust the Smalltalk version as needed.
+* Follow the existing coding style and conventions used in the project.
+* Add or update tests when you change behavior (features, fixes, refactors).
+* Run the test suite locally before opening a pull request.
 
 ## Submitting a Pull Request
 
-1. Ensure your branch is up to date with `main`.
-2. Commit your changes with clear messages and push to your fork.
-3. Open a pull request targeting `main` and describe the motivation and changes.
-4. A maintainer will review your PR. Be ready to make revisions if requested.
+1. Keep your branch up to date with `main`.
+2. Make focused commits with clear messages.
+3. Open a pull request to `main` and explain:
+
+   * what problem it solves,
+   * what changed,
+   * how it was tested.
+4. Be responsive to review feedback—updates may be requested before merging.
 
 ## Code of Conduct
 
-Please be respectful in all interactions. We strive to maintain a friendly, cooperative environment.
+Be respectful and constructive. We want this to be a friendly place for everyone to collaborate.
 
-Happy hacking!
+Thanks again, and happy building!

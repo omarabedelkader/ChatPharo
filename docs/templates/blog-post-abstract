@@ -1,6 +1,0 @@
-<h2><a href="{{pathString}}">{{title}}</a></h2>
-{{abstract}}
-
-
-<div class="date">{{{publicationDate}}}</div>
-
