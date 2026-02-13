@@ -264,7 +264,7 @@ ChatPharoTool >> getResponseForHistory: history [
 	response := self client
 		            addPath: #( 'chat' 'completions' );
 		            entity: (ZnEntity json: (self jsonStringFor: (self normalizeForJson: data)));
-		            timeout: (self requestTimeoutSeconds) asSeconds;
+		            timeout: self requestTimeoutSeconds;
 		            post;
 		            response.
 	response isSuccess ifFalse: [ Error signal: 'Could not get chat completion' ].
