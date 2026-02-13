@@ -1166,6 +1166,20 @@ ChatPharoSettings >> replaceCustomTool: oldTool with: newTool [
 	self class saveDefault
 ]
 
+{ #category : 'as yet unclassified' }
+ChatPharoSettings >> requestTimeoutSeconds [
+
+	^ self ethicsDirector requestTimeoutSeconds
+]
+
+{ #category : 'ethics' }
+ChatPharoSettings >> requestTimeoutSeconds: anInteger [
+
+	self ethicsDirector requestTimeoutSeconds: anInteger.
+	self class setDefault: self.
+	self class saveDefault
+]
+
 { #category : 'private' }
 ChatPharoSettings >> sandboxEnabled [
 

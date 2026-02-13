@@ -3,7 +3,8 @@ Class {
 	#superclass : 'TestCase',
 	#instVars : [
 		'tool',
-		'echoClient'
+		'echoClient',
+		'originalRequestTimeoutSeconds'
 	],
 	#category : 'AI-ChatPharo-Tests-Tools',
 	#package : 'AI-ChatPharo-Tests',
@@ -13,20 +14,28 @@ Class {
 { #category : 'running' }
 ChatPharoToolBackendTest >> setUp [
 
-    super setUp.
-    tool := ChatPharoToolTestDouble
-        baseURL: (ZnUrl new
-            scheme: 'http';
-            host: 'localhost';
-            yourself)
-        system: 'system'
-        tools: nil.
-    echoClient := ChatPharoClient
-        name: 'echo'
-        description: 'Echoes the provided text.'
-        parameters: Dictionary new
-        block: [ :arguments | arguments ].
-    tool tools: { echoClient }.
+	super setUp.
+	 originalRequestTimeoutSeconds := ChatPharoSettings default requestTimeoutSeconds.
+	tool := ChatPharoToolTestDouble
+		        baseURL: (ZnUrl new
+				         scheme: 'http';
+				         host: 'localhost';
+				         yourself)
+		        system: 'system'
+		        tools: nil.
+	echoClient := ChatPharoClient
+		              name: 'echo'
+		              description: 'Echoes the provided text.'
+		              parameters: Dictionary new
+		              block: [ :arguments | arguments ].
+	tool tools: { echoClient }
+]
+
+{ #category : 'running' }
+ChatPharoToolBackendTest >> tearDown [
+
+	ChatPharoSettings default requestTimeoutSeconds: originalRequestTimeoutSeconds.
+	super tearDown
 ]
 
 { #category : 'running' }
@@ -73,6 +82,20 @@ ChatPharoToolBackendTest >> testApplyToolFunctionWrapsErrorsAsDictionary [
             parameters: Dictionary new
             block: [ :arguments | Error signal: 'failure' ] }.
     self assert: ((tool applyToolFunction: 'boom' arguments: Dictionary new) at: 'error') equals: 'failure'.
+]
+
+{ #category : 'running' }
+ChatPharoToolBackendTest >> testRequestTimeoutSecondsUsesEthicsDefaultWhenUnset [
+
+	ChatPharoSettings default requestTimeoutSeconds: nil.
+	self assert: tool requestTimeoutSeconds equals: 300
+]
+
+{ #category : 'running' }
+ChatPharoToolBackendTest >> testRequestTimeoutSecondsUsesEthicsTimeoutSetting [
+
+	ChatPharoSettings default requestTimeoutSeconds: 12.
+	self assert: tool requestTimeoutSeconds equals: 12
 ]
 
 { #category : 'running' }
