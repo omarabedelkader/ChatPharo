@@ -54,7 +54,8 @@ ChatPharoEthicsDirectorTest >> testInitializeDefaults [
 	self assert: ethics cognitiveLoadBudget equals: 120.
 	self assert: ethics tokenBudget equals: 4096.
 	self assert: ethics timeBudgetMinutes equals: 30.
-	self assert: ethics messageLimit equals: 50
+	self assert: ethics messageLimit equals: 50.
+	self assert: ethics requestTimeoutSeconds equals: 300
 ]
 
 { #category : 'running' }
@@ -104,6 +105,13 @@ ChatPharoEthicsDirectorTest >> testMessageLimitSmallValue [
 
 	ethics messageLimit: 1.
 	self assert: ethics messageLimit equals: 1
+]
+
+{ #category : 'running' }
+ChatPharoEthicsDirectorTest >> testRequestTimeoutSecondsSetAndGet [
+
+	ethics requestTimeoutSeconds: 42.
+	self assert: ethics requestTimeoutSeconds equals: 42
 ]
 
 { #category : 'running' }

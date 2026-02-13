@@ -13,7 +13,8 @@ Class {
 		'cognitiveLoadBudget',
 		'tokenBudget',
 		'timeBudgetMinutes',
-		'messageLimit'
+		'messageLimit',
+		'requestTimeoutSeconds'
 	],
 	#category : 'AI-ChatPharo-Ethics',
 	#package : 'AI-ChatPharo-Ethics'
@@ -60,7 +61,8 @@ ChatPharoEthicsDirector >> initialize [
 	cognitiveLoadBudget := 120.
 	tokenBudget := 4096.
 	timeBudgetMinutes := 30.
-	messageLimit := 50
+	messageLimit := 50.
+	requestTimeoutSeconds := 300
 ]
 
 { #category : 'accessing' }
@@ -92,6 +94,22 @@ ChatPharoEthicsDirector >> messageLimit: aNumber [
 	ChatPharoLogger logFrontend: 'Message limit updated'
 		details: (Dictionary new
 			at: 'limit' put: (aNumber ifNil: [ 'unset' ] ifNotNil: [ aNumber ]);
+			yourself)
+]
+
+{ #category : 'initialization' }
+ChatPharoEthicsDirector >> requestTimeoutSeconds [
+
+	^ requestTimeoutSeconds ifNil: [ requestTimeoutSeconds := 300 ]
+]
+
+{ #category : 'initialization' }
+ChatPharoEthicsDirector >> requestTimeoutSeconds: anInteger [
+
+	requestTimeoutSeconds := anInteger.
+	ChatPharoLogger logFrontend: 'Request timeout updated'
+		details: (Dictionary new
+			at: 'seconds' put: (anInteger ifNil: [ 'unset' ] ifNotNil: [ anInteger ]);
 			yourself)
 ]
 
