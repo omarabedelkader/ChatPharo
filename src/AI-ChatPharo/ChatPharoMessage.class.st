@@ -27,7 +27,12 @@ Class {
 		'suggestionRejected',
 		'feedbackTimestamp',
 		'attachments',
-		'thinking'
+		'thinking',
+		'modelName',
+		'inputTokens',
+		'outputTokens',
+		'responseSeconds',
+		'tokensPerSecond'
 	],
 	#category : 'AI-ChatPharo',
 	#package : 'AI-ChatPharo'
@@ -146,7 +151,48 @@ ChatPharoMessage >> initialize [
 	suggestionRejected := false.
 	feedbackTimestamp := nil.
 	attachments := OrderedCollection new.
-	thinking := String empty
+	thinking := String empty.
+	modelName := ''.
+	inputTokens := 0.
+	outputTokens := 0.
+	responseSeconds := 0.
+	tokensPerSecond := 0
+]
+
+{ #category : 'initialization' }
+ChatPharoMessage >> inputTokens [
+
+	^ inputTokens ifNil: [ 0 ]
+]
+
+{ #category : 'initialization' }
+ChatPharoMessage >> inputTokens: aNumber [
+
+	inputTokens := aNumber
+]
+
+{ #category : 'initialization' }
+ChatPharoMessage >> modelName [
+
+	^ modelName ifNil: [ '' ]
+]
+
+{ #category : 'initialization' }
+ChatPharoMessage >> modelName: aString [
+
+	modelName := aString
+]
+
+{ #category : 'initialization' }
+ChatPharoMessage >> outputTokens [
+
+	^ outputTokens ifNil: [ 0 ]
+]
+
+{ #category : 'initialization' }
+ChatPharoMessage >> outputTokens: aNumber [
+
+	outputTokens := aNumber
 ]
 
 { #category : 'accessing' }
@@ -182,6 +228,18 @@ ChatPharoMessage >> removeAttachment: aFileReference [
 ChatPharoMessage >> resetPresenter [
 
 	presenter := nil
+]
+
+{ #category : 'initialization' }
+ChatPharoMessage >> responseSeconds [
+
+	^ responseSeconds ifNil: [ 0 ]
+]
+
+{ #category : 'initialization' }
+ChatPharoMessage >> responseSeconds: aNumber [
+
+	responseSeconds := aNumber
 ]
 
 { #category : 'feedback' }
@@ -220,4 +278,16 @@ ChatPharoMessage >> thinking: aString [
 	"Set the thinking content from the agent response"
 
 	thinking := aString
+]
+
+{ #category : 'initialization' }
+ChatPharoMessage >> tokensPerSecond [
+
+	^ tokensPerSecond ifNil: [ 0 ]
+]
+
+{ #category : 'initialization' }
+ChatPharoMessage >> tokensPerSecond: aNumber [
+
+	tokensPerSecond := aNumber
 ]

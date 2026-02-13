@@ -57,3 +57,27 @@ ChatPharoThinkingPresenterTest >> testStartAnimationResetsAndStartsTiming [
 	self assert: (presenter instVarNamed: #thinkingStartedAt) isNotNil.
 	self assert: (presenter instVarNamed: #thinkingElapsedSeconds) equals: 0
 ]
+
+{ #category : 'tests' }
+ChatPharoThinkingPresenterTest >> testUpdateStatusLabelShowsRunningElapsedSeconds [
+
+	| statusText |
+	presenter instVarNamed: #thinkingElapsedSeconds put: 1.
+	presenter phase: #thinking.
+	statusText := (presenter instVarNamed: #statusLabel) label.
+
+	self assert: statusText equals: 'Thinking (1 sec)'
+]
+
+{ #category : 'tests' }
+ChatPharoThinkingPresenterTest >> testUsageSummaryIncludesModelTokensAndSpeed [
+
+	presenter instVarNamed: #modelName put: 'claude-sonnet'.
+	presenter instVarNamed: #inputTokens put: 120.
+	presenter instVarNamed: #outputTokens put: 60.
+	presenter instVarNamed: #tokensPerSecond put: 30.5.
+
+	self
+		assert: presenter usageSummary
+		equals: 'Model: claude-sonnet | Sent: 120 tok | Received: 60 tok | Speed: 30.5 tok/s'
+]

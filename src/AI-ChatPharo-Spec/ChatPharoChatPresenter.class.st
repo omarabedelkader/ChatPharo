@@ -101,6 +101,7 @@ ChatPharoChatPresenter >> connectPresenters [
 
 	model whenAnswerReceivedDo: [ :message |
 			thinkingPresenter thinkingContent: (message thinking ifNil: [ '' ]).
+			thinkingPresenter responseMessage: message.
 			self hideThinking.
 			cancelButton visible: false.
 			messagesLayout add: message presenter withConstraints: [ :constraints | constraints height: message height ].
@@ -194,12 +195,11 @@ ChatPharoChatPresenter >> hideError [
 ChatPharoChatPresenter >> hideThinking [
 	"Hide the thinking indicator and stop animation"
 
-thinkingPresenter phase: #finished.
+	thinkingPresenter phase: #finished.
 	thinkingPresenter stopAnimation.
 	[
-		(Delay forMilliseconds: 600) wait.
-		thinkingPresenter isFinished ifTrue: [
-			messagesLayout remove: thinkingPresenter ifAbsent: [ "not shown" ] ] ] fork
+		(Delay forMilliseconds: 1600) wait.
+		thinkingPresenter isFinished ifTrue: [ messagesLayout remove: thinkingPresenter ifAbsent: [ "not shown" ] ] ] fork
 ]
 
 { #category : 'initialization' }
@@ -259,6 +259,12 @@ ChatPharoChatPresenter >> initializePresenters [
 		                yourself.
 
 	thinkingPresenter := self instantiate: ChatPharoThinkingPresenter.
+	thinkingPresenter onStopReasoning: [
+		model cancelMessage.
+		self hideThinking.
+		cancelButton visible: false.
+		submitButton enabled: true.
+		messageTextField enabled: true ].
 	errorPresenter := self instantiate: ChatPharoErrorPresenter.
 
 	attachedFiles := OrderedCollection new.

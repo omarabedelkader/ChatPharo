@@ -58,11 +58,10 @@ ChatPharoChat >> addAssistantMessage: anAnswer [
 			thinking := answerText thinking.
 			answerText := answerText content ].
 
-(thinking isNil and: [ self agent respondsTo: #response ]) ifTrue: [
-		| agentResponse |
-		agentResponse := self agent response.
-		(agentResponse respondsTo: #thinking) ifTrue: [
-			thinking := agentResponse thinking ] ].
+	(thinking isNil and: [ self agent respondsTo: #response ]) ifTrue: [
+			| agentResponse |
+			agentResponse := self agent response.
+			(agentResponse respondsTo: #thinking) ifTrue: [ thinking := agentResponse thinking ] ].
 
 
 	history addAssistant: answerText.
@@ -77,7 +76,12 @@ ChatPharoChat >> addAssistantMessage: anAnswer [
 	messages last
 		answer: answerText;
 		assistantLabel: label;
-		thinking: (thinking ifNil: [ '' ]).
+		thinking: (thinking ifNil: [ '' ]);
+		modelName: ((anAnswer respondsTo: #modelName) ifTrue: [ anAnswer modelName ] ifFalse: [ self agent model ]);
+		inputTokens: ((anAnswer respondsTo: #inputTokens) ifTrue: [ anAnswer inputTokens ] ifFalse: [ 0 ]);
+		outputTokens: ((anAnswer respondsTo: #outputTokens) ifTrue: [ anAnswer outputTokens ] ifFalse: [ 0 ]);
+		responseSeconds: ((anAnswer respondsTo: #responseSeconds) ifTrue: [ anAnswer responseSeconds ] ifFalse: [ 0 ]);
+		tokensPerSecond: ((anAnswer respondsTo: #tokensPerSecond) ifTrue: [ anAnswer tokensPerSecond ] ifFalse: [ 0 ]).
 
 	ChatPharoLogger logBackend: 'Assistant response recorded' details: (Dictionary new
 			 at: 'chatId' put: self identityHash;

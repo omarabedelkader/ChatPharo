@@ -9,7 +9,14 @@ Class {
 		'showDetailsButton',
 		'thinkingContent',
 		'thinkingStartedAt',
-		'thinkingElapsedSeconds'
+		'thinkingElapsedSeconds',
+		'metricsLabel',
+		'stopReasoningButton',
+		'modelName',
+		'inputTokens',
+		'outputTokens',
+		'tokensPerSecond',
+		'onStopReasoning'
 	],
 	#category : 'AI-ChatPharo-Spec-Ethics',
 	#package : 'AI-ChatPharo-Spec',
@@ -37,18 +44,18 @@ ChatPharoThinkingPresenter >> agent [
 
 { #category : 'layout' }
 ChatPharoThinkingPresenter >> defaultLayout [
+
 	| layout |
 	layout := SpBoxLayout newHorizontal
-		spacing: 5;
-		vAlignCenter;
-		add: statusLabel expand: false;
-		add: dotsLabel expand: false;
-		yourself.
-	
-	"Only add details button if agent supports thinking"
-	self shouldShowThinkingUI ifTrue: [
-		layout add: showDetailsButton expand: false ].
-	
+		          spacing: 5;
+		          vAlignCenter;
+		          add: statusLabel expand: false;
+		          add: dotsLabel expand: false;
+		add: metricsLabel;
+		add: stopReasoningButton expand: false;
+		          yourself. 
+	self shouldShowThinkingUI ifTrue: [ layout add: showDetailsButton expand: false ].
+
 	^ layout
 ]
 
@@ -77,7 +84,12 @@ ChatPharoThinkingPresenter >> initialize [
 	super initialize.
 	currentPhase := #thinking.
 	thinkingStartedAt := nil.
-	thinkingElapsedSeconds := 0
+	thinkingElapsedSeconds := 0.
+	modelName := ''.
+	inputTokens := 0.
+	outputTokens := 0.
+	tokensPerSecond := 0.
+	onStopReasoning := [ ]
 ]
 
 { #category : 'initialization' }
@@ -89,7 +101,14 @@ ChatPharoThinkingPresenter >> initializePresenters [
 	dotsLabel := self newLabel
 		             label: '';
 		             yourself.
-		showDetailsButton := self newButton
+		metricsLabel := self newLabel
+		               label: '';
+		               yourself.
+	stopReasoningButton := self newButton
+		                     label: 'Stop reasoning';
+		                     action: [ self stopReasoningRequested ];
+		                     yourself.
+	showDetailsButton := self newButton
 		                     label: 'Show Details';
 		                     action: [ self openThinkingDetails ];
 		                     yourself
@@ -99,6 +118,12 @@ ChatPharoThinkingPresenter >> initializePresenters [
 ChatPharoThinkingPresenter >> isFinished [
 
 	^ currentPhase = #finished
+]
+
+{ #category : 'accessing' }
+ChatPharoThinkingPresenter >> onStopReasoning: aBlock [
+
+	onStopReasoning := aBlock ifNil: [ [ ] ]
 ]
 
 { #category : 'initialization' }
@@ -124,6 +149,24 @@ ChatPharoThinkingPresenter >> phase: aSymbol [
 	self updateStatusLabel
 ]
 
+{ #category : 'accessing' }
+ChatPharoThinkingPresenter >> responseMessage: aMessage [
+
+	modelName := (aMessage respondsTo: #modelName)
+		ifTrue: [ aMessage modelName ]
+		ifFalse: [ '' ].
+	inputTokens := (aMessage respondsTo: #inputTokens)
+		ifTrue: [ aMessage inputTokens ]
+		ifFalse: [ 0 ].
+	outputTokens := (aMessage respondsTo: #outputTokens)
+		ifTrue: [ aMessage outputTokens ]
+		ifFalse: [ 0 ].
+	tokensPerSecond := (aMessage respondsTo: #tokensPerSecond)
+		ifTrue: [ aMessage tokensPerSecond ]
+		ifFalse: [ 0 ].
+	self updateStatusLabel
+]
+
 { #category : 'asserting' }
 ChatPharoThinkingPresenter >> shouldShowThinkingUI [
 	"Only show thinking UI if we have an agent that supports it"
@@ -144,6 +187,8 @@ ChatPharoThinkingPresenter >> startAnimation [
 		                    [ true ] whileTrue: [
 				                    dots := dots + 1 \\ 4.
 				                    dotsLabel label: ('.' repeat: dots).
+				self updateElapsedThinkingTime.
+				                    self updateStatusLabel.
 				                    (Delay forMilliseconds: 400) wait ] ] fork
 ]
 
@@ -152,9 +197,16 @@ ChatPharoThinkingPresenter >> stopAnimation [
 	"Stop the animated dots"
 
 	animationProcess ifNotNil: [
-		animationProcess terminate.
-		animationProcess := nil ].
-	dotsLabel label: ''
+			animationProcess terminate.
+			animationProcess := nil ].
+	dotsLabel label: ''.
+	metricsLabel label: ''
+]
+
+{ #category : 'accessing' }
+ChatPharoThinkingPresenter >> stopReasoningRequested [
+
+	onStopReasoning value
 ]
 
 { #category : 'initialization' }
@@ -186,14 +238,37 @@ ChatPharoThinkingPresenter >> updateElapsedThinkingTime [
 ChatPharoThinkingPresenter >> updateStatusLabel [
 	"Update the status label based on current phase"
 
-	| text |
+	| text elapsedText |
+	elapsedText := thinkingElapsedSeconds asString , ' sec'.
 	text := currentPhase
 		        caseOf: {
-				        ([ #thinking ] -> [ 'Thinking' ]).
-				        ([ #executing ] -> [ 'Executing tools' ]).
-				        ([ #analyzing ] -> [ 'Analyzing' ]).
-				        ([ #searching ] -> [ 'Searching code' ]).
+				        ([ #thinking ] -> [ 'Thinking (' , elapsedText , ')' ]).
+				        ([ #executing ] -> [ 'Executing tools (' , elapsedText , ')' ]).
+				        ([ #analyzing ] -> [ 'Analyzing (' , elapsedText , ')' ]).
+				        ([ #searching ] -> [ 'Searching code (' , elapsedText , ')' ]).
 				        ([ #finished ] -> [ 'End of thinking (' , self formattedElapsedThinkingTime , ')' ]) }
 		        otherwise: [ 'Thinking' ].
-	statusLabel label: text
+	statusLabel label: text.
+	metricsLabel label: self usageSummary
+]
+
+{ #category : 'accessing' }
+ChatPharoThinkingPresenter >> usageSummary [
+
+	^ String streamContents: [ :stream |
+		modelName ifNotNil: [
+			modelName asString trimBoth ifNotEmpty: [
+				stream
+					nextPutAll: 'Model: ';
+					nextPutAll: modelName asString;
+					nextPutAll: ' | ' ] ].
+		stream
+			nextPutAll: 'Sent: ';
+			nextPutAll: inputTokens asString;
+			nextPutAll: ' tok | Received: ';
+			nextPutAll: outputTokens asString;
+			nextPutAll: ' tok | ';
+			nextPutAll: 'Speed: ';
+			nextPutAll: ((tokensPerSecond ifNil: [ 0 ]) asFloat printShowingDecimalPlaces: 1);
+			nextPutAll: ' tok/s' ]
 ]

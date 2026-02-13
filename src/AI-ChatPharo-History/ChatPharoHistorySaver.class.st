@@ -9,7 +9,12 @@ Class {
 		'content',
 		'toolCalls',
 		'toolCallId',
-		'thinking'
+		'thinking',
+		'modelName',
+		'inputTokens',
+		'outputTokens',
+		'responseSeconds',
+		'tokensPerSecond'
 	],
 	#category : 'AI-ChatPharo-History',
 	#package : 'AI-ChatPharo-History'
@@ -60,6 +65,42 @@ ChatPharoHistorySaver >> historyStringOn: strm [
                 cr
 ]
 
+{ #category : 'accessing' }
+ChatPharoHistorySaver >> inputTokens [
+
+	^ inputTokens ifNil: [ 0 ]
+]
+
+{ #category : 'accessing' }
+ChatPharoHistorySaver >> inputTokens: aNumber [
+
+	inputTokens := aNumber
+]
+
+{ #category : 'accessing' }
+ChatPharoHistorySaver >> modelName [
+
+	^ modelName ifNil: [ '' ]
+]
+
+{ #category : 'accessing' }
+ChatPharoHistorySaver >> modelName: aString [
+
+	modelName := aString
+]
+
+{ #category : 'accessing' }
+ChatPharoHistorySaver >> outputTokens [
+
+	^ outputTokens ifNil: [ 0 ]
+]
+
+{ #category : 'accessing' }
+ChatPharoHistorySaver >> outputTokens: aNumber [
+
+	outputTokens := aNumber
+]
+
 { #category : 'history' }
 ChatPharoHistorySaver >> putOpenAIChatMessagesOn: stream [
 		| msg |
@@ -71,6 +112,18 @@ ChatPharoHistorySaver >> putOpenAIChatMessagesOn: stream [
 		stream nextPut: msg.
 		toolCalls ifNotNil: [
 			toolCalls do: [ :tc | stream nextPut: tc openAIChatToolMessage ] ] 
+]
+
+{ #category : 'accessing' }
+ChatPharoHistorySaver >> responseSeconds [
+
+	^ responseSeconds ifNil: [ 0 ]
+]
+
+{ #category : 'accessing' }
+ChatPharoHistorySaver >> responseSeconds: aNumber [
+
+	responseSeconds := aNumber
 ]
 
 { #category : 'accessing' }
@@ -97,6 +150,18 @@ ChatPharoHistorySaver >> thinking: aString [
 	"Set the thinking content from the agent response"
 
 	thinking := aString
+]
+
+{ #category : 'accessing' }
+ChatPharoHistorySaver >> tokensPerSecond [
+
+	^ tokensPerSecond ifNil: [ 0 ]
+]
+
+{ #category : 'accessing' }
+ChatPharoHistorySaver >> tokensPerSecond: aNumber [
+
+	tokensPerSecond := aNumber
 ]
 
 { #category : 'accessing' }
