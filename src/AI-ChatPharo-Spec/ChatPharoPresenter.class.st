@@ -22,7 +22,7 @@ Class {
 ChatPharoPresenter >> addNewChat [
 
 	| newPage chatName |
-	chatName := 'Chat ' , notebook pages size asString.
+	chatName := 'Chat ' , (notebook pages size + 1 ) asString.
 	model newChat.
 	newPage := SpNotebookPage title: chatName icon: (self iconNamed: #announcement) provider: [ model chats last presenter ].
 	notebook addPage: newPage.
