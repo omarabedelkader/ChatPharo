@@ -254,10 +254,7 @@ ChatPharoTool >> getResponseForHistory: history [
 			            systemPrompt ifNotNil: [ stream nextPut: (Dictionary with: 'role' -> 'system' with: 'content' -> systemPrompt) ].
 			            history putOpenAIChatMessagesOn: stream ].
 	data := Dictionary with: 'model' -> model with: 'messages' -> messages.
-	extraParameters ifNotNil: [ data addAll: extraParameters ].
-	
-	
-"Merge static tools with any temporal tools the model has created"
+	extraParameters ifNotNil: [ data addAll: extraParameters ]. "Merge static tools with any temporal tools the model has created"
 	allTools := tools ifNil: [ OrderedCollection new ] ifNotNil: [ tools asOrderedCollection copy ].
 	allTools addAll: ChatPharoTemporalToolRegistry current tools.
 	allTools ifNotEmpty: [
@@ -267,7 +264,7 @@ ChatPharoTool >> getResponseForHistory: history [
 	response := self client
 		            addPath: #( 'chat' 'completions' );
 		            entity: (ZnEntity json: (self jsonStringFor: (self normalizeForJson: data)));
-		            timeout: (Duration minutes: 5) asSeconds;
+		            timeout: self requestTimeoutSeconds;
 		            post;
 		            response.
 	response isSuccess ifFalse: [ Error signal: 'Could not get chat completion' ].
@@ -384,6 +381,12 @@ ChatPharoTool >> requestParameters [
 ChatPharoTool >> requestParameters: aDictionary [
 
 	extraParameters := aDictionary ifNil: [ Dictionary new ]
+]
+
+{ #category : 'initialization' }
+ChatPharoTool >> requestTimeoutSeconds [
+
+	^ ChatPharoSettings default requestTimeoutSeconds
 ]
 
 { #category : 'accessing' }

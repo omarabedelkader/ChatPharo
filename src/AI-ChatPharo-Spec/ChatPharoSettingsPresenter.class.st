@@ -35,6 +35,7 @@ Class {
 		'cognitiveLoadBudgetInput',
 		'tokenBudgetInput',
 		'timeBudgetInput',
+		'requestTimeoutInput',
 		'messageLimitInput'
 	],
 	#category : 'AI-ChatPharo-Spec-Core',
@@ -79,11 +80,8 @@ ChatPharoSettingsPresenter >> connectPresenters [
 					selected ifNotNil: [ ollamaModelDropList selectItem: selected ] ifNil: [ ollamaModelDropList selectFirst ] ] ]. "Handle API dropdown selection"
 	apiDropList whenSelectedItemChangedDo: [ :assoc |
 			| apiClass newPresenter |
-			apiClass := assoc value.
-						"Show external API data warning if applicable"
-			(ChatPharoSafetyAdvisor confirmExternalApiUsageOn: self forAgent: apiClass)
-				ifFalse: [
-					"User declined — revert to the current agent"
+			apiClass := assoc value. "Show external API data warning if applicable"
+			(ChatPharoSafetyAdvisor confirmExternalApiUsageOn: self forAgent: apiClass) ifFalse: [ "User declined — revert to the current agent"
 					apiDropList selectItem:
 						(model availableApiChoices detect: [ :a | a value = model agent class ] ifNone: [ model availableApiChoices first ]).
 					^ self ].
@@ -164,21 +162,26 @@ ChatPharoSettingsPresenter >> connectPresenters [
 			text isEmpty
 				ifTrue: [ model timeBudgetMinutes: nil ]
 				ifFalse: [ model timeBudgetMinutes: text asNumber ] ].
+			
+	requestTimeoutInput whenTextChangedDo: [ :text |
+			text isEmpty
+				ifTrue: [ model requestTimeoutSeconds: nil ]
+				ifFalse: [ model requestTimeoutSeconds: text asNumber ] ].
 
-messageLimitInput whenTextChangedDo: [ :text |
-		text isEmpty ifFalse: [
-			| newValue |
-			newValue := text asNumber.
-			newValue ~= model messageLimit ifTrue: [
-				ChatPharoSettings default isDeveloper
-					ifTrue: [
-						(ChatPharoSafetyAdvisor confirmMessageLimitChangeOn: self)
-							ifTrue: [ model messageLimit: newValue ]
-							ifFalse: [ messageLimitInput text: model messageLimit asString ] ]
-					ifFalse: [
-						self alert: ChatPharoSafetyAdvisor ethicsSettingChangeMessage.
-						messageLimitInput text: model messageLimit asString ] ] ] ].
-		
+	messageLimitInput whenTextChangedDo: [ :text |
+			text isEmpty ifFalse: [
+					| newValue |
+					newValue := text asNumber.
+					newValue ~= model messageLimit ifTrue: [
+							ChatPharoSettings default isDeveloper
+								ifTrue: [
+										(ChatPharoSafetyAdvisor confirmMessageLimitChangeOn: self)
+											ifTrue: [ model messageLimit: newValue ]
+											ifFalse: [ messageLimitInput text: model messageLimit asString ] ]
+								ifFalse: [
+										self alert: ChatPharoSafetyAdvisor ethicsSettingChangeMessage.
+										messageLimitInput text: model messageLimit asString ] ] ] ].
+
 
 	playgroundToolCheckBox whenChangedDo: [ :checked |
 			checked
@@ -283,8 +286,8 @@ ChatPharoSettingsPresenter >> initializePresenters [
 
 	notebook addPage:
 		(SpNotebookPage title: 'Custom Tools' icon: (self iconNamed: #smallObjects) provider: [ self newCustomToolsTab ]).
-		
-		notebook addPage: (SpNotebookPage title: 'MCP' icon: (self iconNamed: #network) provider: [ self newMCPTab ]).
+
+	notebook addPage: (SpNotebookPage title: 'MCP' icon: (self iconNamed: #network) provider: [ self newMCPTab ]).
 
 	notebook addPage: (SpNotebookPage title: 'Multivers' icon: (self iconNamed: #branch) provider: [ self newMultiversTab ]).
 
@@ -375,6 +378,12 @@ ChatPharoSettingsPresenter >> initializePresenters [
 		                   yourself.
 
 
+requestTimeoutInput := self newNumberInput
+		                       placeholder: 'e.g. 300';
+		                       text: model requestTimeoutSeconds asString;
+		                       yourself.
+		
+		
 	messageLimitInput := self newNumberInput
 		                     placeholder: 'e.g. 50';
 		                     text: model messageLimit asString;
@@ -485,10 +494,10 @@ ChatPharoSettingsPresenter >> newCustomToolsTab [
 ChatPharoSettingsPresenter >> newEthicsTab [
 	"Create the Ethics Director configuration tab."
 
-| developerNote |
+	| developerNote |
 	developerNote := ChatPharoSettings default isDeveloper
-		ifTrue: [ '' ]
-		ifFalse: [ ' (developer only)' ].
+		                 ifTrue: [ '' ]
+		                 ifFalse: [ ' (developer only)' ].
 	^ SpPresenter new
 		  layout: (SpBoxLayout newTopToBottom
 				   spacing: 12;
@@ -521,7 +530,13 @@ ChatPharoSettingsPresenter >> newEthicsTab [
 				   expand: false;
 				add: (SpBoxLayout newHorizontal
 						    spacing: 8;
-						    add: (self newLabel label: 'Message limit per chat', developerNote) expand: false;
+						    add: (self newLabel label: 'Request timeout (seconds):') expand: false;
+						    add: requestTimeoutInput expand: true;
+						    yourself)
+				   expand: false;
+				   add: (SpBoxLayout newHorizontal
+						    spacing: 8;
+						    add: (self newLabel label: 'Message limit per chat' , developerNote) expand: false;
 						    add: messageLimitInput expand: true;
 						    yourself)
 				   expand: false;
