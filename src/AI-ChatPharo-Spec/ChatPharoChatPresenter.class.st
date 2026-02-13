@@ -7,6 +7,7 @@ Class {
 	#instVars : [
 		'messagesLayout',
 		'messageTextField',
+		'modelNameLabel',
 		'submitButton',
 		'cancelButton',
 		'newChatButton',
@@ -73,6 +74,7 @@ ChatPharoChatPresenter >> connectPresenters [
 					 yourself).
 			model cancelMessage.
 			self hideThinking.
+			cancelButton visible: false.
 			messageTextField text: ''.
 			submitButton enabled: true.
 			messageTextField enabled: true ].
@@ -97,11 +99,10 @@ ChatPharoChatPresenter >> connectPresenters [
 
 	moreMenuButton action: [ self showMoreMenu ].
 
-	attachButton action: [ self attachFile ].
-
 	model whenAnswerReceivedDo: [ :message |
 			thinkingPresenter thinkingContent: (message thinking ifNil: [ '' ]).
 			self hideThinking.
+			cancelButton visible: false.
 			messagesLayout add: message presenter withConstraints: [ :constraints | constraints height: message height ].
 			messageTextField text: ''.
 			submitButton enabled: true.
@@ -120,6 +121,7 @@ ChatPharoChatPresenter >> connectPresenters [
 
 	model whenErrorReceivedDo: [ :errorMessage |
 			self hideThinking.
+			cancelButton visible: false.
 			self showError: errorMessage.
 			submitButton enabled: true.
 			messageTextField enabled: true.
@@ -139,12 +141,11 @@ ChatPharoChatPresenter >> defaultLayout [
 		  add: attachedFilesPresenter expand: false;
 		  add: (SpBoxLayout newHorizontal
 				   spacing: 5;
-				   add: attachButton expand: false;
+				   add: modelNameLabel expand: false;
 				   add: messageTextField;
 				   add: submitButton expand: false;
 				   add: cancelButton expand: false;
-				   add: newChatButton expand: false;
-				  add: moreMenuButton expand: false;
+				   add: moreMenuButton expand: false;
 				   yourself)
 		  expand: false;
 		  yourself
@@ -208,14 +209,19 @@ ChatPharoChatPresenter >> initializePresenters [
 		                    placeholder: 'Type your message here...';
 		                    yourself.
 
+	modelNameLabel := self newLabel
+		                  label: self modelNameLabelText;
+		                  help: 'Current model used for this chat';
+		                  yourself.
+
 	submitButton := self newButton
-		                label: 'Submit';
+		                label: '';
 		                icon: (self iconNamed: #glamorousGo);
 		                help: 'Submit prompt';
 		                yourself.
 
 	cancelButton := self newButton
-		                label: 'Cancel';
+		                label: '';
 		                icon: (self iconNamed: #delete);
 		                help: 'Cancel prompt';
 		                yourself.
@@ -282,15 +288,30 @@ ChatPharoChatPresenter >> messageText [
 	^ messageTextField text
 ]
 
+{ #category : 'layout' }
+ChatPharoChatPresenter >> modelNameLabelText [
+
+	| agent modelName |
+	agent := model agent.
+	modelName := (agent respondsTo: #model)
+		             ifTrue: [ agent model ]
+		             ifFalse: [ '' ].
+	modelName ifNil: [ modelName := '' ].
+	modelName := modelName asString trimBoth.
+
+	^ 'Model: ' , (modelName ifEmpty: [ 'Not selected' ])
+]
+
 { #category : 'initialization' }
 ChatPharoChatPresenter >> reloadMessages [
+
 	self hideThinking.
 	self hideError.
 	messagesLayout := SpBoxLayout newVertical.
 	scrollableMessages layout: messagesLayout.
-	model messages do: [ :each |
-		messagesLayout add: each presenter ].
+	model messages do: [ :each | messagesLayout add: each presenter ].
 	messageTextField text: ''.
+	cancelButton visible: false.
 	submitButton enabled: true.
 	messageTextField enabled: true
 ]
@@ -303,20 +324,16 @@ ChatPharoChatPresenter >> sendMessage [
 	parser := ChatPharoCommandParser default.
 	result := parser parse: text.
 
-	result isCommand ifTrue: [
-		"Handle command execution"
-		ChatPharoLogger logFrontend: 'Command detected' details: (Dictionary new
-			at: 'chatId' put: model identityHash;
-			at: 'command' put: result commandName;
-			yourself).
-		messageTextField text: ''.
-		commandResponse := result execute: model.
-		"Show command response as a system message"
-		self showCommandResponse: commandResponse.
-		^ self ].
+	result isCommand ifTrue: [ "Handle command execution"
+			ChatPharoLogger logFrontend: 'Command detected' details: (Dictionary new
+					 at: 'chatId' put: model identityHash;
+					 at: 'command' put: result commandName;
+					 yourself).
+			messageTextField text: ''.
+			commandResponse := result execute: model. "Show command response as a system message"
+			self showCommandResponse: commandResponse.
+			^ self ]. "Regular message handling"
 
-	"Regular message handling"
-	
 	model agent isConfigured ifFalse: [
 			ChatPharoLogger logFrontend: 'Send blocked - agent not configured' details: (Dictionary new
 					 at: 'chatId' put: model identityHash;
@@ -332,6 +349,7 @@ ChatPharoChatPresenter >> sendMessage [
 			 yourself).
 	attachmentsCopy := attachedFiles copy.
 	submitButton enabled: false.
+	cancelButton visible: true.
 	messageTextField enabled: false.
 	messageTextField text: ''.
 	self clearAttachments.
@@ -381,32 +399,40 @@ ChatPharoChatPresenter >> showMoreMenu [
 	| menu |
 	menu := self newMenu.
 	menu
+			addItem: [ :item |
+			item
+				name: 'Attach file';
+				icon: (self iconNamed: #smallOpen);
+				action: [ self attachFile ] ];
 		addItem: [ :item |
 			item
-				name: 'Pop out';
-				icon: (self iconNamed: #glamorousUp);
+				name: 'New chat';
+				icon: (self iconNamed: #add);
 				action: [
-					ChatPharoLogger
-						logFrontend: 'Pop out chat requested'
-						details: (Dictionary new
+					ChatPharoLogger logFrontend: 'New chat requested from chat tab' details: (Dictionary new
 							at: 'chatId' put: model identityHash;
 							yourself).
-					model presenter open ] ];
+					model requestNewChat ] ];
 		addItem: [ :item |
-			item
-				name: 'Inspect';
-				icon: (self iconNamed: #inspect);
-				action: [
-					ChatPharoLogger
-						logFrontend: 'Inspect chat requested'
-						details: (Dictionary new
-							at: 'chatId' put: model identityHash;
-							yourself).
-					model inspect ] ].
+				item
+					name: 'Pop out';
+					icon: (self iconNamed: #glamorousUp);
+					action: [
+							ChatPharoLogger logFrontend: 'Pop out chat requested' details: (Dictionary new
+										 at: 'chatId' put: model identityHash;
+										 yourself).
+							model presenter open ] ];
+		addItem: [ :item |
+				item
+					name: 'Inspect';
+					icon: (self iconNamed: #inspect);
+					action: [
+							ChatPharoLogger logFrontend: 'Inspect chat requested' details: (Dictionary new
+										 at: 'chatId' put: model identityHash;
+										 yourself).
+							model inspect ] ].
 
-	menu openWithSpecAt:
-		(moreMenuButton adapter widget bounds bottomLeft)
-
+	menu openWithSpecAt: moreMenuButton adapter widget bounds bottomLeft
 ]
 
 { #category : 'initialization' }
