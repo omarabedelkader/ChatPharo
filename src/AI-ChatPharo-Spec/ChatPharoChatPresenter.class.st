@@ -248,7 +248,7 @@ ChatPharoChatPresenter >> initializePresenters [
 
 	moreMenuButton := self newButton
 		                  label: 'More';
-		                  icon: (self iconNamed: #smallDoIt);
+		                  icon: (self iconNamed: #add);
 		                  help: 'More options';
 		                  yourself.
 
@@ -399,20 +399,11 @@ ChatPharoChatPresenter >> showMoreMenu [
 	| menu |
 	menu := self newMenu.
 	menu
-			addItem: [ :item |
-			item
-				name: 'Attach file';
-				icon: (self iconNamed: #smallOpen);
-				action: [ self attachFile ] ];
 		addItem: [ :item |
-			item
-				name: 'New chat';
-				icon: (self iconNamed: #add);
-				action: [
-					ChatPharoLogger logFrontend: 'New chat requested from chat tab' details: (Dictionary new
-							at: 'chatId' put: model identityHash;
-							yourself).
-					model requestNewChat ] ];
+				item
+					name: 'Attach file';
+					icon: (self iconNamed: #smallOpen);
+					action: [ self attachFile ] ];
 		addItem: [ :item |
 				item
 					name: 'Pop out';
