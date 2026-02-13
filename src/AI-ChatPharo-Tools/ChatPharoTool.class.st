@@ -249,7 +249,7 @@ ChatPharoTool >> extraHeaders: aDictionary [
 { #category : 'initialization' }
 ChatPharoTool >> getResponseForHistory: history [
 
-	| messages data response message toolCalls thinkingText allTools payload usage modelName promptTokens completionTokens requestStartedAt responseSeconds tokensPerSecond  |
+	| messages data response message toolCalls thinkingText allTools payload usage modelName promptTokens completionTokens requestStartedAt responseSeconds tokensPerSecond |
 	messages := Array streamContents: [ :stream |
 			            systemPrompt ifNotNil: [ stream nextPut: (Dictionary with: 'role' -> 'system' with: 'content' -> systemPrompt) ].
 			            history putOpenAIChatMessagesOn: stream ].
@@ -261,7 +261,7 @@ ChatPharoTool >> getResponseForHistory: history [
 			data
 				add: 'tools' -> (allTools collect: [ :t | t openAIChatTool ] as: Array);
 				add: 'tool_choice' -> 'auto' ].
-			requestStartedAt := DateAndTime now.
+	requestStartedAt := DateAndTime now.
 	response := self client
 		            addPath: #( 'chat' 'completions' );
 		            entity: (ZnEntity json: (self jsonStringFor: (self normalizeForJson: data)));
@@ -271,11 +271,17 @@ ChatPharoTool >> getResponseForHistory: history [
 	response isSuccess ifFalse: [ Error signal: 'Could not get chat completion' ].
 	payload := STONJSON fromString: response contents.
 	message := (payload at: 'choices') first at: 'message'.
-	usage := payload at: 'usage' ifAbsent: [ Dictionary new ].
+	usage := payload
+		at: 'usage'
+		ifAbsent: [ payload at: 'usage_metadata' ifAbsent: [ Dictionary new ] ].
 	modelName := payload at: 'model' ifAbsent: [ model ].
-	promptTokens := usage at: 'prompt_tokens' ifAbsent: [ usage at: 'input_tokens' ifAbsent: [ 0 ] ].
-	completionTokens := usage at: 'completion_tokens' ifAbsent: [ usage at: 'output_tokens' ifAbsent: [ 0 ] ].
-	responseSeconds := (((DateAndTime now - requestStartedAt) asSeconds asFloat) max: 0.001).
+	promptTokens := self
+		tokenCountFromUsage: usage
+		keys: #( 'prompt_tokens' 'input_tokens' 'promptTokenCount' 'inputTokenCount' 'promptTokens' ).
+	completionTokens := self
+		tokenCountFromUsage: usage
+		keys: #( 'completion_tokens' 'output_tokens' 'candidatesTokenCount' 'outputTokenCount' 'completionTokens' ).
+	responseSeconds := (DateAndTime now - requestStartedAt) asSeconds asFloat max: 0.001.
 	tokensPerSecond := completionTokens asFloat / responseSeconds.
 
 	toolCalls := self toolCallsFromMessage: message.
@@ -306,7 +312,7 @@ ChatPharoTool >> getResponseForHistory: history [
 
 	^ (ChatPharoHistorySaver role: 'assistant' content: (message at: 'content' ifAbsent: [ nil ]) toolCalls: toolCalls)
 		  thinking: thinkingText;
-		modelName: modelName asString;
+		  modelName: modelName asString;
 		  inputTokens: promptTokens;
 		  outputTokens: completionTokens;
 		  responseSeconds: responseSeconds;
@@ -407,6 +413,26 @@ ChatPharoTool >> systemPrompt [
 ChatPharoTool >> systemPrompt: aString [
 
 	^ systemPrompt := aString 
+]
+
+{ #category : 'initialization' }
+ChatPharoTool >> tokenCountFromUsage: usage keys: keyNames [
+
+	| value |
+	value := self tokenValueFrom: usage keys: keyNames.
+	value ifNil: [ ^ 0 ].
+	value isNumber ifTrue: [ ^ value ].
+	^ [ value asString asNumber ] on: Error do: [ 0 ]
+]
+
+{ #category : 'initialization' }
+ChatPharoTool >> tokenValueFrom: aDictionary keys: keyNames [
+
+	aDictionary ifNil: [ ^ nil ].
+	aDictionary isDictionary ifFalse: [ ^ nil ].
+	keyNames do: [ :keyName |
+		(aDictionary includesKey: keyName) ifTrue: [ ^ aDictionary at: keyName ] ].
+	^ nil
 ]
 
 { #category : 'accessing' }
